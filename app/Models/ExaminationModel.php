@@ -61,9 +61,11 @@ class ExaminationModel extends Model
         "petugas",
         "petugas_type",
         "account_id",
-        "kesadaran",
         "isvalid",
-        'vs_status_id'
+        'vs_status_id',
+        "valid_user",
+        "valid_pasien",
+        "valid_date"
     ];
 
     protected $useTimestamps = true;

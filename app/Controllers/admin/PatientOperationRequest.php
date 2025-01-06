@@ -287,6 +287,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'tarif_id',
             'diagnosa_desc',
             'operation_type',
+            'bill_id'
+
         ];
 
 
@@ -383,6 +385,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'tarif_id' => $formData['tarif_id'],
             'diagnosa_desc' => $formData['diagnosa_desc'],
             'operation_type' => $formData['operation_type'],
+            'bill_id' => $formData['bill_id'],
         ];
 
         $model->where('vactination_id', $formData['vactination_id'])->set($updateData)->update();
@@ -569,6 +572,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'diagnosa_desc' => $formData['diagnosa_desc'],
             'operation_type' => $formData['operation_type'],
             'rooms_id' => $formData['rooms_id'],
+            'bill_id' => $formData['bill_id'],
         ];
 
         // Start a database transaction
@@ -1462,7 +1466,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
             foreach ($selectlokalis as $key => $value) {
                 if ($value['value_score'] == 3) {
-                    $filepath = WRITEPATH . 'uploads/signatures/' . $value['value_detail'];
+                    $filepath = WRITEPATH . 'uploads/lokalis/' . $value['value_detail'];
                     if (file_exists($filepath)) {
                         $filedata = file_get_contents($filepath);
                         $filedata64 = base64_encode($filedata);
@@ -1517,7 +1521,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         if (isset($bloodblood_request)) {
             $bloodblood_request = [
-                '202412040411113432R6', '20241204041114617B4V'
+                '202412040411113432R6',
+                '20241204041114617B4V'
             ];
 
             $bloodmodel = new BloodRequestModel();
@@ -1638,7 +1643,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 $data = explode(',', (string)${'lokalis' . $value['value_id']});
                 $encodedLokalis = $data[1];
                 $decodedLokalis = base64_decode($encodedLokalis);
-                $lokalisPath = WRITEPATH . 'uploads/signatures/';
+                $lokalisPath = WRITEPATH . 'uploads/lokalis/';
                 if (!is_dir($lokalisPath)) {
                     mkdir($lokalisPath, 0777, true);
                 }
@@ -2860,7 +2865,15 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $query = $db->query($sql);
         $results = $this->lowerKey($query->getResultArray());
 
-        return $this->response->setJSON($results);
+        $oprasi_type_tarif = $this->lowerKey($db->query("SELECT OPERATION_TYPE,OPERATION as id,OPERATION as text  FROM OPERATION_TYPE")->getResultArray());
+
+
+        return $this->response->setJSON(
+            [
+                'bill_id' => $results,
+                'tarif_id' => $oprasi_type_tarif
+            ]
+        );
     }
 
     public function getDetail()

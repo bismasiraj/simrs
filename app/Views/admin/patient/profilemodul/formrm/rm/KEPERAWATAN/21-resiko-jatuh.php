@@ -100,7 +100,7 @@
                         <td><?= $data['alat_ukur']; ?></td>
                         <td><?= $data['total_value_score'] <= 11 ? 'Resiko Rendah | Skor 7-11' : 'Resiko Tinggi | Skor 12 Keatas'; ?></td>
                         <td><?= $data['intervensi']; ?></td>
-                        <td><?= $data['doctor']; ?></td>
+                        <td><?= $data['modified_by']; ?></td>
                     </tr>
                 <?php endforeach ?>
             </tbody>

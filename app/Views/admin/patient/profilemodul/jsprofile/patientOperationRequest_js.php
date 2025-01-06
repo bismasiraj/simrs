@@ -20,6 +20,7 @@
 
 <script type="text/javascript">
     let treatmentData = [];
+    let tarif_id_oprs = []
     let historyPasien = [];
     let pasienOperasiValue = [];
     let pasienOperasiSelected = [];
@@ -45,13 +46,17 @@
 
             $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
 
-                $('#tarif_id-permintaan_operasi').select2({
+                $('#bill_id-permintaan_operasi').select2({
                     dropdownParent: $('#create-modal-permintaan-operasi')
                 });
 
                 renderDropdownTreatment({
                     data: treatmentData
                 });
+
+                renderDropdownTarifId({
+                    data: tarif_id_oprs
+                })
 
 
             });
@@ -65,12 +70,15 @@
 
             $('#create-modal-tindakan-operasi').on('shown.bs.modal', function() {
 
-                $('#tarif_id-tindakan_operasi').select2({
+                $('#bill_id-tindakan_operasi').select2({
                     dropdownParent: $('#create-modal-tindakan-operasi')
                 });
                 renderDropdownTreatment({
                     data: treatmentData
                 });
+                renderDropdownTarifId({
+                    data: tarif_id_oprs
+                })
             });
 
             $('#btn-reset-data').click(function() {
@@ -178,7 +186,7 @@
 
         // ACTIONS & BTN
         const actionDropdownSpesialisas = () => {
-            $("#tarif_id-permintaan_operasi").off().on("change", function(e) {
+            $("#bill_id-permintaan_operasi").off().on("change", function(e) {
                 let selectedOption = $(this).find('option:selected');
                 let operationType = selectedOption.data('operation-type');
                 $("#operation_type-permintaan_operasi").val(operationType);
@@ -204,45 +212,89 @@
 
 
         const initializeFlatpickrOperasi = () => {
-            flatpickr(".datetimeflatpickr", {
-                enableTime: true,
-                dateFormat: "d/m/Y H:i", // Display format
-                time_24hr: true, // 24-hour time format
+            $(".datetimeflatpickr").each(function() {
+                // Get the value of the input
+                const inputVal = $(this).val();
+
+                // Try to parse the input value in both formats
+                let initialDate = '';
+
+                if (inputVal) {
+                    // Check if the value is in ISO 8601 format (e.g., "2024-12-17T16:24")
+                    if (moment(inputVal, moment.ISO_8601, true).isValid()) {
+                        // If the value is valid ISO 8601, format it to the desired format
+                        initialDate = moment(inputVal).format("DD/MM/YYYY HH:mm");
+                    }
+                    // Check if the value is in the custom format (e.g., "17/12/2024 16:24")
+                    else if (moment(inputVal, "DD/MM/YYYY HH:mm", true).isValid()) {
+                        // If it's valid in the custom format, use it directly
+                        initialDate = moment(inputVal, "DD/MM/YYYY HH:mm").format("DD/MM/YYYY HH:mm");
+                    }
+                    // Check if the value is in the custom format (e.g., "17-12-2024 16:24")
+                    else if (moment(inputVal, "DD-MM-YYYY HH:mm", true).isValid()) {
+                        // If it's valid in the custom format, use it directly
+                        initialDate = moment(inputVal, "DD-MM-YYYY HH:mm").format("DD/MM/YYYY HH:mm");
+                    }
+                    // Handle invalid date formats if necessary
+                    else {
+                        initialDate = moment().format(
+                            "DD/MM/YYYY HH:mm"); // Fallback to current date if invalid
+                    }
+                } else {
+                    // If input is empty, default to the current date and time
+                    initialDate = moment().format("DD/MM/YYYY HH:mm");
+                }
+
+                // Initialize flatpickr with the correct value
+                flatpickr(this, {
+                    enableTime: true,
+                    dateFormat: "d/m/Y H:i", // Display format
+                    time_24hr: true, // 24-hour time format
+                    defaultDate: initialDate, // Use the correctly parsed or default date
+                });
             });
 
+            // Allow user to edit the datetime input field
             $(".datetimeflatpickr").prop("readonly", false);
 
+            // Event listener for when the date changes
             $(".datetimeflatpickr").on("change", function() {
                 let theid = $(this).attr("id");
-                theid = theid.replace("flat", "");
+                if (theid.includes("flat")) {
+                    theid = theid.replace("flat", "");
+                }
                 let thevalue = $(this).val();
 
+                // Validate the date input
                 if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
-                    let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
-                        "YYYY-MM-DD HH:mm"
-                    );
+                    let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm");
+                    $("#" + theid).val(formattedDate);
+                } else if (moment(thevalue, "YYYY-MM-DD HH:mm", true).isValid()) {
+                    let formattedDate = moment(thevalue, "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm");
                     $("#" + theid).val(formattedDate);
                 } else {
-                    // console.warn("Invalid date entered:", thevalue);
+                    // Handle invalid date (optional)
+                    console.warn("Invalid date entered:", thevalue);
                 }
             });
 
-            // const nowtime = moment().format("DD/MM/YYYY HH:mm");
-            // $(".datetimeflatpickr").val(nowtime).trigger("change");
-        }
+            // Trigger the change event programmatically (if needed)
+            $(".datetimeflatpickr").trigger("change");
+        };
+
+
+
 
         const btnSaveActionRequestOperation = (props) => {
             $("#btn-save-permintaan-operasi-modal").off().on("click", function(e) {
                 e.preventDefault();
 
-                if ($('#tarif_id-permintaan_operasi').val() === '' || $('#tarif_id-permintaan_operasi')
+                if ($('#bill_id-permintaan_operasi').val() === '' || $('#bill_id-permintaan_operasi')
                     .val() ===
                     null) {
-                    $('#tarif_id-permintaan_operasi').select2('open');
+                    $('#bill_id-permintaan_operasi').select2('open');
                     return;
                 }
-
-
 
                 $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
                     $(this).removeAttr('disabled');
@@ -674,7 +726,7 @@
                 let diag_descs = dataSend.getAll('diag_desc[]');
                 let diag_names = dataSend.getAll('diag_name[]');
                 let suffer_type = dataSend.getAll('suffer_type[]');
-                console.log(diag_cats.length);
+
                 for (let i = 0; i < diag_cats.length; i++) {
                     let entry = {
                         diagnosa_cat: diag_cats[i],
@@ -718,6 +770,49 @@
                 $(this).closest('tr').addClass('table-primary')
                 // assessmentPraOperasi(item)
                 // getDataInstrumenoprs(item);
+
+
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-praoperasi2',
+                    method: 'cetak_pra_operasi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-laporan-anesthesi',
+                    method: 'cetak_laporan_anesthesi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-anestesi-lengkap',
+                    method: 'cetak_anesthesi_lengkap'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-checklist-anestesi',
+                    method: 'cetak_checklist_anestesi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-catatan-keperawatan',
+                    method: 'cetak_catatan_keperawatan'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-checklist-keselamatan',
+                    method: 'cetak_checklist_keselamatan'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-post-operasi',
+                    method: 'cetak_post_operasi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-laporan-pembedahan',
+                    method: 'cetak_laporan_pembedahan'
+                })
+
                 postData({
                     id: item?.vactination_id,
                     visit_id: item?.visit_id
@@ -829,52 +924,12 @@
                 $("#document_id_checklist_anestesi").val($(this).data('id')); //new
                 $("#document_id_informasi-post-operasi").val($(this).data('id')); //new
                 $("#apobody_id").val($(this).data('id')); //new
-                console.log('before assessmentPraOperasi');
+
                 assessmentPraOperasi({
                     vactination_id: $(this).data('id')
                 })
-                console.log('after assessmentPraOperasi');
 
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-praoperasi2',
-                    method: 'cetak_pra_operasi'
-                })
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-laporan-anesthesi',
-                    method: 'cetak_laporan_anesthesi'
-                })
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-anestesi-lengkap',
-                    method: 'cetak_anesthesi_lengkap'
-                })
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-checklist-anestesi',
-                    method: 'cetak_checklist_anestesi'
-                })
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-catatan-keperawatan',
-                    method: 'cetak_catatan_keperawatan'
-                })
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-checklist-keselamatan',
-                    method: 'cetak_checklist_keselamatan'
-                })
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-post-operasi',
-                    method: 'cetak_post_operasi'
-                })
-                cetakOperasi({
-                    vactination_id: $(this).data('id'),
-                    element_id: '#btn-print-laporan-pembedahan',
-                    method: 'cetak_laporan_pembedahan'
-                })
+
                 $("#container-tab").slideUp();
                 $("#container-tab").slideDown();
                 initializeFlatpickrOperasi()
@@ -883,11 +938,11 @@
 
 
         const cetakOperasi = (props) => {
-            $(props.element_id).on('click', function() {
+            $(props.element_id).off().on('click', function() {
                 // Retrieve data from button attributes
                 var visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
                 var idEncoded = props.vactination_id;
-
+                console.log(idEncoded);
                 // Construct the URL
                 var url = '<?= base_url() . '/admin/cetak/'; ?>' + props.method + '/' + visitEncoded + '/' +
                     idEncoded;
@@ -900,7 +955,6 @@
         const actionBtnUpdateAndInsert = (props) => {
             $('#btn-updateAndInsert-permintaan-operasi-modal').off().on('click', function(e) {
                 e.preventDefault();
-
 
                 $('#formDokumentPermintaanOperasi').find(':disabled').removeAttr('disabled');
 
@@ -2243,11 +2297,67 @@
 
                 $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
                     let treatmentData = renderDropdownTreatment();
-                    $('#tarif_id-permintaan_operasi').select2({
+                    $('#bill_id-permintaan_operasi').select2({
                         data: treatmentData,
                         disabled: false,
                         dropdownParent: $('#create-modal-permintaan-operasi')
                     });
+
+                    let tarif_id_oprs = renderDropdownTarifId();
+
+                    $('#tarif_id-permintaan_operasi').select2({
+                        placeholder: 'Cari atau pilih',
+                        allowClear: false,
+                        tags: true,
+                        data: tarif_id_oprs,
+                        dropdownParent: $('#create-modal-permintaan-operasi'),
+                        createTag: function(params) {
+                            return {
+                                id: params.term,
+                                text: params.term,
+                                newOption: true,
+                            };
+                        },
+                        templateResult: function(data) {
+                            if (data.newOption) {
+                                return $('<span>Tambah: ' + data.text + '</span>');
+                            }
+                            return data.text;
+                        },
+
+                    });
+
+                    $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                        const selectedValue = e.params.data.text;
+
+                        if (e.params.data.newOption) {
+
+                            $('#tarif_id-permintaan_operasi').select2({
+                                placeholder: 'Cari atau pilih',
+                                allowClear: false,
+                                tags: true,
+                                dropdownParent: $(
+                                    '#create-modal-permintaan-operasi'),
+                                createTag: function(params) {
+                                    return {
+                                        id: params.term,
+                                        text: params.term,
+                                        newOption: true,
+                                    };
+                                },
+                                templateResult: function(data) {
+                                    if (data.newOption) {
+                                        return $('<span>Tambah: ' + data.text +
+                                            '</span>');
+                                    }
+                                    return data.text;
+                                },
+
+                            });
+                        }
+                    });
+
+
                     initializeFlatpickrOperasi()
                     initializeQuillEditors();
                 });
@@ -2277,10 +2387,26 @@
                     `<option value="${item.tarif_id}" data-operation-type="${item.operation_type}">${item.tarif_name} (${item?.name_of_class} - ${formatToIDRResult(item?.amount_paid ?? 0)})</option>`;
             });
 
-            $("#tarif_id-permintaan_operasi").html(
+            $("#bill_id-permintaan_operasi").html(
                 `<option selected disabled value="">Pilih Tindakan</option>` +
                 result);
         };
+
+
+        const renderDropdownTarifId = () => {
+            let data = tarif_id_oprs
+
+            let result = "";
+            data.forEach((item) => {
+                result +=
+                    `<option value="${item.id}">${item.text}</option>`;
+            });
+
+            $("#tarif_id-permintaan_operasi").html(
+                `<option selected disabled value="">Pilih Tindakan</option>` +
+                result);
+
+        }
 
         const getTemplatePermintaanOperasi = () => {
             return `<div hidden>
@@ -2504,15 +2630,7 @@
 
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <label for="operation_type-permintaan_operasi">Sub Spesialisas</label>
-                        <input class="form-control disabled" id="operation_type-permintaan_operasi" name="operation_type" disabled value="" hidden>
-                        <input class="form-control disabled" id="operation_type_name-permintaan_operasi" name="operation_type_name" disabled value="">
-                    </div>
-                </div>
-
-                <div class="row form-group">
-                    <div class="col-md-12">
-                        <label for="tarif_id-permintaan_operasi">Tindakan Operasi</label>
+                        <label for="tarif_id-permintaan_operasi">Prosedur Operasi</label>
                         <select class="form-control select2" id="tarif_id-permintaan_operasi" name="tarif_id" required>
                             <!-- Option elements here -->
                         </select>
@@ -2525,6 +2643,25 @@
                         <textarea class="form-control quill-editor disabled" id="diagnosa_desc-permintaan_operasi" name="diagnosa_desc"></textarea>
                     </div>
                 </div>
+                
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label for="operation_type-permintaan_operasi">Sub Spesialisas</label>
+                        <input class="form-control disabled" id="operation_type-permintaan_operasi" name="operation_type" disabled value="" hidden>
+                        <input class="form-control disabled" id="operation_type_name-permintaan_operasi" name="operation_type_name" disabled value="">
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label for="bill_id-permintaan_operasi">Tarif Tindakan Operasi</label>
+                        <select class="form-control select2" id="bill_id-permintaan_operasi" name="bill_id" required>
+                            <!-- Option elements here -->
+                        </select>
+                    </div>
+                </div>
+
+                
             </div>
             `
         }
@@ -2614,12 +2751,107 @@
                 element_id: 'clinic_id_from-permintaan_operasi_name'
             })
 
+            let tarif_id_oprs_data = tarif_id_oprs;
+            const newTreatment = result.tarif_id;
 
             $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
+                $('#bill_id-permintaan_operasi').select2({
+                    disabled: true
+                });
                 $('#tarif_id-permintaan_operasi').select2({
                     disabled: true
                 });
-                $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+
+
+                const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
+                if (!isExistingValue) {
+                    tarif_id_oprs.push({
+                        id: newTreatment,
+                        text: newTreatment
+                    });
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprs,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text + '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
+                    }, 1000);
+                } else {
+                    let tarif_id_oprsresult = renderDropdownTarifId();
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprsresult,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text + '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+                    }, 1000);
+                }
+                $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                    const selectedValue = e.params.data.text;
+
+                    if (e.params.data.newOption) {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            dropdownParent: $(
+                                '#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+                    }
+                });
+
+                $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
                 initializeFlatpickrOperasi()
                 initializeQuillEditors();
             });
@@ -2706,18 +2938,108 @@
                 element_id: 'clinic_id_from-permintaan_operasi_name'
             })
 
-
+            let tarif_id_oprs_data = tarif_id_oprs;
+            const newTreatment = result.tarif_id;
 
             $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
                 let treatmentData = renderDropdownTreatment();
 
-                $('#tarif_id-permintaan_operasi').select2({
+                $('#bill_id-permintaan_operasi').select2({
                     data: treatmentData,
                     disabled: false,
                     dropdownParent: $('#create-modal-permintaan-operasi')
                 });
 
-                $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+                $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
+
+                const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
+                if (!isExistingValue) {
+                    tarif_id_oprs.push({
+                        id: newTreatment,
+                        text: newTreatment
+                    });
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprs,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text + '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
+                    }, 1000);
+                } else {
+                    let tarif_id_oprsresult = renderDropdownTarifId();
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprsresult,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text + '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+                    }, 1000);
+                }
+                $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                    const selectedValue = e.params.data.text;
+
+                    if (e.params.data.newOption) {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            dropdownParent: $(
+                                '#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+                    }
+                });
+
                 initializeFlatpickrOperasi()
                 initializeQuillEditors();
             });
@@ -2780,6 +3102,8 @@
             $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
             $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
             $('#diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
+            $('#diagnosa_desc-permintaan_operasi').val(result.diagnosa_desc);
+
             $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
             $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
             $('#result_id-permintaan_operasi').val(result.result_id);
@@ -2848,20 +3172,110 @@
 
 
 
-            const foundData = treatmentData.find(item => item.operation_type === `${result?.operation_type}`);
-
+            const foundData = treatmentData.find(item => item.tarif_id === `${result?.bill_id}`);
             $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
 
+            let tarif_id_oprs_data = tarif_id_oprs;
+            const newTreatment = result?.tarif_id;
 
             $('#create-modal-permintaan-operasi').off().on('shown.bs.modal', function() {
                 let treatmentData = renderDropdownTreatment();
-                $('#tarif_id-permintaan_operasi').select2({
+                $('#bill_id-permintaan_operasi').select2({
                     data: treatmentData,
                     disabled: false,
                     dropdownParent: $('#create-modal-permintaan-operasi')
                 });
 
-                $('#tarif_id-permintaan_operasi').val(result?.tarif_id).trigger('change');
+                $('#bill_id-permintaan_operasi').val(result?.bill_id).trigger('change');
+
+                const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
+                if (!isExistingValue) {
+                    tarif_id_oprs.push({
+                        id: newTreatment,
+                        text: newTreatment
+                    });
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprs,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text + '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+                        $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
+                    }, 1000);
+
+                } else {
+                    let tarif_id_oprsresult = renderDropdownTarifId();
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprsresult,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text + '</span>');
+                                }
+                                return data.text;
+                            },
+                        });
+                        $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+                    }, 1000);
+
+                }
+
+                $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                    const selectedValue = e.params.data.text;
+
+                    if (e.params.data.newOption) {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            dropdownParent: $(
+                                '#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+                    }
+                });
+
                 initializeFlatpickrOperasi()
                 initializeQuillEditors();
             });
@@ -3069,10 +3483,11 @@
 
             const updateRowScoreAndStatus = (row) => {
                 let totalScore = calculateTotalScore(row);
+                let status = totalScore >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
+
                 row.find('.total-score-input').text(totalScore);
 
-                let status = totalScore >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
-                row.find('.discharge-status-input').val(status);
+                row.find('.discharge-status-input').text(status);
             };
 
             let observationDate = props?.item?.observation_date ? moment(props?.item?.observation_date) : moment(
@@ -3093,11 +3508,11 @@
                             </td>
                         `;
                     }).join('')}
-                    <td class="total-score">
+                    <td class="total-score" width="1%">
                         <h3><span class="badge text-bg-secondary total-score-input">0</span></h3>
                     </td>
-                    <td class="discharge-status">
-                        <input type="text" class="form-control discharge-status-input" readonly value="">
+                    <td class="discharge-status" style="width:100px;">
+                        <span class="discharge-status-input"></span>
                     </td>
                     ${props.index === 0 ? `
                     <td></td>
@@ -3540,7 +3955,8 @@
             }
 
             $("#adddiagnosaPraOperasi").on("click", () => {
-                addRowDiagDokter('bodyDiagPraOperation2-', pasienOperasiSelected?.vactination_id);
+                addRowDiagDokter('bodyDiagPraOperation2-', pasienOperasiSelected?.vactination_id, null,
+                    null, 13, 0);
             });
 
 
@@ -4050,8 +4466,8 @@
                 let totalScore = calculateTotalScore(row);
                 row.find('.steward-total-score-input').text(totalScore);
 
-                let status = totalScore >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
-                row.find('.steward-discharge-status-input').val(status);
+                let status = totalScore >= 5 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
+                row.find('.steward-discharge-status-input').text(status);
             };
 
             let observationDate = props?.item?.observation_date ? moment(props?.item?.observation_date) : moment(
@@ -4072,11 +4488,11 @@
                     </td>
                 `;
             }).join('')}
-            <td class="steward-total-score">
+            <td class="steward-total-score" width="1%">
                 <h3><span class="badge text-bg-secondary steward-total-score-input">0</span></h3>
             </td>
-            <td class="steward-discharge-status">
-                <input type="text" class="form-control steward-discharge-status-input" readonly value="">
+            <td class="steward-discharge-status" style="width:100px;">
+                <span class="steward-discharge-status-input"></span>
             </td>
             ${props.index === 0 ? `
             <td></td>
@@ -4442,10 +4858,11 @@
 
                 let currentValueoprs008_06 = $('#oprs008_06').val();
                 let nameAttributeoprs008_06 = $('#oprs008_06').attr('name');
+
                 let treatment = treatmentData.find(t => t.tarif_id === currentValueoprs008_06);
                 let treatmentName = treatment ? treatment.tarif_name : "-";
                 let labelHtml = `<label id="oprs008_06_label" class="form-control form-thems">
-                                ${treatmentName}
+                                ${data.tarif_id}
                             </label>
                         `;
 
@@ -4455,7 +4872,8 @@
             }, 20);
 
             $("#formdiag2").on("click", function(e) {
-                addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id);
+                addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id, null, null,
+                    13, 0);
             });
             if (diagnosas) {
                 diagnosas.forEach((item, index) => {
@@ -4469,7 +4887,8 @@
                 });
             }
             $("#formdiag").on("click", function(e) {
-                addRowDiagDokter('bodyDiagPascaOperation-', pasienOperasiSelected?.vactination_id);
+                addRowDiagDokter('bodyDiagPascaOperation-', pasienOperasiSelected?.vactination_id, null,
+                    null, 14, 0);
             });
 
             btnSaveLaporanPembedahan(pasienOperasiSelected)
@@ -4523,7 +4942,8 @@
             $("#org_unit_code-laporan_anestesi").val(data?.org_unit_code ?? visit?.org_unit_code);
             $("#visit_id-laporan_anestesi").val(data?.visit_id ?? visit?.visit_id);
             $("#formdiag-laporan").on("click", function(e) {
-                addRowDiagDokter('bodyDiagLaporanAnesthesi-', pasienOperasiSelected?.vactination_id);
+                addRowDiagDokter('bodyDiagLaporanAnesthesi-', pasienOperasiSelected?.vactination_id, null,
+                    null, 14, 0);
             });
             getAvalueType({
                 p_type: 'OPRS006',
@@ -5103,7 +5523,8 @@
             $('#informasiMedis-laporan-recovery-room-monitoring-score-2').html(oprs014)
 
             $("#formdiag-lengkap").on("click", function(e) {
-                addRowDiagDokter('bodyDiagLaporanAnesthesiLengkap-', pasienOperasiSelected?.vactination_id);
+                addRowDiagDokter('bodyDiagLaporanAnesthesiLengkap-', pasienOperasiSelected?.vactination_id,
+                    null, null, 14, 0);
             });
 
             $("#bleeding_amount_val").val(data?.assessment_anesthesia?.bleeding_amount ?? 0)
@@ -5409,42 +5830,69 @@
                             break;
 
                         case 4:
+
+
                             initializeQuill = true; // Set flag to initialize Quill
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
                                 htmlContent = `
-                        <div class="form-group pb-5 pt-4">
+                            <div class="form-group pb-5 pt-4">
                             <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                            <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" value="${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}">
-                            <div id="quill_${props?.p_type?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.p_type?.toLowerCase()}_${props?.parameter_id}'>${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}</div>
-                        </div>
-                    `;
+                            <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" 
+                            value="${props?.get_data?.['value_id_'+props?.parameter_id] 
+                                                        ? encodeURIComponent(props?.get_data?.['value_id_'+props?.parameter_id]) 
+                                                        : ''}">
+                            <div id="quill_${props?.p_type?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.p_type?.toLowerCase()}_${props?.parameter_id}'>${(props?.get_data?.['value_id_'+props?.parameter_id]) ?? ''}</div>
+                            </div>
+                            `;
                             } else {
-
                                 if (props.p_type != 'OPRS008') {
                                     htmlContent = `
-                        <div class="form-group pb-5 pt-4">
-                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                            <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
-                            <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}_${props?.p_type}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
-                        </div>
-                    `;
+                                <div class="form-group pb-5 pt-4">
+                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                     <input type="hidden" name="${props?.column_name?.toLowerCase()}" 
+                                                 value="${props?.get_data?.[props?.column_name?.toLowerCase()] 
+                                                        ? encodeURIComponent(props?.get_data?.[props?.column_name?.toLowerCase()]) 
+                                                        : ''}">
+                                     <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}_${props?.p_type}" 
+                                            class="quill-editor" 
+                                            name="${props?.column_name?.toLowerCase()}">
+                                            ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}
+                                        </div>
+                                </div>
+                            `;
                                 } else {
                                     if (props?.column_name != 'OPERATION_DESC') {
+
                                         htmlContent = `
-                                <div class="form-group pb-5 pt-4">
-                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
-                                    <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
-                                </div>
-                            `;
+                                            <div class="form-group pb-5 pt-4">
+                                                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                                <input type="hidden" name="${props?.column_name?.toLowerCase()}" 
+                                                 value=${props?.get_data?.[props?.column_name?.toLowerCase()] 
+                                                        ? encodeURIComponent(props?.get_data?.[props?.column_name?.toLowerCase()]) 
+                                                        : ''}">
+                                                <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
+                                            </div>
+                                            
+                                        `;
                                     } else {
                                         htmlContent = `
-                                <div class="form-group pb-5 pt-4">
-                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}_oprs008" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
-                                    <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}_${props?.p_type}" class="quill-editor" name='${props?.column_name?.toLowerCase()}_oprs008'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
-                                </div>
-                            `;
+                                        <div class="form-group pb-5 pt-4">
+                                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}__oprs008">${props?.parameter_desc}</label>
+                                            <input 
+                                                    type="hidden" 
+                                                    name="${props?.column_name?.toLowerCase()}_oprs008" 
+
+                                                    value=${props?.get_data?.[props?.column_name?.toLowerCase()] 
+                                                        ? encodeURIComponent(props?.get_data?.[props?.column_name?.toLowerCase()]) 
+                                                        : ''}">
+                                                <div 
+                                                    id="quill_${props?.column_name?.toLowerCase()}_oprs008" 
+                                                    class="quill-editor" 
+                                                    name="${props?.column_name?.toLowerCase()}">
+                                                ${(props?.get_data?.[props?.column_name?.toLowerCase()]) ?? ''}
+                                                </div>
+                                        </div>
+                                    `;
                                     }
 
                                 }
@@ -5540,12 +5988,12 @@
                             }
 
                             htmlContent = `
-            <div class="form-group mb-0 pt-4">
-                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
-                <input class="form-control datetime-input datetimeflatpickr" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
-            </div>
-                 `;
+                            <div class="form-group mb-0 pt-4">
+                                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+                                <input class="form-control datetime-input datetimeflatpickr" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+                            </div>
+                                `;
 
 
                             break;
@@ -5589,7 +6037,8 @@
                                             column_name: 'value_desc',
                                             column_id: 'value_id',
                                             id: props?.items.type_of_anesthesia,
-                                            element_id: props?.p_type?.toLowerCase() + '_' + props
+                                            element_id: props?.p_type?.toLowerCase() + '_' +
+                                                props
                                                 ?.parameter_id
                                         })
                                     }
@@ -5615,31 +6064,38 @@
             });
         };
 
-        const initializeQuillEditors = (props) => {
+        const initializeQuillEditors = () => {
             document.querySelectorAll('.quill-editor').forEach(editor => {
-                if (!quillInstances[editor.id]) {
+                const editorId = editor.id;
+                if (!quillInstances[editorId]) {
                     const quill = new Quill(editor, {
                         theme: 'snow'
                     });
-
-                    quillInstances[editor.id] = quill;
-
+                    quillInstances[editorId] = quill;
 
                     const inputField = document.querySelector(
                         `input[name="${editor.getAttribute('name')}"]`);
+
                     if (inputField) {
-                        const initialContent = inputField.value || '';
+                        let initialContent = inputField.value || '';
+
+                        try {
+                            initialContent = decodeURIComponent(initialContent);
+                        } catch (e) {
+                            console.log("Konten tidak ter-encode atau sudah benar");
+                        }
+
                         quill.root.innerHTML = initialContent;
 
                         quill.on('text-change', () => {
                             const quillContent = quill.root.innerHTML.trim();
-                            inputField.value = quillContent === '<p><br></p>' ? '' :
-                                quillContent;
+                            inputField.value = quillContent === '<p><br></p>' ? '' : quillContent;
                         });
                     }
                 }
             });
         };
+
 
         const createDropdownTables = (props) => {
             let content = '';
@@ -5763,7 +6219,8 @@
                         </table>
                     `;
 
-            $("#dropdown-param-tindakan-operasi").html(content + droppdown + contentFormEsekusi + TransaksiContent);
+            $("#dropdown-param-tindakan-operasi").html(content + droppdown + contentFormEsekusi +
+                TransaksiContent);
 
             $('#dropdown-param-tindakan-operasi').on('click', '.delete-dropdown', function() {
                 $(this).closest('tr').next().remove(); // Remove the next row
@@ -5853,7 +6310,7 @@
         const renderDataRequestOperation = (data) => {
             let hasil = "";
             data?.data?.map((item, index) => {
-                let treatment = treatmentData.find(t => t.tarif_id === item?.tarif_id);
+                let treatment = treatmentData.find(t => t.tarif_id === item?.bill_id);
                 let treatmentName = treatment ? treatment.tarif_name : "-";
                 let treatmentPrice = treatment ? (treatment.amount_paid ?? '0') : "0";
 
@@ -6200,7 +6657,8 @@
             getDataList(
                 'admin/PatientOperationRequest/getTreatment',
                 (res) => {
-                    treatmentData = res;
+                    treatmentData = res?.bill_id;
+                    tarif_id_oprs = res?.tarif_id
                 },
                 () => {
                     // console.log('Before send callback');
@@ -6289,7 +6747,8 @@
 
                     res.data.forEach((diagnosis) => {
                         addRowDiagDokter('bodyDiagLaporanAnesthesi-', props?.vactination_id,
-                            diagnosis?.diagnosa_desc, diagnosis?.diagnosa_name, diagnosis
+                            diagnosis?.diagnosa_desc, diagnosis?.diagnosa_name,
+                            diagnosis
                             ?.diag_cat,
                             diagnosis?.suffer_type);
                     });
@@ -6495,7 +6954,8 @@
 
             const isalkesArray = [2, 19, 20];
 
-            data?.treatment?.filter(item => isalkesArray.includes(parseInt(item.isalkes))).map((item, index) => {
+            data?.treatment?.filter(item => isalkesArray.includes(parseInt(item.isalkes))).map((item,
+                index) => {
                 medication += `<tr>
                     <td>${item?.name ?? "-"}</td>
                     <td>${item?.quantity ?? "0"}</td>
@@ -6522,7 +6982,8 @@
                 postData({
                     document_id: vactination_id ?? "",
                     filter: filter ?? ""
-                }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (res) => {
+                }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (
+                    res) => {
                     if (res.respon && res.data.examination_info.length > 0) {
                         ChartMonitoringDurante({
                             data: res.data.examination_info,
@@ -6546,8 +7007,10 @@
                     const tbody = $(`#${tbodyId}`);
                     tbody.empty();
                     res.data.forEach((diagnosis) => {
-                        addRowDiagDokter('bodyDiagLaporanAnesthesiLengkap-', props?.vactination_id,
-                            diagnosis.diagnosa_desc, diagnosis.diagnosa_name, diagnosis.diag_cat,
+                        addRowDiagDokter('bodyDiagLaporanAnesthesiLengkap-', props
+                            ?.vactination_id,
+                            diagnosis.diagnosa_desc, diagnosis.diagnosa_name, diagnosis
+                            .diag_cat,
                             diagnosis.suffer_type);
                     });
                 }
@@ -6555,7 +7018,9 @@
         }; //new 01/08
 
         const convertDate = (dateString) => {
-            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm", "YYYY-MM-DDTHH:mm"];
+            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm",
+                "YYYY-MM-DDTHH:mm"
+            ];
             const parsedDate = moment(dateString, formats, true);
             if (parsedDate.isValid()) {
                 return parsedDate.format("YYYY-MM-DD HH:mm");

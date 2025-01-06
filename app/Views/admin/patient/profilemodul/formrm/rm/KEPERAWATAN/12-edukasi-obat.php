@@ -25,47 +25,47 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -162,38 +162,38 @@
                 <tbody id="obatTableBody">
                     <?php $no = 1; ?>
                     <?php foreach ($daftar as $item) : ?>
-                    <tr>
-                        <td><?= $no++; ?></td>
-                        <td><?= @$item['nama_obat']; ?></td>
-                        <td><?= @$item['aturanpakai']; ?></td>
-                    </tr>
+                        <tr>
+                            <td><?= $no++; ?></td>
+                            <td><?= @$item['nama_obat']; ?></td>
+                            <td><?= @$item['aturanpakai']; ?></td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
 
             </table>
 
             <?php
-                $groupedData = [];
+            $groupedData = [];
 
-                foreach ($desc as $item) {
-                    $groupedData[$item['parameter_desc']][] = $item['value_desc'];
-                }
+            foreach ($desc as $item) {
+                $groupedData[$item['parameter_desc']][] = $item['value_desc'];
+            }
 
-                foreach ($groupedData as $parameter_desc => $values) {
-                    ?>
-            <div class="row mb-1">
-                <div class="col">
-                    <strong><?= $parameter_desc; ?></strong>
-                    <ul>
-                        <?php foreach ($values as $value_desc) : ?>
-                        <li><?= $value_desc; ?></li>
-                        <?php endforeach; ?>
-                    </ul>
+            foreach ($groupedData as $parameter_desc => $values) {
+            ?>
+                <div class="row mb-1">
+                    <div class="col">
+                        <strong><?= $parameter_desc; ?></strong>
+                        <ul>
+                            <?php foreach ($values as $value_desc) : ?>
+                                <li><?= $value_desc; ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
                 </div>
-            </div>
             <?php
-                }
-                ?>
+            }
+            ?>
 
 
             <div class="row mb-1">
@@ -231,85 +231,85 @@
 
 </body>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: 'a',
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    // var qrcode = new QRCode(document.getElementById("qrcode"), {
+    //     text: 'a',
+    //     width: 70,
+    //     height: 70,
+    //     colorDark: "#000000",
+    //     colorLight: "#ffffff",
+    //     correctLevel: QRCode.CorrectLevel.H // High error correction
+    // });
 </script>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode1"), {
-    text: 'a',
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    // var qrcode = new QRCode(document.getElementById("qrcode1"), {
+    //     text: 'a',
+    //     width: 70,
+    //     height: 70,
+    //     colorDark: "#000000",
+    //     colorLight: "#ffffff",
+    //     correctLevel: QRCode.CorrectLevel.H // High error correction
+    // });
 </script>
 <script>
-$(document).ready(function() {
-    $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-    $("#no_registration").val("<?= $visit['no_registration']; ?>")
-    $("#visit_id").val("<?= $visit['visit_id']; ?>")
-    $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-    $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-    $("#in_date").val("<?= $visit['in_date']; ?>")
-    $("#exit_date").val("<?= $visit['exit_date']; ?>")
-    $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-    <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
+    $(document).ready(function() {
+        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
+        $("#no_registration").val("<?= $visit['no_registration']; ?>")
+        $("#visit_id").val("<?= $visit['visit_id']; ?>")
+        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
+        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
+        $("#in_date").val("<?= $visit['in_date']; ?>")
+        $("#exit_date").val("<?= $visit['exit_date']; ?>")
+        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
+        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
         ?>
-    $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#employee_id").val("<?= $visit['employee_id']; ?>")
-    $("#description").val("<?= $visit['description']; ?>")
-    $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#modified_by").val("<?= user()->username; ?>")
-    $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-    $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-    $("#ageyear").val("<?= $visit['ageyear']; ?>")
-    $("#agemonth").val("<?= $visit['agemonth']; ?>")
-    $("#ageday").val("<?= $visit['ageday']; ?>")
-    $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-    $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-    $("#theid").val("<?= $visit['pasien_id']; ?>")
-    $("#isrj").val("<?= $visit['isrj']; ?>")
-    $("#gender").val("<?= $visit['gender']; ?>")
-    $("#doctor").val("<?= $visit['employee_id']; ?>")
-    $("#kal_id").val("<?= $visit['kal_id']; ?>")
-    $("#petugas_id").val("<?= user()->username; ?>")
-    $("#petugas").val("<?= user()->fullname; ?>")
-    $("#account_id").val("<?= $visit['account_id']; ?>")
-})
-$("#btnSimpan").on("click", function() {
-    saveSignatureData()
-    saveSignatureData1()
-    console.log($("#TTD").val())
-    $("#form").submit()
-})
-$("#btnEdit").on("click", function() {
-    $("input").prop("disabled", false);
-    $("textarea").prop("disabled", false);
+        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#employee_id").val("<?= $visit['employee_id']; ?>")
+        $("#description").val("<?= $visit['description']; ?>")
+        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#modified_by").val("<?= user()->username; ?>")
+        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
+        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
+        $("#ageyear").val("<?= $visit['ageyear']; ?>")
+        $("#agemonth").val("<?= $visit['agemonth']; ?>")
+        $("#ageday").val("<?= $visit['ageday']; ?>")
+        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
+        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
+        $("#theid").val("<?= $visit['pasien_id']; ?>")
+        $("#isrj").val("<?= $visit['isrj']; ?>")
+        $("#gender").val("<?= $visit['gender']; ?>")
+        $("#doctor").val("<?= $visit['employee_id']; ?>")
+        $("#kal_id").val("<?= $visit['kal_id']; ?>")
+        $("#petugas_id").val("<?= user()->username; ?>")
+        $("#petugas").val("<?= user()->fullname; ?>")
+        $("#account_id").val("<?= $visit['account_id']; ?>")
+    })
+    $("#btnSimpan").on("click", function() {
+        saveSignatureData()
+        saveSignatureData1()
+        console.log($("#TTD").val())
+        $("#form").submit()
+    })
+    $("#btnEdit").on("click", function() {
+        $("input").prop("disabled", false);
+        $("textarea").prop("disabled", false);
 
-})
+    })
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

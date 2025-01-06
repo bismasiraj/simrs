@@ -79,7 +79,8 @@ class PasienVisitationModel extends Model
         'backcharge',
         'ssencounter_id',
         'statusantrean',
-        'employee_inap'
+        'employee_inap',
+        'patient_category_id'
     ];
 
     // Dates
@@ -345,7 +346,7 @@ class PasienVisitationModel extends Model
                     @X = N'100',
                     @NAMA = N'%$nama%',
                     @KODE = N'%$kode%',
-                    @ALAMAT = N'%$kode%',
+                    @ALAMAT = N'%$alamat%',
                     @POLI = N'%$poli%',
                     @MULAI = N'$mulai',
                     @AKHIR = N'$akhir',

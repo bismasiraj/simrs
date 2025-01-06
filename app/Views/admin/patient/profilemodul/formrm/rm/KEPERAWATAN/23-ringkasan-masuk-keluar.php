@@ -23,47 +23,47 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -83,9 +83,9 @@
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3><?= @$kop['name_of_org_unit']?></h3>
+                    <h3><?= @$kop['name_of_org_unit'] ?></h3>
                     <!-- <h3>Surakarta</h3> -->
-                    <p><?= @$kop['contact_address']?></p>
+                    <p><?= @$kop['contact_address'] ?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -117,11 +117,11 @@
                         <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
                             <?php if (!empty($visit['date_of_birth'])) : ?>
-                            <p class="m-0 mt-1 p-0">
-                                <?=date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
-                            </p>
+                                <p class="m-0 mt-1 p-0">
+                                    <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
+                                </p>
                             <?php else : ?>
-                            <p class="m-0 mt-1 p-0">-</p>
+                                <p class="m-0 mt-1 p-0">-</p>
                             <?php endif; ?>
                         </td>
                         <td class="p-1" colspan="2">
@@ -146,7 +146,7 @@
                     <tr>
                         <td class="p-1">
                             <b>Golongan Darah</b>
-                            <p class="m-0 mt-1 p-0"><?= @$pasien['gol'] === 0 ? "":@$pasien['gol']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$pasien['gol'] === 0 ? "" : @$pasien['gol']; ?></p>
                         </td>
                         <td class="p-1">
                             <b>Kewarganegaraan</b>
@@ -168,7 +168,7 @@
                         </td>
                         <td class="p-1">
                             <b>Tanggal Masuk</b>
-                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime( @$visit['visit_datetime'])) ?></p>
+                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime(@$visit['visit_datetime'])) ?></p>
                         </td>
                     </tr>
                     <tr>
@@ -182,7 +182,7 @@
                         </td>
                         <td class="p-1">
                             <b>Bed</b>
-                            <div><?= @$visit['bed_id'] === 0 ? "":@$visit['bed_id']; ?></div>
+                            <div><?= @$visit['bed_id'] === 0 ? "" : @$visit['bed_id']; ?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -213,7 +213,7 @@
                         </td>
                         <td>
                             <b>Tanggal Keluar</b>
-                            <div> <?= !@$visit['exit_date'] ? "-":@$visit['exit_date'] ?></div>
+                            <div> <?= !@$visit['exit_date'] ? "-" : @$visit['exit_date'] ?></div>
                         </td>
                         <td rowspan="3">
                             <b>Catatan</b>
@@ -241,12 +241,12 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <!-- <td>
                             <b>Status Pulang</b>
                             <div><?= @$status['nama']  ?></div>
-                        </td>
+                        </td> -->
                         <td>
-                            <b>Kondisi Pulang</b>
+                            <b>Status Pulang</b>
                             <div><?= @$kondisi['cara_keluar']  ?></div>
                         </td>
                     </tr>
@@ -257,7 +257,7 @@
                         </td>
                         <td>
                             <b>Riwayat Imunisasi</b>
-                            <div><?= @$riwayat[0]['riwayat_imunisasi']?></div>
+                            <div><?= @$riwayat[0]['riwayat_imunisasi'] ?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -276,51 +276,51 @@
 </body>
 
 <script>
-$(document).ready(function() {
-    Procedure()
-    Diagnosis()
-    $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+    $(document).ready(function() {
+        Procedure()
+        Diagnosis()
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
 
-})
-
-const Procedure = () => {
-    <?php $dataJson = json_encode( $prod); ?>
-    let dataResult = []
-    let data = <?php echo $dataJson; ?>;
-
-    data.map(e => {
-        dataResult += `<li>${e.diagnosa_id} - ${e.diagnosa_name}</li>`
     })
-    $("#procedure-data").html(dataResult)
 
-}
+    const Procedure = () => {
+        <?php $dataJson = json_encode($prod); ?>
+        let dataResult = []
+        let data = <?php echo $dataJson; ?>;
 
-const Diagnosis = () => {
-    <?php $dataJson = json_encode( $diag); ?>
-    let dataResult = []
-    let data = <?php echo $dataJson; ?>;
+        data.map(e => {
+            dataResult += `<li>${e.diagnosa_id} - ${e.diagnosa_name}</li>`
+        })
+        $("#procedure-data").html(dataResult)
 
-    data.map(e => {
-        dataResult += `<li>${e.diagnosa_id} - ${e.diagnosa_name}</li>`
-    })
-    $("#diagnosis-data").html(dataResult)
-}
+    }
+
+    const Diagnosis = () => {
+        <?php $dataJson = json_encode($diag); ?>
+        let dataResult = []
+        let data = <?php echo $dataJson; ?>;
+
+        data.map(e => {
+            dataResult += `<li>${e.diagnosa_id} - ${e.diagnosa_name}</li>`
+        })
+        $("#diagnosis-data").html(dataResult)
+    }
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

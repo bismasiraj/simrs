@@ -1028,7 +1028,7 @@ class RekamMedis extends \App\Controllers\BaseController
             $data = explode(',', (string)$signatureDokter);
             $encodedDataDokter = $data[1];
             $decodedDataDokter = base64_decode($encodedDataDokter);
-            $signaturePathDokter = WRITEPATH . 'uploads/signatures/';
+            $signaturePathDokter = WRITEPATH . 'uploads/lokalis
             if (!is_dir($signaturePathDokter)) {
                 mkdir($signaturePathDokter, 0777, true);
             }
@@ -1048,7 +1048,7 @@ class RekamMedis extends \App\Controllers\BaseController
             $data = explode(',', (string)$signaturePasien);
             $encodedDataPasien = $data[1];
             $decodedDataPasien = base64_decode($encodedDataPasien);
-            $signaturePathPasien = WRITEPATH . 'uploads/signatures/';
+            $signaturePathPasien = WRITEPATH . 'uploads/lokalis/';
             if (!is_dir($signaturePathPasien)) {
                 mkdir($signaturePathPasien, 0777, true);
             }
@@ -1754,7 +1754,7 @@ class RekamMedis extends \App\Controllers\BaseController
             $data = explode(',', (string)$signatureDokter);
             $encodedDataDokter = $data[1];
             $decodedDataDokter = base64_decode($encodedDataDokter);
-            $signaturePathDokter = WRITEPATH . 'uploads/signatures/';
+            $signaturePathDokter = WRITEPATH . 'uploads/lokalis/';
             if (!is_dir($signaturePathDokter)) {
                 mkdir($signaturePathDokter, 0777, true);
             }
@@ -1774,7 +1774,7 @@ class RekamMedis extends \App\Controllers\BaseController
             $data = explode(',', (string)$signaturePasien);
             $encodedDataPasien = $data[1];
             $decodedDataPasien = base64_decode($encodedDataPasien);
-            $signaturePathPasien = WRITEPATH . 'uploads/signatures/';
+            $signaturePathPasien = WRITEPATH . 'uploads/lokalis/';
             if (!is_dir($signaturePathPasien)) {
                 mkdir($signaturePathPasien, 0777, true);
             }
@@ -2419,7 +2419,7 @@ class RekamMedis extends \App\Controllers\BaseController
             $data = explode(',', (string)$signatureDokter);
             $encodedDataDokter = $data[1];
             $decodedDataDokter = base64_decode($encodedDataDokter);
-            $signaturePathDokter = WRITEPATH . 'uploads/signatures/';
+            $signaturePathDokter = WRITEPATH . 'uploads/lokalis/';
             if (!is_dir($signaturePathDokter)) {
                 mkdir($signaturePathDokter, 0777, true);
             }
@@ -2439,7 +2439,7 @@ class RekamMedis extends \App\Controllers\BaseController
             $data = explode(',', (string)$signaturePasien);
             $encodedDataPasien = $data[1];
             $decodedDataPasien = base64_decode($encodedDataPasien);
-            $signaturePathPasien = WRITEPATH . 'uploads/signatures/';
+            $signaturePathPasien = WRITEPATH . 'uploads/lokalis/';
             if (!is_dir($signaturePathPasien)) {
                 mkdir($signaturePathPasien, 0777, true);
             }

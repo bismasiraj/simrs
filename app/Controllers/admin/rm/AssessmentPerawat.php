@@ -187,7 +187,7 @@ class AssessmentPerawat extends BaseController
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $educationIntegration = json_decode($controller->saveeducationIntegration($value["data"]));
             }
-            if (str_contains($value["id"], "formSocialsocial")) {
+            if (str_contains($value["id"], "formSocial")) {
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $social = json_decode($controller->saveSocial($value["data"]));
             }
@@ -240,6 +240,9 @@ class AssessmentPerawat extends BaseController
             ${$key} = $value;
             if (!(is_null(${$key}) || ${$key} == ''))
                 $dataexam[$key] = $value;
+            if ($value == '')
+                $dataexam[$key] = null;
+
             if (isset($examination_date))
                 $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
             if (isset($temperature) && $temperature != '')
@@ -294,27 +297,52 @@ class AssessmentPerawat extends BaseController
         $exd = new ExaminationDetailModel();
         $exd->save($dataexam);
 
-        $pasienHistory = new PasienHistoryModel();
+        $dataexam['fullname'] = $this->getFullname($dataexam['employee_id']);
+        $dataexam['name_of_clinic'] = $this->getClinicName($dataexam['clinic_id']);
 
         $db = db_connect();
 
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'GEN0009'")->getResultArray());
-        $db->query("delete from pasien_history where no_registration = '$no_registration'");
         $i = 0;
+        $pasienHistory = [];
         foreach ($select as $key => $value) {
             if (isset(${$value['value_id']})) {
+
                 $i++;
-                $data = [
+                $db->query("MERGE INTO pasien_history AS target
+                USING (VALUES ('$org_unit_code', '$no_registration', '$i', '" . $value['value_id'] . "', '" . $value['value_desc'] . "', '" . ${$value['value_id']} . "', '" . user()->username . "', getdate())) AS source 
+                (org_unit_code, no_registration, item_id, value_id,value_desc, histories,modified_by, modified_date)
+                        ON target.no_registration = source.no_registration and target.value_id = source.value_id
+                        WHEN MATCHED THEN
+                            UPDATE SET target.org_unit_code = source.org_unit_code, target.item_id = source.item_id, 
+                            target.histories = source.histories, target.modified_by = source.modified_by, target.modified_date = getdate()
+                            WHEN NOT MATCHED BY TARGET THEN
+                            INSERT (org_unit_code, no_registration, item_id, value_id,value_desc, histories,modified_by, modified_date)
+                            VALUES ('$org_unit_code', '$no_registration', '$i', '" . $value['value_id'] . "', '" . $value['value_desc'] . "', '" . ${$value['value_id']} . "', '" . user()->username . "', getdate());");
+                $pasienHistory[] = [
                     'org_unit_code' => $org_unit_code,
                     'no_registration' => $no_registration,
                     'item_id' => $i,
                     'value_id' => $value['value_id'],
                     'value_desc' => $value['value_desc'],
                     'histories' => ${$value['value_id']},
-                    'modified_by' => user()->username
+                    'modified_by' => user()->username,
+                    'modified_date' => Time::now()
                 ];
+                // if ($value['value_id'] == 'G0090301')
+                //     return json_encode($G0090301);
+                // $data = [
+                //     'org_unit_code' => $org_unit_code,
+                //     'no_registration' => $no_registration,
+                //     'item_id' => $i,
+                //     'value_id' => $value['value_id'],
+                //     'value_desc' => $value['value_desc'],
+                //     'histories' => ${$value['value_id']},
+                //     'modified_by' => user()->username
+                // ];
                 // $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
-                $pasienHistory->insert($data);
+                // return json_encode($data);
+                // $pasienHistory->insert($data);
             }
         }
 
@@ -356,6 +384,8 @@ class AssessmentPerawat extends BaseController
                 $pds->insert($dataDiag);
             }
         }
+
+        $dataexam['pasienHistory'] = $pasienHistory;
 
 
 

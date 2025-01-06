@@ -90,34 +90,27 @@ class Cairan extends \App\Controllers\BaseController
             try {
                 $existingRecord = $model->where('body_id', $data['body_id'])->first();
                 $existingRecord = $existingRecord ? $this->lowerKey($existingRecord) : null;
-        
+            
                 if ($existingRecord) {
-                    if ($model->update($existingRecord['body_id'], $data)) {
+                    if (!$model->delete($existingRecord['body_id'])) {
                         return $this->response->setJSON([
-                            'message' => 'Data berhasil diperbarui.',
-                            'respon'  => true,
-                            'data'    => $data
-                        ]);
-                    } else {
-                        return $this->response->setJSON([
-                            'message' => 'Gagal memperbarui data.',
+                            'message' => 'Gagal menghapus data lama.',
                             'respon'  => false
                         ]);
                     }
-                } 
-                else {
-                    if ($model->insert($data)) {
-                        return $this->response->setJSON([
-                            'message' => 'Data berhasil disimpan.',
-                            'respon'  => true,
-                            'data'    => $data
-                        ]);
-                    } else {
-                        return $this->response->setJSON([
-                            'message' => 'Gagal menyimpan data.',
-                            'respon'  => false
-                        ]);
-                    }
+                }
+            
+                if ($model->insert($data)) {
+                    return $this->response->setJSON([
+                        'message' => 'Data berhasil disimpan.',
+                        'respon'  => true,
+                        'data'    => $data
+                    ]);
+                } else {
+                    return $this->response->setJSON([
+                        'message' => 'Gagal menyimpan data.',
+                        'respon'  => false
+                    ]);
                 }
             } catch (\Exception $e) {
                 return $this->response->setJSON([
@@ -125,6 +118,7 @@ class Cairan extends \App\Controllers\BaseController
                     'respon'  => false
                 ]);
             }
+            
         }
 
         return $this->response->setJSON([

@@ -3,6 +3,7 @@
     var canvasAssessment;
     var specialistTypeId = '<?= $visit['specialist_type_id']; ?>'
     var assessmentMedisType = 0;
+    var patientCategoryId = '<?= @$visit['patient_category_id']; ?>'
     let mappingOrder = [{
             name: "appendRiwayatMedis",
             order: 2,
@@ -106,7 +107,6 @@
 
 
         // $("#armdiag_cat").val(3)
-        // console.log($("#armdiag_cat").val())
     })
     $("#assessmentmedisTab").on("mouseup", function() {
         getAssessmentMedis(3)
@@ -162,7 +162,6 @@
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             };
             img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
-            console.log(img.src)
 
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
@@ -244,7 +243,6 @@
                     }
                 })
             }
-
         })
         <?php foreach ($aParameter as $key => $value) {
             if ($value['p_type'] == 'GEN0002')
@@ -409,7 +407,6 @@
 
             let mappingContentMap = JSON.parse(req);
             let updatedMappingContentMap = mappingContentMap
-            console.log(updatedMappingContentMap)
 
             // const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
             // const updatedMappingContentMap = mappingContentMap.map(item => {
@@ -422,11 +419,9 @@
             //     }
             //     return item;
             // });
-            // console.log(updatedMappingContentMap)
 
 
             const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
-            console.log(sortedMappingContentMap)
             let val = avalue.filter(item => item.p_type == 'GEN0002')
             $.each(sortedMappingContentMap, function(key, value) {
                 if (value.doc_type == 1) {
@@ -435,8 +430,6 @@
                 }
                 // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
             })
-            console.log('bisma')
-            console.log(val)
             $.each(sortedMappingContentMap, function(key, value) {
 
                 if (value.doc_type == 3) {
@@ -477,7 +470,6 @@
         if (isnew) {
             return alert("Anda sudah pernah membuat dokumen Assessment Medis pada sesi " + pasienDiagnosaId + ". Silahkan refresh halaman jika memang sudah berganti sesi.");
         }
-        // console.log(flatpickrInstances["flatarmdate_of_diagnosa"])
 
         // pasienDiagnosaId = date.toISOString().substring(0, 23);
         // pasienDiagnosaId = pasienDiagnosaId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
@@ -548,7 +540,7 @@
             }
         } ?>
 
-        var initialexam = examForassessment[examForassessment.length - 1]
+        var initialexam = examForassessmentDetail[examForassessmentDetail.length - 1]
         $.each(initialexam, function(key, value) {
             $("#arm" + key).val(value)
         })
@@ -565,6 +557,12 @@
             $("#formeditrm").slideDown()
         }
         generateLokalis()
+
+        if ($("#armclinic_id").val() == 'P012') {
+            $("#armemergency_group").show()
+        } else {
+            $("#armemergency_group").hide()
+        }
 
         // $("#formaddarm").find('input, select, textarea').each(function() {
         //     const key = $(this).attr('id'); // Use ID or placeholder as key
@@ -610,7 +608,6 @@
 
         let mappingContentMap = JSON.parse(req);
         let updatedMappingContentMap = mappingContentMap
-        // console.log(updatedMappingContentMap)
         // Update `mappingContentMap` based on `mappingOrder`
         // const updatedMappingContentMap = mappingContentMap.map(item => {
         //     // Find the corresponding item in `mappingOrder` based on `doc_id`
@@ -623,10 +620,8 @@
         //     }
         //     return item;
         // });
-        // console.log(updatedMappingContentMap)
 
         const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
-        console.log(sortedMappingContentMap)
         let val = avalue.filter(item => item.p_type == 'GEN0002')
         $.each(sortedMappingContentMap, function(key, value) {
             if (value.doc_type == 1) {
@@ -635,8 +630,7 @@
             }
             // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
         })
-        console.log('bisma')
-        console.log(val)
+
         $.each(sortedMappingContentMap, function(key, value) {
 
             if (value.doc_type == 3) {
@@ -647,7 +641,7 @@
                                     <div class="mb-3">
                                         <div class="form-group">
                                             <label for="arm${value1.p_type+ value1.parameter_id+ value1.value_id}">${value1.value_desc}</label>
-                                            <textarea id="arm{value1.p_type+ value1.parameter_id+ value1.value_id}" name="fisik${value1.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
+                                            <textarea id="arm${value1.p_type+ value1.parameter_id+ value1.value_id}" name="fisik${value1.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
                                         </div>
                                     </div>
                                 </div>`
@@ -672,7 +666,12 @@
             $("#arm" + key).val(value)
             // $("#arm" + key).prop("disabled", true)
         })
-
+        if (pasienDiagnosa.clinic_id == 'P012') {
+            $("#armemergency").val(patientCategoryId)
+            $("#armemergency_group").show()
+        } else {
+            $("#armemergency_group").hide()
+        }
         $("#armdiagnosa_desc_pulang").val(pasienDiagnosa.diagnosa_desc)
 
         let formattedValue = moment(pasienDiagnosa.date_of_diagnosa).format('DD/MM/YYYY HH:mm');
@@ -746,8 +745,6 @@
             specialist_type_id: pasienDiagnosa.specialist_type_id,
             clinic_id: pasienDiagnosa.specialist_type_id
         }, 'admin/rm/assessmentmedis/getSateliteMedis', (res) => {
-            console.log(res)
-            console.log(res.gcs)
             if (res.gcs) {
                 gcsAll = res.gcs
                 // gcsDetailAll = data.gcsDetail
@@ -860,8 +857,8 @@
                     $("#arm" + value.p_type + value.parameter_id + value.value_id).val(value.value_detail);
                     $("#arm" + value.p_type + value.parameter_id + value.value_id).prop("disabled", true)
                 } else if (value.value_score == 3) {
-                    $("#lokalis" + value.value_id).val(value.value_detail)
-                    $("#lokalis" + value.value_id + "desc").val(value.value_desc)
+                    $("#lokalis" + value.value_id).val(value.value_detail);
+                    $("#lokalis" + value.value_id + "desc").val(value.value_desc);
                     var canvas = document.getElementById('canvas' + value.p_type + value.parameter_id + value.value_id);
                     const canvasDataInput = document.getElementById('lokalis' + value.value_id);
                     var context = canvas?.getContext('2d');
@@ -911,7 +908,7 @@
         $("#formaddarm").find(".btn-to-hide").slideUp()
         if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
             $("#formeditarm").slideUp()
-            $("#formsignarm").slideUp()
+            $("#formsignarm").slideDown()
         } else {
             $("#formeditarm").slideDown()
             $("#formsignarm").slideDown()
@@ -997,7 +994,6 @@
                 dataType: 'json',
                 success: function(data) {
                     alert("berhasil ambil periksa fisik")
-                    console.log(data)
                     $("#armbody_id").val(data.body_id)
                     $("#armpemeriksaan").val(data.periksafisik)
                     $("#armanamnase").val(data.anamnase)
@@ -1069,13 +1065,19 @@
             if (key == index) {
                 $("#assessmentMedisHistoryBody")
                     .append($("<tr>").append($("<td colspan =\"5\">").html()))
-                    .append($("<tr>")
-                        .append($("<td rowspan=\"6\">").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                        .append($("<td>").append($("<b>").html(value.date_of_diagnosa)))
-                        .append($("<td class=\"text-end\">").html("<b>Anamnase: </b>"))
-                        .append($("<td>").html(value.anamnase))
-                        .append($("<td rowspan=\"6\">").append($('<button class="btn btn-success" onclick="fillDataArm(' + key + ')">').html("Lihat")))
-                    )
+                    .append(`<tr>
+                                    <td rowspan="6"></td>
+                                    <td><b>${value.date_of_diagnosa}</b></td>
+                                    <td class="text-end"><b>Anamnase: </b></td>
+                                    <td>${value.anamnase}</td>
+                                    <td rowspan="6">
+                                        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                            <button type="button" class="btn btn-success" onclick="fillDataArm(${key})">Lihat</button>
+                                            <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>/${value.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `)
                     .append($("<tr>")
                         .append($("<td>").append($("<b>").html(value.name_of_clinic)))
                         .append($("<td class=\"text-end\">").html("<b>Aloanamnase: </b>"))
@@ -1115,13 +1117,19 @@
             } else {
                 $("#assessmentMedisHistoryBody")
                     .append($("<tr>").append($("<td colspan =\"5\">").html()))
-                    .append($("<tr>")
-                        .append($("<td rowspan=\"6\">"))
-                        .append($("<td>").append($("<b>").html(value.date_of_diagnosa)))
-                        .append($("<td class=\"text-end\">").html("<b>Anamnase: </b>"))
-                        .append($("<td>").html(value.anamnase))
-                        .append($("<td rowspan=\"6\">").append($('<button class="btn btn-success" onclick="fillDataArm(' + key + ')">').html("Lihat")))
-                    )
+                    .append(`<tr>
+                                    <td rowspan="6"></td>
+                                    <td><b>${value.date_of_diagnosa}</b></td>
+                                    <td class="text-end"><b>Anamnase: </b></td>
+                                    <td>${value.anamnase}</td>
+                                    <td rowspan="6">
+                                        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                            <button type="button" class="btn btn-success" onclick="fillDataArm(${key})">Lihat</button>
+                                            <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>/${value.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `)
                     .append($("<tr>")
                         .append($("<td>").append($("<b>").html(value.name_of_clinic)))
                         .append($("<td class=\"text-end\">").html("<b>Aloanamnase: </b>"))
@@ -1234,18 +1242,21 @@
                         var isNewDocument = 0
 
                         $.each(pasienDiagnosaAll, function(key, value) {
-                            if (value.pasien_diagnosa_id == formDataObject.pasien_diagnosa_id) {
-                                pasienDiagnosaAll[key] = formDataObject
+                            if (value.pasien_diagnosa_id == data.medis.data.pasien_diagnosa_id) {
+                                pasienDiagnosaAll[key] = data.medis.data
                                 isNewDocument = 1
                             }
                         })
                         if (isNewDocument != 1)
                             pasienDiagnosaAll.push(formDataObject)
                         displayTableAssessmentMedis(pasienDiagnosaAll.length - 1)
+
+                        pasienVisitation['patientCategoryId'] = patientCategoryId;
+                        window.history.pushState({}, "", btoa(JSON.stringify(pasienVisitation)));
                     }
                 }
                 if (data.gcs) {
-                    let bodyId = data.gcs
+                    let bodyId = data.gcs.body_id
 
                     if ($("#gcsvalid_pasien" + bodyId).val() == '') {
                         $("#formGcsSaveBtn" + bodyId).slideUp()
@@ -1259,9 +1270,8 @@
                     $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
 
-                    if (isrefresh) {
-                        getGcsAll()
-                    }
+                    getGcsAll()
+                    // if (isrefresh) {}
                 }
                 if (data.fallRisk) {
                     let bodyId = data.fallRisk
@@ -1276,9 +1286,8 @@
                 if (data.monitoring) {
                     let bodyId = data.monitoring
                     if (response.status === 'success') {
-                        if (isrefresh) {
-                            getPainMonitoringAll()
-                        }
+                        getPainMonitoringAll()
+                        // if (isrefresh) {}
                         if ($("#ases022valid_user" + bodyId).val() == '') {
                             $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
                             $("#formPainMonitoringEditBtn" + bodyId).slideDown();
@@ -1341,6 +1350,7 @@
         } else {
             var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
         }
+
 
         openPopUpTab(url)
 
@@ -2779,6 +2789,7 @@
         appendAccordionItem(accordionId, accordionContent);
         let visit = <?= json_encode($visit) ?>;
 
+
         templateDermatovenerologi({
             visit: visit
         })
@@ -2826,126 +2837,7 @@
 
 <script>
     function cetakAssessmentMedis() {
-        // var data = `<div class="container-fluid">
-        //                 <div class="row">
-        //                     <div class="col-auto" align="center">
-        //                         <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
-        //                     </div>
-        //                     <div class="col mt-2" align="center">
-        //                         <h3>RS PKU Muhammadiyah Sampangan</h3>
-        //                         <h3>Surakarta</h3>
-        //                         <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
-        //                     </div>
-        //                     <div class="col-auto" align="center">
-        //                         <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
-        //                     </div>
-        //                 </div>
-        //                 <div class="row">
-        //                     <h4 class="text-center">` + $("#armTitle").html() + `</h4>
-        //                 </div>
-        //                 <div class="row">
-        //                     <h5 class="text-start">Informasi Pasien</h5>
-        //                 </div>
-        //                 <table class="table table-bordered">
-        //                     <tbody>
-        //                         <tr>
-        //                             <td>
-        //                                 <b>Nomor RM</b>
-        //                                 <div id="no_registration" name="no_registration" class="h6"><?= $visit['no_registration']; ?></div>
-        //                             </td>
-        //                             <td>
-        //                                 <b>Nama Pasien</b>
-        //                                 <div id="thename" name="thename" class="h6"><?= $visit['diantar_oleh']; ?></div>
-        //                             </td>
-        //                             <td>
-        //                                 <b>Jenis Kelamin</b>
-        //                                 <div id="thename" name="thename" class="h6"><?= $visit['gender']; ?></div>
-        //                                 <select name="gender" id="gender" class="form-control">
-        //                                     <option value="1">Laki-Laki</option>
-        //                                     <option value="2">Perempuan</option>
-        //                                 </select>
-        //                             </td>
-        //                         </tr>
-        //                         <tr>
-        //                             <td>
-        //                                 <b>Tanggal Lahir (Usia)</b>
-        //                                 <div id="patient_age" name="patient_age" class="h6"><?= $visit['date_of_birth']; ?></div>
-        //                             </td>
-        //                             <td colspan="2">
-        //                                 <b>Alamat Pasien</b>
-        //                                 <div id="theaddress" name="theaddress" class="h6"><?= $visit['visitor_address']; ?></div>
-        //                             </td>
-        //                         </tr>
-        //                         <tr>
-        //                             <td>
-        //                                 <b>DPJP</b>
-        //                                 <div id="doctor" name="doctor" class="h6"><?= $visit['fullname']; ?></div>
-        //                             </td>
-        //                             <td>
-        //                                 <b>Department</b>
-        //                                 <div id="clinic_id" name="clinic_id" class="h6"><?= $visit['name_of_clinic']; ?></div>
-        //                             </td>
-        //                             <td>
-        //                                 <b>Tanggal Masuk</b>
-        //                                 <div id="examination_date" name="examination_date" class="h6"><?= $visit['visit_date']; ?></div>
-        //                             </td>
-        //                         </tr>
-        //                     </tbody>
-        //                 </table>
-        //                 <div class="row">
-        //                     <h4 class="text-start">Subjektif (S)</h4>
-        //                 </div>
 
-        //                 <div class="row">
-        //                     <h5 class="text-start">Edukasi Pasien</h5>
-        //                 </div>
-        //                 <table class="table table-bordered">
-        //                     <tbody>
-        //                         <tr>
-        //                             <td>
-        //                                 <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
-        //                                 <div  name="" class="h6"></div>
-        //                             </td>
-        //                         </tr>
-        //                         <tr>
-        //                             <td>
-        //                                 <b>Materi Edukasi:</b>
-        //                                 <div  name="" class="h6"></div>
-        //                             </td>
-        //                         </tr>
-        //                     </tbody>
-        //                 </table>
-        //                 <div class="row">
-        //                     <div class="col-auto" align="center">
-        //                         <div>Dokter</div>
-        //                         <div class="mb-1">
-        //                             <div id="qrcode"></div>
-        //                         </div>
-        //                     </div>
-        //                     <div class="col"></div>
-        //                     <div class="col-auto" align="center">
-        //                         <div>Penerima Penjelasan</div>
-        //                         <div class="mb-1">
-        //                             <div id="qrcode1"></div>
-        //                         </div>
-        //                     </div>
-        //                 </div>
-        //             </div>`;
-
-
-        // $("#cetakarmbody").html(data);
-        // $("#cetakarm").modal("show")
-
-        // $.ajax({
-        //     url: '<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val(),
-        //     type: "GET",
-        //     success: function(data) {
-        //         // Insert fetched content into modal
-        //         $("#cetakarmbody").html(data);
-        //         // Display the modal
-        //         $("#cetakarm").css("display", "block");
-        //     }
-        // });
     }
 
     function appendCetakMedis(accordionId) {
@@ -2966,13 +2858,5 @@
                 </div>
             </div>
         `;
-        // appendAccordionItem(accordionId, accordionContent);
-        // $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/profile/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Profile Ringkas Medis Rawat Jalan</a></li>')
-        // // $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ringkasan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>')
-        // if ($("#armdiag_cat").val() == 1) {
-        //     $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '/' + title + '" target="_blank">Resume Medis</a></li>')
-        // } else {
-        //     $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '/' + title + '" target="_blank">Assessment Medis</a></li>')
-        // }
     }
 </script>

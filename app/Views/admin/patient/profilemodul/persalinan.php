@@ -299,7 +299,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                             <button type="submit" id="formPersalinanSaveBtn" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formPersalinanEditBtn" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                             <button type="button" id="formPersalinanSignBtn" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
-                                            <button type="button" id="formPersalinanCetakBtn" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fas fa-file"></i> <span>Cetak</span></button>
+                                            <button type="button" id="formPersalinanCetakBtn" name="" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fas fa-file"></i> <span>Cetak</span></button>
                                         </div>
                                     </div><!--./col-md-4-->
                                 </div><!--./row-->

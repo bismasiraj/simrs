@@ -1,16 +1,9 @@
-<?php
-$db = db_connect();
-$exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EXAMINATION_DETAIL WHERE VISIT_ID = '" . $visit['visit_id'] . "' ORDER BY EXAMINATION_DATE DESC")->getRowArray();
-
-?>
-
 <script type="text/javascript">
     (function() {
 
         let visit = <?= json_encode($visit) ?>;
         let aValue = <?= json_encode($aValue) ?>;
         let aParameter = <?= json_encode($aParameter) ?>;
-        let exam_info = <?= json_encode($exam_info) ?>;
         const allowedTypes = ['GIZ0604', 'GIZ0605', 'GIZ0606', 'GIZ0607', 'GIZ0608', 'GIZ0609'];
         const allowedNames = [
             'ANAK (0-1 TH)',
@@ -31,7 +24,6 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         ];
 
         $(document).ready(function() {
-
 
             initializeSearchDietaryHabit('pola_makan_gizi', '#create-modal-gizi')
 
@@ -193,16 +185,26 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                     <td width="1%" class="text-center">${key+1}</td>
                                     <td class="text-center">${value?.nutrition_diagnose ?? '-'}</td>
                                     <td width="1%">
+                                    ${value?.treat_image_base64 !== '' && value?.treat_image_base64 !== null ? 
+                                        `<button type="button" class="btn btn-outline-primary btn-sm btn-asuhan-gizi-upload" data-type="asuhan_gizi" data-filename="${value?.filename}" data-file="true" data-id="${value?.body_id}"><i class="fas fa-upload"></i></button>`
+                                        : 
+                                        `<button type="button" class="btn btn-outline-primary btn-sm btn-asuhan-gizi-upload" data-type="asuhan_gizi" data-filename="${value?.filename}" data-file="false" data-id="${value?.body_id}"><i class="fas fa-upload"></i></button>`
+                                        }
+                                        
+                                    </td>
+                                    <td width="1%">
                                         <button type="button" class="btn btn-success btn-sm print-row" data-id="${value?.body_id}"><i class="fas fa-print"></i></button>
                                     </td>
-                                    <?php /* if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
-                                    <td width="1%">
-                                        <div class="position-relative" id="qr-${key+1}-${value?.body_id}">
-                                            <button type="button" class="btn btn-outline-primary btn-sm validate-row" name="sign_gizi" data-sign-ke="1"
-                                            data-button-id="formGiziSaveBtn-${key+1}" data-id="${value?.body_id}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Validasi dokumen"><i class="fas fa-signature"></i></button>
-                                        </div>
+                                    
+                                    <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
+                                    <td style="width:1% !important;" class="text-center p-1">
+                                        ${value?.valid_user !== '' && value?.valid_user !== null ? 
+                                        `<img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(value?.valid_user)}&size=30x30" alt="QR Code" />`
+                                        : 
+                                        `<button class="btn btn-sm btn-light btn-asuhan-gizi-sign" data-id="${value?.body_id}" data-gizi="asuhan_gizi"><i class="fas fa-signature"></i></button>`
+                                        }
                                     </td>
-                                    <?php endif */ ?>
+                                    <?php endif  ?>
                                     <td width="1%">
                                     <button type="button" class="btn btn-success btn-sm assessment-row" data-id="${value?.body_id}">Assessment</button>
                                     </td>
@@ -224,6 +226,11 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                     });
 
                     tableGizi.draw();
+
+
+                    actionSign({
+                        container: '.btn-asuhan-gizi-sign'
+                    })
 
                     $('.validate-row').each(function(index, button) {
                         const id = $(button).data('id');
@@ -249,7 +256,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         //     checkSignSignatureGizi(formId, primaryKey, formSaveBtn, '7');
                         // }
                     })
-                    $('.assessment-row').on('click', function() {
+                    $('.assessment-row').off().on('click', function() {
                         getLoadingscreen("accordionGizi", "load-content-accordion-gizi")
                         const id = $(this).data('id');
 
@@ -269,7 +276,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         })
 
                     })
-                    $('.duplicate-row-gizi').on('click', function() {
+                    $('.duplicate-row-gizi').off().on('click', function() {
                         const id = $(this).data('id');
 
                         Swal.fire({
@@ -300,7 +307,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
                     });
 
-                    $('.delete-row-gizi').on('click', function() {
+                    $('.delete-row-gizi').off().on('click', function() {
                         const id = $(this).data('id');
                         const swalWithBootstrapButtons = Swal.mixin({
                             customClass: {
@@ -346,7 +353,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
                     });
 
-                    $('.edit-row-gizi').on('click', function() {
+                    $('.edit-row-gizi').off().on('click', function() {
                         const id = $(this).data('id');
                         getAsuhanGiziByID({
                             visit_id: props?.visit_id,
@@ -356,7 +363,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
                     });
 
-                    $('.print-row').on('click', function() {
+                    $('.print-row').off().on('click', function() {
 
                         const id = $(this).data('id');
                         cetakGizi({
@@ -364,6 +371,10 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         })
 
                     });
+                    actionUploadGizi({
+                        container: '.btn-asuhan-gizi-upload'
+                    })
+
 
 
 
@@ -371,7 +382,65 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             });
             updateAsuhanGizi();
         }
+        const actionUploadGizi = (props) => {
+            $(props?.container).off().on('click', function() {
+                $('#uploadFileGizi').modal('show')
+                const id = $(this).data('id');
+                const file = $(this).data('file');
+                const type = $(this).data('type');
+                const filename = $(this).data('filename') ?? '';
+                const visit_id = <?= json_encode($visit['visit_id']); ?>;
+                if (file) {
+                    $('#wrapLinkGizi').css('visibility', 'visible');
+                    $('#linkUploadGizi').text(filename);
+                } else {
+                    $('#wrapLinkGizi').css('visibility', 'hidden');
+                    $('#linkUploadGizi').text('');
+                }
 
+                $('#linkUploadGizi').off().on('click', function(e) {
+                    filePreview({
+                        body_id: id,
+                        type: type
+                    })
+                })
+
+
+                $('#btnUploadGizi').off().on('click', function(e) {
+
+                    let formData = document.querySelector('#formUploadGizi');
+                    let dataSend = new FormData(formData);
+
+                    dataSend.set('visit_id', visit_id);
+                    dataSend.set('id', id);
+                    dataSend.set('type', type);
+
+                    $.ajax({
+                        url: '<?php echo base_url(); ?>admin/Gizi/uploadFile',
+                        type: "POST",
+                        data: dataSend,
+                        dataType: 'json',
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(data) {
+                            successSwal('Data berhasil disimpan');
+                            $("#uploadFileGizi").modal("hide")
+                            renderGizi({
+                                visit_id: res?.result?.visit_id,
+                                no_registration: res?.result?.no_registration,
+                            })
+
+                        },
+                        error: function() {
+                            errorSwal('Data gagal disimpan');
+                            $("#uploadFileGizi").modal("hide")
+                        }
+                    });
+                })
+
+            });
+        }
         const renderFoodRecall = (props) => {
 
             postData({
@@ -1337,6 +1406,18 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             }
         }
 
+        const filePreview = (props) => {
+            // Retrieve data from button attributes
+            let visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
+            let type = props.type;
+            let id = props.body_id;
+
+            // Construct the URL
+            let url = '<?= base_url() . '/admin/Gizi/preview/'; ?>' + visitEncoded + '/' + type + '/' + id;
+
+            // Redirect to the URL
+            window.open(url, '_blank'); // Open in a new tab
+        }
 
 
         const cetakGizi = (props) => {
@@ -1533,62 +1614,6 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         // ======= SCRIPT SCREENING GIZI =======
 
 
-        $('#tambah-skrining-gizi').off().on('click', function(e) {
-
-            let birth = moment(<?= json_encode($visit['date_of_birth']); ?>);
-            let now = moment();
-
-            let bmi = countBMI({
-                weight: exam_info ? exam_info['weight'] : 0,
-                height: exam_info ? exam_info['height'] : 0
-            });
-            $('#height_screening').val(exam_info ? exam_info['height'] : 0)
-            $('#weight_screening').val(exam_info ? exam_info['weight'] : 0)
-            $('#imt_screening').val(isNaN(bmi) ? 0 : bmi)
-
-            BMIonChange({
-                height: '#height_screening',
-                weight: '#weight_screening',
-                bmi: '#imt_screening',
-            })
-
-            let daysDiff = now.diff(birth, 'days');
-            getAge({
-                visit: visit['visit_id'],
-            }, 'age_category_screening', daysDiff);
-
-            $('#select_skrining_gizi').change(function(e) {
-                let selectedOption = $(this).val();
-                getFormScreening({
-                    selectedOption: selectedOption,
-                    container: '#tbodySkriningGizi',
-                });
-
-                countScoreAndDescription({
-                    select_id: '#tbodySkriningGizi',
-                    score_id: '#score_screening',
-                    kesimpulan_id: '#kesimpulan_screening',
-                    p_type: selectedOption,
-
-                })
-
-                $('#tbodySkriningGizi select').on('change', function() {
-                    countScoreAndDescription({
-                        select_id: '#tbodySkriningGizi',
-                        score_id: '#score_screening',
-                        kesimpulan_id: '#kesimpulan_screening',
-                        p_type: selectedOption,
-
-                    })
-                })
-            })
-
-
-
-            insertDataScreening();
-        })
-
-
         const getDataScreening = () => {
             postData({
                 visit_id: visit['visit_id'],
@@ -1624,8 +1649,19 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                     <th class="text-center p-1">Formulir Skrining - ${moment(element?.examination_date).format('YYYY-MM-DD HH:mm:ss')} (${p_type})</th>
                                     <td class="text-center" width="1%">${element.total_score}</td>
                                     <td class="text-center" style="width:100px;">${element.score_desc}</td>
+                                     <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
+                                        <th style="width:1% !important;" class="text-center p-1">
+                                            ${element?.valid_user && element?.valid_user !== '' ? 
+                                            `<img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(element?.valid_user)}&size=30x30" alt="QR Code" />`
+                                            : 
+                                            `<button class="btn btn-sm btn-light btn-skrining-sign" data-id="${element.body_id}" data-gizi="screening"><i class="fas fa-signature"></i></button>`
+                                            }
+                                        </th>
+                                    <?php endif; ?>
                                     <th style="width:1% !important;" class="text-center p-1">
-                                        <button class="btn btn-sm btn-success btn-skrining-cetak" data-id="${element.body_id}"><i class="fas fa-print"></i></button>
+                                       <button class="btn btn-sm btn-success btn-skrining-cetak" data-id="${element.body_id}">
+                                                <i class="fas fa-print"></i>
+                                        </button>
                                     </th>
                                     <th style="width:1% !important;" class="text-center p-1">
                                         <button class="btn btn-sm btn-warning btn-skrining-edit" data-id="${element.body_id}"><i class="fas fa-edit"></i></button>
@@ -1638,6 +1674,64 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         table.row.add($(dataHtml));
                     })
                     table.draw();
+
+                    $('#tambah-skrining-gizi').off().on('click', function(e) {
+
+                        let birth = moment(<?= json_encode($visit['date_of_birth']); ?>);
+                        let now = moment();
+                        let exam_info = res.exam_info;
+
+                        let bmi = countBMI({
+                            weight: exam_info ? exam_info['weight'] : 0,
+                            height: exam_info ? exam_info['height'] : 0
+                        });
+                        $('#height_screening').val(exam_info ? exam_info['height'] : 0)
+                        $('#weight_screening').val(exam_info ? exam_info['weight'] : 0)
+                        $('#imt_screening').val(isNaN(bmi) ? 0 : bmi)
+
+                        BMIonChange({
+                            height: '#height_screening',
+                            weight: '#weight_screening',
+                            bmi: '#imt_screening',
+                        })
+
+                        let daysDiff = now.diff(birth, 'days');
+                        getAge({
+                            visit: visit['visit_id'],
+                        }, 'age_category_screening', daysDiff);
+
+                        $('#select_skrining_gizi').change(function(e) {
+                            let selectedOption = $(this).val();
+                            selectedOption === '' ? $('#btnSaveSkrining').attr('disabled', 'disabled') : $('#btnSaveSkrining').removeAttr('disabled');
+
+                            getFormScreening({
+                                selectedOption: selectedOption,
+                                container: '#tbodySkriningGizi',
+                            });
+
+                            countScoreAndDescription({
+                                select_id: '#tbodySkriningGizi',
+                                score_id: '#score_screening',
+                                kesimpulan_id: '#kesimpulan_screening',
+                                p_type: selectedOption,
+
+                            })
+
+                            $('#tbodySkriningGizi select').on('change', function() {
+                                countScoreAndDescription({
+                                    select_id: '#tbodySkriningGizi',
+                                    score_id: '#score_screening',
+                                    kesimpulan_id: '#kesimpulan_screening',
+                                    p_type: selectedOption,
+
+                                })
+                            })
+                        })
+
+
+
+                        insertDataScreening();
+                    })
 
                     $('.btn-skrining-edit').off().on('click', function(event) {
                         const id = $(this).data('id');
@@ -1679,6 +1773,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                 });
 
                                 $('#edit_select_skrining_gizi').change(function(e) {
+                                    $(this).val() == '' ? $('#btnUpdateSkrining').attr('disabled') : $('#btnUpdateSkrining').removeAttr('disabled')
                                     getFormScreening({
                                         selectedOption: $(this).val(),
                                         container: '#edit_tbodySkriningGizi',
@@ -1712,6 +1807,13 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         });
                     });
 
+
+
+                    actionSign({
+                        container: '.btn-skrining-sign'
+                    })
+
+
                     deleteScreening();
                     actionCetakScreening();
 
@@ -1721,6 +1823,49 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             });
 
         }
+
+        const actionSign = (props) => {
+            $(props?.container).off().on('click', function(e) {
+                $('#signSignGiziModal').modal('show')
+                const id = $(this).data('id');
+                const type = $(this).data('gizi');
+                $('#gizi_sign_id').val(id)
+
+
+                $('#btnSubmitSignGizi').off().on('click', function(e) {
+
+                    let formData = document.querySelector('#formSignGizi');
+                    let dataSend = new FormData(formData);
+                    let jsonObj = {};
+
+                    dataSend.forEach((value, key) => {
+                        jsonObj[key] = value;
+                    });
+                    jsonObj.type = type;
+                    if (jsonObj.user_type == '1') {
+                        jsonObj.password = btoa(jsonObj.password)
+                    }
+                    postData(jsonObj, 'admin/Gizi/signGizi', (res) => {
+                        if (res.respon) {
+                            successSwal(res.message)
+                            $('#signSignGiziModal').modal('hide')
+                            getDataScreening();
+                            renderGizi({
+                                visit_id: visit['visit_id'],
+                                no_registration: visit['no_registration']
+                            })
+                            $('#formSignGizi').reset();
+                        } else {
+                            errorSwal(res.message)
+                            $('#signSignGiziModal').modal('hide')
+                            $('#formSignGizi').reset();
+                        }
+                    });
+                })
+
+            })
+        }
+
         const insertDataScreening = () => {
             $('#btnSaveSkrining').off().on('click', function(e) {
 
@@ -1905,7 +2050,6 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
             window.open(url, '_blank');
         }
-
 
         function initializeReceipe(theid, modalParent, data = null) {
             let initialvalue = data?.meal_name;

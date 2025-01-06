@@ -115,7 +115,7 @@
         $("#apainDocument").html("")
         addPainMonitoring(0, key, 'painmonitoring', 'apainDocument')
         $("#painModal").modal("show")
-        $("#apainDocument").find("input, select, textarea").prop("disabled", false)
+        $("#apainDocument").find("input, select, textarea, option").prop("disabled", false)
     }
 
     function copypain(key) {

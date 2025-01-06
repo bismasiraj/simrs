@@ -26,47 +26,47 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -87,9 +87,9 @@
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3><?= @$kop['name_of_org_unit']?></h3>
+                    <h3><?= @$kop['name_of_org_unit'] ?></h3>
                     <!-- <h3>Surakarta</h3> -->
-                    <p><?= @$kop['contact_address']?></p>
+                    <p><?= @$kop['contact_address'] ?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -115,9 +115,9 @@
                 <label for="sa" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
                     <span>
-                        <?= isset($family_data['gender']) 
-                    ? ($family_data['gender'] == 1 ? 'Laki-Laki' : 'Perempuan') 
-                    : (isset($visit['gender']) ? ($visit['gender'] == 1 ? 'Laki-Laki' : 'Perempuan') : '-'); ?>
+                        <?= isset($family_data['gender'])
+                            ? ($family_data['gender'] == 1 ? 'Laki-Laki' : 'Perempuan')
+                            : (isset($visit['gender']) ? ($visit['gender'] == 1 ? 'Laki-Laki' : 'Perempuan') : '-'); ?>
                     </span>
                 </div>
             </div>
@@ -136,13 +136,13 @@
                     <span>
                         <?php
                         if (isset($family_data['date_of_birth'])) {
-                            $dateOfBirth = new DateTime($family_data['date_of_birth']); 
+                            $dateOfBirth = new DateTime($family_data['date_of_birth']);
                             $today = new DateTime();
-                            $age = $today->diff($dateOfBirth)->y; 
+                            $age = $today->diff($dateOfBirth)->y;
 
-                            echo $age . " tahun"; 
+                            echo $age . " tahun";
                         } else {
-                            echo @$visit['ageyear']. " Tahun"; 
+                            echo @$visit['ageyear'] . " Tahun";
                         }
                         ?>
                     </span>
@@ -161,7 +161,7 @@
                 <div class="col">
                     <span>
                         <?php
-                        
+
                         $religions = [
                             1 => 'Islam',
                             2 => 'Kristen',
@@ -170,15 +170,15 @@
                             5 => 'Budha',
                             6 => 'Aliran',
                             7 => 'Lainnya',
-                            8 => '-' 
+                            8 => '-'
                         ];
                         ?>
                         <?php
-                            $religionId  = isset($family_data['kode_agama']) ? $family_data['kode_agama'] : @$visit['nama_agama'];
-                                
-                            
-                                echo isset($religions[$religionId]) ? $religions[$religionId] : '-';
-                                ?></span>
+                        $religionId  = isset($family_data['kode_agama']) ? $family_data['kode_agama'] : @$visit['nama_agama'];
+
+
+                        echo isset($religions[$religionId]) ? $religions[$religionId] : '-';
+                        ?></span>
                 </div>
             </div>
             <div class="row mb-1">
@@ -187,43 +187,43 @@
                 <div class="col">
                     <span>
                         <?php
-                                $jobs = [
-                                    0 => 'BELUM BEKERJA',
-                                    1 => 'TNI',
-                                    2 => 'KARYAWAN',
-                                    3 => 'PENSIUNAN',
-                                    4 => 'PETANI',
-                                    5 => 'PELAJAR/MAHASISWA',
-                                    6 => 'BURUH',
-                                    7 => 'GURU/DOSEN',
-                                    8 => 'IBU RUMAH TANGGA',
-                                    9 => 'PNS',
-                                    10 => 'LAIN-LAIN',
-                                    11 => 'PEGAWAI SWASTA',
-                                    21 => 'WIRASWASTA',
-                                    22 => 'SWASTA',
-                                    23 => 'POLRI',
-                                    24 => 'CPNS',
-                                    25 => 'JAKSA',
-                                    26 => 'BUMN',
-                                    27 => 'BUMD',
-                                    28 => 'PEDAGANG',
-                                    29 => 'DOKTER',
-                                    30 => 'HAKIM/KEHAKIMAN',
-                                    31 => 'DPR/Anggota Dewan',
-                                    32 => 'BIDAN',
-                                    33 => 'PERAWAT',
-                                    34 => 'PENDETA',
-                                    35 => 'NELAYAN',
-                                    36 => 'HONORER'
-                                ];
-                                ?>
+                        $jobs = [
+                            0 => 'BELUM BEKERJA',
+                            1 => 'TNI',
+                            2 => 'KARYAWAN',
+                            3 => 'PENSIUNAN',
+                            4 => 'PETANI',
+                            5 => 'PELAJAR/MAHASISWA',
+                            6 => 'BURUH',
+                            7 => 'GURU/DOSEN',
+                            8 => 'IBU RUMAH TANGGA',
+                            9 => 'PNS',
+                            10 => 'LAIN-LAIN',
+                            11 => 'PEGAWAI SWASTA',
+                            21 => 'WIRASWASTA',
+                            22 => 'SWASTA',
+                            23 => 'POLRI',
+                            24 => 'CPNS',
+                            25 => 'JAKSA',
+                            26 => 'BUMN',
+                            27 => 'BUMD',
+                            28 => 'PEDAGANG',
+                            29 => 'DOKTER',
+                            30 => 'HAKIM/KEHAKIMAN',
+                            31 => 'DPR/Anggota Dewan',
+                            32 => 'BIDAN',
+                            33 => 'PERAWAT',
+                            34 => 'PENDETA',
+                            35 => 'NELAYAN',
+                            36 => 'HONORER'
+                        ];
+                        ?>
                         <?php
-                            $jobId = isset($family_data['job_id']) ? $family_data['job_id'] : @$visit['employee_id'];
-                                
-                            
-                                echo isset($jobs[$jobId]) ? $jobs[$jobId] : '-';
-                                ?></span>
+                        $jobId = isset($family_data['job_id']) ? $family_data['job_id'] : @$visit['employee_id'];
+
+
+                        echo isset($jobs[$jobId]) ? $jobs[$jobId] : '-';
+                        ?></span>
                 </div>
             </div>
             <div class="row mb-1">
@@ -247,11 +247,11 @@
                 <label for="sa" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
                     <span>
-                        <?= isset($family_data['family_status']) && !empty($family_data['family_status']) 
-                ? $family_data['family_status'] 
-                : (isset($visit['family_status_id']) && !empty($visit['family_status_id']) 
-                    ? $visit['family_status_id'] 
-                    : 'Diri Sendiri'); ?>
+                        <?= isset($family_data['family_status']) && !empty($family_data['family_status'])
+                            ? $family_data['family_status']
+                            : (isset($visit['family_status_id']) && !empty($visit['family_status_id'])
+                                ? $visit['family_status_id']
+                                : 'Diri Sendiri'); ?>
                     </span>
                 </div>
             </div>
@@ -269,9 +269,9 @@
                 <label for="gender" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
                     <span>
-                        <?= isset($visit['gender']) 
-                                ? ($visit['gender'] == 1 ? 'Laki-Laki' : 'Perempuan') 
-                                : '-'; ?>
+                        <?= isset($visit['gender'])
+                            ? ($visit['gender'] == 1 ? 'Laki-Laki' : 'Perempuan')
+                            : '-'; ?>
                     </span>
                 </div>
             </div>
@@ -288,7 +288,7 @@
                 <label for="patient_age" class="col-sm-2 col-form-label">Umur</label>
                 <label for="patient_age" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <span> <?= @$visit['ageyear']. " Tahun" ?></span>
+                    <span> <?= @$visit['ageyear'] . " Tahun" ?></span>
                 </div>
                 <label for="status_pasien_id" class="col-sm-2 col-form-label">Status</label>
                 <label for="status_pasien_id" class="col-sm-auto col-form-label">:</label>
@@ -401,85 +401,85 @@
 
 </body>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: 'a',
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    // var qrcode = new QRCode(document.getElementById("qrcode"), {
+    //     text: 'a',
+    //     width: 70,
+    //     height: 70,
+    //     colorDark: "#000000",
+    //     colorLight: "#ffffff",
+    //     correctLevel: QRCode.CorrectLevel.H // High error correction
+    // });
 </script>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode1"), {
-    text: 'a',
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    // var qrcode = new QRCode(document.getElementById("qrcode1"), {
+    //     text: 'a',
+    //     width: 70,
+    //     height: 70,
+    //     colorDark: "#000000",
+    //     colorLight: "#ffffff",
+    //     correctLevel: QRCode.CorrectLevel.H // High error correction
+    // });
 </script>
 <script>
-$(document).ready(function() {
-    $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-    $("#no_registration").val("<?= $visit['no_registration']; ?>")
-    $("#visit_id").val("<?= $visit['visit_id']; ?>")
-    $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-    $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-    $("#in_date").val("<?= $visit['in_date']; ?>")
-    $("#exit_date").val("<?= $visit['exit_date']; ?>")
-    $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-    <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
+    $(document).ready(function() {
+        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
+        $("#no_registration").val("<?= $visit['no_registration']; ?>")
+        $("#visit_id").val("<?= $visit['visit_id']; ?>")
+        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
+        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
+        $("#in_date").val("<?= $visit['in_date']; ?>")
+        $("#exit_date").val("<?= $visit['exit_date']; ?>")
+        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
+        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
         ?>
-    $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#employee_id").val("<?= $visit['employee_id']; ?>")
-    $("#description").val("<?= $visit['description']; ?>")
-    $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#modified_by").val("<?= user()->username; ?>")
-    $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-    $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-    $("#ageyear").val("<?= $visit['ageyear']; ?>")
-    $("#agemonth").val("<?= $visit['agemonth']; ?>")
-    $("#ageday").val("<?= $visit['ageday']; ?>")
-    $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-    $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-    $("#theid").val("<?= $visit['pasien_id']; ?>")
-    $("#isrj").val("<?= $visit['isrj']; ?>")
-    $("#gender").val("<?= $visit['gender']; ?>")
-    $("#doctor").val("<?= $visit['employee_id']; ?>")
-    $("#kal_id").val("<?= $visit['kal_id']; ?>")
-    $("#petugas_id").val("<?= user()->username; ?>")
-    $("#petugas").val("<?= user()->fullname; ?>")
-    $("#account_id").val("<?= $visit['account_id']; ?>")
-})
-$("#btnSimpan").on("click", function() {
-    saveSignatureData()
-    saveSignatureData1()
-    console.log($("#TTD").val())
-    $("#form").submit()
-})
-$("#btnEdit").on("click", function() {
-    $("input").prop("disabled", false);
-    $("textarea").prop("disabled", false);
+        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#employee_id").val("<?= $visit['employee_id']; ?>")
+        $("#description").val("<?= $visit['description']; ?>")
+        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#modified_by").val("<?= user()->username; ?>")
+        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
+        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
+        $("#ageyear").val("<?= $visit['ageyear']; ?>")
+        $("#agemonth").val("<?= $visit['agemonth']; ?>")
+        $("#ageday").val("<?= $visit['ageday']; ?>")
+        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
+        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
+        $("#theid").val("<?= $visit['pasien_id']; ?>")
+        $("#isrj").val("<?= $visit['isrj']; ?>")
+        $("#gender").val("<?= $visit['gender']; ?>")
+        $("#doctor").val("<?= $visit['employee_id']; ?>")
+        $("#kal_id").val("<?= $visit['kal_id']; ?>")
+        $("#petugas_id").val("<?= user()->username; ?>")
+        $("#petugas").val("<?= user()->fullname; ?>")
+        $("#account_id").val("<?= $visit['account_id']; ?>")
+    })
+    $("#btnSimpan").on("click", function() {
+        saveSignatureData()
+        saveSignatureData1()
+        console.log($("#TTD").val())
+        $("#form").submit()
+    })
+    $("#btnEdit").on("click", function() {
+        $("input").prop("disabled", false);
+        $("textarea").prop("disabled", false);
 
-})
+    })
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

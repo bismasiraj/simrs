@@ -172,7 +172,7 @@
                         });
                         foreach ($diagnosa_pra as $key => $diag_pra) :
                         ?>
-                            <li class="m-0 mt-1 p-0"><?= $diag_pra['diagnosa_name'] . ', ' . @$diag_pra['suffer']; ?></li>
+                            <li class="m-0 mt-1 p-0"><?= $diag_pra['diagnosa_desc'] . ', ' . @$diag_pra['suffer']; ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -194,7 +194,7 @@
                         });
                         foreach ($diagnosa_pasca as $key => $diag_pasca) :
                         ?>
-                            <li class="m-0 mt-1 p-0"><?= $diag_pasca['diagnosa_name'] . ', ' . @$diag_pasca['suffer']; ?></li>
+                            <li class="m-0 mt-1 p-0"><?= $diag_pasca['diagnosa_desc'] . ', ' . @$diag_pasca['suffer']; ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>

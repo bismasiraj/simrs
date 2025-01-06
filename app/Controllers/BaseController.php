@@ -20,6 +20,7 @@ use CodeIgniter\I18n\Time;
 use DateTime;
 use Psr\Log\LoggerInterface;
 use LZCompressor\LZString;
+use Myth\Auth\Models\UserModel;
 
 /**
  * Class BaseController
@@ -695,6 +696,41 @@ abstract class BaseController extends Controller
         return $query;
     }
 
+    public function query_assessment_column_style($table, $p_type, $visit_id, $document_id)
+    {
+        $db = db_connect();
+        $data = $db->query("select * from $table where VISIT_ID = '$visit_id' and DOCUMENT_ID = '$document_id'")->getRow(0, "array");
+        $parameter = $db->query("select * from ASSESSMENT_PARAMETER ap
+                    INNER JOIN ASSESSMENT_PARAMETER_VALUE av ON ap.P_TYPE = av.P_TYPE
+                    and ap.PARAMETER_ID = av.PARAMETER_ID
+                    where ap.P_TYPE = '$p_type'")->getResultArray();
+        $newparam = [];
+        if (!is_null($data)) {
+            $data = $this->lowerKeyOne($data);
+            $parameter = $this->lowerKey($parameter);
+            // foreach ($parameter as $key => $value) {
+            //     if ($value['entry_type'] == '2' && $data[strtolower($value['column_name'])] == $value['value_score']) {
+            //         $data[strtolower($value['column_name'])] = $value['value_desc'];
+            //     }
+            //     if ($value['entry_type'] == '3' && $data[strtolower($value['column_name'])] == $value['value_score']) {
+            //         $data[strtolower($value['column_name'])] = $value['value_desc'];
+            //     }
+            // }
+            foreach ($parameter as $key => $value) {
+                if ($value['entry_type'] == '1'  || $value['entry_type'] == '4' || $value['entry_type'] == '5') {
+                    $parameter[$key]['value_desc'] = $data[strtolower($value['column_name'])];
+                    $newparam[] = $parameter[$key];
+                }
+                if (($value['entry_type'] == '2' || $value['entry_type'] == '3' || $value['entry_type'] == '6') && $data[strtolower($value['column_name'])] == $value['value_score']) {
+                    $newparam[] = $parameter[$key];
+                }
+            }
+        }
+
+
+        return $newparam;
+    }
+
     public function query_template_info($db, $visit_id, $diagnosa_id)
     {
         $info = $this->lowerKey($db->query(
@@ -897,12 +933,54 @@ abstract class BaseController extends Controller
         $json = '[{"diag_cat":1,"diagnosa_category":"DIAGNOSA UTAMA"},{"diag_cat":2,"diagnosa_category":"DIAGNOSA PENUNJANG \/SEKUNDER"},{"diag_cat":3,"diagnosa_category":"DIAGNOSA MASUK"},{"diag_cat":4,"diagnosa_category":"DIAGNOSA HARIAN\/ KERJA"},{"diag_cat":5,"diagnosa_category":"DIAGNOSA KECELAKAAN"},{"diag_cat":6,"diagnosa_category":"DIAGNOSA KEMATIAN"},{"diag_cat":7,"diagnosa_category":"DIAGNOSA BANDING"},{"diag_cat":8,"diagnosa_category":"DIAGNOSA UTAMA EKLAIM"},{"diag_cat":9,"diagnosa_category":"DIAGNOSA SEKUNDER EKLAIM"},{"diag_cat":10,"diagnosa_category":"DIAGNOSA AKTUAL (KEPERAWATAN)"},{"diag_cat":11,"diagnosa_category":"DIAGNOSA RESIKO(KEPERAWATAN)"},{"diag_cat":12,"diagnosa_category":"DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)"},{"diag_cat":13,"diagnosa_category":"DIAGNOSA PRA OPERASI"},{"diag_cat":14,"diagnosa_category":"DIAGNOSA PASCA OPERASI"},{"diag_cat":15,"diagnosa_category":"DIAGNOSA OPERASI"},{"diag_cat":16,"diagnosa_category":"DIAGNOSA NUTRISI"},{"diag_cat":17,"diagnosa_category":"DIAGNOSA FUNGSI FISIOTERAPI"}]';
         return json_decode($json, true);
     }
-    function isInvalidDate($dateString)
+    function isInvalidDateTime($dateString)
     {
-        $date = DateTime::createFromFormat('Y-m-d', $dateString);
+        $date = DateTime::createFromFormat('Y-m-d H:i', $dateString);
         $errors = DateTime::getLastErrors();
 
+        // return $errors;
+
         // Check if the date is valid and if there are any errors
-        return $errors['warning_count'] > 0 || $errors['error_count'] > 0;
+        return @$errors['warning_count'] > 0 || @$errors['error_count'] > 0;
+    }
+    function getFullnameByUsername($username)
+    {
+        $user = new UserModel();
+        $select = $user->select("employee_id")->where("username", $username)->first();
+        $employee_id = @$select['employee_id'];
+        if (!is_null($employee_id)) {
+            $employee = new EmployeeAllModel();
+            $select = $employee->select("fullname")->where("employee_id", $employee_id)->first();
+            $fullname = @$select['fullname'];
+            if (!is_null($fullname)) {
+                return $fullname;
+            } else {
+                return $username;
+            }
+        } else {
+            return $username;
+        }
+    }
+    function getFullname($employee_id)
+    {
+        $employee = new EmployeeAllModel();
+        $select = $employee->select("fullname")->where("employee_id", $employee_id)->first();
+        $fullname = @$select['fullname'];
+        if (!is_null($fullname)) {
+            return $fullname;
+        } else {
+            return $employee_id;
+        }
+    }
+    function getClinicName($clinic_id)
+    {
+        $clinic = new ClinicModel();
+        $select = $clinic->select("name_of_clinic")->where("clinic_id", $clinic_id)->first();
+        $name_of_clinic = @$select['name_of_clinic'];
+        if (!is_null($name_of_clinic)) {
+            return $name_of_clinic;
+        } else {
+            return $clinic_id;
+        }
     }
 }

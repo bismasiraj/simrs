@@ -58,13 +58,14 @@ $menu = [
     'educationForm' => 0,
     'gizi' => 0,
     'patologi' => 0,
-    'cairan' => 0,
+    'asuhancairan' => 0,
     'penunjang' => 0,
     'riwayatHamil' => 0,
     'permintaandarah' => 0,
     'pemeriksaanSaraf' => 0,
     'pemeriksaanKulit' => 0,
-    'reportEKlaim' => 1
+    'reportEKlaim' => 0,
+    'treatintensive' => 0
 ];
 if ($visit['specialist_type_id'] == '1.05') {
     $menu['nifas'] = 1;
@@ -144,14 +145,14 @@ if (user()->checkPermission("eklaim", "r"))
     $menu['eklaim'] = 1;
 if (user()->checkPermission("asuhangizi", "r"))
     $menu['gizi'] = 1;
-if (user()->checkPermission("cairan", "r"))
-    $menu['cairan'] = 1;
+if (user()->checkPermission("asuhancairan", "r"))
+    $menu['asuhancairan'] = 1;
 if (user()->checkPermission("penunjangmedis", "r"))
     $menu['penunjang'] = 1;
 if (user()->checkPermission("patologi", "r"))
     $menu['patologi'] = 1;
-// if (user()->checkPermission("reportEKlaim", "r"))
-//     $menu['reportEKlaim'] = 1;
+if (user()->checkPermission("reportEKlaim", "r"))
+    $menu['reportEKlaim'] = 1;
 ?>
 
 <?php $this->section('content') ?>
@@ -223,61 +224,81 @@ $currency_symbol = 'Rp. ';
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                                         <li class="nav-item active"><a id="overviewTab" class="nav-link border-bottom active" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab">Profil</a></li>
-                                        <!-- <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li> -->
                                         <?php if ($menu['assessmentmedis'] == 1) { ?>
                                             <li class="nav-item"><a id="assessmentmedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Medis</a></li>
-                                        <?php }
+                                        <?php }  ?>
+                                        <?php
                                         if ($menu['assessmentperawat'] == 1) { ?>
                                             <li class="nav-item"><a id="assessmentigdTab" class="nav-link border-bottom" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li>
-                                        <?php }
+                                        <?php }  ?>
+                                        <?php
                                         if ($menu['assessmentbidan'] == 1) { ?>
                                             <li class="nav-item"><a id="assessmentbidanTab" class="nav-link border-bottom" href="#assessmentbidan" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Bidan</a></li>
-                                        <?php }
+                                        <?php }  ?>
+                                        <?php
                                         if ($menu['cppt'] == 1) { ?>
                                             <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"> CPPT</a></li>
-                                            <!-- <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> CPPT</a></li> -->
-                                        <?php }
+                                        <?php }  ?>
+                                        <?php if ($menu['vitalsign'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
+                                        <?php
+                                        } ?>
+                                        <?php
                                         if ($menu['eresep'] == 1) { ?>
                                             <li class="nav-item"><a id="eresepTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">EPrescription</a></li>
-                                            <!-- <li class="nav-item"><a id="eresepTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li> -->
-                                        <?php }
-                                        if ($menu['lab'] == 1) { ?>
-                                            <li class="nav-item"><a id="labTab" class="nav-link border-bottom" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab">Laboratorium</a></li>
-                                            <!-- <li class="nav-item"><a id="labTab" class="nav-link border-bottom" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li> -->
-                                        <?php }
-                                        if ($menu['rad'] == 1) { ?>
-                                            <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab">Radiologi</a></li>
-                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
-                                        <?php }
-                                        if ($menu['penunjang'] == 1) { ?>
-                                            <li class="nav-item"><a id="penunjangMedisTab" class="nav-link border-bottom" href="#penunjangMedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Penunjang Medis</a></li>
-                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
-                                        <?php }
-                                        if ($menu['fisio'] == 1) { ?>
-                                            <li class="nav-item"><a id="fisioTab" class="nav-link border-bottom" href="#fisio" data-bs-toggle="tab" aria-expanded="true" role="tab">Fisioterapi</a></li>
-                                            <li class="nav-item"><a id="jadwalFisioTab" class="nav-link border-bottom" href="#jadwalFisiomodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Jadwal Fisio</a></li>
-                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
-                                        <?php }
-                                        if ($menu['patologi'] == 1) { ?>
-                                            <li class="nav-item"><a id="patologiTab" class="nav-link border-bottom" href="#patologi" data-bs-toggle="tab" aria-expanded="true" role="tab">Patologi</a></li>
-                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
-                                        <?php }
-                                        if ($menu['permintaandarah'] == 1) { ?>
-                                            <li class="nav-item"><a id="PermintaanDarahTab" class="nav-link border-bottom" href="#permintaanDarah" data-bs-toggle="tab" aria-expanded="true" role="tab">Permintaan Darah</a></li>
-                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
-                                        <?php }
-                                        if ($menu['rekammedis'] == 1) { ?>
-                                            <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Resume Medis</a></li>
-                                            <!-- <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Resume Medis</a></li> -->
-                                        <?php }
-                                        if ($visit['isrj'] == '0') { ?>
-                                            <!-- <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li> -->
-                                        <?php } else { ?>
-                                            <!-- <li class="nav-item"><a is="vitalsignTab" class="nav-link border-bottom" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li> -->
-                                        <?php } ?>
+                                        <?php }  ?>
+                                        <?php if ($menu['medicalitem'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="medicalitemTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">Medical Item</a></li>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['odd'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="oddTab" class="nav-link border-bottom" href="#odd" data-bs-toggle="tab" aria-expanded="true" role="tab">ODD</a></li>
+                                        <?php
+                                        } ?>
                                         <?php if ($menu['tindakan'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="tindakanTab" class="nav-link border-bottom" href="#billpoli" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Medis</a></li>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['tindakanperawat'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Implementasi</a></li>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['fisio'] == 1) { ?>
+                                            <li class="nav-item"><a id="fisioTab" class="nav-link border-bottom" href="#fisio" data-bs-toggle="tab" aria-expanded="true" role="tab">Fisioterapi</a></li>
+                                            <li class="nav-item"><a id="jadwalFisioTab" class="nav-link border-bottom" href="#jadwalFisiomodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Jadwal Fisio</a></li>
+                                        <?php }  ?>
+                                        <?php
+                                        if ($menu['lab'] == 1) { ?>
+                                            <li class="nav-item"><a id="labTab" class="nav-link border-bottom" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab">Laboratorium</a></li>
+                                        <?php }  ?>
+                                        <?php
+                                        if ($menu['rad'] == 1) { ?>
+                                            <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab">Radiologi</a></li>
+                                        <?php }  ?>
+                                        <?php
+                                        if ($menu['penunjang'] == 1) { ?>
+                                            <li class="nav-item"><a id="penunjangMedisTab" class="nav-link border-bottom" href="#penunjangMedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Penunjang Medis</a></li>
+                                        <?php }  ?>
+                                        <?php
+                                        if ($menu['patologi'] == 1) { ?>
+                                            <li class="nav-item"><a id="patologiTab" class="nav-link border-bottom" href="#patologi" data-bs-toggle="tab" aria-expanded="true" role="tab">Patologi</a></li>
+                                        <?php }  ?>
+                                        <?php
+                                        if ($menu['permintaandarah'] == 1) { ?>
+                                            <li class="nav-item"><a id="PermintaanDarahTab" class="nav-link border-bottom" href="#permintaanDarah" data-bs-toggle="tab" aria-expanded="true" role="tab">Permintaan Darah</a></li>
+                                        <?php }  ?>
+                                        <?php
+                                        if ($menu['rekammedis'] == 1) { ?>
+                                            <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Resume Medis</a></li>
+                                        <?php } ?>
+                                        <?php if ($menu['transfer'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['charges'] == 1) {
@@ -285,9 +306,9 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="chargesTab" class="nav-link border-bottom" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab">Billing</a></li>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['rm'] == 1) {
+                                        <?php if ($menu['gcs'] == 1) {
                                         ?>
-                                            <li class="nav-item"><a id="rmTab" class="nav-link border-bottom" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab">Reporting</a></li>
+                                            <li class="nav-item"><a id="gcsTab" class="nav-link border-bottom" href="#gcs" data-bs-toggle="tab" aria-expanded="true" role="tab">GCS</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['pain'] == 1) {
@@ -300,19 +321,9 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="fallTab" class="nav-link border-bottom" href="#fall" data-bs-toggle="tab" aria-expanded="true" role="tab">Resiko Jatuh</a></li>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['gcs'] == 1) {
-                                        ?>
-                                            <li class="nav-item"><a id="gcsTab" class="nav-link border-bottom" href="#gcs" data-bs-toggle="tab" aria-expanded="true" role="tab">GCS</a></li>
-                                        <?php
-                                        } ?>
                                         <?php if ($menu['educationIntegration'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="educationIntegrationTab" class="nav-link border-bottom" href="#educationIntegration" data-bs-toggle="tab" aria-expanded="true" role="tab">Edukasi Integrasi</a></li>
-                                        <?php
-                                        } ?>
-                                        <?php if ($menu['medicalitem'] == 1) {
-                                        ?>
-                                            <li class="nav-item"><a id="medicalitemTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">Medical Item</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['diagnosa'] == 1) {
@@ -325,29 +336,9 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="orderGiziTab" class="nav-link border-bottom" href="#orderGizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Order Gizi</a></li>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['vitalsign'] == 1) {
-                                        ?>
-                                            <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
-                                        <?php
-                                        } ?>
-                                        <?php if ($menu['transfer'] == 1) {
-                                        ?>
-                                            <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li>
-                                        <?php
-                                        } ?>
-                                        <?php if ($menu['tindakanperawat'] == 1) {
-                                        ?>
-                                            <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Implementasi</a></li>
-                                        <?php
-                                        } ?>
                                         <?php if ($menu['informedconcent'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="informConcentTab" class="nav-link border-bottom" href="#infConsent" data-bs-toggle="tab" aria-expanded="true" role="tab">Inform Concent</a></li>
-                                        <?php
-                                        } ?>
-                                        <?php if ($menu['odd'] == 1) {
-                                        ?>
-                                            <li class="nav-item"><a id="oddTab" class="nav-link border-bottom" href="#odd" data-bs-toggle="tab" aria-expanded="true" role="tab">ODD</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['nifas'] == 1) {
@@ -386,8 +377,14 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="giziTab" class="nav-link border-bottom" href="#gizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Asuhan Gizi</a></li>
                                         <?php
                                         } ?>
-
-                                        <?php if ($menu['cairan'] == 1) {
+                                        <?php if ($menu['treatintensive'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="treatintensiveTab" class="nav-link border-bottom"
+                                                    href="#treatintensive" data-bs-toggle="tab" aria-expanded="true"
+                                                    role="tab">Treatment Intensive</a></li>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['asuhancairan'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="cairanTab" class="nav-link border-bottom" href="#cairan" data-bs-toggle="tab" aria-expanded="true" role="tab">Balance Cairan</a></li>
                                         <?php
@@ -406,9 +403,9 @@ $currency_symbol = 'Rp. ';
                                         <?php
                                         } ?>
 
-                                        <!-- <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li> -->
-                                        <?php if ($visit['specialist_type_id'] == '1.05') {
+                                        <?php if ($menu['rm'] == 1) {
                                         ?>
+                                            <li class="nav-item"><a id="rmTab" class="nav-link border-bottom" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab">Reporting</a></li>
                                         <?php
                                         } ?>
                                     </ul>
@@ -1325,6 +1322,31 @@ $currency_symbol = 'Rp. ';
                                             ]); ?>
                                         <?php
                                         } ?>
+
+                                        <?php if ($menu['treatintensive'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/treat-intensive.php', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+                                                'clinic' => $clinic,
+                                                'dokter' => $employee,
+
+                                            ]); ?>
+                                        <?php
+                                        } ?>
                                         <?php if ($menu['persalinan'] == 1) {
                                         ?>
                                             <?php echo view('admin/patient/profilemodul/persalinan', [
@@ -1361,7 +1383,7 @@ $currency_symbol = 'Rp. ';
                                             ]) ?>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['cairan'] == 1) {
+                                        <?php if ($menu['asuhancairan'] == 1) {
                                         ?>
                                             <?php echo view('admin\patient\profilemodul\cairan.php', [
                                                 'title' => '',
@@ -1409,7 +1431,6 @@ $currency_symbol = 'Rp. ';
                                             ]) ?>
                                         <?php
                                         } ?>
-
                                     </div>
                                 </div>
                             </div>
@@ -2846,7 +2867,7 @@ if ($menu['permintaandarah'] == 1) {
     ]) ?>
 <?php
 } ?>
-<?php if ($menu['cairan'] == 1) {
+<?php if ($menu['asuhancairan'] == 1) {
 ?>
     <?php echo view('admin\patient\profilemodul\jsprofile\cairan_js.php', [
         'title' => '',

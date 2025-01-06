@@ -249,7 +249,7 @@
             <div class="d-flex flex-wrap mb-3">
                 <?php foreach ($diagnosa as $key => $diag) : ?>
                     <div class="col-12 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <p class="m-0 mt-1 p-0"><?= @$diag['diagnosa_name']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$diag['diagnosa_desc']; ?></p>
                     </div>
                 <?php endforeach ?>
             </div>

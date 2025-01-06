@@ -77,132 +77,200 @@
                 <h3><?= @$organization['name_of_org_unit'] ?></h3>
                 <!-- <h3>Surakarta</h3> -->
                 <p><?= @$organization['contact_address'] ?></p>
+                <p class="mb-0"><?= @$organization['contact_address'] ?>, <?= @$organization['phone']; ?>, Fax: <?= @$organization['fax']; ?>, <?= @$organization['kota']; ?></p>
+                <p><?= @$organization['sk']; ?></p>
             </div>
             <div class="col-auto text-center">
                 <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
             </div>
         </div>
-        <div class="row">
-            <h4 class="text-center"><?= $title; ?></h4>
+
+    </div>
+    <div class="row">
+        <h4 class="text-center"><?= $title; ?></h4>
+    </div>
+    <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok')); ?>
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td class="p-1" style="width:33.3%">
+                    <b>Nomor RM</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
+                </td>
+                <td class="p-1" style="width:33.3%">
+                    <b>Nama Pasien</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['diantar_oleh']; ?></p>
+                </td>
+                <td class="p-1" style="width:33.3%">
+                    <b>Jenis Kelamin</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['gendername']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1" style="width:33.3%">
+                    <b>Tanggal Lahir (Usia)</b>
+                    <p class="m-0 mt-1 p-0"><?= tanggal_indo($visit['date_of_birth']) . ' (' . @$visit['age'] . ')'; ?></p>
+
+                </td>
+                <td class="p-1" style="width:66.3%" colspan="2">
+                    <b>Alamat Pasien</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['visitor_address']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">
+                    <b>DPJP</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['fullname_inap']; ?></p>
+                </td>
+                <td class="p-1">
+                    <b>Department</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic_from']; ?></p>
+                </td>
+                <td class="p-1">
+                    <b>Tanggal Masuk</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['in_date'] ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-1">
+                    <b>Kelas</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['class_room']; ?></p>
+                </td>
+                <td class="p-1">
+                    <b>Bangsal/Kamar</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
+                </td>
+                <td class="p-1">
+                    <b>Bed</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['bed']; ?></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="d-flex flex-wrap mb-3">
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Waktu Operasi</b>
+            <p><?= @tanggal_indo(date_format(date_create(@$operasi['vactination_date']), 'Y-m-d')) . ' ' . date_format(date_create($operasi['vactination_date']), 'H:i'); ?></p>
         </div>
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok')); ?>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <td class="p-1" style="width:33.3%">
-                        <b>Nomor RM</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
-                    </td>
-                    <td class="p-1" style="width:33.3%">
-                        <b>Nama Pasien</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['diantar_oleh']; ?></p>
-                    </td>
-                    <td class="p-1" style="width:33.3%">
-                        <b>Jenis Kelamin</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['gendername']; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width:33.3%">
-                        <b>Tanggal Lahir (Usia)</b>
-                        <p class="m-0 mt-1 p-0"><?= tanggal_indo($visit['date_of_birth']) . ' (' . @$visit['age'] . ')'; ?></p>
-
-                    </td>
-                    <td class="p-1" style="width:66.3%" colspan="2">
-                        <b>Alamat Pasien</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['visitor_address']; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1">
-                        <b>DPJP</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['fullname_inap']; ?></p>
-                    </td>
-                    <td class="p-1">
-                        <b>Department</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic_from']; ?></p>
-                    </td>
-                    <td class="p-1">
-                        <b>Tanggal Masuk</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['in_date'] ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1">
-                        <b>Kelas</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['class_room']; ?></p>
-                    </td>
-                    <td class="p-1">
-                        <b>Bangsal/Kamar</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
-                    </td>
-                    <td class="p-1">
-                        <b>Bed</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['bed']; ?></p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <h5>Checklist Persiapan Operasi</h5>
-        <?php if (isset($informasiMedis)) : ?>
-            <div class="d-flex flex-wrap mb-3">
-                <?php foreach ($informasiMedis as $key => $medis) : ?>
-                    <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $key ?></b>
-                        <p class="m-0 mt-1 p-0"><?= @$medis == 1 ? '&#x1F5F9;' : @$medis; ?></p>
-                    </div>
-                <?php endforeach ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if (!empty($lokalis)) : ?>
-            <table class="table table-bordered">
-                <tbody>
-                    <tr class="fw-bold">
-                        <td>Gambar Laki-laki</td>
-                        <td>Gambar Perempuan</td>
-                    </tr>
-                    <?php foreach ($lokalis as $key => $value) : ?>
-                        <?php if (($key + 1) % 2 != 0) : ?>
-                            <?php if ($key + 1 != count($lokalis)) : ?>
-                                <tr>
-                                    <td style="width: 50%;">
-                                        <img class="mt-3" src="<?= base_url('assets/img/asesmen/' . $value['value_info']) ?>" width="300px">
-                                    </td>
-                                <?php else : ?>
-                                <tr>
-                                    <td>
-                                        <img class="mt-3" src="<?= base_url('assets/img/asesmen/' . $value['value_info']) ?>" width="300px">
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
-                        <?php else : ?>
-                            <td>
-                                <img class="mt-3" src="<?= base_url('assets/img/asesmen/' . $value['value_info']) ?>" width="300px">
-                            </td>
-                            </tr>
-                        <?php endif; ?>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Riwayat Alergi</b>
+            <?php if (isset($riwayat_alergi)) : ?>
+                <ul>
+                    <?php foreach ($riwayat_alergi as $alergi) : ?>
+                        <li><?= $alergi['value_desc'] . ': ' . $alergi['histories'] ?></li>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Hasil Pemeriksaan Penunjang</b>
+
+        </div>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Informed Consent Bedah</b>
+            <p></p>
+        </div>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Informed Consent Anesthesi</b>
+            <p></p>
+        </div>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Penanda Lokasi Operasi</b>
+            <p></p>
+        </div>
+        <div class="col-12 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Rencana Operasi</b>
+            <p><?= @$operasi['treatment']; ?></p>
+        </div>
+        <div class="col-12 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Diagnosis</b>
+            <?php if (isset($diagnosa)) : ?>
+                <ul>
+                    <?php foreach ($diagnosa as $diag) : ?>
+                        <li><?= $diag['diagnosa_desc']; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Estimasi Waktu Operasi</b>
+            <p><?= @tanggal_indo(date_format(date_create(@$operasi['vactination_date']), 'Y-m-d')) . ' ' . date_format(date_create($operasi['vactination_date']), 'H:i'); ?></p>
+        </div>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Alat Khusus</b>
+        </div>
+        <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <b>Produk Darah</b>
+            <?php if (isset($blood_request)) : ?>
+                <ul>
+                    <?php foreach ($blood_request as $blood) : ?>
+                        <li><?= $blood['usagetype'] . ' (' . $blood['blood_quantity'] . ' ' . $blood['measurement'] . ')'; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+    <h5>Checklist Persiapan Operasi</h5>
+    <?php if (isset($informasiMedis)) : ?>
+        <div class=" d-flex flex-wrap mb-3">
+            <?php foreach ($informasiMedis as $key => $medis) : ?>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <input type="checkbox" <?= @$medis == 1 ? 'checked' : ''; ?> onclick="return false;">
+                    <b><?= $key ?></b>
+                </div>
+            <?php endforeach ?>
+        </div>
+    <?php endif; ?>
+
+    <h5>Riwayat Penyakit</h5>
+    <?php if (isset($riwayat_penyakit)) : ?>
+        <div class=" d-flex flex-wrap mb-3">
+            <?php foreach ($riwayat_penyakit as $key => $riwayat) : ?>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+
+                    <?php if ($riwayat['item_id'] == '34') : ?>
+                        <b><?= $riwayat['value_desc'] ?></b>
+                        <p class="pb-0 my-0"><?= $riwayat['histories']; ?></p>
+                    <?php else : ?>
+                        <input type="checkbox" <?= !empty(@$riwayat['histories']) ? 'checked' : ''; ?> onclick="return false;">
+                        <b><?= $riwayat['value_desc'] ?></b>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($lokalis)) : ?>
+        <h5>Lokasi Operasi</h5>
+        <div class=" d-flex flex-wrap mb-3">
+            <?php foreach ($lokalis as $key => $value) : ?>
+                <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <?php if (isset($value['filedata64'])) : ?>
+                        <img class="mt-3" src="<?= 'data:image/png;base64,' . $value['filedata64'] ?>" width="300px">
+                    <?php else : ?>
+                        <img class="mt-3" src="<?= base_url('assets/img/asesmen/' . $value['value_info']) ?>" width="300px">
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
 
-        <div class="row">
-            <div class="col-auto" align="center">
-                <div>Dokter</div>
-                <div class="mb-1">
-                    <div id="qrcode"></div>
-                </div>
-            </div>
-            <div class="col"></div>
-            <div class="col-auto" align="center">
-                <div>pasien</div>
-                <div class="mb-1">
-                    <div id="qrcode1"></div>
-                </div>
+    <div class="row">
+        <div class="col-auto" align="center">
+            <div>Dokter</div>
+            <div class="mb-1">
+                <div id="qrcode"></div>
             </div>
         </div>
+        <div class="col"></div>
+        <div class="col-auto" align="center">
+            <div>pasien</div>
+            <div class="mb-1">
+                <div id="qrcode1"></div>
+            </div>
+        </div>
+    </div>
     </div>
     <br>
     <i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i>

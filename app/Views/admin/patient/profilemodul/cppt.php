@@ -219,11 +219,11 @@ $permission = user()->getPermissions();
                     <div class="d-flex mb-3">
                         <?php if ($visit['class_room_id'] == '') {
                         ?>
-                            <a href="" class="btn btn-success w-100" onclick="openPopUpTab('<?= base_url(); ?>/admin/rm/keperawatan/cppt_ralan/<?= base64_encode(json_encode($visit)); ?>')"><i class="fa fa-print"></i> Cetak</a>
+                            <a href="#" class="btn btn-success w-100" onclick="openPopUpTab('<?= base_url(); ?>/admin/rm/keperawatan/cppt_ralan/<?= base64_encode(json_encode($visit)); ?>')"><i class="fa fa-print"></i> Cetak</a>
                         <?php
                         } else {
                         ?>
-                            <a href="" class="btn btn-success w-100" onclick="openPopUpTab('<?= base_url(); ?>/admin/rm/keperawatan/cppt_ranap/<?= base64_encode(json_encode($visit)); ?>')"><i class="fa fa-print"></i> Cetak</a>
+                            <a href="#" class="btn btn-success w-100" onclick="openPopUpTab('<?= base_url(); ?>/admin/rm/keperawatan/cppt_ranap/<?= base64_encode(json_encode($visit)); ?>')"><i class="fa fa-print"></i> Cetak</a>
 
                         <?php
                         } ?>

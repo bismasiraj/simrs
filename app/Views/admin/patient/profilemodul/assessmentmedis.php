@@ -167,6 +167,18 @@ $group = user()->getRoles();
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div id="armemergency_group" class="col-sm-4 col-xs-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="armemergency">Emergency</label>
+                                                                    <select name="emergency" id="armemergency" type="hidden" class="form-control" onclick="patientCategoryId=this.value">
+                                                                        <option value="1">Tidak Emergency</option>
+                                                                        <option value="2">False Emergency</option>
+                                                                        <option value="3">Emergency</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="accordion" id="accordionAssessmentMedis">
                                                     </div>

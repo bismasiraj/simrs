@@ -412,12 +412,12 @@ $permission = user()->getPermissions();
                                 <h3>Pembuatan SKDP</h3>
                                 <hr>
                                 <div class="row">
-                                    <div class="col-sm-12 col-md-12 col-xs-12 mb-3">
+                                    <div class="col-sm-12 col-md-12 col-xs-12 mb-3 d-none">
                                         <div class="form-group"><label for="skdpnosurat">No SKDP</label>
                                             <input type='text' name="skdpnosurat" class="form-control" id='skdpnosurat' readonly />
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-md-4 col-lg-4 mb-3">
+                                    <div class="col-sm-12 col-md-4 col-lg-4 mb-3 d-none">
                                         <div class="form-group"><label for="skdpnosep">No SEP</label>
                                             <input type='text' name="skdpnosep" class="form-control" id='skdpnosep' value="<?= is_null($visit['class_room_id']) ? $visit['no_skp'] : $visit['no_skpinap']; ?>" />
                                         </div>
@@ -501,7 +501,7 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-4 col-lg-4 mb-3">
-                            <div class="form-group"><label for="atransfernotes">Alasan Kontrol</label>
+                            <div class="form-group"><label for="atransfernotes">Alasan</label>
                                 <textarea type='text' name="notes" class="form-control" id='atransfernotes'>
                                     </textarea>
                             </div>

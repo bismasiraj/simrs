@@ -114,7 +114,7 @@ $permission = user()->getPermissions();
                                             <div class="panel-footer text-end mb-4">
                                                 <button type="button" id="formSaveTindPerawatBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                                 <!-- <button type="button" id="formEditBillPoliBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button> -->
-                                                <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                                <!-- <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button> -->
                                                 <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                                             </div>
                                             <?php if (user()->checkPermission("tindakanperawat", "c")) {
@@ -129,7 +129,7 @@ $permission = user()->getPermissions();
                     </div>
 
                     <div class="d-flex mb-3">
-                        <a href="<?= base_url(); ?>/admin/rm/keperawatan/implementasi/<?= base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
+                        <a href="#" onclick="openPopUpTab('<?= base_url(); ?>/admin/rm/keperawatan/implementasi/<?= base64_encode(json_encode($visit)); ?>')" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
                     </div>
                 </div><!--./row-->
             </div>

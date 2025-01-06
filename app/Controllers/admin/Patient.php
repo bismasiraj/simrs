@@ -908,7 +908,7 @@ This Function is used to Add Patient
         if ($poli == 'P013' || $poli == 'P016' || $poli == 'P015') {
             $pv = new PasienPenunjangModel();
 
-            $kunjungan = $this->lowerKey($pv->getKunjunganPenunjang($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
+            $kunjungan = $this->lowerKey($pv->getKunjunganPenunjang($this->escapeString($nama, true), $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
         } else {
             $pv = new PasienVisitationModel();
 
@@ -1099,6 +1099,14 @@ This Function is used to Add Patient
                 $row2 =  substr($kunjungan[$key]['visit_date'], 8, 2) . "/" . substr($kunjungan[$key]['visit_date'], 5, 2) . "/" . substr($kunjungan[$key]['visit_date'], 0, 4) . "<br>" . substr(@$kunjungan[$key]['tgl_lahir'], 8, 2) . "/" . substr(@$kunjungan[$key]['tgl_lahir'], 5, 2) . "/" . substr(@$kunjungan[$key]['tgl_lahir'], 0, 4);
                 if ($poli == 'P013' || $poli == 'P016' || $poli == 'P015')
                     $row2 .= '<br><i>Pemeriksaan: <b>' . @$kunjungan[$key]['laboratorium'] . '</b></i>';
+                if ($poli == 'P012') {
+                    if (@$kunjungan[$key]['patient_category_id'] == 1)
+                        $row2 .= '<br><span class="bg-success"><i><b>Tidak Emergency</b></i></span>';
+                    else if (@$kunjungan[$key]['patient_category_id'] == 2)
+                        $row2 .= '<br><span class="bg-danger"><i><b>False Emergency</b></i></span>';
+                    else if (@$kunjungan[$key]['patient_category_id'] == 3)
+                        $row2 .= '<br><span class="bg-danger"><i><b>Emergency</b></i></span>';
+                }
                 $row[] = $row2;
                 $row[] = $kunjungan[$key]['name_of_status_pasien'] . "/" . $kunjungan[$key]['name_of_gender'] . "/" . $kunjungan[$key]['nama_agama'] . "<br>" . $ranap;
                 $row[] = "<b>" . $kunjungan[$key]['name_of_clinic'] . "</b><br><b>" . $kunjungan[$key]['fullname'] . "</b><br>" . $kunjungan[$key]['name_of_class'];
@@ -1159,8 +1167,6 @@ This Function is used to Add Patient
         }
 
         $nama = $kode;
-        $nokartu = $kode;
-
         $kunjungan = $this->lowerKey($pv->getKunjunganOperasi($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
 
 

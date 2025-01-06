@@ -30,7 +30,10 @@ extends Model
         'responput',
         'respondel',
         'isused',
-        'no_registration'
+        'no_registration',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     // Dates

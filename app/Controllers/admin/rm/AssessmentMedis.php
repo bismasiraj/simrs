@@ -20,6 +20,7 @@ use App\Models\PasienDiagnosaModel;
 use App\Models\PasienDiagnosasModel;
 use App\Models\PasienHistoryModel;
 use App\Models\PasienProceduresModel;
+use App\Models\PasienVisitationModel;
 use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 
@@ -65,7 +66,7 @@ class AssessmentMedis extends BaseController
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $neuro = $neuroController->saveDataLokal($value["data"]);
             }
-            if (str_contains($value["id"], "FormAssessmen_Neurologi")) {
+            if (str_contains($value["id"], "FormAssessmen_Dermatovenerologi")) {
                 $dermaController = new AssDermatovenerologi();
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $dermatologi = $dermaController->saveDataLokal($value["data"]);
@@ -112,62 +113,64 @@ class AssessmentMedis extends BaseController
         if ($body_id != '') {
             $dataexam = [];
             $dataexam = [
-                "body_id" => @$body_id,
-                "document_id" => @$body_id,
-                "org_unit_code" => @$org_unit_code,
-                "pasien_diagnosa_id" => @$pasien_diagnosa_id,
-                "no_registration" => @$no_registration,
-                "visit_id" => @$visit_id,
-                "clinic_id" => @$clinic_id,
-                "class_room_id" => @$class_room_id,
-                "bed_id" => @$bed_id,
-                "in_date" => @$in_date,
-                "exit_date" => @$exit_date,
-                "keluar_id" => @$keluar_id,
-                "examination_date" => str_replace('T', ' ', $date_of_diagnosa),
-                "temperature" => @$temperature,
-                "tension_upper" => @$tension_upper,
-                "tension_below" => @$tension_below,
-                "nadi" => @$nadi,
-                "nafas" => @$nafas,
-                "weight" => @$weight,
-                "height" => @$height,
-                "awareness" => @@$awareness,
-                "saturasi" => @$saturasi,
-                "arm_diameter" => @$arm_diameter,
-                "anamnase" => @$anamnase,
-                "alo_anamnase" => @$alloanamnase,
-                "pemeriksaan" => @$pemeriksaan,
-                "teraphy_desc" => @$teraphy_desc,
-                "instruction" => @$instruction,
-                "employee_id" => @$employee_id,
-                "description" => @$description,
-                "modified_date" => @$modified_date,
-                "modified_by" => @$modified_by,
-                "modified_from" => @$clinic_id,
-                "status_pasien_id" => @$status_pasien_id,
-                "ageyear" => @$ageyear,
-                "agemonth" => @$agemonth,
-                "ageday" => @$ageday,
-                "thename" => @$thename,
-                "theaddress" => @$theaddress,
-                "theid" => @$theid,
-                "isrj" => @$isrj,
-                "gender" => @$gender,
-                "doctor" => @$doctor,
-                "petugas_id" => user()->getOneRoles(),
-                "petugas" => user()->getFullname(),
-                'vs_status_id' => '2',
-                'valid_date' => @$valid_date,
-                'valid_user' => @$valid_user,
-                'valid_pasien' => @$valid_pasien,
-                'account_id' => 1
+                'org_unit_code' => @$org_unit_code,
+                'body_id' => @$body_id,
+                'document_id' => @$document_id,
+                'vs_status_id' => @$vs_status_id,
+                'no_registration' => @$no_registration,
+                'visit_id' => @$visit_id,
+                'trans_id' => @$trans_id,
+                'clinic_id' => @$clinic_id,
+                'examination_date' => str_replace('T', ' ', $date_of_diagnosa),
+                'account_id' => @$account_id,
+                'temperature' => @$temperature,
+                'tension_upper' => @$tension_upper,
+                'tension_below' => @$tension_below,
+                'nadi' => @$nadi,
+                'nafas' => @$nafas,
+                'weight' => @$weight,
+                'height' => @$height,
+                'imt_score' => @$imt_score,
+                'imt_desc' => @$imt_desc,
+                'saturasi' => @$saturasi,
+                'arm_diameter' => @$arm_diameter,
+                'oxygen_usage' => @$oxygen_usage,
+                'oxygen_usage_score' => @$oxygen_usage_score,
+                'temperature_score' => @$temperature_score,
+                'tension_upper_score' => @$tension_upper_score,
+                'tension_below_score' => @$tension_below_score,
+                'nadi_score' => @$nadi_score,
+                'nafas_score' => @$nafas_score,
+                'saturasi_score' => @$saturasi_score,
+                'awareness' => @$awareness,
+                'pain' => @$pain,
+                'lochia' => @$lochia,
+                'general_condition' => @$general_condition,
+                'cardiovasculer' => @$cardiovasculer,
+                'respiration' => @$respiration,
+                'proteinuria' => @$proteinuria,
+                'cervix' => @$cervix,
+                'djj' => @$djj,
+                'his_freq' => @$his_freq,
+                'his_duration' => @$his_duration,
+                'his_power' => @$his_power,
+                'his_simetry' => @$his_simetry,
+                'child_position' => @$child_position,
+                'heart_sound' => @$heart_sound,
+                'oedema' => @$oedema,
+                'urine' => @$urine,
+                'tfu' => @$tfu,
+                'uterus' => @$uterus,
+                'modified_date' => new RawSql('getdate()'),
+                'modified_by' => @$modified_by
             ];
+            // return $dataexam;
+
             foreach ($body as $key => $value) {
-                if (!(is_null(${$key}) || ${$key} == ''))
-                    $dataexam[$key] = $value;
-                if (isset($examination_date))
-                    $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
+                if ($value == '')
+                    $dataexam[$key] = null;
+                // if (isset($examination_date))
+                //     $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
                 if (isset($temperature))
                     $dataexam['temperature'] = (float)$dataexam['temperature'];
                 else
@@ -274,10 +277,18 @@ class AssessmentMedis extends BaseController
             'valid_date' => @$valid_date,
             'valid_user' => @$valid_user,
             'valid_pasien' => @$valid_pasien,
-            'specialist_type_id' => @$specialist_type_id
+            'specialist_type_id' => @$specialist_type_id,
+            // 'fullname' => $this->getFullname(@$employee_id),
+            'name_of_clinic' => $this->getClinicName(@$clinic_id)
         ];
 
+        foreach ($data as $key => $value) {
+            if ($value == '') {
+                $data[$key] = null;
+            }
+        }
 
+        // return $data;
 
 
 
@@ -288,8 +299,6 @@ class AssessmentMedis extends BaseController
         } else {
             // return json_encode($data);
             $hasil = $pd->save($data);
-
-            // $mesej = 'update';
         }
 
 
@@ -303,12 +312,14 @@ class AssessmentMedis extends BaseController
 
         // return json_encode($lokalisG0020206);
         $lokalisModel = new LokalisModel();
+        $lokalisArray = [];
         foreach ($select as $key => $value) {
             if (isset(${'lokalis' . $value['value_id']}) && $value['value_score'] == 3) {
-                $data = explode(',', (string)${'lokalis' . $value['value_id']});
-                $encodedLokalis = $data[1];
+                $dataImage = explode(',', (string)${'lokalis' . $value['value_id']});
+                $encodedLokalis = $dataImage[1];
+                // return $data;
                 $decodedLokalis = base64_decode($encodedLokalis);
-                $lokalisPath = WRITEPATH . 'uploads/signatures/';
+                $lokalisPath = WRITEPATH . 'uploads/lokalis/';
                 if (!is_dir($lokalisPath)) {
                     mkdir($lokalisPath, 0777, true);
                 }
@@ -335,6 +346,7 @@ class AssessmentMedis extends BaseController
                 } else {
                     return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
                 }
+                $lokalisArray[] = $dataLokalis;
             } else if (isset(${'fisik' . $value['value_id']}) && $value['value_score'] == 2) {
                 $dataLokalis = [
                     'org_unit_code' => $org_unit_code,
@@ -352,6 +364,7 @@ class AssessmentMedis extends BaseController
                 ];
                 $db->query("delete from assessment_lokalis where body_id = '$pasien_diagnosa_id' and value_id = '" . $value['value_id'] . "'");
                 $lokalisModel->insert($dataLokalis);
+                $lokalisArray[] = $dataLokalis;
             } else if (isset(${'lokalis' . $value['value_id']}) && ($value['value_score'] == 4 || $value['value_score'] == 5)) {
                 $dataLokalis = [
                     'org_unit_code' => $org_unit_code,
@@ -369,8 +382,10 @@ class AssessmentMedis extends BaseController
                 ];
                 $db->query("delete from assessment_lokalis where body_id = '$pasien_diagnosa_id' and value_id = '" . $value['value_id'] . "'");
                 $lokalisModel->insert($dataLokalis);
+                $lokalisArray[] = $dataLokalis;
             }
         }
+        $data['lokalis'] = $lokalisArray;
 
         $pasienHistory = new PasienHistoryModel();
 
@@ -424,6 +439,16 @@ class AssessmentMedis extends BaseController
                 $dataProc['modified_by'] = user_id();
                 $pcs->insert($dataProc);
             }
+        }
+
+        if (@$clinic_id == 'P012') {
+            $pv = new PasienVisitationModel();
+            $pvdata = [
+                'patient_category_id' => $emergency,
+                'visit_id' => $visit_id
+            ];
+            // return json_encode($pvdata);
+            $pv->save($pvdata);
         }
         $array   = array('status' => 'success', 'error' => '', 'message' => $mesej . ' riwayat rekam medis berhasil', 'data' => $data);
         return ($array);
@@ -761,7 +786,6 @@ class AssessmentMedis extends BaseController
                             }
                         }
                     }
-
                     if ($timeIntervensi != '' && $timeIntervensi != null && isset($timeIntervensi)) {
                         $painIntervensi = new PainIntervensiModel();
                         $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");

@@ -22,7 +22,7 @@ $menu['neurosensoris'] = 0;
 $menu['pencernaan'] = 0;
 $menu['pernapasan'] = 0;
 $menu['perkemihan'] = 0;
-$menu['psikologi'] = 0;
+$menu['psikologi'] = 1;
 $menu['sirkulasi'] = 0;
 $menu['seksual'] = 0;
 $menu['social'] = 0;
@@ -529,7 +529,7 @@ if ($visit['clinic_id'] == 'P012') {
                             <input type="hidden" id="arbimt_score" name="imt_score">
                             <input type="hidden" id="arbimt_desc" name="imt_desc">
                             <input type="hidden" id="arbalo_anamnase" name="alo_anamnase">
-                            <input type="hidden" id="arbteraphy_desc" name="teraphy_desc">
+                            <!-- <input type="hidden" id="arbteraphy_desc" name="teraphy_desc"> -->
                             <input type="hidden" id="arbinstruction" name="instruction">
                             <input type="hidden" id="arbmedical_treatment" name="medical_treatment">
                             <input type="hidden" id="arbmodified_date" name="modified_date">
@@ -585,10 +585,10 @@ if ($visit['clinic_id'] == 'P012') {
                                     <?php
                                     } ?>
                                     <!-- <div class="col-md-3">
-                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="acpptvs_status_id2" value="2"><label class="form-check-label" for="acpptvs_status_id2" checked>SOAP</label></div>
+                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arbvs_status_id2" value="2"><label class="form-check-label" for="arbvs_status_id2" checked>SOAP</label></div>
                                     </div>
                                     <div class="col-md-3">
-                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="acpptvs_status_id7" value="7"><label class="form-check-label" for="acpptvs_status_id7">SBAR</label></div>
+                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arbvs_status_id7" value="7"><label class="form-check-label" for="arbvs_status_id7">SBAR</label></div>
                                     </div> -->
                                 </div>
                                 <div class="row">
@@ -649,8 +649,54 @@ if ($visit['clinic_id'] == 'P012') {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <?php if ($visit['specialist_type_id'] == '1.05') {
+                                                            <?php foreach ($aValue as $key => $value) {
+                                                                if ($value['p_type'] == 'GEN0009') {
+                                                                    if ($value['value_score'] == '4') {
                                                             ?>
+                                                                        <div class="col-sm-6 col-xs-12">
+                                                                            <div class="mb-3">
+                                                                                <div class="form-group">
+                                                                                    <label for="arb<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
+                                                                                    <textarea id="arb<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    <?php
+                                                                    } else if ($value['value_score'] == '2') {
+                                                                    ?>
+                                                                        <div class="col-sm-6 col-xs-12">
+                                                                            <div class="form-check mb-3">
+                                                                                <input id="arb<?= $value['p_type'] . $value['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value['value_id']; ?>" value="1">
+                                                                                <label class="form-check-label" for="arb<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
+                                                                            </div>
+                                                                        </div> <?php
+                                                                            }
+                                                                                ?>
+                                                            <?php
+                                                                }
+                                                            } ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php if ($visit['specialist_type_id'] == '1.05') {
+                                ?>
+                                    <div class="accordion mb-4" id="accodrionRiwayatBidanARB">
+                                        <div class="accordion-item">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="arbheadingRiwayatBidanARB">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#arbcollapseRiwayatBidanARB" aria-expanded="false" aria-controls="arbcollapseRiwayatBidanARB">
+                                                        <b>RIWAYAT KEHAMILAN</b>
+                                                    </button>
+                                                </h2>
+                                                <div id="arbcollapseRiwayatBidanARB" class="accordion-collapse collapse" aria-labelledby="arbheadingRiwayatBidanARB" data-bs-parent="#accodrionExamInfo" style="">
+                                                    <div class="accordion-body text-muted">
+                                                        <div class="row mb-4">
+                                                            <div id="groupRiwayat" class="row">
+
                                                                 <?php foreach ($aValue as $key => $value) {
                                                                     if ($value['p_type'] == 'GEN0009' && $value['parameter_id'] == '06') {
                                                                         if ($value['value_score'] == '4') {
@@ -677,45 +723,16 @@ if ($visit['clinic_id'] == 'P012') {
                                                                 <?php
                                                                     }
                                                                 } ?>
-                                                            <?php
-                                                            } else {
-                                                            ?>
-                                                                <?php foreach ($aValue as $key => $value) {
-                                                                    if ($value['p_type'] == 'GEN0009') {
-                                                                        if ($value['value_score'] == '4') {
-                                                                ?>
-                                                                            <div class="col-sm-6 col-xs-12">
-                                                                                <div class="mb-3">
-                                                                                    <div class="form-group">
-                                                                                        <label for="arb<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                        <textarea id="arb<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        <?php
-                                                                        } else if ($value['value_score'] == '2') {
-                                                                        ?>
-                                                                            <div class="col-sm-6 col-xs-12">
-                                                                                <div class="form-check mb-3">
-                                                                                    <input id="arb<?= $value['p_type'] . $value['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value['value_id']; ?>" value="1">
-                                                                                    <label class="form-check-label" for="arb<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                </div>
-                                                                            </div> <?php
-                                                                                }
-                                                                                    ?>
-                                                                <?php
-                                                                    }
-                                                                } ?>
-                                                            <?php
-                                                            } ?>
+
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
+                                <?php
+                                } ?>
                                 <!-- <h4 id="objectiveGroupHeader">O:</h4> -->
                                 <div class="row mb-4" id="accodrionExamInfo">
                                     <div class="">
@@ -873,7 +890,7 @@ if ($visit['clinic_id'] == 'P012') {
                                             <div class="text-muted">
                                                 <div class="row">
                                                     <div class="col-sm-12 mt-2">
-                                                        <div class="form-group"><label id="acpptalo_anamnase_label">Diagnosa Bidan</label><textarea name="alo_anamnase" id="acpptalo_anamnase" placeholder="" value="" class="form-control" row="4"></textarea></div>
+                                                        <div class="form-group"><label id="arbteraphy_desc_label">Diagnosa Bidan</label><textarea name="teraphy_desc" id="arbteraphy_desc" placeholder="" value="" class="form-control" row="4"></textarea></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -889,7 +906,7 @@ if ($visit['clinic_id'] == 'P012') {
                                         <div class="text-muted">
                                             <div class="row">
                                                 <div class="col-sm-12 mt-2">
-                                                    <div class="form-group"><label id="acpptinstruction_label">Catatan Planning</label><textarea name="instruction" id="acpptinstruction" placeholder="" value="" class="form-control" row="4"></textarea></div>
+                                                    <div class="form-group"><label id="arbinstruction_label">Catatan Planning</label><textarea name="instruction" id="arbinstruction" placeholder="" value="" class="form-control" row="4"></textarea></div>
                                                 </div>
                                             </div>
                                         </div>

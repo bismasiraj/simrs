@@ -1,45 +1,37 @@
 <style>
 @media print {
     @page {
-        margin: none;
-    }
-
-    @page {
         size: A4 portrait;
+        /* Ukuran default untuk pencetakan */
     }
 
-    @page landscape {
-        size: A4 landscape;
-    }
-
-    .container {
+    body {
+        margin: 0;
+        font-size: 12px;
         width: 100%;
     }
 
-    .page-break {
-        page-break-before: always;
-    }
-
     .landscape {
-        width: 29.7cm;
-        height: 29.7cm;
-        page-break-before: always;
-        writing-mode: horizontal-tb;
-        transform: rotate(90deg);
-
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        box-sizing: border-box;
+        /* background-color: #eef7ff; */
+        transform-origin: left top;
+        transform: scale(0.8);
+        overflow: hidden;
+        display: block;
     }
 
-    td {
-        background-color: inherit;
-        color: inherit;
-        border: inherit;
-        padding: inherit;
-        text-align: inherit;
+    .portrait {
+        page-break-before: always;
+        /* width: 21cm; */
+        /* Ukuran A4 portrait */
+        /* height: auto; */
+        margin-top: 0 !important;
     }
 }
 </style>
-
-
 
 <head>
     <!-- Required meta tags -->
@@ -47,8 +39,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/bootstrap/css/bootstrap.min.css">
-    <link href="<?= base_url(); ?>css/jquery.signature.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/bootstrap/css/bootstrap.min.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- <link href="<?= base_url(); ?>css/jquery.signature.css" rel="stylesheet"> -->
     <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?= base_url(); ?>assets/libs/jquery/jquery.min.js"></script>
     <script src="<?= base_url(); ?>js/jquery.signature.js"></script>
@@ -74,19 +68,32 @@
     }
 
     body {
-        width: 21cm;
-        height: 29.7cm;
         margin: 0;
         font-size: 12px;
+        width: 21cm;
+        /* padding: 1cm;
+        box-sizing: border-box; */
+    }
+
+    .portrait {
+        page-break-before: always;
+        width: 26cm;
+        height: auto;
+        margin: 0 auto;
+        /* padding: 1cm; */
+        box-sizing: border-box;
+        /* background-color: #f9f9f9; */
     }
 
     .landscape {
+        page-break-after: always;
         width: 29.7cm;
-        height: 29.7cm;
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        page-break-inside: avoid;
+        height: auto;
+        margin: 0 auto;
+        padding: 1cm;
+        box-sizing: border-box;
+        /* background-color: #eef7ff; */
+        /* transform-origin: left top; */
     }
 
     .h1,
@@ -120,14 +127,14 @@
 
 
 <?php if ($type === 'SEP'): ?>
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-3">
             <div class="row">
                 <div class="col-6">
                     <div>
-                        <img src="<?= base_url() ?>bpjs.jpeg" alt="BPJS KESEHATAN" style="width: 230px;">
+                        <img src="<?= base_url() ?>assets/img/logo-bpjs.jpg" alt="BPJS KESEHATAN" style="width: 260px;">
                     </div>
                     <form action="" method="">
                         <div class="form-group row mt-2 align-items-center">
@@ -435,14 +442,14 @@
 
 </div>
 <?php elseif ($type === 'SRI'): ?>
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-3">
             <div class="row">
                 <div class="col-6">
                     <div>
-                        <img src="<?= base_url() ?>bpjs.jpeg" alt="BPJS KESEHATAN" style="width: 230px;">
+                        <img src="<?= base_url() ?>assets/img/logo-bpjs.jpg" alt="BPJS KESEHATAN" style="width: 260px;">
                     </div>
                     <form action="" method="">
                         <div class="form-group row mt-2 align-items-center">
@@ -540,7 +547,7 @@
 
 </div>
 <?php elseif ($type === 'ResumeMedis'): ?>
-<div class="page-break">
+<div class="page-break portrait">
     <!doctype html>
     <html lang="en">
 
@@ -857,7 +864,7 @@
     </html>
 </div>
 <?php elseif ($type === 'INV'): ?>
-<div class="page-break">
+<div class="page-break portrait">
 
     <!doctype html>
     <html lang="en">
@@ -884,41 +891,78 @@
                         <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>
-                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
                 <div class="row">
-                    <h4 class="text-center pt-2">INVOICE</h4>
+                    <h4 class="text-center pt-2">INVOICE PASIEN</h4>
                 </div>
+                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
                 <div class="table-container-split">
                     <table>
                         <!-- kiri -->
                         <tr>
-                            <th>
-                                <div id="name_patient-inv"></div>
-                            </th>
+                            <th>Nama</th>
+                            <td colspan='3'>
+                                <span id="name_patient-inv"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>NO.RM</th>
+                            <td>
+                                <span id="no_rm-inv"></span>
+                            </td>
+                            <th>Status</th>
+                            <td>
+                                <span id="type-pay-inv"></span>
+                            </td>
                         </tr>
                         <tr>
                             <th>
-                                <div id="type-pay-inv"></div>
+                                <div>Alamat</div>
                             </th>
+                            <td colspan='3'>
+                                <span id="address-inv"></span>
+                            </td>
                         </tr>
+
                     </table>
                     <table class="text-end">
                         <!--kanan -->
                         <tr>
                             <th>
-                                <div id="total-all-pay-inv"></div>
+                                Tgl Lahir
                             </th>
+                            <td>
+                                <span id="birthday-inv"></span>
+                            </td>
                         </tr>
                         <tr>
                             <th>
-                                <div id="date-pay-inv"></div>
+                                No.Peserta
                             </th>
+                            <td>
+                                <span id="nobpjs-inv"></span>
+                            </td>
                         </tr>
+                        <tr>
+                            <th>
+                                Tanggal Masuk
+                            </th>
+                            <td>
+                                <span id="indate-inv"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Tanggal Keluar
+                            </th>
+                            <td>
+                                <span id="exitdate-inv"></span>
+                            </td>
+                        </tr>
+
                     </table>
                 </div>
 
@@ -1067,9 +1111,17 @@
         <?php $dataJson = json_encode($visit); ?>
         let data = <?php echo $dataJson; ?>;
 
+        $("#no_rm-inv").html(data?.no_registration)
+        $("#address-inv").html(data?.contact_address)
+        $("#birthday-inv").html(data?.date_of_birth ? moment(data?.date_of_birth).format("DD-MM-YYYY") : "")
+        $("#nobpjs-inv").html(data?.pasien_id)
+        $("#indate-inv").html(data?.in_date)
+        $("#exitdate-inv").html(data?.exit_date)
+
+
         // render patient 
         $("#name_patient-inv").html(data?.name_of_pasien)
-        $("#type-pay-inv").html(data?.payor)
+        $("#type-pay-inv").html(data?.name_of_status_pasien)
         // $("#total-all-pay-inv").html(data?.phone_number)
         $("#date-pay-inv").html(
             moment(new Date(data?.exit_date || data?.in_date)).format("DD/MM/YYYY HH:mm")
@@ -1103,7 +1155,7 @@
 
 </div>
 <?php elseif ($type === 'Persalinan'): ?>
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-5">
@@ -1465,7 +1517,7 @@
     </body>
 </div>
 <?php elseif ($type === 'ANOTOMI'): ?>
-<div class="page-break">
+<div class="page-break portrait">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 
     <?php foreach ($anotomi as $item): ?>
@@ -1550,7 +1602,7 @@
     <?php endforeach; ?>
 </div>
 <?php elseif ($type === 'OPRS'): ?>
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-5">
@@ -1808,7 +1860,7 @@
 
 </div>
 <?php elseif ($type === 'Anestesi'): ?>
-<div class="page-break landscape">
+<div class="landscape">
 
     <body>
         <div class="row align-items-center mb-3">
@@ -1897,22 +1949,26 @@
             <div class="col-4">
                 <h5 class="text-center">KRITERIA KELUAR KAMAR PULIH</h5>
                 <table class="table table-bordered">
-
-                    <?php foreach (@$anestesi['steward_score'] as $key => $steward) : ?>
+                    <?php foreach ($anestesi['steward_score'] as $key => $steward) : ?>
                     <tr>
                         <th colspan="2" class="text-center">steward Score</th>
                     </tr>
+                    <?php $total_steward = 0; ?>
                     <tr class="text-center">
                         <th>Kriteria</th>
                         <th width="1%">Score</th>
                     </tr>
-                    <?php foreach (@$steward as $strd) : ?>
+                    <?php foreach ($steward as $strd) : ?>
                     <tr>
                         <td><?= $strd['value_desc']; ?></td>
                         <td class="text-center"><?= $strd['value_score']; ?></td>
                     </tr>
+                    <?php $total_steward += $strd['value_score']; ?>
                     <?php endforeach; ?>
-
+                    <tr class="bg-secondary text-white">
+                        <td><?= $total_steward >= 5 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah'; ?></td>
+                        <td class="text-center"><?= $total_steward; ?></td>
+                    </tr>
                     <?php endforeach; ?>
                 </table>
                 <table class="table table-bordered">
@@ -1920,6 +1976,7 @@
                     <tr>
                         <th colspan="2" class="text-center">Aldrete Score</th>
                     </tr>
+                    <?php $total_aldrete = 0; ?>
                     <tr class="text-center">
                         <th>Kriteria</th>
                         <th width="1%">Score</th>
@@ -1929,8 +1986,12 @@
                         <td><?= $aldr['value_desc']; ?></td>
                         <td class="text-center"><?= $aldr['value_score']; ?></td>
                     </tr>
+                    <?php $total_aldrete += $aldr['value_score']; ?>
                     <?php endforeach; ?>
-
+                    <tr class="bg-secondary text-white">
+                        <td><?= $total_aldrete >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah'; ?></td>
+                        <td class="text-center"><?= $total_aldrete; ?></td>
+                    </tr>
                     <?php endforeach; ?>
                 </table>
                 <?php if (!empty($anestesi['bromage_score'])) : ?>
@@ -1954,7 +2015,7 @@
         </div>
     </body>
 </div>
-<div class="page-break landscape">
+<div class="landscape">
 
     <body>
         <div class="d-flex gap-2">
@@ -2245,7 +2306,7 @@
         </div>
     </body>
 </div>
-<div class="page-break landscape">
+<div class="landscape">
 
     <body>
 
@@ -2581,697 +2642,692 @@
             </div>
         </div>
     </body>
-
-</div>
-
-<div class="">
-    <script>
-    var qrcode1 = new QRCode(document.getElementById("qrcode-anestesi"), {
-        text: `<?= $visit['fullname']; ?>`,
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    var qrcode = new QRCode(document.getElementById("qrcode-anestesi1"), {
-        text: `<?= $visit['diantar_oleh']; ?>`,
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    </script>
-
-    <script type="text/javascript">
-    $(document).ready(function() {
-        let val = <?= json_encode($anestesi['val']); ?>;
-        let aParamVal = <?= json_encode($anestesi['a_paramVal']); ?>;
-        let aParam = <?= json_encode($anestesi['a_param']); ?>;
-        getRequestVtRangeAnesthesia({
-            vactination_id: <?= json_encode(@$val['document_id']); ?>,
-            filters: ["13", "all", "11"],
-            body_requestCharts: ["myChartMonitoringDurante", "myChartMonitoringRecoveryRoom", null],
-            body_requestTables: ["bodyDatamyChartMonitoringDurante",
-                "bodyDatamyChartMonitoringRecoveryRoom",
-                "bodyDataCAnestesiandsedasi"
-            ]
+    <div class="">
+        <script>
+        var qrcode1 = new QRCode(document.getElementById("qrcode-anestesi"), {
+            text: `<?= $visit['fullname']; ?>`,
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
         });
-
-        renderAlldata({
-            aParamVal: aParamVal,
-            val: val,
-            aParam: aParam
-        })
-
-        getDataTreatment(val)
-    })
-
-
-
-    const ChartMonitoringDurante1 = (props) => {
-        let rawData = props?.data || [];
-        let dataRendersTables = '';
-
-        let groupedData = {};
-
-        rawData?.forEach(item => {
-            let dateTime = item?.examination_date ? moment(item?.examination_date).format(
-                'DD MMM YYYY HH:mm') : null;
-            if (dateTime && !groupedData[dateTime]) {
-                groupedData[dateTime] = {
-                    nadi: [],
-                    temperature: [],
-                    saturasi: [],
-                    tension_upper: [],
-                    tension_below: []
-                };
-            }
-            if (dateTime) {
-                groupedData[dateTime].nadi.push(parseInt(item?.nadi ?? 0));
-                groupedData[dateTime].temperature.push(parseInt(item?.temperature ?? 0));
-                groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 10));
-                groupedData[dateTime].tension_upper.push(parseInt(item?.tension_upper ?? 0));
-                groupedData[dateTime].tension_below.push(parseInt(item?.tension_below ?? 0));
-            }
+        var qrcode = new QRCode(document.getElementById("qrcode-anestesi1"), {
+            text: `<?= $visit['diantar_oleh']; ?>`,
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
         });
+        </script>
 
-
-        let allDates = Object.keys(groupedData);
-        let dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format(
-            'DD MMM YYYY'))));
-        let times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
-
-        let labels = dates.flatMap(date => times.filter((_, index) => allDates[index].startsWith(date)));
-
-
-        if (props?.body_requestChart) {
-            let datasets = [{
-                    label: 'Nadi',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (groupedData[
-                            key]?.nadi.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(235, 125, 52, 0.2)',
-                    borderColor: '#eb7d34',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yNadi'
-                },
-                {
-                    label: 'Suhu',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.temperature.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.temperature.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(52, 101, 235, 0.2)',
-                    borderColor: '#3465eb',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yTemperature'
-                },
-                {
-                    label: 'SPO2',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.saturasi.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.saturasi.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(18, 41, 105, 0.2)',
-                    borderColor: '#122969',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'ySaturasi'
-                },
-                {
-                    label: 'Sistole',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.tension_upper.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.tension_upper.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(61, 235, 52, 0.2)',
-                    borderColor: '#3deb34',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yTension'
-                },
-                {
-                    label: 'Diastole',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.tension_below.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.tension_below.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(61, 235, 52, 0.2)',
-                    borderColor: '#3deb34',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yTension'
-                },
-                {
-                    label: 'Respirasi',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (groupedData[
-                            key]?.nadi.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(230, 242, 5, 0.2)',
-                    borderColor: '#e6f205',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yRespirasi'
-                }
-            ];
-
-            const ctxChart = document?.getElementById(`${props?.body_requestChart}`)?.getContext('2d');
-            new Chart(ctxChart, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    plugins: {
-                        datalabels: false
-                    },
-                    scales: {
-                        yNadi: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Nadi'
-                            }
-                        },
-                        yTemperature: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Suhu'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        ySaturasi: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'SPO2'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        yTension: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Tekanan Darah'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        yRespirasi: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Respirasi'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        }
-                    },
-                    layout: {
-                        padding: {
-                            left: 10,
-                            right: 10,
-                            top: 10,
-                            bottom: 10
-                        }
-                    }
-                }
+        <script type="text/javascript">
+        $(document).ready(function() {
+            let val = <?= json_encode($anestesi['val']); ?>;
+            let aParamVal = <?= json_encode($anestesi['a_paramVal']); ?>;
+            let aParam = <?= json_encode($anestesi['a_param']); ?>;
+            getRequestVtRangeAnesthesia1({
+                vactination_id: <?= json_encode(@$val['document_id']); ?>,
+                filters: ["13", "all", "11"],
+                body_requestCharts: ["myChartMonitoringDurante", "myChartMonitoringRecoveryRoom", null],
+                body_requestTables: ["bodyDatamyChartMonitoringDurante",
+                    "bodyDatamyChartMonitoringRecoveryRoom",
+                    "bodyDataCAnestesiandsedasi"
+                ]
             });
-        }
 
-
-        const tableBody = $(`#${props?.body_requestTabels}`);
-        if (tableBody.length) {
-            dataRendersTables = rawData.map(item => `
-                                    <tr>
-                                        <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
-                                        <td>${item?.tension_upper ?? 0}</td>
-                                        <td>${item?.tension_below?? 0}</td>
-                                        <td>${item?.nadi?? 0}</td>
-                                        <td>${item?.temperature?? 0}</td>
-                                        <td>${item?.nafas?? 0}</td>
-                                        <td>${item?.saturasi?? 0}</td>
-                                        <td>${item?.pemeriksaan ?? "-"}</td>
-                                        <td>${item?.petugas ?? "-"}</td>
-                                    </tr>
-                                `).join('');
-
-            tableBody.html(dataRendersTables);
-        } else {
-            console.log("Table body element not found.");
-        }
-    };
-
-    const getRequestVtRangeAnesthesia1 = (props) => {
-        let {
-            vactination_id,
-            filters,
-            body_requestCharts,
-            body_requestTables
-        } = props;
-
-
-
-
-        filters.forEach((filter, index) => {
-            postData({
-                document_id: vactination_id ?? "",
-                filter: filter ?? ""
-            }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (res) => {
-
-                if (res.respon && res.data.examination_info.length > 0) {
-                    ChartMonitoringDurante({
-                        data: res.data.examination_info,
-                        body_requestChart: body_requestCharts[
-                            index],
-                        body_requestTabels: body_requestTables[index]
-                    });
-                } else {
-                    $(`#${body_requestTables[index]}`).closest('.box.box-info').hide();
-                    if (body_requestCharts[index]) {
-                        $(`#${body_requestCharts[index]}`).closest('.box.box-info').hide();
-                    }
-                }
-            });
-        });
-    };
-
-
-    const getDataDiagnosaPreoperatif1 = (props) => {
-        let result = ''
-        const sufferTypes = {
-            "0": "BELUM DIIDENTIFIKASI",
-            "1": "KASUS BARU",
-            "2": "KASUS LAMA",
-            "11": "KASUS BEDAH",
-            "12": "KASUS NON BEDAH",
-            "13": "KASUS KEBIDANAN",
-            "14": "KASUS PSKIATRIK",
-            "15": "KASUS ANAK"
-        };
-        const diagCategories = {
-            "1": "DIAGNOSA UTAMA",
-            "2": "DIAGNOSA PENUNJANG /SEKUNDER",
-            "3": "DIAGNOSA MASUK",
-            "4": "DIAGNOSA HARIAN/ KERJA",
-            "5": "DIAGNOSA KECELAKAAN",
-            "6": "DIAGNOSA KEMATIAN",
-            "7": "DIAGNOSA BANDING",
-            "8": "DIAGNOSA UTAMA EKLAIM",
-            "9": "DIAGNOSA SEKUNDER EKLAIM",
-            "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
-            "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
-            "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
-            "13": "DIAGNOSA PRA OPERASI",
-            "14": "DIAGNOSA PASCA OPERASI",
-            "15": "DIAGNOSA OPERASI"
-        };
-        if (props?.data) {
-            props?.data?.diagnosa?.map(item => {
-                const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
-                const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
-                result += `<tr>
-                            <td>${item?.diagnosa_name}</td>
-                            <td>${sufferTypeText}</td>
-                            <td>${diagCatText}</td>
-                        </tr>`
+            renderAlldata1({
+                aParamVal: aParamVal,
+                val: val,
+                aParam: aParam
             })
 
-            $("#tabelsRenderdiagPreoperatif").html(result)
-
-        }
-
-    }
-
-    const renderDataTeamInPembedahanAnesthesiLengkap1 = (result) => {
-        const labels = result?.labels || [];
-        const data = result?.data || [];
-
-        const groupedData = data.reduce((acc, item) => {
-            const label = labels.find(lbl => lbl.task_id === item?.task_id);
-            const taskName = label ? label.task : item?.task_id;
-
-            const category = taskName.split(' ')[0];
-
-            if (!acc[category]) {
-                acc[category] = [];
-            }
-            acc[category].push({
-                ...item,
-                taskName
-            });
-            return acc;
-        }, {});
-
-        const categories = Object.entries(groupedData);
-        const half = Math.ceil(categories.length / 2);
-        const leftCategories = categories.slice(0, half);
-        const rightCategories = categories.slice(half);
-
-        let hasil = `
-                    <div class="d-flex justify-content-between">
-                        <div class="flex-fill me-2">
-                            ${leftCategories.map(([category, tasks]) => `
-                                <div class="form-group mb-3">
-                                    <h5 class="fw-bold">${category}</h5>
-                                    ${tasks.map(item => `
-                                        <div class="d-flex align-items-center mb-2 ms-4">
-                                            <label class="fw-bold me-3 w-25">${item.taskName}</label>
-                                            <span class="w-75">${item?.doctor}</span>
-                                        </div>
-                                    `).join('')}
-                                    <hr />
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="flex-fill ms-2">
-                            ${rightCategories.map(([category, tasks]) => `
-                                <div class="form-group mb-3">
-                                    <h5 class="fw-bold">${category}</h5>
-                                    ${tasks.map(item => `
-                                        <div class="d-flex align-items-center mb-2 ms-4">
-                                            <label class="fw-bold me-3 w-25">${item.taskName}</label>
-                                            <span class="w-75">${item?.doctor}</span>
-                                        </div>
-                                    `).join('')}
-                                    <hr />
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-
-        $(`#bodyTimOperasiAnesthesiLengkap-cetak`).html(hasil);
-    }
-
-    const templateOprasiPembedahanAnesthesiLengkap1 = (props) => {
-        let data = props?.data
-        renderDataTeamInPembedahanAnesthesiLengkap({
-            data: data?.operation_team,
-            labels: data?.operation_task
-        });
-
-    }
-
-
-    const renderAlldata1 = (props) => {
-        quillInstances = {};
-        dataDrain = [];
-        globalBodyId = '';
-
-        postData({
-            id: <?= json_encode(@$val['document_id']); ?>,
-            visit_id: <?= json_encode(@$val['visit_id']); ?>
-        }, 'admin/PatientOperationRequest/getAllArcodions', (res) => {
-
-            if (res.respon) {
-                let result = res?.data
-                getDataDiagnosaPreoperatif({
-                    data: {
-                        diagnosa: result?.diagnosas
-                    }
-                })
-
-                getDataDiagnosaPostoperatif({
-                    pasien_diagnosa_id: result?.assessment_anesthesia?.body_id,
-                    vactination_id: result?.assessment_anesthesia?.document_id
-                });
-
-                templateOprasiPembedahanAnesthesiLengkap({
-                    data: {
-                        operation_team: result?.operation_team,
-                        operation_task: result?.operation_task
-
-                    }
-                })
-
-                getDataAsaRender({
-                    aParamVal: props?.aParamVal,
-                    val: props?.val
-                })
-
-                getDatateknikAnesRender({
-                    aParamVal: props?.aParam,
-                    val: props?.val
-                })
-
-
-            }
+            getDataTreatment1(val)
         })
-    }
 
 
-    const getDataDiagnosaPostoperatif1 = (props) => {
-        const sufferTypes = {
-            "0": "BELUM DIIDENTIFIKASI",
-            "1": "KASUS BARU",
-            "2": "KASUS LAMA",
-            "11": "KASUS BEDAH",
-            "12": "KASUS NON BEDAH",
-            "13": "KASUS KEBIDANAN",
-            "14": "KASUS PSKIATRIK",
-            "15": "KASUS ANAK"
+
+        const ChartMonitoringDurante1 = (props) => {
+            let rawData = props?.data || [];
+            let dataRendersTables = '';
+
+            let groupedData = {};
+
+            rawData?.forEach(item => {
+                let dateTime = item?.examination_date ? moment(item?.examination_date).format(
+                    'DD MMM YYYY HH:mm') : null;
+                if (dateTime && !groupedData[dateTime]) {
+                    groupedData[dateTime] = {
+                        nadi: [],
+                        temperature: [],
+                        saturasi: [],
+                        tension_upper: [],
+                        tension_below: []
+                    };
+                }
+                if (dateTime) {
+                    groupedData[dateTime].nadi.push(parseInt(item?.nadi ?? 0));
+                    groupedData[dateTime].temperature.push(parseInt(item?.temperature ?? 0));
+                    groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 10));
+                    groupedData[dateTime].tension_upper.push(parseInt(item?.tension_upper ?? 0));
+                    groupedData[dateTime].tension_below.push(parseInt(item?.tension_below ?? 0));
+                }
+            });
+
+
+            let allDates = Object.keys(groupedData);
+            let dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format(
+                'DD MMM YYYY'))));
+            let times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
+
+            let labels = dates.flatMap(date => times.filter((_, index) => allDates[index].startsWith(date)));
+
+
+            if (props?.body_requestChart) {
+                let datasets = [{
+                        label: 'Nadi',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
+                                groupedData[
+                                    key]?.nadi.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(235, 125, 52, 0.2)',
+                        borderColor: '#eb7d34',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yNadi'
+                    },
+                    {
+                        label: 'Suhu',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.temperature.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.temperature.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(52, 101, 235, 0.2)',
+                        borderColor: '#3465eb',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yTemperature'
+                    },
+                    {
+                        label: 'SPO2',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.saturasi.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.saturasi.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(18, 41, 105, 0.2)',
+                        borderColor: '#122969',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'ySaturasi'
+                    },
+                    {
+                        label: 'Sistole',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.tension_upper.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.tension_upper.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                        borderColor: '#3deb34',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yTension'
+                    },
+                    {
+                        label: 'Diastole',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.tension_below.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.tension_below.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                        borderColor: '#3deb34',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yTension'
+                    },
+                    {
+                        label: 'Respirasi',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
+                                groupedData[
+                                    key]?.nadi.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(230, 242, 5, 0.2)',
+                        borderColor: '#e6f205',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yRespirasi'
+                    }
+                ];
+
+                const ctxChart = document?.getElementById(`${props?.body_requestChart}`)?.getContext('2d');
+                new Chart(ctxChart, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        plugins: {
+                            datalabels: false
+                        },
+                        scales: {
+                            yNadi: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Nadi'
+                                }
+                            },
+                            yTemperature: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Suhu'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            ySaturasi: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'SPO2'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            yTension: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Tekanan Darah'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            yRespirasi: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Respirasi'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 10,
+                                top: 10,
+                                bottom: 10
+                            }
+                        }
+                    }
+                });
+            }
+
+
+            const tableBody = $(`#${props?.body_requestTabels}`);
+            if (tableBody.length) {
+                dataRendersTables = rawData.map(item => `
+                                        <tr>
+                                            <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
+                                            <td>${item?.tension_upper ?? 0}</td>
+                                            <td>${item?.tension_below?? 0}</td>
+                                            <td>${item?.nadi?? 0}</td>
+                                            <td>${item?.temperature?? 0}</td>
+                                            <td>${item?.nafas?? 0}</td>
+                                            <td>${item?.saturasi?? 0}</td>
+                                            <td>${item?.pemeriksaan ?? "-"}</td>
+                                            <td>${item?.petugas ?? "-"}</td>
+                                        </tr>
+                                    `).join('');
+
+                tableBody.html(dataRendersTables);
+            } else {
+                console.log("Table body element not found.");
+            }
         };
-        const diagCategories = {
-            "1": "DIAGNOSA UTAMA",
-            "2": "DIAGNOSA PENUNJANG /SEKUNDER",
-            "3": "DIAGNOSA MASUK",
-            "4": "DIAGNOSA HARIAN/ KERJA",
-            "5": "DIAGNOSA KECELAKAAN",
-            "6": "DIAGNOSA KEMATIAN",
-            "7": "DIAGNOSA BANDING",
-            "8": "DIAGNOSA UTAMA EKLAIM",
-            "9": "DIAGNOSA SEKUNDER EKLAIM",
-            "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
-            "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
-            "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
-            "13": "DIAGNOSA PRA OPERASI",
-            "14": "DIAGNOSA PASCA OPERASI",
-            "15": "DIAGNOSA OPERASI"
+
+        const getRequestVtRangeAnesthesia1 = (props) => {
+            let {
+                vactination_id,
+                filters,
+                body_requestCharts,
+                body_requestTables
+            } = props;
+
+            filters.forEach((filter, index) => {
+                postData({
+                    document_id: vactination_id ?? "",
+                    filter: filter ?? ""
+                }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (res) => {
+
+                    if (res.respon && res.data.examination_info.length > 0) {
+                        ChartMonitoringDurante({
+                            data: res.data.examination_info,
+                            body_requestChart: body_requestCharts[
+                                index],
+                            body_requestTabels: body_requestTables[index]
+                        });
+                    } else {
+                        $(`#${body_requestTables[index]}`).closest('.box.box-info').hide();
+                        if (body_requestCharts[index]) {
+                            $(`#${body_requestCharts[index]}`).closest('.box.box-info').hide();
+                        }
+                    }
+                });
+            });
         };
-        postData({
-            pasien_diagnosa_id: props?.pasien_diagnosa_id
-        }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
-            if (res.respon && Array.isArray(res.data)) {
-                let result = "";
-                res?.data?.map(item => {
+
+
+        const getDataDiagnosaPreoperatif1 = (props) => {
+            let result = ''
+            const sufferTypes = {
+                "0": "BELUM DIIDENTIFIKASI",
+                "1": "KASUS BARU",
+                "2": "KASUS LAMA",
+                "11": "KASUS BEDAH",
+                "12": "KASUS NON BEDAH",
+                "13": "KASUS KEBIDANAN",
+                "14": "KASUS PSKIATRIK",
+                "15": "KASUS ANAK"
+            };
+            const diagCategories = {
+                "1": "DIAGNOSA UTAMA",
+                "2": "DIAGNOSA PENUNJANG /SEKUNDER",
+                "3": "DIAGNOSA MASUK",
+                "4": "DIAGNOSA HARIAN/ KERJA",
+                "5": "DIAGNOSA KECELAKAAN",
+                "6": "DIAGNOSA KEMATIAN",
+                "7": "DIAGNOSA BANDING",
+                "8": "DIAGNOSA UTAMA EKLAIM",
+                "9": "DIAGNOSA SEKUNDER EKLAIM",
+                "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
+                "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
+                "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
+                "13": "DIAGNOSA PRA OPERASI",
+                "14": "DIAGNOSA PASCA OPERASI",
+                "15": "DIAGNOSA OPERASI"
+            };
+            if (props?.data) {
+                props?.data?.diagnosa?.map(item => {
                     const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
                     const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
                     result += `<tr>
-                            <td>${item?.diagnosa_name}</td>
-                            <td>${sufferTypeText}</td>
-                            <td>${diagCatText}</td>
-                        </tr>`
+                                <td>${item?.diagnosa_desc}</td>
+                                <td>${sufferTypeText}</td>
+                                <td>${diagCatText}</td>
+                            </tr>`
                 })
-                $("#tabelsRenderdiagPostoperatif").html(result)
+
+                $("#tabelsRenderdiagPreoperatif").html(result)
 
             }
-        });
-    };
+
+        }
+
+        const renderDataTeamInPembedahanAnesthesiLengkap1 = (result) => {
+            const labels = result?.labels || [];
+            const data = result?.data || [];
+
+            const groupedData = data.reduce((acc, item) => {
+                const label = labels.find(lbl => lbl.task_id === item?.task_id);
+                const taskName = label ? label.task : item?.task_id;
+
+                const category = taskName.split(' ')[0];
+
+                if (!acc[category]) {
+                    acc[category] = [];
+                }
+                acc[category].push({
+                    ...item,
+                    taskName
+                });
+                return acc;
+            }, {});
+
+            const categories = Object.entries(groupedData);
+            const half = Math.ceil(categories.length / 2);
+            const leftCategories = categories.slice(0, half);
+            const rightCategories = categories.slice(half);
+
+            let hasil = `
+                        <div class="d-flex justify-content-between">
+                            <div class="flex-fill me-2">
+                                ${leftCategories.map(([category, tasks]) => `
+                                    <div class="form-group mb-3">
+                                        <h5 class="fw-bold">${category}</h5>
+                                        ${tasks.map(item => `
+                                            <div class="d-flex align-items-center mb-2 ms-4">
+                                                <label class="fw-bold me-3 w-25">${item.taskName}</label>
+                                                <span class="w-75">${item?.doctor}</span>
+                                            </div>
+                                        `).join('')}
+                                        <hr />
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="flex-fill ms-2">
+                                ${rightCategories.map(([category, tasks]) => `
+                                    <div class="form-group mb-3">
+                                        <h5 class="fw-bold">${category}</h5>
+                                        ${tasks.map(item => `
+                                            <div class="d-flex align-items-center mb-2 ms-4">
+                                                <label class="fw-bold me-3 w-25">${item.taskName}</label>
+                                                <span class="w-75">${item?.doctor}</span>
+                                            </div>
+                                        `).join('')}
+                                        <hr />
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+
+            $(`#bodyTimOperasiAnesthesiLengkap-cetak`).html(hasil);
+        }
+
+        const templateOprasiPembedahanAnesthesiLengkap1 = (props) => {
+            let data = props?.data
+            renderDataTeamInPembedahanAnesthesiLengkap1({
+                data: data?.operation_team,
+                labels: data?.operation_task
+            });
+
+        }
+
+
+        const renderAlldata1 = (props) => {
+            quillInstances = {};
+            dataDrain = [];
+            globalBodyId = '';
+
+            postData({
+                id: props?.val?.document_id,
+                visit_id: props?.val?.visit_id
+            }, 'admin/PatientOperationRequest/getAllArcodions', (res) => {
+
+                if (res.respon) {
+                    let result = res?.data
+                    getDataDiagnosaPreoperatif1({
+                        data: {
+                            diagnosa: result?.diagnosas
+                        }
+                    })
+
+                    getDataDiagnosaPostoperatif1({
+                        pasien_diagnosa_id: result?.assessment_anesthesia?.body_id,
+                        vactination_id: result?.assessment_anesthesia?.document_id
+                    });
+
+                    templateOprasiPembedahanAnesthesiLengkap1({
+                        data: {
+                            operation_team: result?.operation_team,
+                            operation_task: result?.operation_task
+
+                        }
+                    })
+
+                    getDataAsaRender1({
+                        aParamVal: props?.aParamVal,
+                        val: props?.val
+                    })
+
+                    getDatateknikAnesRender1({
+                        aParamVal: props?.aParam,
+                        val: props?.val
+                    })
+
+
+                }
+            })
+        }
+
+
+        const getDataDiagnosaPostoperatif1 = (props) => {
+            const sufferTypes = {
+                "0": "BELUM DIIDENTIFIKASI",
+                "1": "KASUS BARU",
+                "2": "KASUS LAMA",
+                "11": "KASUS BEDAH",
+                "12": "KASUS NON BEDAH",
+                "13": "KASUS KEBIDANAN",
+                "14": "KASUS PSKIATRIK",
+                "15": "KASUS ANAK"
+            };
+            const diagCategories = {
+                "1": "DIAGNOSA UTAMA",
+                "2": "DIAGNOSA PENUNJANG /SEKUNDER",
+                "3": "DIAGNOSA MASUK",
+                "4": "DIAGNOSA HARIAN/ KERJA",
+                "5": "DIAGNOSA KECELAKAAN",
+                "6": "DIAGNOSA KEMATIAN",
+                "7": "DIAGNOSA BANDING",
+                "8": "DIAGNOSA UTAMA EKLAIM",
+                "9": "DIAGNOSA SEKUNDER EKLAIM",
+                "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
+                "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
+                "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
+                "13": "DIAGNOSA PRA OPERASI",
+                "14": "DIAGNOSA PASCA OPERASI",
+                "15": "DIAGNOSA OPERASI"
+            };
+            postData({
+                pasien_diagnosa_id: props?.pasien_diagnosa_id
+            }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
+                if (res.respon && Array.isArray(res.data)) {
+                    let result = "";
+                    res?.data?.map(item => {
+                        const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
+                        const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
+                        result += `<tr>
+                                <td>${item?.diagnosa_desc}</td>
+                                <td>${sufferTypeText}</td>
+                                <td>${diagCatText}</td>
+                            </tr>`
+                    })
+                    $("#tabelsRenderdiagPostoperatif").html(result)
+
+                }
+            });
+        };
 
 
 
-    const getDataTreatment1 = (data) => {
-        getDataList(
-            'admin/PatientOperationRequest/getTreatment',
-            (res) => {
-                let macam_procedure = res?.find(item => item?.tarif_id === data?.tarif_id)
-                $("#macam-prosedur-treat-name").html(macam_procedure?.tarif_name)
-                $("#nama-tindakan").html(macam_procedure?.tarif_name)
+        const getDataTreatment1 = (data) => {
+            getDataList(
+                'admin/PatientOperationRequest/getTreatment',
+                (res) => {
+                    let macam_procedure = res?.find(item => item?.tarif_id === data?.tarif_id)
+                    $("#macam-prosedur-treat-name").html(macam_procedure?.tarif_name)
+                    $("#nama-tindakan").html(macam_procedure?.tarif_name)
 
-                // res.
-            },
-            () => {
-                // console.log('Before send callback');
-            }
-        );
-    };
+                    // res.
+                },
+                () => {
+                    // console.log('Before send callback');
+                }
+            );
+        };
 
-    const getDataAsaRender1 = (props) => {
-        let htmlContent = '';
-        let htmlContentckAnamnesis = '';
-        let htmlContentckfisik = '';
+        const getDataAsaRender1 = (props) => {
+            let htmlContent = '';
+            let htmlContentckAnamnesis = '';
+            let htmlContentckfisik = '';
 
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS006' && item.parameter_id === "22") {
-                const isChecked = item?.value_id === props?.val?.asa_class ? 'checked' : '';
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS006' && item.parameter_id === "22") {
+                    const isChecked = item?.value_id === props?.val?.asa_class ? 'checked' : '';
 
-                htmlContent += `
-            <div class="col-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
-                    <label class="form-check-label" for="checkbox_${index + 1}">
-                        ${item?.value_desc}
-                    </label>
+                    htmlContent += `
+                <div class="col-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
+                        <label class="form-check-label" for="checkbox_${index + 1}">
+                            ${item?.value_desc}
+                        </label>
+                    </div>
                 </div>
-            </div>
-        `;
-            }
-        });
+            `;
+                }
+            });
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && item.parameter_id === "20") {
-                const isChecked = item?.value_id === props?.val?.auto_anamnesis ? 'checked' : '';
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && item.parameter_id === "20") {
+                    const isChecked = item?.value_id === props?.val?.auto_anamnesis ? 'checked' : '';
 
-                htmlContentckAnamnesis += `
-            <div class="col-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
-                    <label class="form-check-label" for="checkbox_${index + 1}">
-                        ${item?.value_desc}
-                    </label>
+                    htmlContentckAnamnesis += `
+                <div class="col-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
+                        <label class="form-check-label" for="checkbox_${index + 1}">
+                            ${item?.value_desc}
+                        </label>
+                    </div>
                 </div>
-            </div>
-        `;
-            }
-        });
+            `;
+                }
+            });
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS006' && item.parameter_id === "21") {
-                const isChecked = item?.value_id === props?.val?.mallampati ? 'checked' : '';
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS006' && item.parameter_id === "21") {
+                    const isChecked = item?.value_id === props?.val?.mallampati ? 'checked' : '';
 
-                htmlContentckfisik += `
-            <div class="col-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
-                    <label class="form-check-label" for="checkbox_${index + 1}">
-                        ${item?.value_desc}
-                    </label>
+                    htmlContentckfisik += `
+                <div class="col-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
+                        <label class="form-check-label" for="checkbox_${index + 1}">
+                            ${item?.value_desc}
+                        </label>
+                    </div>
                 </div>
-            </div>
-        `;
-            }
-        });
+            `;
+                }
+            });
 
 
-        $("#Pemeriksaan_fisikck-malapati").html(htmlContentckfisik);
-        $("#asa-canestesi-sedasi").html(htmlContent);
-        $("#ckAnamnesis").html(htmlContentckAnamnesis);
-    };
+            $("#Pemeriksaan_fisikck-malapati").html(htmlContentckfisik);
+            $("#asa-canestesi-sedasi").html(htmlContent);
+            $("#ckAnamnesis").html(htmlContentckAnamnesis);
+        };
 
-    const getDatateknikAnesRender1 = (props) => {
-        let htmlContent = '';
-        let htmlContentChecklist = '';
-        let htmlContentPemeriksaan_fisik = '';
-        let htmlContentmonitoring = '';
+        const getDatateknikAnesRender1 = (props) => {
+            let htmlContent = '';
+            let htmlContentChecklist = '';
+            let htmlContentPemeriksaan_fisik = '';
+            let htmlContentmonitoring = '';
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS006' && parseInt(item.parameter_id) >= 26 && parseInt(item
-                    .parameter_id) <=
-                32) {
-                htmlContent += `
-            <div class="col-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                    <label class="form-check-label" for="checkbox_${index + 1}">
-                        ${item?.parameter_desc}
-                    </label>
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS006' && parseInt(item.parameter_id) >= 26 && parseInt(item
+                        .parameter_id) <=
+                    32) {
+                    htmlContent += `
+                <div class="col-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                        <label class="form-check-label" for="checkbox_${index + 1}">
+                            ${item?.parameter_desc}
+                        </label>
+                    </div>
                 </div>
-            </div>
-        `;
-            }
-        });
+            `;
+                }
+            });
 
-        $("#teknik-anestesi-canestesi-sedasi").html(htmlContent);
+            $("#teknik-anestesi-canestesi-sedasi").html(htmlContent);
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 22 && parseInt(item
-                    .parameter_id) <=
-                25) {
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 22 && parseInt(item
+                        .parameter_id) <=
+                    25) {
 
 
-                htmlContentChecklist += `
-            <div class="col-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                    <label class="form-check-label" for="checkbox_${index + 1}">
-                        ${item?.parameter_desc}
-                    </label>
+                    htmlContentChecklist += `
+                <div class="col-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                        <label class="form-check-label" for="checkbox_${index + 1}">
+                            ${item?.parameter_desc}
+                        </label>
+                    </div>
                 </div>
-            </div>
-        `;
-            }
-        });
+            `;
+                }
+            });
 
-        $("#checklist_operasi-canestesi-sedasi").html(htmlContentChecklist);
+            $("#checklist_operasi-canestesi-sedasi").html(htmlContentChecklist);
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 16 && parseInt(item
-                    .parameter_id) <=
-                19) {
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 16 && parseInt(item
+                        .parameter_id) <=
+                    19) {
 
 
-                htmlContentPemeriksaan_fisik += `
-            <div class="col-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                    <label class="form-check-label" for="checkbox_${index + 1}">
-                        ${item?.parameter_desc}
-                    </label>
+                    htmlContentPemeriksaan_fisik += `
+                <div class="col-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                        <label class="form-check-label" for="checkbox_${index + 1}">
+                            ${item?.parameter_desc}
+                        </label>
+                    </div>
                 </div>
-            </div>
-        `;
-            }
-        });
+            `;
+                }
+            });
 
-        $("#Pemeriksaan_fisikck").html(htmlContentPemeriksaan_fisik);
+            $("#Pemeriksaan_fisikck").html(htmlContentPemeriksaan_fisik);
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 4 && parseInt(item
-                    .parameter_id) <=
-                11) {
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 4 && parseInt(item
+                        .parameter_id) <=
+                    11) {
 
 
-                htmlContentmonitoring += `
-            <div class="col-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                    <label class="form-check-label" for="checkbox_${index + 1}">
-                        ${item?.parameter_desc}
-                    </label>
+                    htmlContentmonitoring += `
+                <div class="col-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                        <label class="form-check-label" for="checkbox_${index + 1}">
+                            ${item?.parameter_desc}
+                        </label>
+                    </div>
                 </div>
-            </div>
-        `;
-            }
-        });
+            `;
+                }
+            });
 
-        $("#monitoring-cas").html(htmlContentmonitoring);
+            $("#monitoring-cas").html(htmlContentmonitoring);
 
 
-    };
-    </script>
+        };
+        </script>
+    </div>
 </div>
-
-
 <?php elseif ($type === 'TRIASE'): ?>
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
     <!doctype html>
     <html lang="en">
 
@@ -3341,7 +3397,7 @@
 
 </div>
 <?php elseif ($type === 'PNJG'): ?>
-<div class="page-break">
+<div class="page-break portrait">
 
     <!doctype html>
     <html lang="en">
@@ -3370,8 +3426,8 @@
                         <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>
@@ -3726,7 +3782,7 @@
 
 </div>
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
     <!doctype html>
     <html lang="en">
 
@@ -3752,8 +3808,8 @@
                         <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>
@@ -3947,14 +4003,14 @@
     </html>
 </div>
 <?php else: ?>
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-3">
             <div class="row">
                 <div class="col-6">
                     <div>
-                        <img src="<?= base_url() ?>bpjs.jpeg" alt="BPJS KESEHATAN" style="width: 230px;">
+                        <img src="<?= base_url() ?>assets/img/logo-bpjs.jpg" alt="BPJS KESEHATAN" style="width: 260px;">
                     </div>
                     <form action="" method="">
                         <div class="form-group row mt-2 align-items-center">
@@ -4263,14 +4319,14 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-3">
             <div class="row">
                 <div class="col-6">
                     <div>
-                        <img src="<?= base_url() ?>bpjs.jpeg" alt="BPJS KESEHATAN" style="width: 230px;">
+                        <img src="<?= base_url() ?>assets/img/logo-bpjs.jpg" alt="BPJS KESEHATAN" style="width: 260px;">
                     </div>
                     <form action="" method="">
                         <div class="form-group row mt-2 align-items-center">
@@ -4368,7 +4424,7 @@
 
 </div>
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
     <!doctype html>
     <html lang="en">
 
@@ -4440,7 +4496,7 @@
 
 <!-- ========================================================== -->
 
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-5">
@@ -4805,7 +4861,7 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
 
     <body>
         <div class="container-fluid mt-5">
@@ -5064,7 +5120,7 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break landscape">
+<div class=" landscape">
 
     <body>
         <div class="row align-items-center mb-3">
@@ -5154,21 +5210,26 @@
             <div class="col-4">
                 <h5 class="text-center">KRITERIA KELUAR KAMAR PULIH</h5>
                 <table class="table table-bordered">
-                    <?php foreach (@$anestesi['steward_score'] as $key => $steward) : ?>
+                    <?php foreach ($anestesi['steward_score'] as $key => $steward) : ?>
                     <tr>
                         <th colspan="2" class="text-center">steward Score</th>
                     </tr>
+                    <?php $total_steward = 0; ?>
                     <tr class="text-center">
                         <th>Kriteria</th>
                         <th width="1%">Score</th>
                     </tr>
-                    <?php foreach (@$steward as $strd) : ?>
+                    <?php foreach ($steward as $strd) : ?>
                     <tr>
                         <td><?= $strd['value_desc']; ?></td>
                         <td class="text-center"><?= $strd['value_score']; ?></td>
                     </tr>
+                    <?php $total_steward += $strd['value_score']; ?>
                     <?php endforeach; ?>
-
+                    <tr class="bg-secondary text-white">
+                        <td><?= $total_steward >= 5 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah'; ?></td>
+                        <td class="text-center"><?= $total_steward; ?></td>
+                    </tr>
                     <?php endforeach; ?>
                 </table>
                 <table class="table table-bordered">
@@ -5176,6 +5237,7 @@
                     <tr>
                         <th colspan="2" class="text-center">Aldrete Score</th>
                     </tr>
+                    <?php $total_aldrete = 0; ?>
                     <tr class="text-center">
                         <th>Kriteria</th>
                         <th width="1%">Score</th>
@@ -5185,8 +5247,12 @@
                         <td><?= $aldr['value_desc']; ?></td>
                         <td class="text-center"><?= $aldr['value_score']; ?></td>
                     </tr>
+                    <?php $total_aldrete += $aldr['value_score']; ?>
                     <?php endforeach; ?>
-
+                    <tr class="bg-secondary text-white">
+                        <td><?= $total_aldrete >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah'; ?></td>
+                        <td class="text-center"><?= $total_aldrete; ?></td>
+                    </tr>
                     <?php endforeach; ?>
                 </table>
                 <?php if (!empty($anestesi['bromage_score'])) : ?>
@@ -5210,7 +5276,7 @@
         </div>
     </body>
 </div>
-<div class="page-break landscape">
+<div class=" landscape">
 
     <body>
         <div class="d-flex gap-2">
@@ -5501,7 +5567,7 @@
         </div>
     </body>
 </div>
-<div class="page-break landscape">
+<div class=" landscape">
 
     <body>
 
@@ -5838,696 +5904,698 @@
         </div>
     </body>
 
-</div>
-
-<div class="">
-    <script>
-    var qrcode1 = new QRCode(document.getElementById("qrcode-anestesi"), {
-        text: `<?= $visit['fullname']; ?>`,
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    var qrcode = new QRCode(document.getElementById("qrcode-anestesi1"), {
-        text: `<?= $visit['diantar_oleh']; ?>`,
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    </script>
-
-    <script type="text/javascript">
-    $(document).ready(function() {
-        let val = <?= json_encode($anestesi['val']); ?>;
-        let aParamVal = <?= json_encode($anestesi['a_paramVal']); ?>;
-        let aParam = <?= json_encode($anestesi['a_param']); ?>;
-        getRequestVtRangeAnesthesia({
-            vactination_id: <?= json_encode(@$val['document_id']); ?>,
-            filters: ["13", "all", "11"],
-            body_requestCharts: ["myChartMonitoringDurante", "myChartMonitoringRecoveryRoom", null],
-            body_requestTables: ["bodyDatamyChartMonitoringDurante",
-                "bodyDatamyChartMonitoringRecoveryRoom",
-                "bodyDataCAnestesiandsedasi"
-            ]
+    <div class="">
+        <script>
+        var qrcode1 = new QRCode(document.getElementById("qrcode-anestesi"), {
+            text: `<?= $visit['fullname']; ?>`,
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
         });
-
-        renderAlldata({
-            aParamVal: aParamVal,
-            val: val,
-            aParam: aParam
-        })
-
-        getDataTreatment(val)
-    })
-
-
-
-    const ChartMonitoringDurante = (props) => {
-        let rawData = props?.data || [];
-        let dataRendersTables = '';
-
-        let groupedData = {};
-
-        rawData?.forEach(item => {
-            let dateTime = item?.examination_date ? moment(item?.examination_date).format(
-                'DD MMM YYYY HH:mm') : null;
-            if (dateTime && !groupedData[dateTime]) {
-                groupedData[dateTime] = {
-                    nadi: [],
-                    temperature: [],
-                    saturasi: [],
-                    tension_upper: [],
-                    tension_below: []
-                };
-            }
-            if (dateTime) {
-                groupedData[dateTime].nadi.push(parseInt(item?.nadi ?? 0));
-                groupedData[dateTime].temperature.push(parseInt(item?.temperature ?? 0));
-                groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 10));
-                groupedData[dateTime].tension_upper.push(parseInt(item?.tension_upper ?? 0));
-                groupedData[dateTime].tension_below.push(parseInt(item?.tension_below ?? 0));
-            }
+        var qrcode = new QRCode(document.getElementById("qrcode-anestesi1"), {
+            text: `<?= $visit['diantar_oleh']; ?>`,
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
         });
+        </script>
 
-
-        let allDates = Object.keys(groupedData);
-        let dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format(
-            'DD MMM YYYY'))));
-        let times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
-
-        let labels = dates.flatMap(date => times.filter((_, index) => allDates[index].startsWith(date)));
-
-
-        if (props?.body_requestChart) {
-            let datasets = [{
-                    label: 'Nadi',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (groupedData[
-                            key]?.nadi.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(235, 125, 52, 0.2)',
-                    borderColor: '#eb7d34',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yNadi'
-                },
-                {
-                    label: 'Suhu',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.temperature.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.temperature.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(52, 101, 235, 0.2)',
-                    borderColor: '#3465eb',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yTemperature'
-                },
-                {
-                    label: 'SPO2',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.saturasi.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.saturasi.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(18, 41, 105, 0.2)',
-                    borderColor: '#122969',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'ySaturasi'
-                },
-                {
-                    label: 'Sistole',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.tension_upper.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.tension_upper.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(61, 235, 52, 0.2)',
-                    borderColor: '#3deb34',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yTension'
-                },
-                {
-                    label: 'Diastole',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.tension_below.reduce((a, b) => a + b, 0) / (
-                            groupedData[key]?.tension_below.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(61, 235, 52, 0.2)',
-                    borderColor: '#3deb34',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yTension'
-                },
-                {
-                    label: 'Respirasi',
-                    data: labels.map(dateTime => {
-                        let key = allDates.find(dt => dt.includes(dateTime));
-                        return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (groupedData[
-                            key]?.nadi.length || 1) : null;
-                    }),
-                    backgroundColor: 'rgba(230, 242, 5, 0.2)',
-                    borderColor: '#e6f205',
-                    fill: true,
-                    tension: 0.2,
-                    yAxisID: 'yRespirasi'
-                }
-            ];
-
-            const ctxChart = document?.getElementById(`${props?.body_requestChart}`)?.getContext('2d');
-            new Chart(ctxChart, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    plugins: {
-                        datalabels: false
-                    },
-                    scales: {
-                        yNadi: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Nadi'
-                            }
-                        },
-                        yTemperature: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Suhu'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        ySaturasi: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'SPO2'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        yTension: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Tekanan Darah'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-                        yRespirasi: {
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Respirasi'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        }
-                    },
-                    layout: {
-                        padding: {
-                            left: 10,
-                            right: 10,
-                            top: 10,
-                            bottom: 10
-                        }
-                    }
-                }
+        <script type="text/javascript">
+        $(document).ready(function() {
+            let val = <?= json_encode($anestesi['val']); ?>;
+            let aParamVal = <?= json_encode($anestesi['a_paramVal']); ?>;
+            let aParam = <?= json_encode($anestesi['a_param']); ?>;
+            getRequestVtRangeAnesthesia({
+                vactination_id: <?= json_encode(@$val['document_id']); ?>,
+                filters: ["13", "all", "11"],
+                body_requestCharts: ["myChartMonitoringDurante", "myChartMonitoringRecoveryRoom", null],
+                body_requestTables: ["bodyDatamyChartMonitoringDurante",
+                    "bodyDatamyChartMonitoringRecoveryRoom",
+                    "bodyDataCAnestesiandsedasi"
+                ]
             });
-        }
 
-
-        const tableBody = $(`#${props?.body_requestTabels}`);
-        if (tableBody.length) {
-            dataRendersTables = rawData.map(item => `
-                                        <tr>
-                                            <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
-                                            <td>${item?.tension_upper ?? 0}</td>
-                                            <td>${item?.tension_below?? 0}</td>
-                                            <td>${item?.nadi?? 0}</td>
-                                            <td>${item?.temperature?? 0}</td>
-                                            <td>${item?.nafas?? 0}</td>
-                                            <td>${item?.saturasi?? 0}</td>
-                                            <td>${item?.pemeriksaan ?? "-"}</td>
-                                            <td>${item?.petugas ?? "-"}</td>
-                                        </tr>
-                                    `).join('');
-
-            tableBody.html(dataRendersTables);
-        } else {
-            console.log("Table body element not found.");
-        }
-    };
-
-    const getRequestVtRangeAnesthesia = (props) => {
-        let {
-            vactination_id,
-            filters,
-            body_requestCharts,
-            body_requestTables
-        } = props;
-
-
-
-
-        filters.forEach((filter, index) => {
-            postData({
-                document_id: vactination_id ?? "",
-                filter: filter ?? ""
-            }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (res) => {
-
-                if (res.respon && res.data.examination_info.length > 0) {
-                    ChartMonitoringDurante({
-                        data: res.data.examination_info,
-                        body_requestChart: body_requestCharts[
-                            index],
-                        body_requestTabels: body_requestTables[index]
-                    });
-                } else {
-                    $(`#${body_requestTables[index]}`).closest('.box.box-info').hide();
-                    if (body_requestCharts[index]) {
-                        $(`#${body_requestCharts[index]}`).closest('.box.box-info').hide();
-                    }
-                }
-            });
-        });
-    };
-
-
-    const getDataDiagnosaPreoperatif = (props) => {
-        let result = ''
-        const sufferTypes = {
-            "0": "BELUM DIIDENTIFIKASI",
-            "1": "KASUS BARU",
-            "2": "KASUS LAMA",
-            "11": "KASUS BEDAH",
-            "12": "KASUS NON BEDAH",
-            "13": "KASUS KEBIDANAN",
-            "14": "KASUS PSKIATRIK",
-            "15": "KASUS ANAK"
-        };
-        const diagCategories = {
-            "1": "DIAGNOSA UTAMA",
-            "2": "DIAGNOSA PENUNJANG /SEKUNDER",
-            "3": "DIAGNOSA MASUK",
-            "4": "DIAGNOSA HARIAN/ KERJA",
-            "5": "DIAGNOSA KECELAKAAN",
-            "6": "DIAGNOSA KEMATIAN",
-            "7": "DIAGNOSA BANDING",
-            "8": "DIAGNOSA UTAMA EKLAIM",
-            "9": "DIAGNOSA SEKUNDER EKLAIM",
-            "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
-            "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
-            "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
-            "13": "DIAGNOSA PRA OPERASI",
-            "14": "DIAGNOSA PASCA OPERASI",
-            "15": "DIAGNOSA OPERASI"
-        };
-        if (props?.data) {
-            props?.data?.diagnosa?.map(item => {
-                const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
-                const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
-                result += `<tr>
-                                <td>${item?.diagnosa_name}</td>
-                                <td>${sufferTypeText}</td>
-                                <td>${diagCatText}</td>
-                            </tr>`
+            renderAlldata({
+                aParamVal: aParamVal,
+                val: val,
+                aParam: aParam
             })
 
-            $("#tabelsRenderdiagPreoperatif").html(result)
-
-        }
-
-    }
-
-    const renderDataTeamInPembedahanAnesthesiLengkap = (result) => {
-        const labels = result?.labels || [];
-        const data = result?.data || [];
-
-        const groupedData = data.reduce((acc, item) => {
-            const label = labels.find(lbl => lbl.task_id === item?.task_id);
-            const taskName = label ? label.task : item?.task_id;
-
-            const category = taskName.split(' ')[0];
-
-            if (!acc[category]) {
-                acc[category] = [];
-            }
-            acc[category].push({
-                ...item,
-                taskName
-            });
-            return acc;
-        }, {});
-
-        const categories = Object.entries(groupedData);
-        const half = Math.ceil(categories.length / 2);
-        const leftCategories = categories.slice(0, half);
-        const rightCategories = categories.slice(half);
-
-        let hasil = `
-                        <div class="d-flex justify-content-between">
-                            <div class="flex-fill me-2">
-                                ${leftCategories.map(([category, tasks]) => `
-                                    <div class="form-group mb-3">
-                                        <h5 class="fw-bold">${category}</h5>
-                                        ${tasks.map(item => `
-                                            <div class="d-flex align-items-center mb-2 ms-4">
-                                                <label class="fw-bold me-3 w-25">${item.taskName}</label>
-                                                <span class="w-75">${item?.doctor}</span>
-                                            </div>
-                                        `).join('')}
-                                        <hr />
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div class="flex-fill ms-2">
-                                ${rightCategories.map(([category, tasks]) => `
-                                    <div class="form-group mb-3">
-                                        <h5 class="fw-bold">${category}</h5>
-                                        ${tasks.map(item => `
-                                            <div class="d-flex align-items-center mb-2 ms-4">
-                                                <label class="fw-bold me-3 w-25">${item.taskName}</label>
-                                                <span class="w-75">${item?.doctor}</span>
-                                            </div>
-                                        `).join('')}
-                                        <hr />
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-
-        $(`#bodyTimOperasiAnesthesiLengkap-cetak`).html(hasil);
-    }
-
-    const templateOprasiPembedahanAnesthesiLengkap = (props) => {
-        let data = props?.data
-        renderDataTeamInPembedahanAnesthesiLengkap({
-            data: data?.operation_team,
-            labels: data?.operation_task
-        });
-
-    }
-
-
-    const renderAlldata = (props) => {
-        quillInstances = {};
-        dataDrain = [];
-        globalBodyId = '';
-
-        postData({
-            id: <?= json_encode(@$val['document_id']); ?>,
-            visit_id: <?= json_encode(@$val['visit_id']); ?>
-        }, 'admin/PatientOperationRequest/getAllArcodions', (res) => {
-
-            if (res.respon) {
-                let result = res?.data
-                getDataDiagnosaPreoperatif({
-                    data: {
-                        diagnosa: result?.diagnosas
-                    }
-                })
-
-                getDataDiagnosaPostoperatif({
-                    pasien_diagnosa_id: result?.assessment_anesthesia?.body_id,
-                    vactination_id: result?.assessment_anesthesia?.document_id
-                });
-
-                templateOprasiPembedahanAnesthesiLengkap({
-                    data: {
-                        operation_team: result?.operation_team,
-                        operation_task: result?.operation_task
-
-                    }
-                })
-
-                getDataAsaRender({
-                    aParamVal: props?.aParamVal,
-                    val: props?.val
-                })
-
-                getDatateknikAnesRender({
-                    aParamVal: props?.aParam,
-                    val: props?.val
-                })
-
-
-            }
+            getDataTreatment(val)
         })
-    }
 
 
-    const getDataDiagnosaPostoperatif = (props) => {
-        const sufferTypes = {
-            "0": "BELUM DIIDENTIFIKASI",
-            "1": "KASUS BARU",
-            "2": "KASUS LAMA",
-            "11": "KASUS BEDAH",
-            "12": "KASUS NON BEDAH",
-            "13": "KASUS KEBIDANAN",
-            "14": "KASUS PSKIATRIK",
-            "15": "KASUS ANAK"
+
+        const ChartMonitoringDurante = (props) => {
+            let rawData = props?.data || [];
+            let dataRendersTables = '';
+
+            let groupedData = {};
+
+            rawData?.forEach(item => {
+                let dateTime = item?.examination_date ? moment(item?.examination_date).format(
+                    'DD MMM YYYY HH:mm') : null;
+                if (dateTime && !groupedData[dateTime]) {
+                    groupedData[dateTime] = {
+                        nadi: [],
+                        temperature: [],
+                        saturasi: [],
+                        tension_upper: [],
+                        tension_below: []
+                    };
+                }
+                if (dateTime) {
+                    groupedData[dateTime].nadi.push(parseInt(item?.nadi ?? 0));
+                    groupedData[dateTime].temperature.push(parseInt(item?.temperature ?? 0));
+                    groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 10));
+                    groupedData[dateTime].tension_upper.push(parseInt(item?.tension_upper ?? 0));
+                    groupedData[dateTime].tension_below.push(parseInt(item?.tension_below ?? 0));
+                }
+            });
+
+
+            let allDates = Object.keys(groupedData);
+            let dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format(
+                'DD MMM YYYY'))));
+            let times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
+
+            let labels = dates.flatMap(date => times.filter((_, index) => allDates[index].startsWith(date)));
+
+
+            if (props?.body_requestChart) {
+                let datasets = [{
+                        label: 'Nadi',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
+                                groupedData[
+                                    key]?.nadi.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(235, 125, 52, 0.2)',
+                        borderColor: '#eb7d34',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yNadi'
+                    },
+                    {
+                        label: 'Suhu',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.temperature.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.temperature.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(52, 101, 235, 0.2)',
+                        borderColor: '#3465eb',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yTemperature'
+                    },
+                    {
+                        label: 'SPO2',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.saturasi.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.saturasi.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(18, 41, 105, 0.2)',
+                        borderColor: '#122969',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'ySaturasi'
+                    },
+                    {
+                        label: 'Sistole',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.tension_upper.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.tension_upper.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                        borderColor: '#3deb34',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yTension'
+                    },
+                    {
+                        label: 'Diastole',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.tension_below.reduce((a, b) => a + b, 0) / (
+                                groupedData[key]?.tension_below.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                        borderColor: '#3deb34',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yTension'
+                    },
+                    {
+                        label: 'Respirasi',
+                        data: labels.map(dateTime => {
+                            let key = allDates.find(dt => dt.includes(dateTime));
+                            return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
+                                groupedData[
+                                    key]?.nadi.length || 1) : null;
+                        }),
+                        backgroundColor: 'rgba(230, 242, 5, 0.2)',
+                        borderColor: '#e6f205',
+                        fill: true,
+                        tension: 0.2,
+                        yAxisID: 'yRespirasi'
+                    }
+                ];
+
+                const ctxChart = document?.getElementById(`${props?.body_requestChart}`)?.getContext('2d');
+                new Chart(ctxChart, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        plugins: {
+                            datalabels: false
+                        },
+                        scales: {
+                            yNadi: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Nadi'
+                                }
+                            },
+                            yTemperature: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Suhu'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            ySaturasi: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'SPO2'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            yTension: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Tekanan Darah'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            yRespirasi: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Respirasi'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 10,
+                                top: 10,
+                                bottom: 10
+                            }
+                        }
+                    }
+                });
+            }
+
+
+            const tableBody = $(`#${props?.body_requestTabels}`);
+            if (tableBody.length) {
+                dataRendersTables = rawData.map(item => `
+                                            <tr>
+                                                <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
+                                                <td>${item?.tension_upper ?? 0}</td>
+                                                <td>${item?.tension_below?? 0}</td>
+                                                <td>${item?.nadi?? 0}</td>
+                                                <td>${item?.temperature?? 0}</td>
+                                                <td>${item?.nafas?? 0}</td>
+                                                <td>${item?.saturasi?? 0}</td>
+                                                <td>${item?.pemeriksaan ?? "-"}</td>
+                                                <td>${item?.petugas ?? "-"}</td>
+                                            </tr>
+                                        `).join('');
+
+                tableBody.html(dataRendersTables);
+            } else {
+                console.log("Table body element not found.");
+            }
         };
-        const diagCategories = {
-            "1": "DIAGNOSA UTAMA",
-            "2": "DIAGNOSA PENUNJANG /SEKUNDER",
-            "3": "DIAGNOSA MASUK",
-            "4": "DIAGNOSA HARIAN/ KERJA",
-            "5": "DIAGNOSA KECELAKAAN",
-            "6": "DIAGNOSA KEMATIAN",
-            "7": "DIAGNOSA BANDING",
-            "8": "DIAGNOSA UTAMA EKLAIM",
-            "9": "DIAGNOSA SEKUNDER EKLAIM",
-            "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
-            "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
-            "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
-            "13": "DIAGNOSA PRA OPERASI",
-            "14": "DIAGNOSA PASCA OPERASI",
-            "15": "DIAGNOSA OPERASI"
+
+        const getRequestVtRangeAnesthesia = (props) => {
+            let {
+                vactination_id,
+                filters,
+                body_requestCharts,
+                body_requestTables
+            } = props;
+
+
+
+
+            filters.forEach((filter, index) => {
+                postData({
+                    document_id: vactination_id ?? "",
+                    filter: filter ?? ""
+                }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (res) => {
+
+                    if (res.respon && res.data.examination_info.length > 0) {
+                        ChartMonitoringDurante({
+                            data: res.data.examination_info,
+                            body_requestChart: body_requestCharts[
+                                index],
+                            body_requestTabels: body_requestTables[index]
+                        });
+                    } else {
+                        $(`#${body_requestTables[index]}`).closest('.box.box-info').hide();
+                        if (body_requestCharts[index]) {
+                            $(`#${body_requestCharts[index]}`).closest('.box.box-info').hide();
+                        }
+                    }
+                });
+            });
         };
-        postData({
-            pasien_diagnosa_id: props?.pasien_diagnosa_id
-        }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
-            if (res.respon && Array.isArray(res.data)) {
-                let result = "";
-                res?.data?.map(item => {
+
+
+        const getDataDiagnosaPreoperatif = (props) => {
+            let result = ''
+            const sufferTypes = {
+                "0": "BELUM DIIDENTIFIKASI",
+                "1": "KASUS BARU",
+                "2": "KASUS LAMA",
+                "11": "KASUS BEDAH",
+                "12": "KASUS NON BEDAH",
+                "13": "KASUS KEBIDANAN",
+                "14": "KASUS PSKIATRIK",
+                "15": "KASUS ANAK"
+            };
+            const diagCategories = {
+                "1": "DIAGNOSA UTAMA",
+                "2": "DIAGNOSA PENUNJANG /SEKUNDER",
+                "3": "DIAGNOSA MASUK",
+                "4": "DIAGNOSA HARIAN/ KERJA",
+                "5": "DIAGNOSA KECELAKAAN",
+                "6": "DIAGNOSA KEMATIAN",
+                "7": "DIAGNOSA BANDING",
+                "8": "DIAGNOSA UTAMA EKLAIM",
+                "9": "DIAGNOSA SEKUNDER EKLAIM",
+                "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
+                "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
+                "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
+                "13": "DIAGNOSA PRA OPERASI",
+                "14": "DIAGNOSA PASCA OPERASI",
+                "15": "DIAGNOSA OPERASI"
+            };
+            if (props?.data) {
+                props?.data?.diagnosa?.map(item => {
                     const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
                     const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
                     result += `<tr>
-                                <td>${item?.diagnosa_name}</td>
+                                <td>${item?.diagnosa_desc}</td>
                                 <td>${sufferTypeText}</td>
                                 <td>${diagCatText}</td>
                             </tr>`
                 })
-                $("#tabelsRenderdiagPostoperatif").html(result)
+
+                $("#tabelsRenderdiagPreoperatif").html(result)
 
             }
-        });
-    };
+
+        }
+
+        const renderDataTeamInPembedahanAnesthesiLengkap = (result) => {
+            const labels = result?.labels || [];
+            const data = result?.data || [];
+
+            const groupedData = data.reduce((acc, item) => {
+                const label = labels.find(lbl => lbl.task_id === item?.task_id);
+                const taskName = label ? label.task : item?.task_id;
+
+                const category = taskName.split(' ')[0];
+
+                if (!acc[category]) {
+                    acc[category] = [];
+                }
+                acc[category].push({
+                    ...item,
+                    taskName
+                });
+                return acc;
+            }, {});
+
+            const categories = Object.entries(groupedData);
+            const half = Math.ceil(categories.length / 2);
+            const leftCategories = categories.slice(0, half);
+            const rightCategories = categories.slice(half);
+
+            let hasil = `
+                            <div class="d-flex justify-content-between">
+                                <div class="flex-fill me-2">
+                                    ${leftCategories.map(([category, tasks]) => `
+                                        <div class="form-group mb-3">
+                                            <h5 class="fw-bold">${category}</h5>
+                                            ${tasks.map(item => `
+                                                <div class="d-flex align-items-center mb-2 ms-4">
+                                                    <label class="fw-bold me-3 w-25">${item.taskName}</label>
+                                                    <span class="w-75">${item?.doctor}</span>
+                                                </div>
+                                            `).join('')}
+                                            <hr />
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="flex-fill ms-2">
+                                    ${rightCategories.map(([category, tasks]) => `
+                                        <div class="form-group mb-3">
+                                            <h5 class="fw-bold">${category}</h5>
+                                            ${tasks.map(item => `
+                                                <div class="d-flex align-items-center mb-2 ms-4">
+                                                    <label class="fw-bold me-3 w-25">${item.taskName}</label>
+                                                    <span class="w-75">${item?.doctor}</span>
+                                                </div>
+                                            `).join('')}
+                                            <hr />
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+
+            $(`#bodyTimOperasiAnesthesiLengkap-cetak`).html(hasil);
+        }
+
+        const templateOprasiPembedahanAnesthesiLengkap = (props) => {
+            let data = props?.data
+            renderDataTeamInPembedahanAnesthesiLengkap({
+                data: data?.operation_team,
+                labels: data?.operation_task
+            });
+
+        }
+
+
+        const renderAlldata = (props) => {
+            quillInstances = {};
+            dataDrain = [];
+            globalBodyId = '';
+
+            postData({
+                id: props?.val?.document_id,
+                visit_id: props?.val?.visit_id
+            }, 'admin/PatientOperationRequest/getAllArcodions', (res) => {
+
+                if (res.respon) {
+                    let result = res?.data
+                    getDataDiagnosaPreoperatif({
+                        data: {
+                            diagnosa: result?.diagnosas
+                        }
+                    })
+
+                    getDataDiagnosaPostoperatif({
+                        pasien_diagnosa_id: result?.assessment_anesthesia?.body_id,
+                        vactination_id: result?.assessment_anesthesia?.document_id
+                    });
+
+                    templateOprasiPembedahanAnesthesiLengkap({
+                        data: {
+                            operation_team: result?.operation_team,
+                            operation_task: result?.operation_task
+
+                        }
+                    })
+
+                    getDataAsaRender({
+                        aParamVal: props?.aParamVal,
+                        val: props?.val
+                    })
+
+                    getDatateknikAnesRender({
+                        aParamVal: props?.aParam,
+                        val: props?.val
+                    })
+
+
+                }
+            })
+        }
+
+
+        const getDataDiagnosaPostoperatif = (props) => {
+            const sufferTypes = {
+                "0": "BELUM DIIDENTIFIKASI",
+                "1": "KASUS BARU",
+                "2": "KASUS LAMA",
+                "11": "KASUS BEDAH",
+                "12": "KASUS NON BEDAH",
+                "13": "KASUS KEBIDANAN",
+                "14": "KASUS PSKIATRIK",
+                "15": "KASUS ANAK"
+            };
+            const diagCategories = {
+                "1": "DIAGNOSA UTAMA",
+                "2": "DIAGNOSA PENUNJANG /SEKUNDER",
+                "3": "DIAGNOSA MASUK",
+                "4": "DIAGNOSA HARIAN/ KERJA",
+                "5": "DIAGNOSA KECELAKAAN",
+                "6": "DIAGNOSA KEMATIAN",
+                "7": "DIAGNOSA BANDING",
+                "8": "DIAGNOSA UTAMA EKLAIM",
+                "9": "DIAGNOSA SEKUNDER EKLAIM",
+                "10": "DIAGNOSA AKTUAL (KEPERAWATAN)",
+                "11": "DIAGNOSA RESIKO(KEPERAWATAN)",
+                "12": "DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)",
+                "13": "DIAGNOSA PRA OPERASI",
+                "14": "DIAGNOSA PASCA OPERASI",
+                "15": "DIAGNOSA OPERASI"
+            };
+            postData({
+                pasien_diagnosa_id: props?.pasien_diagnosa_id
+            }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
+                if (res.respon && Array.isArray(res.data)) {
+                    let result = "";
+                    res?.data?.map(item => {
+                        const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
+                        const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
+                        result += `<tr>
+                                <td>${item?.diagnosa_desc}</td>
+                                <td>${sufferTypeText}</td>
+                                <td>${diagCatText}</td>
+                            </tr>`
+                    })
+                    $("#tabelsRenderdiagPostoperatif").html(result)
+
+                }
+            });
+        };
 
 
 
-    const getDataTreatment = (data) => {
-        getDataList(
-            'admin/PatientOperationRequest/getTreatment',
-            (res) => {
-                let macam_procedure = res?.find(item => item?.tarif_id === data?.tarif_id)
-                $("#macam-prosedur-treat-name").html(macam_procedure?.tarif_name)
-                $("#nama-tindakan").html(macam_procedure?.tarif_name)
+        const getDataTreatment = (data) => {
+            getDataList(
+                'admin/PatientOperationRequest/getTreatment',
+                (res) => {
+                    let macam_procedure = res?.find(item => item?.tarif_id === data?.tarif_id)
+                    $("#macam-prosedur-treat-name").html(macam_procedure?.tarif_name)
+                    $("#nama-tindakan").html(macam_procedure?.tarif_name)
 
-                // res.
-            },
-            () => {
-                // console.log('Before send callback');
-            }
-        );
-    };
+                    // res.
+                },
+                () => {
+                    // console.log('Before send callback');
+                }
+            );
+        };
 
-    const getDataAsaRender = (props) => {
-        let htmlContent = '';
-        let htmlContentckAnamnesis = '';
-        let htmlContentckfisik = '';
+        const getDataAsaRender = (props) => {
+            let htmlContent = '';
+            let htmlContentckAnamnesis = '';
+            let htmlContentckfisik = '';
 
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS006' && item.parameter_id === "22") {
-                const isChecked = item?.value_id === props?.val?.asa_class ? 'checked' : '';
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS006' && item.parameter_id === "22") {
+                    const isChecked = item?.value_id === props?.val?.asa_class ? 'checked' : '';
 
-                htmlContent += `
-                <div class="col-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
-                        <label class="form-check-label" for="checkbox_${index + 1}">
-                            ${item?.value_desc}
-                        </label>
+                    htmlContent += `
+                    <div class="col-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
+                            <label class="form-check-label" for="checkbox_${index + 1}">
+                                ${item?.value_desc}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-            }
-        });
+                `;
+                }
+            });
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && item.parameter_id === "20") {
-                const isChecked = item?.value_id === props?.val?.auto_anamnesis ? 'checked' : '';
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && item.parameter_id === "20") {
+                    const isChecked = item?.value_id === props?.val?.auto_anamnesis ? 'checked' : '';
 
-                htmlContentckAnamnesis += `
-                <div class="col-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
-                        <label class="form-check-label" for="checkbox_${index + 1}">
-                            ${item?.value_desc}
-                        </label>
+                    htmlContentckAnamnesis += `
+                    <div class="col-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
+                            <label class="form-check-label" for="checkbox_${index + 1}">
+                                ${item?.value_desc}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-            }
-        });
+                `;
+                }
+            });
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS006' && item.parameter_id === "21") {
-                const isChecked = item?.value_id === props?.val?.mallampati ? 'checked' : '';
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS006' && item.parameter_id === "21") {
+                    const isChecked = item?.value_id === props?.val?.mallampati ? 'checked' : '';
 
-                htmlContentckfisik += `
-                <div class="col-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
-                        <label class="form-check-label" for="checkbox_${index + 1}">
-                            ${item?.value_desc}
-                        </label>
+                    htmlContentckfisik += `
+                    <div class="col-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${isChecked} onclick="return false;">
+                            <label class="form-check-label" for="checkbox_${index + 1}">
+                                ${item?.value_desc}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-            }
-        });
+                `;
+                }
+            });
 
 
-        $("#Pemeriksaan_fisikck-malapati").html(htmlContentckfisik);
-        $("#asa-canestesi-sedasi").html(htmlContent);
-        $("#ckAnamnesis").html(htmlContentckAnamnesis);
-    };
+            $("#Pemeriksaan_fisikck-malapati").html(htmlContentckfisik);
+            $("#asa-canestesi-sedasi").html(htmlContent);
+            $("#ckAnamnesis").html(htmlContentckAnamnesis);
+        };
 
-    const getDatateknikAnesRender = (props) => {
-        let htmlContent = '';
-        let htmlContentChecklist = '';
-        let htmlContentPemeriksaan_fisik = '';
-        let htmlContentmonitoring = '';
+        const getDatateknikAnesRender = (props) => {
+            let htmlContent = '';
+            let htmlContentChecklist = '';
+            let htmlContentPemeriksaan_fisik = '';
+            let htmlContentmonitoring = '';
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS006' && parseInt(item.parameter_id) >= 26 && parseInt(item
-                    .parameter_id) <=
-                32) {
-                htmlContent += `
-                <div class="col-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                        <label class="form-check-label" for="checkbox_${index + 1}">
-                            ${item?.parameter_desc}
-                        </label>
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS006' && parseInt(item.parameter_id) >= 26 && parseInt(item
+                        .parameter_id) <=
+                    32) {
+                    htmlContent += `
+                    <div class="col-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                            <label class="form-check-label" for="checkbox_${index + 1}">
+                                ${item?.parameter_desc}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-            }
-        });
+                `;
+                }
+            });
 
-        $("#teknik-anestesi-canestesi-sedasi").html(htmlContent);
+            $("#teknik-anestesi-canestesi-sedasi").html(htmlContent);
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 22 && parseInt(item
-                    .parameter_id) <=
-                25) {
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 22 && parseInt(item
+                        .parameter_id) <=
+                    25) {
 
 
-                htmlContentChecklist += `
-                <div class="col-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                        <label class="form-check-label" for="checkbox_${index + 1}">
-                            ${item?.parameter_desc}
-                        </label>
+                    htmlContentChecklist += `
+                    <div class="col-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                            <label class="form-check-label" for="checkbox_${index + 1}">
+                                ${item?.parameter_desc}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-            }
-        });
+                `;
+                }
+            });
 
-        $("#checklist_operasi-canestesi-sedasi").html(htmlContentChecklist);
+            $("#checklist_operasi-canestesi-sedasi").html(htmlContentChecklist);
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 16 && parseInt(item
-                    .parameter_id) <=
-                19) {
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 16 && parseInt(item
+                        .parameter_id) <=
+                    19) {
 
 
-                htmlContentPemeriksaan_fisik += `
-                <div class="col-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                        <label class="form-check-label" for="checkbox_${index + 1}">
-                            ${item?.parameter_desc}
-                        </label>
+                    htmlContentPemeriksaan_fisik += `
+                    <div class="col-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                            <label class="form-check-label" for="checkbox_${index + 1}">
+                                ${item?.parameter_desc}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-            }
-        });
+                `;
+                }
+            });
 
-        $("#Pemeriksaan_fisikck").html(htmlContentPemeriksaan_fisik);
+            $("#Pemeriksaan_fisikck").html(htmlContentPemeriksaan_fisik);
 
-        props?.aParamVal?.forEach((item, index) => {
-            if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 4 && parseInt(item
-                    .parameter_id) <=
-                11) {
+            props?.aParamVal?.forEach((item, index) => {
+                if (item.p_type === 'OPRS011' && parseInt(item.parameter_id) >= 4 && parseInt(item
+                        .parameter_id) <=
+                    11) {
 
 
-                htmlContentmonitoring += `
-                <div class="col-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
-                        <label class="form-check-label" for="checkbox_${index + 1}">
-                            ${item?.parameter_desc}
-                        </label>
+                    htmlContentmonitoring += `
+                    <div class="col-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox_${index + 1}" ${props?.val?.[item?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''} onclick="return false;">
+                            <label class="form-check-label" for="checkbox_${index + 1}">
+                                ${item?.parameter_desc}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-            }
-        });
+                `;
+                }
+            });
 
-        $("#monitoring-cas").html(htmlContentmonitoring);
+            $("#monitoring-cas").html(htmlContentmonitoring);
 
 
-    };
-    </script>
+        };
+        </script>
+    </div>
 </div>
+
 
 
 <!-- ========================================================== -->
 
-<div class="page-break">
+<div class="page-break portrait">
     <!doctype html>
     <html lang="en">
 
@@ -6845,7 +6913,7 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
 
     <!doctype html>
     <html lang="en">
@@ -6872,41 +6940,79 @@
                         <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>
-                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
                 <div class="row">
-                    <h4 class="text-center pt-2">INVOICE</h4>
+                    <h4 class="text-center pt-2">INVOICE PASIEN</h4>
                 </div>
+                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
                 <div class="table-container-split">
                     <table>
                         <!-- kiri -->
                         <tr>
-                            <th>
-                                <div id="name_patient-inv"></div>
-                            </th>
+                            <th>Nama</th>
+                            <td colspan='3'>
+                                <span id="name_patient-inv"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>NO.RM</th>
+                            <td>
+                                <span id="no_rm-inv"></span>
+                            </td>
+                            <th>Status</th>
+                            <td>
+                                <span id="type-pay-inv"></span>
+                            </td>
                         </tr>
                         <tr>
                             <th>
-                                <div id="type-pay-inv"></div>
+                                <div>Alamat</div>
                             </th>
+                            <td colspan='3'>
+                                <span id="address-inv"></span>
+                            </td>
                         </tr>
+
                     </table>
                     <table class="text-end">
                         <!--kanan -->
                         <tr>
                             <th>
-                                <div id="total-all-pay-inv"></div>
+                                Tgl Lahir
                             </th>
+                            <td>
+                                <span id="birthday-inv"></span>
+                            </td>
                         </tr>
                         <tr>
                             <th>
-                                <div id="date-pay-inv"></div>
+                                No.Peserta
                             </th>
+                            <td>
+                                <span id="nobpjs-inv"></span>
+                            </td>
                         </tr>
+                        <tr>
+                            <th>
+                                Tanggal Masuk
+                            </th>
+                            <td>
+                                <span id="indate-inv"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Tanggal Keluar
+                            </th>
+                            <td>
+                                <span id="exitdate-inv"></span>
+                            </td>
+                        </tr>
+
                     </table>
                 </div>
 
@@ -7048,46 +7154,20 @@
 
         $("#total-all-pay-inv").html(`Rp. ${formatCurrency(grandTotal)}`);
 
-
-
-
-
-        // Optional: Function to add image to QR code (commented out)
-        // function addImageToQRCode() {
-        //     var qrElement = document.getElementById("qrcode");
-        //     var qrCanvas = qrElement.querySelector('canvas');
-        //     var img = new Image();
-        //     img.src = '<?= base_url() ?>'assets/img/logo.png;
-        //     img.onload = function() {
-        //         var canvas = document.createElement('canvas');
-        //         var ctx = canvas.getContext('2d');
-        //         canvas.width = qrCanvas.width;
-        //         canvas.height = qrCanvas.height;
-        //         ctx.drawImage(qrCanvas, 0, 0, canvas.width, canvas.height);
-        //         var imgSize = Math.min(canvas.width, canvas.height) * 0.3;
-        //         var imgX = (canvas.width - imgSize) / 2;
-        //         var imgY = (canvas.height - imgSize) / 2;
-        //         ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-        //         qrElement.innerHTML = '';
-        //         qrElement.appendChild(canvas);
-        //     };
-        // }
-        // addImageToQRCode();
     };
-
-
-
-
-
-
-
     const renderDataPatientinvorat = () => {
         <?php $dataJson = json_encode($visit); ?>
         let data = <?php echo $dataJson; ?>;
+        $("#no_rm-inv").html(data?.no_registration)
+        $("#address-inv").html(data?.contact_address)
+        $("#birthday-inv").html(data?.date_of_birth ? moment(data?.date_of_birth).format("DD-MM-YYYY") : "")
+        $("#nobpjs-inv").html(data?.pasien_id)
+        $("#indate-inv").html(data?.in_date)
+        $("#exitdate-inv").html(data?.exit_date)
 
         // render patient 
         $("#name_patient-inv").html(data?.name_of_pasien)
-        $("#type-pay-inv").html(data?.payor)
+        $("#type-pay-inv").html(data?.name_of_status_pasien)
         // $("#total-all-pay-inv").html(data?.phone_number)
         $("#date-pay-inv").html(
             moment(new Date(data?.exit_date || data?.in_date)).format("DD/MM/YYYY HH:mm")
@@ -7122,7 +7202,7 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
 
     <!doctype html>
     <html lang="en">
@@ -7151,8 +7231,8 @@
                         <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>
@@ -7509,7 +7589,7 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
     <!doctype html>
     <html lang="en">
 
@@ -7535,8 +7615,8 @@
                         <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>
@@ -7732,7 +7812,7 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 
     <?php foreach ($anotomi as $item): ?>
@@ -7818,7 +7898,7 @@
 </div>
 
 <!-- ========================================================== -->
-<div class="page-break">
+<div class="page-break portrait">
 
     <!doctype html>
     <html lang="en">
@@ -7845,8 +7925,8 @@
                         <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>

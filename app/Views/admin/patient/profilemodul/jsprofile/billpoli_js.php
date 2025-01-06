@@ -30,10 +30,12 @@
     }
 
     function addBillBillPoli(container) {
-        var nota_no = $("#notaNoPoli").val();
+        let nota_no = $("#notaNoPoli").val();
+        let sesi = '<?= $visit['session_id']; ?>';
 
         if (nota_no == '%') {
-            nota_no = get_bodyid()
+            $("#notaNoPoli").find(`option[value='${sesi}']`).remove()
+            nota_no = sesi
             $("#notaNoPoli").append($("<option>").val(nota_no).text(nota_no))
             $("#notaNoPoli").val(nota_no)
             $("#billPoliChargesBody").html("")
@@ -47,33 +49,36 @@
 
         var i = $('#billPoliChargesBody tr').length + 1;
         var key = 'billpoli' + i
-        $("#billPoliChargesBody").append($("<tr id=\"" + key + "\">")
-            .append($("<td>").html(String(i) + "."))
-            .append($("<td>").attr("id", "abillpolidisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
-            .append($("<td>").attr("id", "abillpolidisplaytreat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
-            // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
-            .append($("<td>").attr("id", "abillpolidisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
-            .append($("<td>")
-                .append('<input type="text" name="quantity[]" id="abillpoliquantity' + key + '" placeholder="" value="1" class="form-control" >')
-                .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
-            )
-            .append($("<td>").attr("id", "abillpolidisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-            .append($("<td>").attr("id", "abillpolidisplayamount_plafond" + key).html((parseFloat(tarifData.amount))))
-            .append($("<td>").attr("id", "abillpolidisplayamount_paid_plafond" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "abillpolidisplaydiscount" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "abillpolidisplaysubsidisat" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "abillpolidisplaysubsidi" + key).html(formatCurrency(0)))
-            // .append($("<td>").append('<button id="abillpolisimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'abillpoli\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="abillpolieditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'abillpoli\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'abillpoli\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
-            .append($("<td>")
-                .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
-                    '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
-                    '<button id="abillpolisimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'abillpoli\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">simpan</button>' +
-                    '<button id="abillpolieditDeleteCharge' + key + '" type="button" onclick="editBillCharge(\'abillpoli\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off"  style="display: none">Edit</button>' +
-                    '<button id="delBillBtn' + key + '" type="button" onclick="delBill(\'abillpoli\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
-                    '</div>' +
-                    '</div>')
-            )
-        )
+        $("#billPoliChargesBody").append(`
+            <tr id="${key}">
+                <td>${String(i)}.</td>
+                <td id="abillpolidisplaytreatment${key}"><b><i>${tarifData.tarif_name}</i></b><p><?= $visit['name_of_clinic']; ?></p></td>
+                <td>
+                    <select id="abillpoliemployee_id${key}" class="form-select" name="employee_id[]" style="display: none" onchange="changeFullnameDoctor('abillpoli','${key}')" readonly>
+                        ${chargesDropdownDoctor()}
+                    </select>
+                    <input id="abillpolidoctor${key}" class="form-control" type="text" value="<?= $visit['fullname']; ?>" readonly>
+                </td>
+                <td id="abillpolidisplaytreat_date${key}">${moment().format("DD/MM/YYYY HH:mm")}</td>
+                <td id="abillpolidisplaysell_price${key}">${formatCurrency(parseFloat(tarifData.amount))}<p></p></td>
+                <td>
+                    <input type="text" name="quantity[]" id="abillpoliquantity${key}" placeholder="" value="1" class="form-control">
+                    <p><?= $visit['name_of_status_pasien']; ?></p>
+                </td>
+                <td id="abillpolidisplayamount_paid${key}">${formatCurrency(parseFloat(tarifData.amount))}</td>
+                <td>
+                    <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                            <button id="abillpolisimpanBillBtn${key}" type="button" onclick="simpanBillCharge('${key}', 'abillpoli')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">simpan</button>
+                            <button id="abillpolieditDeleteCharge${key}" type="button" onclick="editBillCharge('abillpoli', '${key}')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off" style="display: none">Edit</button>
+                            <button id="delBillBtn${key}" type="button" onclick="delBill('abillpoli', '${key}')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `);
+
+
 
 
         $("#billPoliChargesBody")
@@ -159,7 +164,7 @@
         $("#billPoliChargesBody")
             .append(
                 '<input name="employee_id[]" id="abillpoliemployee_id' + key + '" type="hidden" value="" class="form-control" />' +
-                '<input name="doctor[]" id="abillpolidoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />' +
+                // '<input name="doctor[]" id="abillpolidoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />' +
                 '<input name="amount[]" id="abillpoliamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />' +
                 '<input name="nota_no[]" id="abillpolinota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />' +
                 '<input name="profesi[]" id="abillpoliprofesi' + key + '" type="hidden" value="" class="form-control" />' +
@@ -204,9 +209,11 @@
 <script>
     function filterBillPoli() {
         $("#billPoliChargesBody").html("")
-        var notaNoPoli = $("#notaNoPoli").val()
+        let notaNoPoli = $("#notaNoPoli").val()
+
         billJson.forEach((element, key) => {
-            if (billJson[key].clinic_id == 'P016' && (billJson[key].nota_no == notaNoPoli || '%' == notaNoPoli)) {
+            var clinicIsTrue = billJson[key].clinic_id == 'P013' || billJson[key].clinic_id == 'P016' || billJson[key].clinic_id == 'P015' || billJson[key].clinic_id == 'P023'
+            if (!clinicIsTrue && (billJson[key].nota_no == notaNoPoli || '%' == notaNoPoli)) {
                 var i = $('#billPoliChargesBody tr').length + 1;
                 var counter = 'billpoli' + i
                 addRowBill("billPoliChargesBody", "abillpoli", key, i, counter)

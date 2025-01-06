@@ -89,7 +89,7 @@
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
                 </div>
-                <div class="col mt-2">
+                <div class="col mt-2 text-center">
                     <h3><?= @$kop['name_of_org_unit'] ?></h3>
                     <!-- <h3>Surakarta</h3> -->
                     <p class="mb-0"><?= @$kop['contact_address'] ?>, <?= @$kop['phone']; ?>, Fax: <?= @$kop['fax']; ?>, <?= @$kop['kota']; ?></p>

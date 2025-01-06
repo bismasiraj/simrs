@@ -160,7 +160,7 @@
 
             </tbody>
         </table>
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-auto" align="center">
                 <div>Dokter</div>
                 <div class="mb-1">
@@ -174,7 +174,7 @@
                     <div id="qrcode1"></div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -232,6 +232,12 @@
 
     const getVitalSign = () => {
         let pasien = <?= json_encode($visit); ?>;
+        let val = <?= json_encode($val); ?>;
+
+        addRowVitalSign(val)
+
+
+
 
         // postData({
         //     'visit_id': pasien?.visit_id,
@@ -241,29 +247,29 @@
         //     addRowVitalSign(res.examInfo)
 
         // })
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
-            type: "POST",
-            data: JSON.stringify({
-                'visit_id': pasien?.visit_id,
-                'nomor': pasien?.no_registration
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
+        // $.ajax({
+        //     url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
+        //     type: "POST",
+        //     data: JSON.stringify({
+        //         'visit_id': pasien?.visit_id,
+        //         'nomor': pasien?.no_registration
+        //     }),
+        //     dataType: 'json',
+        //     contentType: false,
+        //     cache: false,
+        //     processData: false,
+        //     success: function(data) {
 
-                console.log(data.examInfo);
-                addRowVitalSign(data.examInfo)
+        //         console.log(data.examInfo);
+        //         addRowVitalSign(data.examInfo)
 
-                vitalsign = data.examInfo
+        //         vitalsign = data.examInfo
 
-            },
-            error: function() {
+        //     },
+        //     error: function() {
 
-            }
-        });
+        //     }
+        // });
     }
 
     const checkEWS = (value) => {
@@ -330,7 +336,7 @@
 
     }
 </script>
-<script>
+<!-- <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
         text: 'sa',
         width: 100,
@@ -349,7 +355,7 @@
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
     });
-</script>
+</script> -->
 
 <style>
     @media print {

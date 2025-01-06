@@ -1,121 +1,65 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <!-- css -->
-    <link rel="stylesheet" type="text/css" href="https://avirtum.com/list/ipages-jquery-plugin/demo/assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="https://avirtum.com/list/ipages-jquery-plugin/min_version/ipages.min.css">
-    <!-- /end css -->
-    <!-- scripts-section -->
-    <script type="text/javascript" src="https://avirtum.com/list/ipages-jquery-plugin/demo/assets/js/jquery.min.js"></script>
-    <script type="text/javascript" src="https://avirtum.com/list/ipages-jquery-plugin/min_version/pdf.min.js"></script>
-    <script type="text/javascript" src="https://avirtum.com/list/ipages-jquery-plugin/min_version/jquery.ipages.min.js"></script>
+    <!-- Viewer.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/viewerjs@1.10.0/dist/viewer.min.css">
 
+    <!-- CSS for image container -->
+    <style>
+        #image-container {
+            text-align: center;
+            margin-top: 50px;
+        }
 
-    <script>
-        $(document).ready(function() {
-            var options = {
-                responsive: true,
-                autoFit: true,
-
-                padding: 10,
-                bookEngine: 'OnePageSwipe',
-
-                pageImagesUrl: '<?php echo base_url() . $url; ?>',
-                pageImagesFirst: 1, // The number of the first image (starting from 1)
-                pageImagesCount: 1, // Set to the number of images you have
-
-                zoom: 1,
-
-                bookmarks: [{
-                        text: 'Profile List',
-                        link: '',
-                        folded: false,
-                        bookmarks: [{
-                                text: 'Avirtum',
-                                link: 'http://avirtum.com',
-                                target: 'blank'
-                            },
-                            {
-                                text: 'Twitter',
-                                link: 'https://twitter.com/avirtumcom',
-                                target: 'blank'
-                            }
-                        ]
-                    },
-                    {
-                        text: 'The first page',
-                        link: '1'
-                    },
-                    {
-                        text: 'The last page',
-                        link: '-1'
-                    }
-                ],
-                toolbarControls: [{
-                        type: 'sound',
-                        active: false,
-                        title: 'turn on/off flip sound',
-                        icon: 'ipgs-icon-sound',
-                        optional: true
-                    },
-                    {
-                        type: 'share',
-                        active: false,
-                        title: 'share',
-                        icon: 'ipgs-icon-share',
-                        optional: false
-                    },
-                    {
-                        type: 'outline',
-                        active: false,
-                        title: 'toggle outline/bookmarks',
-                        icon: 'ipgs-icon-outline',
-                        optional: false
-                    },
-                    {
-                        type: 'thumbnails',
-                        active: false,
-                        title: 'toggle thumbnails',
-                        icon: 'ipgs-icon-thumbnails',
-                        optional: false
-                    },
-                    {
-                        type: 'zoom-in',
-                        active: false,
-                        title: 'zoom in',
-                        icon: 'ipgs-icon-zoom-in',
-                        optional: false
-                    },
-                    {
-                        type: 'zoom-out',
-                        active: false,
-                        title: 'zoom out',
-                        icon: 'ipgs-icon-zoom-out',
-                        optional: false
-                    },
-                    {
-                        type: 'zoom-default',
-                        active: false,
-                        title: 'zoom default',
-                        icon: 'ipgs-icon-zoom-default',
-                        optional: true
-                    }
-                ],
-            };
-
-            // Initialize the flipbook with the specified options
-            $('#flipbook').ipages(options);
-        });
-    </script>
-
-    <!-- /end scripts-section -->
+        #zoomImage {
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- flipbook markup -->
-    <div id="flipbook"></div>
-    <!-- /end flipbook markup -->
+    <div id="image-container">
+        <!-- Image to display, use your file ID here -->
+        <img id="zoomImage" src="<?= base_url() . $url; ?>" alt="Image" />
+    </div>
+
+    <!-- Viewer.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/viewerjs@1.10.0/dist/viewer.min.js"></script>
+
+    <script>
+        // Wait for the DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Viewer.js on the image
+            const image = document.getElementById('zoomImage');
+            const viewer = new Viewer(image, {
+                inline: true, // To enable inline mode
+                zoomable: true, // Enable zoom
+                scalable: true, // Enable scaling (zooming in and out)
+                rotatable: true, // Allow rotation (optional)
+                navbar: true, // Enable navbar
+                toolbar: {
+                    zoomIn: true, // Show zoom-in button
+                    zoomOut: true, // Show zoom-out button
+                    reset: true, // Show reset button
+                    prev: false, // Hide previous button
+                    next: false, // Hide next button
+                    oneToOne: false, // Hide 1:1 button
+                    rotateLeft: true, // Hide rotate left button
+                    rotateRight: true, // Hide rotate right button
+                    flipHorizontal: false, // Hide flip horizontal button
+                    flipVertical: false, // Hide flip vertical button
+                },
+                title: true // Show title of the image
+            });
+
+            // Open the viewer (if needed)
+            viewer.show();
+        });
+    </script>
 
 </body>
 

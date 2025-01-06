@@ -209,7 +209,7 @@ class Assessment extends BaseController
 
             if (@$parameter_id01 != '0210101') {
                 $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER 
-                                                where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
+                where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
                 $p_type = $select[0]['p_type'];
                 if (in_array($select[0]['p_type'], [
                     'ASES025',
@@ -245,7 +245,8 @@ class Assessment extends BaseController
                     $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
                     foreach ($timeIntervensi as $key => $value) {
                         // return json_encode(str_replace('T', ' ', $reassessment_date));
-                        if (!$this->isInvalidDate($timeIntervensi[$key])) {
+                        // return $this->isInvalidDateTime($timeIntervensi[$key]);
+                        if (!$this->isInvalidDateTime($timeIntervensi[$key])) {
                             $data = [
                                 'body_id' => $body_id,
                                 'intervensi_ke' => $key,
@@ -1014,7 +1015,7 @@ class Assessment extends BaseController
                 $data = explode(',', (string)${'lokalis' . $value['value_id']});
                 $encodedLokalis = $data[1];
                 $decodedLokalis = base64_decode($encodedLokalis);
-                $lokalisPath = WRITEPATH . 'uploads/signatures/';
+                $lokalisPath = WRITEPATH . 'uploads/lokalis/';
                 if (!is_dir($lokalisPath)) {
                     mkdir($lokalisPath, 0777, true);
                 }
@@ -1311,9 +1312,10 @@ class Assessment extends BaseController
 
             $selectlokalis = $this->lowerKey($db->query("select * from assessment_lokalis where body_id in ($primaryPD)")->getResultArray());
 
+
             foreach ($selectlokalis as $key => $value) {
                 if ($value['value_score'] == 3) {
-                    $filepath = WRITEPATH . 'uploads/signatures/' . $value['value_detail'];
+                    $filepath = WRITEPATH . 'uploads/lokalis/' . $value['value_detail'];
                     if (file_exists($filepath)) {
                         $filedata = file_get_contents($filepath);
                         $filedata64 = base64_encode($filedata);
@@ -1866,7 +1868,9 @@ class Assessment extends BaseController
             ea.fullname,
             gcs.GCS_DESC,
             case petugas_type when  '11' then 'D'
-            when '13' then 'P' end as kode_PPA
+            when '13' then 'P' 
+            when '19' then 'G'
+            end as kode_PPA
             from examination_info ex 
             left join examination_detail exd on ex.body_id = exd.document_id
             inner join pasien_visitation pv on pv.visit_id = ex.visit_id
@@ -2003,9 +2007,9 @@ class Assessment extends BaseController
         // left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' 
         // and visit_id = '$visit_id' order by examination_date desc")->getResultArray());
         if ($isrj == 1)
-            $where = "and (ex.visit_id = '$visit_id' or pv.norujukan = '$norujukan')";
+            $where = "and (exd.visit_id = '$visit_id' or pv.norujukan = '$norujukan')";
         else
-            $where = "and (ex.visit_id = '$visit_id')";
+            $where = "and (exd.visit_id = '$visit_id')";
 
 
         if ($isrj == 1) {
@@ -2045,8 +2049,8 @@ class Assessment extends BaseController
             exd.vs_status_id
             from examination_detail exd
             inner join pasien_visitation pv on pv.visit_id = exd.visit_id
-            left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
-            where ex.no_registration = '$no_registration' $where
+            left outer join ASSESSMENT_GCS gcs on exd.BODY_ID = gcs.DOCUMENT_ID
+            where exd.no_registration = '$no_registration' $where
             ")->getResultArray());
         } else {
             $selectex = $this->lowerKey($db->query("

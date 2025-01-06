@@ -159,6 +159,7 @@
                         <tr>
                             <th colspan="2" class="text-center">steward Score</th>
                         </tr>
+                        <?php $total_steward = 0; ?>
                         <tr class="text-center">
                             <th>Kriteria</th>
                             <th width="1%">Score</th>
@@ -168,8 +169,12 @@
                                 <td><?= $strd['value_desc']; ?></td>
                                 <td class="text-center"><?= $strd['value_score']; ?></td>
                             </tr>
+                            <?php $total_steward += $strd['value_score']; ?>
                         <?php endforeach; ?>
-
+                        <tr class="bg-secondary text-white">
+                            <td><?= $total_steward >= 5 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah'; ?></td>
+                            <td class="text-center"><?= $total_steward; ?></td>
+                        </tr>
                     <?php endforeach; ?>
                 </table>
                 <table class="table table-bordered">
@@ -177,6 +182,7 @@
                         <tr>
                             <th colspan="2" class="text-center">Aldrete Score</th>
                         </tr>
+                        <?php $total_aldrete = 0; ?>
                         <tr class="text-center">
                             <th>Kriteria</th>
                             <th width="1%">Score</th>
@@ -186,8 +192,12 @@
                                 <td><?= $aldr['value_desc']; ?></td>
                                 <td class="text-center"><?= $aldr['value_score']; ?></td>
                             </tr>
+                            <?php $total_aldrete += $aldr['value_score']; ?>
                         <?php endforeach; ?>
-
+                        <tr class="bg-secondary text-white">
+                            <td><?= $total_aldrete >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah'; ?></td>
+                            <td class="text-center"><?= $total_aldrete; ?></td>
+                        </tr>
                     <?php endforeach; ?>
                 </table>
                 <?php if (!empty($bromage_score)) : ?>
@@ -471,7 +481,16 @@
                     <tr>
                         <td width="30%">Makan/minum</td>
                         <td width="1%">:</td>
-                        <td><?= @$instruksi_post['eat']; ?></td>
+                        <td>
+                            <?=
+                            trim(
+                                (!empty($instruksi_post['eat']) ? 'Makan' : '') .
+                                    (!empty($instruksi_post['drink_little']) ? ', Minum sedikit' : '') .
+                                    (!empty($instruksi_post['free_drink']) ? ', Minum bebas' : ''),
+                                ','
+                            );
+                            ?>
+                        </td>
                     </tr>
                     <tr>
                         <td width="30%">Pemantauan tensi,nadi,napas tiap menit selama</td>
@@ -1180,7 +1199,7 @@
                 const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
                 const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
                 result += `<tr>
-                                <td>${item?.diagnosa_name}</td>
+                                <td>${item?.diagnosa_desc}</td>
                                 <td>${sufferTypeText}</td>
                                 <td>${diagCatText}</td>
                             </tr>`
@@ -1347,7 +1366,7 @@
                     const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
                     const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
                     result += `<tr>
-                                <td>${item?.diagnosa_name}</td>
+                                <td>${item?.diagnosa_desc}</td>
                                 <td>${sufferTypeText}</td>
                                 <td>${diagCatText}</td>
                             </tr>`

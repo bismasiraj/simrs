@@ -500,9 +500,8 @@
             // Construct the URL
             let url = '<?= base_url() . '/admin/cetak/patologi/'; ?>' + visitEncoded + '/' +
                 props?.bill_id + '/' + props?.tarif_id;
-
+            openPopUpTab(url)
             // Redirect to the URL
-            window.open(url, '_blank'); // Open in a new tab
         })
     }
 

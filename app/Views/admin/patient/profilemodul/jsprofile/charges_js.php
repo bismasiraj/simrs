@@ -103,7 +103,7 @@
                 countCasemix(billJson[key].casemix_id, parseFloat(billJson[key].tagihan))
 
                 //  sum(if(isnull(subsidi),0,subsidi) for all)
-                subsidi += billJson[key].subsidi
+                subsidi += (isNaN(billJson[key].subsidi) ? 0 : billJson[key].subsidi)
 
                 //  sum(if(isnull(potongan),0,potongan) for all)
                 potongan += billJson[key].potongan
@@ -118,7 +118,12 @@
                 retur += billJson[key].retur
             }
         })
-        total += tagihan - (subsidi + potongan) + pembulatan - pembayaran + retur;
+        total += (isNaN(tagihan) ? 0 : tagihan) -
+            (isNaN(subsidi) ? 0 : subsidi) -
+            (isNaN(potongan) ? 0 : potongan) +
+            (isNaN(pembulatan) ? 0 : pembulatan) -
+            (isNaN(pembayaran) ? 0 : pembayaran) +
+            (isNaN(retur) ? 0 : retur);
         labtotal += labtagihan - (labsubsidi + labpotongan) + labpembulatan - labpembayaran + labretur;
         radtotal += radtagihan - (radsubsidi + radpotongan) + radpembulatan - radpembayaran + radretur;
         billpolitotal += billpolitagihan - (billpolisubsidi + billpolipotongan) + billpolipembulatan - billpolipembayaran + billpoliretur;
@@ -316,19 +321,19 @@
                     countCasemix(billJson[key].casemix_id, parseFloat(billJson[key].tagihan))
 
                     //  sum(if(isnull(subsidi),0,subsidi) for all)
-                    subsidi += billJson[key].subsidi
+                    subsidi += (isNaN(billJson[key].subsidi) ? 0 : billJson[key].subsidi)
 
                     //  sum(if(isnull(potongan),0,potongan) for all)
-                    potongan += billJson[key].potongan
+                    potongan += (isNaN(billJson[key].potongan) ? 0 : billJson[key].potongan)
 
                     // sum(pembulatannya for all)
-                    pembulatan += billJson[key].pembulatan
+                    pembulatan += (isNaN(billJson[key].pembulatan) ? 0 : billJson[key].pembulatan)
 
                     // sum(if(isnull(bayar),0,bayar) for all)
-                    pembayaran += billJson[key].bayar
+                    pembayaran += (isNaN(billJson[key].pembayaran) ? 0 : billJson[key].pembayaran)
 
                     // sum(if(isnull(retur),0,retur) for all)
-                    retur += billJson[key].retur
+                    retur += (isNaN(billJson[key].retur) ? 0 : billJson[key].retur)
 
                     // total_tagihan  - (total_subsidi + total_potongan) + bulat - total_lunas +total_retur_bayar 
 
@@ -404,7 +409,9 @@
                             .nota_no))
                         addRowBill("patologiChargesBody", "apatologi", key, i, counter)
                     }
-                    if (billJson[key].clinic_id == '<?= $visit['clinic_id']; ?>') {
+                    let clinicIsTrue = billJson[key].clinic_id == 'P013' || billJson[key].clinic_id == 'P016' || billJson[key].clinic_id == 'P015' || billJson[key].clinic_id == 'P023'
+
+                    if (!clinicIsTrue) {
                         var i = $('#billPoliChargesBody tr').length + 1;
                         var counter = 'billpoli' + i
                         $("#notaNoPoli").append(new Option(billJson[key].nota_no, billJson[key]
@@ -415,11 +422,15 @@
                     var counter = 'charge' + i
                     $("#notaNoCharge").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
                     addRowBill("chargesBody", "a", key, i, counter)
-
                 });
 
 
-                total += tagihan - (subsidi + potongan) + pembulatan - pembayaran + retur;
+                total += (isNaN(tagihan) ? 0 : tagihan) -
+                    (isNaN(subsidi) ? 0 : subsidi) -
+                    (isNaN(potongan) ? 0 : potongan) +
+                    (isNaN(pembulatan) ? 0 : pembulatan) -
+                    (isNaN(pembayaran) ? 0 : pembayaran) +
+                    (isNaN(retur) ? 0 : retur);
                 labtotal += labtagihan - (labsubsidi + labpotongan) + labpembulatan - labpembayaran + labretur;
                 radtotal += radtagihan - (radsubsidi + radpotongan) + radpembulatan - radpembayaran + radretur;
                 billpolitotal += billpolitagihan - (billpolisubsidi + billpolipotongan) + billpolipembulatan -
@@ -520,6 +531,7 @@
     }
 
     function addBillCharge(container) {
+        // return false
         tarifDataJson = $("#" + container).val();
         console.log(tarifDataJson);
 
@@ -1349,7 +1361,6 @@
                         )
                     )
                 )
-
             );
 
         } else {
@@ -1471,7 +1482,7 @@
 
 
                 .append($("<td>").html(String(i) + "."))
-                .append($("<td>").attr("id", identifier + "displaytreatment" + counter).html(billJson[key].treatment)
+                .append($("<td>").attr("id", identifier + "displaytreatment" + counter).html(`<b><i>${billJson[key].treatment}</i></b>`)
                     .append($("<p>").html(billJson[key].name_of_clinic)))
                 .append($("<td>").html('<select id="' + identifier + 'employee_id' + counter +
                     '" class="form-select" name="employee_id[]" style="display: none" onchange="changeFullnameDoctor(\'' +

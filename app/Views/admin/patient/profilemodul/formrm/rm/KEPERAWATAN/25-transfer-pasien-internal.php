@@ -272,7 +272,7 @@
                     <tr>
                         <td>
                             <b>Derajat Stabilitas</b>
-                            <div type="text" class="form-control" name=""></div>
+                            <div type="text" class="form-control" name=""><?= @$stabil['value_desc']; ?></div>
                         </td>
                         <td>
                             <b>Asal Pasien</b>

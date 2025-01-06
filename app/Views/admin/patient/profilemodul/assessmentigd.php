@@ -31,30 +31,30 @@ $menu['tidur'] = 1;
 
 
 if ($visit['clinic_id'] == 'P012') {
-    $menu['fallrisk'] = 1;
-    $menu['painmonitoring'] = 1;
-    $menu['triase'] = 1;
-    $menu['apgar'] = 0;
-    $menu['skrininggizi'] = 1;
-    $menu['adl'] = 0;
-    $menu['dekubitus'] = 0;
-    $menu['stabilitas'] = 0;
-    $menu['edukasiintegrasi'] = 0;
-    $menu['formedukasi'] = 0;
-    $menu['gcs'] = 0;
-    $menu['integumen'] = 1;
-    $menu['anak'] = 0; //?
-    $menu['neonatus'] = 0; //?
-    $menu['neurosensoris'] = 1;
-    $menu['pencernaan'] = 0;
-    $menu['pernapasan'] = 0;
-    $menu['perkemihan'] = 1;
-    $menu['psikologi'] = 0;
-    $menu['sirkulasi'] = 1;
-    $menu['seksual'] = 0;
-    $menu['social'] = 0;
-    $menu['tht'] = 0; //hearing
-    $menu['tidur'] = 0;
+    // $menu['fallrisk'] = 1;
+    // $menu['painmonitoring'] = 1;
+    // $menu['triase'] = 1;
+    // $menu['apgar'] = 0;
+    // $menu['skrininggizi'] = 1;
+    // $menu['adl'] = 0;
+    // $menu['dekubitus'] = 0;
+    // $menu['stabilitas'] = 0;
+    // $menu['edukasiintegrasi'] = 0;
+    // $menu['formedukasi'] = 0;
+    // $menu['gcs'] = 0;
+    // $menu['integumen'] = 1;
+    // $menu['anak'] = 0; //?
+    // $menu['neonatus'] = 0; //?
+    // $menu['neurosensoris'] = 1;
+    // $menu['pencernaan'] = 0;
+    // $menu['pernapasan'] = 0;
+    // $menu['perkemihan'] = 1;
+    // $menu['psikologi'] = 0;
+    // $menu['sirkulasi'] = 1;
+    // $menu['seksual'] = 0;
+    // $menu['social'] = 0;
+    // $menu['tht'] = 0; //hearing
+    // $menu['tidur'] = 0;
 } else if ($visit['isrj'] == '0') {
     $menu['fallrisk'] = 1;
     $menu['painmonitoring'] = 1;
@@ -579,7 +579,7 @@ if ($visit['clinic_id'] == 'P012') {
                             <input type="hidden" id="arpimt_score" name="imt_score">
                             <input type="hidden" id="arpimt_desc" name="imt_desc">
                             <input type="hidden" id="arpalo_anamnase" name="alo_anamnase">
-                            <input type="hidden" id="arpteraphy_desc" name="teraphy_desc">
+                            <!-- <input type="hidden" id="arpteraphy_desc" name="teraphy_desc"> -->
                             <input type="hidden" id="arpinstruction" name="instruction">
                             <input type="hidden" id="arpmedical_treatment" name="medical_treatment">
                             <input type="hidden" id="arpmodified_date" name="modified_date">
@@ -603,6 +603,7 @@ if ($visit['clinic_id'] == 'P012') {
                             <input type="hidden" id="arpisvalid" name="isvalid">
                             <input type="hidden" id="arpvalid_date" name="valid_date" class="valid_date" value="">
                             <input type="hidden" id="arpvalid_user" name="valid_user" class="valid_user" value="">
+                            <input type="hidden" id="arpvalid_pasien" name="valid_pasien" class="valid_pasien" value="">
                             <?php csrf_field(); ?>
                             <div class="row">
                                 <hr>
@@ -992,7 +993,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                                     <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
                                                                         <?php if (true) { ?>
                                                                             <thead>
-                                                                                <th class="text-center" colspan="2">DiagnosaPerawat</th>
+                                                                                <th class="text-center" colspan="2">Diagnosa Perawat</th>
                                                                             </thead>
                                                                             <tbody id="bodyDiagPerawat">
                                                                             </tbody>
@@ -1026,9 +1027,13 @@ if ($visit['clinic_id'] == 'P012') {
                                     </div>
                                 </div>
                                 <div class="row text-center">
-                                    <div class="col-sm-12 col-md-4 m-4">
+                                    <div class="col-sm-6 col-md-4 m-4">
                                         <div id="formaddarpqrcode1" class="qrcode-class"></div>
                                         <div id="formaddarpsigner1"></div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-4 m-4">
+                                        <div id="formaddarpqrcode2" class="qrcode-class"></div>
+                                        <div id="formaddarpsigner2"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -1075,7 +1080,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div id="bodyGiziPerawat">
                                                             </div>
                                                             <div id="bodyGiziPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addGizi(1,1, 'arpbody_id','bodyGiziPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addGizi(1,1, 'arpbody_id','bodyGiziPerawat', false,  'arp')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1395,7 +1400,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan', false, 'arp')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>

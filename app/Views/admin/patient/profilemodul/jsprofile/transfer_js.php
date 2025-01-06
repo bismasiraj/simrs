@@ -8,26 +8,6 @@
     let visitTransfer = []
     let clinicDoctors = [];
     var i = 0
-    // flatpickrInstances["flatskdptglkontrol"] = flatpickr("#flatskdptglkontrol", {
-    //     enableTime: false,
-    //     dateFormat: "d/m/Y", // Display format
-    //     time_24hr: false, // 24-hour time format
-    //     defaultDate: moment().format("DD/MM/YYYY"),
-    //     minuteIncrement: 1,
-    // });
-    // $("#" + flatskdptglkontrol).prop("readonly", false);
-    // $("#" + flatskdptglkontrol).on("change", function() {
-    //     let theid = flatskdptglkontrol.replace("flat", "");
-    //     let thevalue = $(this).val();
-    //     let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
-    //         "YYYY-MM-DD HH:mm"
-    //     );
-    //     $("#" + theid)
-    //         .val(formattedDate)
-    //         .trigger("change");
-    // });
-    // addRanap('100000') // blm ranap
-    // getAkomodasi('202408030835470650684') // sudah ranap
     $("#transferTab").on("click", function() {
         getTindakLanjut()
         setDataTindakLanjut()
@@ -153,6 +133,7 @@
         $("#atransfertransferinternalgroup").hide()
         $("#atransfertransferinternalgroup").find("input, select, textarea").val(null)
         if (isinternal == 10) {
+            $("label[for='atransfernotes']").text("Alasan Transfer Internal");
             $("#atransferservice_needs_group").slideUp()
             $("#atransferclinic_id_group").slideDown()
             $("#atransferclinic_id_to_group").slideDown()
@@ -160,6 +141,7 @@
             $("#atransferinternal").slideDown()
             setDatatransfer($("#atransferdocument_id").val(), $("#atransferdocument_id3").val())
         } else if (isinternal == 3) {
+            $("label[for='atransfernotes']").text("Alasan Konsul Internal");
             let visitselected = {};
             $.each(visitTransfer, function(key, value) {
                 if (value.visit_id == $("#atransferdocument_id").val()) {
@@ -169,20 +151,24 @@
             $("#atransferservice_needs_group").slideUp()
             await setDataRujukInternal(visitselected)
         } else if (isinternal == 2) {
+            $("label[for='atransfernotes']").text("Alasan Dirujuk");
             $("#atransferservice_needs_group").slideUp()
             await setDataRujukEksternal()
             setDataCpptEksternal($("#atransferdocument_id").val(), $("#atransferdocument_id2").val(), $("#atransferdocument_id3").val())
             $("#atransferinternal").slideDown()
         } else if (isinternal == 4) {
+            $("label[for='atransfernotes']").text("Alasan Kontrol");
             $("#atransferservice_needs_group").slideUp()
             $("#atransferinternal").slideUp()
             $("#atransferskdpgroup").slideDown()
 
             await setDataSkdp()
         } else if (isinternal == 5) {
+            $("label[for='atransfernotes']").text("Alasan Rawat Inap");
             $("#atransferservice_needs_group").slideDown()
             await setDataSpri()
         } else {
+            $("label[for='atransfernotes']").text("Alasan");
             $("#atransferservice_needs_group").slideUp()
         }
         $("#formopenmodaltransferid").html('<i class="fa fa-plus"></i> <span>Detail</span>')
@@ -224,7 +210,7 @@
     //ini untuk save tindak lanjut
     $("#formaddatransfer").on('submit', (function(e) {
 
-        let alasan = $("#atransferprocedure_05").val()
+        let alasan = $("#atransfernotes").val()
         if (alasan == '') {
             alert("Alasan tidak boleh kosong")
             return false;
@@ -357,16 +343,10 @@
         if (isinternal == 10) {
             $.each(examForassessmentDetail, function(key, value) {
                 if (value.body_id == examselect.document_id) {
-                    console.log('masuk1')
-                    console.log(value.body_id)
                     exam1 = value
                 } else if (value.body_id == examselect.document_id2) {
-                    console.log('masuk2')
-                    console.log(value.body_id)
                     exam2 = value
                 } else if (value.body_id == examselect.document_id3) {
-                    console.log('masuk3')
-                    console.log(value.body_id)
                     exam3 = value
                 }
             })
@@ -538,10 +518,10 @@
             $("#transferBodyHistory").append($("<tr>")
                 .append($("<td>").append(formatedDatetimeFlat(examselect.examination_date)))
                 .append($("<td>").html(examselect.petugas))
-                .append($("<td>").html(getFollowUpName(examselect.isinternal)))
-                .append($("<td colspan=\"2\">").html(examselect.isinternal))
-                .append($("<td colspan=\"2\">").html(examselect.isinternal))
-                .append($("<td colspan=\"2\">").html(examselect.isinternal))
+                .append($("<td colspan='4'>").html(getFollowUpName(examselect.isinternal)))
+                // .append($("<td colspan=\"2\">").html(examselect.isinternal))
+                // .append($("<td colspan=\"2\">").html(examselect.isinternal))
+                // .append($("<td colspan=\"2\">").html(examselect.isinternal))
                 // .append($("<td>").html('<b>Nafas/RR</b>'))
                 // .append($("<td>").html('<b>Temp</b>'))
                 // .append($("<td>").html('<b>SpO2</b>'))
@@ -556,10 +536,10 @@
             $("#transferBodyHistory").append($("<tr>")
                 .append($("<td>").append(formatedDatetimeFlat(examselect.examination_date)))
                 .append($("<td>").html(examselect.petugas))
-                .append($("<td>").html(getFollowUpName(examselect.isinternal)))
-                .append($("<td colspan=\"2\">").html(examselect.isinternal))
-                .append($("<td colspan=\"2\">").html(examselect.isinternal))
-                .append($("<td colspan=\"2\">").html(examselect.isinternal))
+                .append($("<td colspan='4'>").html(getFollowUpName(examselect.isinternal)))
+                // .append($("<td colspan=\"2\">").html(examselect.isinternal))
+                // .append($("<td colspan=\"2\">").html(examselect.isinternal))
+                // .append($("<td colspan=\"2\">").html(examselect.isinternal))
                 // .append($("<td>").html('<b>Nafas/RR</b>'))
                 // .append($("<td>").html('<b>Temp</b>'))
                 // .append($("<td>").html('<b>SpO2</b>'))
@@ -841,10 +821,19 @@
     }
 
     const cetakCpptTransfer = (key) => {
-        var transferselect = transfer[key];
+        let transferselect = transfer[key];
 
-        var win = window.open('<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id, '_blank');
+        let isinternal = transferselect.isinternal
 
+        if (isinternal == '4') {
+            openPopUpTab('<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id)
+        } else if (isinternal == '5') {
+            openPopUpTab('<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id)
+        } else {
+            openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id)
+        }
+
+        // var win = window.open('<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id, '_blank');
     }
 
     const saveCpptTransfer = () => {
@@ -1918,7 +1907,7 @@
             var rujppkdirujukName = rujppkname
         }
         let rujjnsPelayanan = '<?= is_null($visit['class_room_id']) ? '1' : '2'; ?>'
-        let rujcatatan = $("#atransferprocedure_05").val()
+        let rujcatatan = $("#atransfernotes").val()
         let rujdiagRujukan = $("#ardiag_id1").val()
         if (rujdiagRujukan == '' || rujdiagRujukan == null) {
             alert('Harus sudah mengisi diagnosa utama')

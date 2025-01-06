@@ -786,8 +786,7 @@
                     const encodedVisit = btoa(visitString);
                     const url =
                         `<?= base_url() . '/admin/rm/keperawatan/diagnosis_keperawatan/' ?>${encodedVisit}`;
-
-                    window.open(url, '_blank');
+                    openPopUpTab(url);
                 });
 
                 if (res.respon) {

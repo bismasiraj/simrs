@@ -217,7 +217,7 @@
                 <label for="diagnosis" class="col-sm-2 col-form-label">Indikasi Rawat Inap</label>
                 <label for="diagnosis" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="diagnosis" name="diagnosis" value="<?= $val['diagnosis']; ?>">
+                    <input type="text" class="form-control" id="diagnosis" name="diagnosis" value="<?= $val['notes']; ?>">
                 </div>
             </div>
             <div class="row mb-1">
@@ -227,20 +227,20 @@
                     <input type="text" class="form-control" id="diagnosis" name="diagnosis" value="<?= $val['diagnosis']; ?>">
                 </div>
             </div>
-            <div class="row mb-1">
+            <!-- <div class="row mb-1">
                 <label for="bangsal" class="col-sm-2 col-form-label">Mohon rawat inap di</label>
                 <label for="bangsal" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
                     <input type="text" class="form-control" id="bangsal" name="bangsal" value="<?= $val['bangsal']; ?>">
                 </div>
-            </div>
-            <div class="row mb-3">
+            </div> -->
+            <!-- <div class="row mb-3">
                 <label for="intruksi" class="col-sm-2 col-form-label">Instruksi Rawat Inap</label>
                 <label for="intruksi" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
                     <input type="text" class="form-control" id="intruksi" name="intruksi" value="<?= $val['intruksi']; ?>">
                 </div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col"></div>
                 <div class="col-auto" align="center">
@@ -260,16 +260,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: '<?= $val['dpjp']; ?>, <?= $val['nosuratkontrol']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
+<?php if (!is_null($val['valid_user'])) {
+?>
+    <script>
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: '<?= $val['valid_user'] . ': ' . $val['valid_date']; ?>',
+            width: 150,
+            height: 150,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+    </script>
+<?php
+} ?>
 <script>
     $(document).ready(function() {
         $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")

@@ -160,7 +160,7 @@ $permission = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 d-none">
                                                             <div class="form-group">
                                                                 <label>Diameter Lengan(cm)</label>
                                                                 <div class="position-relative">
@@ -409,10 +409,10 @@ $permission = user()->getPermissions();
                     </tbody>
                 </table>
                 <div class="d-flex mb-3">
-                    <a href="<?= base_url() . '/admin/cetak/cetakVitalSign/' . base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
+                    <a href="#" onclick="openPopUpTab('<?= base_url() . '/admin/cetak/cetakVitalSign/' . base64_encode(json_encode($visit)); ?>')" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
                 </div>
                 <div class="d-flex mb-3">
-                    <a href="<?= base_url() . '/admin/rm/lainnya/nadi_suhu/' . base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-warning w-100"><i class="fa fa-print"></i> Lembar Nadi / Suhu</a>
+                    <a href="#" onclick="openPopUpTab('<?= base_url() . '/admin/rm/lainnya/nadi_suhu/' . base64_encode(json_encode($visit)); ?>')" target="_blank" class="btn btn-warning w-100"><i class="fa fa-print"></i> Lembar Nadi / Suhu</a>
                 </div>
             </div>
         </div>

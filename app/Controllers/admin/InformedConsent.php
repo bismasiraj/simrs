@@ -32,15 +32,54 @@ class InformedConsent extends \App\Controllers\BaseController
     //     return $this->response->setJSON($data);
     // }
 
-    public function getDataAssesment()
+    // public function getDataAssesment()
+    // {
+    //     $db = db_connect();
+    //     $aParam = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER where P_type = 'GEN0017'")->getResultArray());
+    //     $aValue = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER_VALUE where P_type = 'GEN0017'")->getResultArray());
+
+    //     $data = [
+    //         'aPram' => $aParam,
+    //         'aValue' => $aValue,
+    //     ];
+
+    //     return $this->response->setJSON($data);
+    // }
+    public function getDataAssesment($id = null)
     {
         $db = db_connect();
         $aParam = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER where P_type = 'GEN0017'")->getResultArray());
         $aValue = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER_VALUE where P_type = 'GEN0017'")->getResultArray());
+        $queryAssessment = "SELECT 'sex' AS category, gender AS id, name_of_gender AS name FROM SEX
+                            UNION
+                            SELECT 'family_status' AS category, family_status_id AS id, FAMILY_STATUS AS name FROM FAMILY_STATUS
+                            UNION
+                            SELECT 'agama' AS category, kode_agama AS id, nama_agama AS name FROM AGAMA
+                            UNION
+                            SELECT 'class' AS category, class_id AS id, name_of_class AS name FROM CLASS
+                            UNION
+                            SELECT 'job_category' AS category, job_id AS id, name_of_job AS name FROM JOB_CATEGORY
+                            UNION
+                            SELECT 'marital_status' AS category, maritalstatusid AS id, name_of_maritalstatus AS name FROM MARITAL_STATUS
+                            UNION
+                            SELECT 'status_pasien' AS category, status_pasien_id AS id, name_of_status_pasien AS name FROM STATUS_PASIEN
+
+                        ";
+        $options = $db->query($queryAssessment)->getResultArray();
+
+        $visit = $this->lowerKey($db->query("SELECT no_registration, class_id, class_id_plafond, status_pasien_id from PASIEN_VISITATION where VISIT_ID ='$id'")->getRowArray());
+
+        $no_regis = $visit['no_registration'];
+
+
+        $family = $this->lowerKey($db->query("SELECT * from FAMILY where NO_REGISTRATION ='$no_regis' and ISRESPONSIBLE = 1")->getRowArray());
 
         $data = [
             'aPram' => $aParam,
             'aValue' => $aValue,
+            'options' => $options,
+            'family' => $family,
+            'visit' => $visit
         ];
 
         return $this->response->setJSON($data);

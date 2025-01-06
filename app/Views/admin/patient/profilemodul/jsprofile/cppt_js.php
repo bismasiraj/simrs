@@ -13,8 +13,36 @@ $group = user()->getRoles();
     var retur = 0.0;
     var total = 0.0;
     var lastOrder = 0;
+    var quillCppt = [];
     // var cpptjson = [];
     // cpptjson = <?= json_encode($exam); ?>;
+
+    $(document).ready(function() {
+        quillCppt['anamnase'] = new Quill(`#acpptanamnase`, {
+            theme: 'snow',
+            modules: {
+                toolbar: true
+            }
+        });
+        quillCppt['alo_anamnase'] = new Quill(`#acpptalo_anamnase`, {
+            theme: 'snow',
+            modules: {
+                toolbar: true
+            }
+        });
+        quillCppt['teraphy_desc'] = new Quill(`#acpptteraphy_desc`, {
+            theme: 'snow',
+            modules: {
+                toolbar: true
+            }
+        });
+        quillCppt['instruction'] = new Quill(`#acpptinstruction`, {
+            theme: 'snow',
+            modules: {
+                toolbar: true
+            }
+        });
+    })
 
 
     $("#cpptTab").on("click", function() {
@@ -203,9 +231,10 @@ $group = user()->getRoles();
     // })
 
     function addRowCPPT(examselect, key) {
+        // console.log(examselect)
         if (examselect.account_id == "2" || examselect.account_id == "3") {
             $("#cpptBody").append($("<tr>")
-                .append($("<td rowspan='8'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td colspan='6'>").html(''))
                 // .append($("<td>").html('<b>Tekanan Darah</b>'))
@@ -214,7 +243,7 @@ $group = user()->getRoles();
                 // .append($("<td>").html('<b>Temp</b>'))
                 // .append($("<td>").html('<b>SpO2</b>'))
 
-                .append($("<td rowspan='8'>")
+                .append($("<td rowspan='7'>")
                     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                         .append('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-primary" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
                             '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'
@@ -224,7 +253,7 @@ $group = user()->getRoles();
                             } ?>
                         )
                     ))
-                .append($("<td rowspan='8'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                .append($("<td rowspan='7'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
             // .append($("<tr>")
             //     .append($("<td>").html(''))
@@ -236,7 +265,7 @@ $group = user()->getRoles();
             // )
         } else {
             $("#cpptBody").append($("<tr>")
-                .append($("<td rowspan='6'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td rowspan='5'>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td colspan='6'>").html(''))
                 // .append($("<td>").html('<b>Tekanan Darah</b>'))
@@ -245,7 +274,7 @@ $group = user()->getRoles();
                 // .append($("<td>").html('<b>Temp</b>'))
                 // .append($("<td>").html('<b>SpO2</b>'))
 
-                .append($("<td rowspan='6'>")
+                .append($("<td rowspan='5'>")
                     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                         .append('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-primary" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
                             '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'
@@ -254,8 +283,9 @@ $group = user()->getRoles();
                             <?php
                             } ?>
                         )
-                    ))
-                .append($("<td rowspan='6'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                    )
+                )
+                .append($("<td rowspan='5'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
 
         }
@@ -263,9 +293,9 @@ $group = user()->getRoles();
         if (examselect.account_id == "2" || examselect.account_id == "3") {
             $("#cpptBody")
                 .append($("<tr>")
-                    .append($("<td rowspan='7'>").html(examselect.kode_ppa))
+                    .append($("<td rowspan='6'>").html(examselect.kode_ppa))
                     .append($("<td>").html("<b>S</b>"))
-                    .append($("<td colspan='5'>").html(examselect.anamnase))
+                    .append($("<td colspan='5'>").html(examselect?.anamnase?.replace(/\r\n/g, '<br>')))
                 )
 
                 .append($("<tr>")
@@ -285,43 +315,66 @@ $group = user()->getRoles();
                 )
                 .append($("<tr>")
                     // .append($("<td>").html("<b>O</b>"))
-                    .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+                    .append($("<td colspan='5'>").html(examselect?.pemeriksaan?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>A</b>"))
-                    .append($("<td colspan='5'>").html(examselect.teraphy_desc))
+                    .append($("<td colspan='5'>").html(examselect?.teraphy_desc?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>P</b>"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
+                    .append($("<td colspan='5'>").html(examselect?.instruction?.replace(/\r\n/g, '<br>')))
                 )
-                .append($("<tr>")
-                    .append($("<td>").html("Instruksi"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
-                )
-        } else {
+            // .append($("<tr>")
+            //     .append($("<td>").html("Instruksi"))
+            //     .append($("<td colspan='5'>").html(examselect.instruction))
+            // )
+        } else if (examselect.account_id == '4') {
             $("#cpptBody")
                 .append($("<tr>")
                     .append($("<td rowspan='5'>").html(examselect.kode_ppa))
                     .append($("<td>").html("<b>S</b>"))
-                    .append($("<td colspan='5'>").html(examselect.anamnase))
+                    .append($("<td colspan='5'>").html(examselect?.anamnase?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>B</b>"))
-                    .append($("<td colspan='5'>").html(examselect.alo_anamnase))
+                    .append($("<td colspan='5'>").html(examselect?.alo_anamnase?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>A</b>"))
-                    .append($("<td colspan='5'>").html(examselect.teraphy_desc))
+                    .append($("<td colspan='5'>").html(examselect?.teraphy_desc?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>R</b>"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
+                    .append($("<td colspan='5'>").html(examselect?.instruction?.replace(/\r\n/g, '<br>')))
+                )
+            // .append($("<tr>")
+            //     .append($("<td>").html("Instruksi"))
+            //     .append($("<td colspan='5'>").html(examselect.instruction))
+            // )
+        } else {
+            $("#cpptBody")
+                .append($("<tr>")
+                    .append($("<td rowspan='4'>").html(examselect.kode_ppa))
+                    .append($("<td>").html("<b>A</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.anamnase?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
-                    .append($("<td>").html("Instruksi"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
+                    .append($("<td>").html("<b>D</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.alo_anamnase?.replace(/\r\n/g, '<br>')))
                 )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>I</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.teraphy_desc.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>ME</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.instruction?.replace(/\r\n/g, '<br>')))
+                )
+            // .append($("<tr>")
+            //     .append($("<td>").html("Instruksi"))
+            //     .append($("<td colspan='5'>").html(examselect.instruction))
+            // )
         }
     }
 
@@ -371,9 +424,13 @@ $group = user()->getRoles();
             $("#acppt" + key).val(value)
         })
 
+        // $("#acpptanamnase").html(examselect.anamnase)
+
         // var editor = tinymce.get('acpptinstruction')
         // editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
         // $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change");
+        flatpickrInstances["flatacpptexamination_date"].setDate(formatedDatetimeFlat(examselect.examination_date))
+        $("#flatacpptexamination_date").trigger("change")
 
         $("#acpptcollapseVitalSign").find("input, select").trigger("change")
 
@@ -791,7 +848,7 @@ $group = user()->getRoles();
                 if (examForassessment.length > 0) {
                     $("#cpptBody").html("")
                     $.each(examForassessment, function(key, value) {
-                        if (value.account_id == 3 || value.account_id == 4) {
+                        if (value.account_id == 3 || value.account_id == 4 || value.account_id == 6) {
                             let pd = examForassessment[key]
                             addRowCPPT(value, key)
                         }

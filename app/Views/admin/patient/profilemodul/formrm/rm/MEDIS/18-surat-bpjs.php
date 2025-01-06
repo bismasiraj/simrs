@@ -253,16 +253,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: '<?= $val['dpjp']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
+<?php if (!is_null($val['valid_user'])) {
+?>
+    <script>
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: '<?= $val['valid_user'] . ': ' . $val['valid_date']; ?>',
+            width: 150,
+            height: 150,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+    </script>
+<?php
+} ?>
 <script>
     $(document).ready(function() {
         $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")

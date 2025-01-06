@@ -133,9 +133,9 @@ class BloodRequest extends \App\Controllers\BaseController
                         'document_id' => null,
                         'clinic_id' => $blood->clinic_id,
 
-                        'calf_number' => $existData[0]['calf_number'] ?? null,
-                        'delivery_time' => $existData[0]['delivery_time'] ?? null,
-                        'terlayani' => $existData[0]['terlayani'] ?? null,
+                        'calf_number' => !empty($existData[0]['calf_number']) ? $existData[0]['calf_number'] : null,
+                        'delivery_time' => !empty($existData[0]['delivery_time']) ? $existData[0]['delivery_time'] : null,
+                        'terlayani' => !empty($existData[0]['terlayani']) ? $existData[0]['terlayani'] : null,
 
                         'request_date' => $blood->request_date,
                         'blood_type_id' => $blood->blood_type_id,

@@ -102,7 +102,7 @@ $db = db_connect();
                                         </table>
                                         <div class="panel-footer text-end mb-4">
                                             <button type="button" id="formSaveBillPatologiBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                            <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                            <!-- <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button> -->
                                         </div>
                                     </div>
                                 </div>

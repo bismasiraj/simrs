@@ -1,69 +1,69 @@
 <script>
-    $("#digitalSignForm").on('submit', (function(e) {
-        e.preventDefault();
-        let clicked_submit_btn = $(this).closest('form').find(':submit');
-        let formData = new FormData(this)
-        let formDataObject = {};
-        formData.forEach(function(value, key) {
-            formDataObject[key] = value
-        });
-        let docData = new FormData(document.getElementById($("#signform").val()))
-        let docDataObject = {};
-        docData.forEach(function(value, key) {
-            docDataObject[key] = value
-        });
-        // let data = [];
-        var data = {
-            signData: formDataObject,
-            docData: docDataObject
-        };
-        $.ajax({
-            url: '<?php echo base_url(); ?>signature/postingSignedDocsTable',
-            type: "POST",
-            // data: [docData, formData],
-            data: JSON.stringify(data),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-            },
-            success: function(data) {
-                if (data) {
-                    var valid_date = $("#signvalid_date").val()
-                    var valid_user = $("#signvalid_user").val()
-                    var valid_pasien = $("#signvalid_pasien").val()
-                    var signButton = $("#signtombolsave").val()
-                    var signform = $("#signform").val()
+    // $("#digitalSignForm").on('submit', (function(e) {
+    //     e.preventDefault();
+    //     let clicked_submit_btn = $(this).closest('form').find(':submit');
+    //     let formData = new FormData(this)
+    //     let formDataObject = {};
+    //     formData.forEach(function(value, key) {
+    //         formDataObject[key] = value
+    //     });
+    //     let docData = new FormData(document.getElementById($("#signform").val()))
+    //     let docDataObject = {};
+    //     docData.forEach(function(value, key) {
+    //         docDataObject[key] = value
+    //     });
+    //     // let data = [];
+    //     var data = {
+    //         signData: formDataObject,
+    //         docData: docDataObject
+    //     };
+    //     $.ajax({
+    //         url: '<?php echo base_url(); ?>signature/postingSignedDocsTable',
+    //         type: "POST",
+    //         // data: [docData, formData],
+    //         data: JSON.stringify(data),
+    //         dataType: 'json',
+    //         contentType: false,
+    //         cache: false,
+    //         processData: false,
+    //         beforeSend: function() {
+    //             clicked_submit_btn.button('loading');
+    //         },
+    //         success: function(data) {
+    //             if (data) {
+    //                 var valid_date = $("#signvalid_date").val()
+    //                 var valid_user = $("#signvalid_user").val()
+    //                 var valid_pasien = $("#signvalid_pasien").val()
+    //                 var signButton = $("#signtombolsave").val()
+    //                 var signform = $("#signform").val()
 
-                    $("#" + signform).find(".valid-date").each(function() {
-                        $(this).val(get_date())
-                    })
-                    $("#" + signform).find(".valid-user").each(function() {
-                        $(this).val(get_bodyid())
-                    })
-                    $("#" + signform).find(".valid-pasien").each(function() {
-                        $(this).val(get_bodyid())
-                    })
-                    $("#" + valid_date).val(get_date())
-                    $("#" + valid_user).val(get_bodyid())
-                    $("#" + valid_pasien).val(get_bodyid())
-                    $("#" + signButton).trigger("click")
-                    $("#digitalSignForm").find("input").val(null)
-                }
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-                errorMsg(xhr);
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        });
-        $("#digitalSignModal").modal("hide")
-    }));
+    //                 $("#" + signform).find(".valid-date").each(function() {
+    //                     $(this).val(get_date())
+    //                 })
+    //                 $("#" + signform).find(".valid-user").each(function() {
+    //                     $(this).val(get_bodyid())
+    //                 })
+    //                 $("#" + signform).find(".valid-pasien").each(function() {
+    //                     $(this).val(get_bodyid())
+    //                 })
+    //                 $("#" + valid_date).val(get_date())
+    //                 $("#" + valid_user).val(get_bodyid())
+    //                 $("#" + valid_pasien).val(get_bodyid())
+    //                 $("#" + signButton).trigger("click")
+    //                 $("#digitalSignForm").find("input").val(null)
+    //             }
+    //         },
+    //         error: function(xhr) { // if error occured
+    //             alert("Error occured.please try again");
+    //             clicked_submit_btn.button('reset');
+    //             errorMsg(xhr);
+    //         },
+    //         complete: function() {
+    //             clicked_submit_btn.button('reset');
+    //         }
+    //     });
+    //     $("#digitalSignModal").modal("hide")
+    // }));
 </script>
 <script>
     function checkSign(formId) {
@@ -576,10 +576,15 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctxttd.clearRect(0, 0, canvasttd.width, canvasttd.height);
 
-                    img.src = "data:image/gif;base64," + data.sign_file;
-                    imgttd.src = "data:image/gif;base64," + data.sign_file;
+                    if (data) {
+                        img.src = "data:image/gif;base64," + data.sign_file;
+                        imgttd.src = "data:image/gif;base64," + data.sign_file;
 
-                    $("#signname").val(data.fullname)
+                        $("#signname").val(data.fullname)
+
+                        $("#tandatangansign").val("data:image/gif;base64," + data.sign_file);
+                    }
+
 
                 },
                 error: function(xhr) { // if error occured
@@ -603,8 +608,7 @@
     $("#openttdmodal").on("click", function() {
         $("#tandatanganDialog").modal("show")
     })
-    $("#submitttd").on("click", function() {
-        $("#submitttd").off()
+    $("#submitttd").off().on("click", function() {
         if (canvasttd) {
             let canvasResult = canvasttd.toDataURL('image/gif');
             $("#tandatangansign").val(canvasResult);
@@ -644,10 +648,16 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctxttd.clearRect(0, 0, canvasttd.width, canvasttd.height);
 
-                img.src = "data:image/gif;base64," + data.sign_file;
-                imgttd.src = "data:image/gif;base64," + data.sign_file;
+                if (data?.sign_file != '') {
+                    img.src = "data:image/gif;base64," + data.sign_file;
+                    imgttd.src = "data:image/gif;base64," + data.sign_file;
 
-                $("#signname").val(data.fullname)
+                    $("#signname").val(data.fullname)
+
+                    $("#tandatangansign").val("data:image/gif;base64," + data.sign_file);
+                    console.log("bisma")
+                }
+
 
             },
             error: function(xhr) { // if error occured
@@ -663,6 +673,46 @@
 </script>
 <script>
     $("#digitalSignForm").on('submit', (function(e) {
+        let user_type = $("#signuser_type").val();
+
+        if (user_type == '1') {
+            if ($("#password").val() == '') {
+                alert("Password tidak boleh kosong");
+                return false;
+            }
+            if ($("#user_id").val() == '') {
+                alert("Username tidak boleh kosong");
+                return false
+            }
+        } else if (user_type == '2') {
+            if ($("#signno_registration").val() == '') {
+                alert("Nomor Rekam Medis tidak boleh kosong");
+                return false
+            }
+            if ($("#signdatepasien").val() == '') {
+                alert("Tanggal Lahir tidak boleh kosong");
+                return false
+            }
+        } else if (user_type == '3') {
+            if ($("#signnik").val() == '') {
+                alert("NIK tidak boleh kosong");
+                return false
+            }
+            if ($("#signname").val() == '') {
+                alert("Nama tidak boleh kosong");
+                return false
+            }
+            if ($("#signno_registration").val() == '') {
+                alert("Nomor Rekam Medis pasien tidak boleh kosong");
+                return false
+            }
+            if ($("#signdatepasien").val() == '') {
+                alert("Tanggal Lahir pasien tidak boleh kosong");
+                return false
+            }
+        }
+
+
         e.preventDefault();
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         let formData = new FormData(this)
@@ -720,7 +770,7 @@
                     $("#" + valid_date).val(get_date())
                     $("#" + valid_user).val(get_bodyid())
                     $("#" + valid_pasien).val(get_bodyid())
-                    $("#" + signButton).trigger("click")
+                    // $("#" + signButton).trigger("click")
                     $("#digitalSignForm").find("input").val(null)
                 }
             },

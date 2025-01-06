@@ -959,8 +959,8 @@ foreach ($aValue as $key => $value) {
                             value.saturasi + 'SpO2%; ' +
                             value.nafas + '/menit; ' +
                             value.arm_diameter + 'cm; ')))
-                        .append($("<td>").append($("<b>").html()))
-                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($("<b>").html(value.teraphy_desc)))
+                        .append($("<td>").append($("<b>").html(value.instruction)))
                         .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArb(' + key + ')">').html("Lihat")))
                     )
                     $('html, body').animate({
@@ -980,8 +980,8 @@ foreach ($aValue as $key => $value) {
                             value.saturasi + 'SpO2%; ' +
                             value.nafas + '/menit; ' +
                             value.arm_diameter + 'cm; ')))
-                        .append($("<td>").append($("<b>").html()))
-                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($("<b>").html(value.teraphy_desc)))
+                        .append($("<td>").append($("<b>").html(value.instruction)))
                         .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArb(' + key + ')">').html("Lihat")))
                     )
                 }
@@ -1062,18 +1062,6 @@ foreach ($aValue as $key => $value) {
             titlekeperawatan = 'Obsetric'
         }
 
-        openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arbbody_id").val() + '/' + titlekeperawatan)
-        // var win = window.open('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arbbody_id").val() + '/' + titlekeperawatan, '_blank');
-        // $.ajax({
-        //     url: '<?= base_url() . '/admin/rm/assessment/cetakKebidanan' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val(),
-        //     type: "GET",
-        //     success: function(data) {
-        //         // Insert fetched content into modal
-        //         // $("#cetakarbbody").html(data);
-        //         $("#pdfFrame").attr("src", "data:application/pdf;base64," + data);
-        //         // Display the modal
-        //         $("#cetakarb").modal('show');
-        //     }
-        // });
+        openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/cetak_kebidanan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arbbody_id").val() + '/' + titlekeperawatan)
     }
 </script>

@@ -399,7 +399,7 @@
                 if (!empty($lokalis)) {
                     foreach ($lokalis as $key => $value) {
                         if ($value['value_score'] == 3) {
-                            $filepath = WRITEPATH . 'uploads/signatures/' . $value['value_detail'];
+                            $filepath = WRITEPATH . 'uploads/lokalis/' . $value['value_detail'];
 
                             if (file_exists($filepath)) {
                                 $filedata = file_get_contents($filepath);
@@ -619,7 +619,7 @@
         </table>
         <div class="row">
             <div class="col-auto" align="center">
-                <div>Semarang, <?= date('d-m-Y'); ?></div>
+                <div>Sampangan, <?= date('d-m-Y'); ?></div>
                 <br>
                 <div>Dokter</div>
                 <div class="mb-1">

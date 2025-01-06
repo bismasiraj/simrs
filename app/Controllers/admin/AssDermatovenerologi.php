@@ -17,13 +17,19 @@ class AssDermatovenerologi extends \App\Controllers\BaseController
         $db = db_connect();
 
         $model = new AdermatovenerologiModel();
-        $data = $this->lowerKeyOne(
-            $model->where('org_unit_code', $formData['org_unit_code'])
-                ->where('no_registration', $formData['no_registration'])
-                ->where('document_id', $formData['session_id'])
-                ->orderBy('examination_date', 'DESC')
-                ->first()
-        );
+        $data = $model->where('org_unit_code', $formData['org_unit_code'])
+            ->where('no_registration', $formData['no_registration'])
+            ->where('document_id', $formData['session_id'])
+            ->orderBy('examination_date', 'DESC')
+            ->first();
+
+        if (!is_null($data)) {
+            if (count(@$data) > 0) {
+                $data = $this->lowerKeyOne(
+                    $data
+                );
+            }
+        }
 
         $result =  ['dataAll' => $data];
 

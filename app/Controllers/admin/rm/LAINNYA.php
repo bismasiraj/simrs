@@ -1725,4 +1725,530 @@ class lainnya extends \App\Controllers\BaseController
             ]);
         }
     }
+    public function icuncppt_preview($visit = null)
+    {
+        $title = "";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $kopprintData = $this->kopprint();
+
+            $start = $this->request->getVar('start');
+            $end = $this->request->getVar('end');
+
+            $startDate = !empty($start) ? date('Y-m-d', strtotime($start)) : date('Y-m-d');
+            $endDate = !empty($end) ? date('Y-m-d', strtotime($end)) : date('Y-m-d');
+
+
+            $lab = $this->lowerKey($db->query("SELECT k.Kode_Kunjungan, h.PARAMETER_NAME, MAX(h.HASIL) AS HASIL, h.SATUAN, h.FLAG_HL, h.KODE_KUNJUNGAN
+                                        FROM sharelis.dbo.kirimlis k
+                                        INNER JOIN sharelis.dbo.hasilLIS h
+                                        ON k.Kode_Kunjungan = h.Kode_Kunjungan
+                                        WHERE k.no_pasien = ? AND h.FLAG_HL LIKE '%H%'
+                                        GROUP BY k.Kode_Kunjungan, h.PARAMETER_NAME, h.SATUAN, h.FLAG_HL, h.KODE_KUNJUNGAN;", [$visit['no_registration']])->getResultArray());
+
+            $diag = $this->lowerKey($db->query("SELECT a.PASIEN_DIAGNOSA_ID, a.PASIEN_DIAGNOSA_ID, b.DIAGNOSA_NAME
+                                            FROM PASIEN_DIAGNOSA a
+                                            INNER JOIN pasien_diagnosas b ON a.PASIEN_DIAGNOSA_ID = b.PASIEN_DIAGNOSA_ID 
+                                            where a.NO_REGISTRATION = ?", [$visit['no_registration']])->getResultArray() ?? []);
+
+            $oprs = $this->lowerKey($db->query("SELECT  tarif_id, START_OPERATION, VACTINATION_ID
+                                                FROM PASIEN_OPERASI 
+                                                WHERE VISIT_ID = ?
+                                                AND START_OPERATION BETWEEN '$startDate' AND '$endDate' 
+                                                ORDER BY START_OPERATION DESC
+                                            ", [$visit['visit_id']])->getResultArray());
+            $raberan = $this->lowerKey($db->query("SELECT DOCTOR, DOCUMENT_DATE FROM PASIEN_KONSULAN WHERE DOCTOR IS NOT NULL AND CONSUL_TYPE= 2 AND VISIT_ID = ?
+                                                AND DOCUMENT_DATE BETWEEN '$startDate' AND '$endDate' 
+                                                ORDER BY DOCUMENT_DATE DESC
+                                            ", [$visit['visit_id']])->getResultArray());
+            $tools = $this->lowerKey($db->query("SELECT 
+                                                t1.*
+                                            FROM 
+                                                assessment_invasif_tools t1
+                                            WHERE 
+                                                t1.visit_id = ?
+                                                AND t1.EXAMINATION_DATE = (
+                                                    SELECT MAX(t2.EXAMINATION_DATE)
+                                                    FROM assessment_invasif_tools t2
+                                                    WHERE t2.tool_id = t1.tool_id
+                                                    AND t2.visit_id = t1.visit_id
+                                                );", [$visit['visit_id']])->getResultArray());
+
+            $pasien_data = $this->lowerKey($db->query("SELECT p.*, b.NAME_OF_TYPE as jenis_gol_darah
+					FROM PASIEN p
+					LEFT JOIN BLOOD_TYPE b ON p.blood_type_id = b.blood_type_id
+					WHERE p.NO_REGISTRATION = ? ", [$visit['no_registration']])->getRowArray());
+
+
+            $dataTables = $this->lowerKey($db->query("SELECT * 
+                FROM EXAMINATION_DETAIL 
+                WHERE VISIT_ID = ? 
+                AND EXAMINATION_DATE BETWEEN '$startDate' AND '$endDate' 
+                ORDER BY EXAMINATION_DATE DESC
+            ", [$visit['visit_id']])->getResultArray());
+
+            $gcs = $this->lowerKey($db->query("SELECT * 
+                FROM ASSESSMENT_GCS 
+                WHERE VISIT_ID = ? 
+                AND EXAMINATION_DATE BETWEEN '$startDate' AND '$endDate' 
+                ORDER BY EXAMINATION_DATE DESC
+            ", [$visit['visit_id']])->getResultArray());
+
+            $odd =  $this->lowerKey($db->query("SELECT SIGNA_1, DESCRIPTION2, SIGNA_4, DESCRIPTION as nama_obat, TREAT_DATE, DOSE_PRESC,RECEIVED_DATE ,VACTINATION_ID 
+                FROM pasien_prescription_detail 
+                WHERE VISIT_ID = ? 
+                AND RECEIVED_DATE BETWEEN '$startDate' AND '$endDate' 
+                ORDER BY RECEIVED_DATE DESC
+                ", [$visit['visit_id']])->getResultArray());
+            $examAgd = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_INTENSIVE_TREATMENT 
+                        WHERE VISIT_ID = ? 
+                        AND EXAMINATION_DATE BETWEEN '$startDate' AND '$endDate' 
+                        ORDER BY EXAMINATION_DATE DESC
+                        ", [$visit['visit_id']])->getResultArray());
+
+            $skalaNyeri = $this->lowerKey($db->query("SELECT 
+                        apm.VISIT_ID,
+                        apm.EXAMINATION_DATE,
+                        apm.BODY_ID,
+                        COALESCE(SUM(apd.VALUE_SCORE), 0) AS TOTAL_VALUE_SCORE
+                    FROM 
+                        ASSESSMENT_PAIN_MONITORING apm
+                    LEFT JOIN 
+                        ASSESSMENT_PAIN_DETAIL apd
+                    ON 
+                        apm.BODY_ID = apd.BODY_ID
+                    WHERE 
+                        apm.VISIT_ID = ?
+                        AND apm.EXAMINATION_DATE BETWEEN '$startDate' AND '$endDate' 
+                    GROUP BY 
+                        apm.VISIT_ID, apm.EXAMINATION_DATE, apm.BODY_ID
+                    ORDER BY 
+                        apm.EXAMINATION_DATE DESC
+                        ", [$visit['visit_id']])->getResultArray());
+
+            $resikoJatuh = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_FALL_RISK 
+                        WHERE VISIT_ID = ?  AND TOTAL_SCORE IS NOT NULL
+                        AND EXAMINATION_DATE BETWEEN '$startDate' AND '$endDate' 
+                        ORDER BY EXAMINATION_DATE DESC
+                        ", [$visit['visit_id']])->getResultArray());
+
+            $skorNutrisi = $this->lowerKey($db->query("SELECT case when P_TYPE = 'GIZ0601' then 'Adaptasi Strong Kid : ' 
+                            when p_type = 'GIZ0602' then 'MST : ' 
+                            when P_TYPE =  'GIZ0603' then 'MNA : '
+                            else '' end+cast(total_score as varchar(2))  as hasil_score , EXAMINATION_DATE, BODY_ID, TOTAL_SCORE FROM ASSESSMENT_SCREENING_NUTRITION 
+                            WHERE VISIT_ID = ?  AND TOTAL_SCORE IS NOT NULL
+                            AND EXAMINATION_DATE BETWEEN '$startDate' AND '$endDate' 
+                            ORDER BY EXAMINATION_DATE DESC
+                            ", [$visit['visit_id']])->getResultArray());
+
+
+
+            $cairan = $this->lowerKey($db->query("SELECT 
+                                            afb.*, 
+                                            afc.balance_category
+                                        FROM 
+                                            assessment_fluid_balance afb
+                                        LEFT JOIN 
+                                            ASSESSMENT_FLUID_category afc
+                                            ON afb.FLUID_TYPE = afc.value_id
+                                            AND afb.FLUID_CATEGORY = afc.balance_category
+                                        WHERE 
+                                            afb.VISIT_ID = ? 
+                                            AND afb.FLUID_TYPE != 'G0230301'
+                                        AND afb.EXAMINATION_DATE BETWEEN '$startDate' AND '$endDate' 
+                                        ORDER BY EXAMINATION_DATE DESC
+                ", [$visit['visit_id']])->getResultArray());
+
+            $treat_perawat =  $this->lowerKey($db->query("SELECT treat_date,tarif_id,treatment from treatment_perawat 
+                            WHERE tarif_id in ('0106029','0107029','0207029','0208029', '0108005','0106055','0107055','0207055','0208055','0108009') AND 
+                            VISIT_ID = '" . $visit['visit_id'] . "' 
+                            AND treat_date BETWEEN '$startDate' AND '$endDate' 
+                            ORDER BY treat_date DESC
+                            ")->getResultArray());
+
+            if (empty($treat_perawat)) {
+                $filter_treat_perawat = $this->lowerKey($db->query("SELECT TOP 1 treat_date, VISIT_ID
+                    FROM treatment_perawat 
+                    WHERE tarif_id in ('0106029','0107029','0207029','0208029', '0108005','0106055','0107055','0207055','0208055','0108009') AND 
+                    VISIT_ID = '" . $visit['visit_id'] . "' 
+                    ORDER BY treat_date DESC
+                ")->getRowArray());
+                if (!empty($filter_treat_perawat)) {
+                    $treat_perawat = $this->lowerKey($db->query("SELECT treat_date,tarif_id,treatment from treatment_perawat
+                        WHERE tarif_id in ('0106029','0107029','0207029','0208029', '0108005','0106055','0107055','0207055','0208055','0108009') AND
+                        VISIT_ID = '{$filter_treat_perawat['visit_id']}' 
+                        AND CONVERT(DATE, treat_date) = CONVERT(DATE, '{$filter_treat_perawat['treat_date']}') 
+                        ORDER BY treat_date DESC;
+                ")->getResultArray());
+                } else {
+                    $treat_perawat = [];
+                }
+            }
+
+            if (empty($oprs)) {
+                $filter_oprs = $this->lowerKey($db->query("SELECT TOP 1 START_OPERATION, VISIT_ID
+                    FROM PASIEN_OPERASI 
+                    WHERE VISIT_ID = ? 
+                    ORDER BY START_OPERATION DESC", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_oprs)) {
+                    $oprs = $this->lowerKey($db->query("SELECT tarif_id, START_OPERATION, VACTINATION_ID 
+                        FROM PASIEN_OPERASI 
+                        WHERE VISIT_ID = '{$filter_oprs['visit_id']}' 
+                        AND CONVERT(DATE, START_OPERATION) = CONVERT(DATE, '{$filter_oprs['start_operation']}') 
+                        ORDER BY START_OPERATION DESC;
+                    ")->getResultArray());
+                } else {
+                    $oprs = [];
+                }
+            }
+
+            if (empty($raberan)) {
+                $filter_raberan = $this->lowerKey($db->query("SELECT TOP 1 DOCUMENT_DATE, VISIT_ID
+                    FROM PASIEN_KONSULAN 
+                    WHERE VISIT_ID = ?  AND  DOCTOR IS NOT NULL AND CONSUL_TYPE= 2
+                    ORDER BY DOCUMENT_DATE DESC", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_raberan)) {
+                    $raberan = $this->lowerKey($db->query("SELECT DOCTOR, DOCUMENT_DATE 
+                    FROM PASIEN_KONSULAN 
+                    WHERE VISIT_ID = '{$filter_raberan['visit_id']}'  AND DOCTOR IS NOT NULL AND CONSUL_TYPE= 2
+                    AND CONVERT(DATE, DOCUMENT_DATE) = CONVERT(DATE, '{$filter_raberan['document_date']}') 
+                    ORDER BY DOCUMENT_DATE DESC;
+                ")->getResultArray());
+                } else {
+                    $raberan = [];
+                }
+            }
+
+
+            if (empty($gcs)) {
+                $filter_gcs = $this->lowerKey($db->query("SELECT TOP 1 EXAMINATION_DATE, VISIT_ID
+                    FROM ASSESSMENT_GCS 
+                    WHERE VISIT_ID = ? 
+                    ORDER BY EXAMINATION_DATE DESC
+                ", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_gcs)) {
+                    $gcs = $this->lowerKey($db->query("SELECT * 
+                        FROM ASSESSMENT_GCS 
+                        WHERE VISIT_ID = '{$filter_gcs['visit_id']}' 
+                        AND CONVERT(DATE, EXAMINATION_DATE) = CONVERT(DATE, '{$filter_gcs['examination_date']}') 
+                        ORDER BY EXAMINATION_DATE DESC;
+                    ")->getResultArray());
+                } else {
+                    $gcs = [];
+                }
+            }
+
+
+            if (empty($odd)) {
+                $filter_odd = $this->lowerKey($db->query("SELECT TOP 1 RECEIVED_DATE, VISIT_ID
+                    FROM pasien_prescription_detail 
+                    WHERE VISIT_ID = ? 
+                    ORDER BY RECEIVED_DATE DESC
+                ", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_odd)) {
+                    $odd = $this->lowerKey($db->query("SELECT SIGNA_1, DESCRIPTION2, SIGNA_4, DESCRIPTION as nama_obat, TREAT_DATE, DOSE_PRESC,received_date ,VACTINATION_ID
+                    FROM pasien_prescription_detail 
+                    WHERE VISIT_ID = '{$filter_odd['visit_id']}' 
+                    AND CONVERT(DATE, RECEIVED_DATE) = CONVERT(DATE, '{$filter_odd['received_date']}') 
+                    ORDER BY RECEIVED_DATE DESC;
+                ")->getResultArray());
+                } else {
+                    $odd = [];
+                }
+            }
+
+
+            if (empty($examAgd)) {
+                $filter_examAgd = $this->lowerKey($db->query("SELECT TOP 1 EXAMINATION_DATE, VISIT_ID
+                    FROM ASSESSMENT_INTENSIVE_TREATMENT 
+                    WHERE VISIT_ID = ? 
+                    ORDER BY EXAMINATION_DATE DESC
+                ", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_examAgd)) {
+                    $examAgd = $this->lowerKey($db->query("SELECT *
+                        FROM ASSESSMENT_INTENSIVE_TREATMENT 
+                        WHERE VISIT_ID = '{$filter_examAgd['visit_id']}' 
+                        AND CONVERT(DATE, EXAMINATION_DATE) = CONVERT(DATE, '{$filter_examAgd['examination_date']}') 
+                        ORDER BY EXAMINATION_DATE DESC;
+                    ")->getResultArray());
+                } else {
+                    $filter_examAgd = [];
+                }
+            }
+
+
+            if (empty($skalaNyeri)) {
+                $filter_skalaNyeri = $this->lowerKey($db->query("SELECT TOP 1 EXAMINATION_DATE, VISIT_ID
+                    FROM ASSESSMENT_PAIN_MONITORING 
+                    WHERE VISIT_ID = ? 
+                    ORDER BY EXAMINATION_DATE DESC
+                ", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_skalaNyeri)) {
+                    $skalaNyeri = $this->lowerKey($db->query("SELECT 
+                            apm.VISIT_ID,
+                            apm.EXAMINATION_DATE,
+                            apm.BODY_ID,
+                            COALESCE(SUM(apd.VALUE_SCORE), 0) AS TOTAL_VALUE_SCORE
+                        FROM 
+                            ASSESSMENT_PAIN_MONITORING apm
+                        LEFT JOIN 
+                            ASSESSMENT_PAIN_DETAIL apd
+                        ON 
+                            apm.BODY_ID = apd.BODY_ID
+                        WHERE 
+                            apm.VISIT_ID = '{$filter_skalaNyeri['visit_id']}' 
+                            AND CONVERT(DATE, apm.EXAMINATION_DATE) = CONVERT(DATE, '{$filter_skalaNyeri['examination_date']}') 
+                        GROUP BY 
+                            apm.VISIT_ID, apm.EXAMINATION_DATE, apm.BODY_ID
+                        ORDER BY 
+                            apm.EXAMINATION_DATE DESC
+                    ")->getResultArray());
+                } else {
+                    $filter_skalaNyeri = [];
+                }
+            }
+
+
+
+            if (empty($resikoJatuh)) {
+                $filter_resikoJatuh = $this->lowerKey($db->query("SELECT TOP 1 EXAMINATION_DATE, VISIT_ID
+                    FROM ASSESSMENT_FALL_RISK 
+                    WHERE VISIT_ID = ?  AND TOTAL_SCORE IS NOT NULL
+                    ORDER BY EXAMINATION_DATE DESC
+                ", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_resikoJatuh)) {
+                    $resikoJatuh = $this->lowerKey($db->query("SELECT *
+                        FROM ASSESSMENT_FALL_RISK 
+                        WHERE VISIT_ID = '{$filter_resikoJatuh['visit_id']}' 
+                        AND CONVERT(DATE, EXAMINATION_DATE) = CONVERT(DATE, '{$filter_resikoJatuh['examination_date']}') 
+                        ORDER BY EXAMINATION_DATE DESC;
+                    ")->getResultArray());
+                }
+            }
+
+            if (empty($skorNutrisi)) {
+                $filter_skorNutrisi = $this->lowerKey($db->query("SELECT TOP 1 EXAMINATION_DATE, VISIT_ID
+                    FROM ASSESSMENT_SCREENING_NUTRITION 
+                    WHERE VISIT_ID = ?  AND TOTAL_SCORE IS NOT NULL
+                    ORDER BY EXAMINATION_DATE DESC
+                ", [$visit['visit_id']])->getRowArray());
+                if (!empty($filter_skorNutrisi)) {
+                    $skorNutrisi = $this->lowerKey($db->query("SELECT 
+                    case when P_TYPE = 'GIZ0601' then 'Adaptasi Strong Kid : ' 
+							when p_type = 'GIZ0602' then 'MST : ' 
+						when P_TYPE =  'GIZ0603' then 'MNA : '
+					else '' end+cast(total_score as varchar(2))  as hasil_score , EXAMINATION_DATE, BODY_ID, TOTAL_SCORE
+                        FROM ASSESSMENT_SCREENING_NUTRITION 
+                        WHERE VISIT_ID = '{$filter_skorNutrisi['visit_id']}' 
+                        AND CONVERT(DATE, EXAMINATION_DATE) = CONVERT(DATE, '{$filter_skorNutrisi['examination_date']}') 
+                        ORDER BY EXAMINATION_DATE DESC;
+                    ")->getResultArray());
+                }
+            }
+
+            if (empty($cairan)) {
+                $filter_cairan = $this->lowerKey(
+                    $db->query(
+                        "SELECT TOP 1 EXAMINATION_DATE, VISIT_ID
+                         FROM assessment_fluid_balance 
+                         WHERE VISIT_ID = ? 
+                         ORDER BY EXAMINATION_DATE DESC",
+                        [$visit['visit_id']]
+                    )->getRowArray()
+                );
+
+                if (!empty($filter_cairan)) {
+                    $cairan = $this->lowerKey(
+                        $db->query(
+                            "SELECT 
+                                afb.*, 
+                                afc.balance_category
+                             FROM 
+                                assessment_fluid_balance afb
+                             LEFT JOIN 
+                                ASSESSMENT_FLUID_category afc
+                                ON afb.FLUID_TYPE = afc.value_id
+                                AND afb.FLUID_CATEGORY = afc.balance_category
+                             WHERE 
+                                afb.VISIT_ID = ? 
+                                AND afb.FLUID_TYPE != 'G0230301'
+                                AND CONVERT(DATE, afb.EXAMINATION_DATE) = CONVERT(DATE, ?)
+                             ORDER BY 
+                                afb.EXAMINATION_DATE DESC",
+                            [$filter_cairan['visit_id'], $filter_cairan['examination_date']]
+                        )->getResultArray()
+                    );
+                } else {
+                    $cairan = [];
+                }
+            }
+            if (!empty($oprs)) {
+                $result_data_doc_anest = [];
+
+                foreach ($oprs as $dataOprs => $itemOprs) {
+                    $resultDataAneQuerry = $this->lowerKey(
+                        $db->query(
+                            "SELECT 
+                                    ot.*, 
+                                    otk.* 
+                                FROM 
+                                    operation_team ot
+                                JOIN 
+                                    OPERATION_TASK otk
+                                    ON ot.TASK_ID = otk.TASK_ID
+                                WHERE 
+                                    ot.OPERATION_ID = ? AND ot.TASK_ID = '17'",
+                            [$itemOprs['vactination_id']]
+                        )->getResultArray()
+                    );
+
+                    if (!empty($resultDataAneQuerry)) {
+                        $result_data_doc_anest = array_merge($result_data_doc_anest, $resultDataAneQuerry);
+                    }
+                }
+            }
+
+            function getLastNonEmptyData($groupedData, $currentDateKey, $dataType)
+            {
+                $lastData = null;
+
+                foreach (array_reverse($groupedData) as $dateKey => $group) {
+                    if ($dateKey === $currentDateKey) {
+                        continue;
+                    }
+
+                    if (!empty($group[$dataType])) {
+                        $lastData = $group[$dataType];
+                        break;
+                    }
+                }
+
+                return $lastData;
+            }
+
+            function filterLatestByExaminationDate($data)
+            {
+                $latest = null;
+
+                foreach ($data as $row) {
+                    $dateKey = date('Y-m-d', strtotime(
+                        $row['examination_date'] ??
+                            $row['treat_date'] ??
+                            $row['received_date'] ??
+                            '1970-01-01'
+                    ));
+
+                    $latestDate = date('Y-m-d', strtotime(
+                        $latest['examination_date'] ??
+                            $latest['treat_date'] ??
+                            $latest['received_date'] ??
+                            '1970-01-01'
+                    ));
+
+                    if ($latest === null || strtotime($dateKey) > strtotime($latestDate)) {
+                        $latest = $row;
+                    }
+                }
+
+                return $latest ? [$latest] : [];
+            }
+
+
+            if (isset($dataTables) && count($dataTables) > 0) {
+                $groupedData = [];
+
+                foreach ($dataTables as $row) {
+                    $dateKey = date('Y-m-d', strtotime($row['examination_date']));
+                    if (!isset($groupedData[$dateKey])) {
+                        $groupedData[$dateKey] = [
+                            'data_vt' => [],
+                            'data_gcs' => [],
+                            'data_odd' => [],
+                            'data_cairan' => [],
+                            'data_treat_perawat' => [],
+                            'data_exam_agd' => [],
+                            'data_skala_nyeri' => [],
+                            'data_resiko_jatuh' => [],
+                            'data_score_nutrisi' => []
+                        ];
+                    }
+                    $groupedData[$dateKey]['data_vt'][] = $row;
+                }
+
+                $dataSources = [
+                    'data_gcs' => $gcs,
+                    'data_odd' => $odd,
+                    'data_exam_agd' => $examAgd,
+                    'data_skala_nyeri' => $skalaNyeri,
+                    'data_cairan' => $cairan,
+                    'data_treat_perawat' => $treat_perawat,
+                    'data_resiko_jatuh' => $resikoJatuh,
+                    'data_score_nutrisi' => $skorNutrisi
+                ];
+                foreach ($dataSources as $dataType => $dataRows) {
+                    if (!empty($dataRows)) {
+                        foreach ($dataRows as $dataRow) {
+                            $dataDate = date('Y-m-d', strtotime($dataRow['examination_date'] ?? $dataRow['treat_date'] ?? $dataRow['received_date']));
+                            if (isset($groupedData[$dataDate])) {
+                                $groupedData[$dataDate][$dataType][] = $dataRow;
+                            } else {
+                                $lastGroupKeys = array_keys($groupedData);
+                                if (!empty($lastGroupKeys)) {
+                                    foreach ($lastGroupKeys as $lastGroupKey) {
+                                        $groupedData[$lastGroupKey][$dataType][] = $dataRow;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // echo json_encode($groupedData, JSON_PRETTY_PRINT);
+                // exit();
+
+                //     foreach ($groupedData as $dateKey => &$group) {
+                //         foreach (array_keys($dataSources) as $dataType) {
+                //             if (!empty($group[$dataType])) {
+                //                 $group[$dataType] = filterLatestByExaminationDate($group[$dataType]);
+                //             } elseif (empty($group[$dataType])) {
+                //                 $latestData = getLastNonEmptyData($groupedData, $dateKey, $dataType);
+                //                 if ($latestData !== null) {
+                //                     $group[$dataType] = $latestData;
+                //                 }
+                //             }
+                //         }
+                //     }
+                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/icu_perawat_n_cppt.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    'kop' => $kopprintData[0],
+                    'data' => $groupedData,
+                    'lab' => $lab,
+                    'diag' => $diag,
+                    'oprs' => $oprs,
+                    'tools' => $tools,
+                    'pasien' => $pasien_data,
+                    'doc_anes' => $result_data_doc_anest,
+                    'doc_konsulan' => $raberan
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/icu_perawat_n_cppt.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    'kop' => $kopprintData[0],
+                    'dataTables' => [],
+                    'lab' => $lab,
+                    'diag' => $diag,
+                    'oprs' => $oprs,
+                    'tools' => $tools,
+                    'pasien' => $pasien_data,
+                    'doc_anes' => $result_data_doc_anest,
+                    'doc_konsulan' => $raberan
+
+                ]);
+            }
+        }
+    }
 }

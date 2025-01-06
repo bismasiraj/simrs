@@ -16,16 +16,20 @@ class AssNeurology extends \App\Controllers\BaseController
         $formData = $request->getJSON(true);
         $db = db_connect();
 
+        // return json_encode($formData);
+
         $model = new AneurologyModel();
         $data = $model->where('org_unit_code', $formData['org_unit_code'])
             ->where('no_registration', $formData['no_registration'])
             ->where('document_id', $formData['session_id'])
             ->orderBy('examination_date', 'DESC')
             ->findAll();
-        if (count(@$data) > 0) {
-            $data = $this->lowerKeyOne(
-                $data[0]
-            );
+        if (!is_null($data)) {
+            if (count(@$data) > 0) {
+                $data = $this->lowerKeyOne(
+                    $data[0]
+                );
+            }
         }
 
         $result =  ['dataAll' => $data];

@@ -2200,6 +2200,8 @@ class medis extends \App\Controllers\BaseController
             $db = db_connect();
             $select = $this->lowerKey($db->query("SELECT 
             pd.NO_REGISTRATION as no_RM,
+            pd.valid_user,
+            pd.valid_pasien,
             p.NAME_OF_PASIEN as nama,
             pd.PASIEN_DIAGNOSA_ID,
             pd.BODY_ID,
@@ -2249,9 +2251,20 @@ class medis extends \App\Controllers\BaseController
             eid.TEMPERATURE AS Suhu,
             eid.NAFAS as respiration,
             eid.SATURASI AS SPO2,
-            EId.WEIGHT/ ( (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) AS IMT,
-            isnull((select top(1) total_score from ASSESSMENT_FALL_RISK
-            where DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as FALL_SCORE,
+            case when eid.height = 0 then 0 else
+            EId.WEIGHT/ ( (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) end AS IMT,
+            isnull((select top(1) case when P_TYPE = 'ASES019' then
+                        case when TOTAL_SCORE >= 0 and TOTAL_SCORE <= 24 then 'Tidak Ada Resiko'
+                        when TOTAL_SCORE >= 24 and TOTAL_SCORE <= 50 then 'Risiko Rendah' 
+                        when TOTAL_SCORE > 50 then 'Risiko Tinggi'
+                        else 'Tidak ada Risiko' end
+                    else 
+                    case
+                        when TOTAL_SCORE >= 7 and TOTAL_SCORE <= 11 then 'Risiko Rendah' 
+                        when TOTAL_SCORE > 11 then 'Risiko Tinggi'
+                        else 'Tidak ada Risiko' end
+                    end as fall_risk from ASSESSMENT_FALL_RISK
+            where DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'Tidak ada Risiko') as FALL_SCORE,
             isnull((select top(1) total_score from ASSESSMENT_PAIN_MONITORING
             where DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as PAIN_SCORE,
             PD.DIAGNOSA_ID,
@@ -2268,7 +2281,7 @@ class medis extends \App\Controllers\BaseController
 			 when total_score = 4 then 'ATS IV'
 			 when total_score = 3 then 'ATS III'
 			 when TOTAL_SCORE = 2 then 'ATS II'
-			 when total_score = 1 then 'ATS I' end 
+			 when total_score = 1 then 'ATS I' end
 			 from ASSESSMENT_indicator
             where DOCUMENT_ID = pd.pasien_diagnosa_id order by EXAMINATION_DATE desc) ,'') as ATS_Tipe,
 
@@ -2346,11 +2359,22 @@ class medis extends \App\Controllers\BaseController
             PD.DIAGNOSA_ID,
             PD.HURT, 
             PD.MEDICAL_PROBLEM, 
-            EID.WEIGHT/ ( (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ), 
+            EID.WEIGHT, 
+            EID.HEIGHT,
             ei.INSTRUCTION,
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
-            PD.DOCTOR")->getRow(0, "array"));
+            PD.DOCTOR,
+            pd.valid_user,
+            pd.valid_pasien")->getRow(0, "array"));
+
+            foreach ($select as $key => $value) {
+                if ($value == '') {
+                    $select[$key] = null;
+                }
+            }
+
+            // return json_encode($select);
 
             $query = "SELECT  STUFF(
              (SELECT ', ' +  description + ' ( ' + isnull(description2,'') + ' ) '   from  treatment_obat where 
@@ -2525,21 +2549,61 @@ class medis extends \App\Controllers\BaseController
             $select = $this->lowerKey($db->query(
                 "
                 select 
-                    pasien_diagnosa_id,DATE_OF_DIAGNOSA as tgl_kunjungan,
+                    pv.trans_id,pasien_diagnosa_id,EXAMINATION_DATE as tgl_kunjungan,
                     DOCTOR as DPJP,
                     Diagnosis = 
                             cast(STUFF(
                             (SELECT ',' + pp.diagnosa_id + '( ' + pp.diagnosa_desc + ' ) '
                             FROM PASIEN_DIAGNOSAs pp
-                            WHERE pp.PASIEN_DIAGNOSA_ID =(pd.PASIEN_DIAGNOSA_ID)
+                            WHERE pp.PASIEN_DIAGNOSA_ID =(pd.BODY_ID)
                             
                             FOR XML PATH (''))
                             , 1, 1, '') as varchar(4000) ),
-                    LAB_RESULT as prosedur_lab,RO_RESULT as radiologi,TERAPHY_DESC as farmasi
-                from pasien_diagnosa pd 
-                where NO_REGISTRATION = '{$visit['no_registration']}'
-                and (CLASS_ROOM_ID is null 
-                or CLASS_ROOM_ID = '')
+                    prosedur_lab = 
+					cast(STUFF(
+                            (SELECT
+                            ';' + hl.PARAMETER_NAME+': '+hl.HASIL+' '+ hl.SATUAN
+                        FROM
+                            treatment_bill tb
+
+                        LEFT JOIN
+                            sharelis.dbo.kirimlis kl 
+                            ON tb.bill_id = kl.kode COLLATE SQL_Latin1_General_CP1_CI_AS
+                        LEFT JOIN
+                            sharelis.dbo.hasilLIS hl 
+                            ON kl.kode_kunjungan COLLATE SQL_Latin1_General_CP1_CI_AS + kl.kode_tarif COLLATE SQL_Latin1_General_CP1_CI_AS = 
+                            hl.Kode_Kunjungan COLLATE SQL_Latin1_General_CP1_CI_AS + hl.kode_tarif COLLATE SQL_Latin1_General_CP1_CI_AS
+                        WHERE
+                            tb.no_registration LIKE pv.no_registration
+                            AND tb.trans_id = pv.trans_id
+                             and tb.bill_id IN (SELECT kode FROM sharelis.dbo.kirimlis)
+                            AND tb.clinic_id = 'P013'
+							and PARAMETER_NAME is not null
+                        ORDER BY
+                            tb.treat_date
+                            
+                            FOR XML PATH (''))
+                            , 1, 1, '') as varchar(4000)),
+				radiologi = cast(STUFF(
+                            (select ';' + ts.TARIF_NAME + ': ' + cast(ts.RESULT_VALUE as varchar(4000))  from TREAT_RESULTS ts
+							where visit_id = pv.VISIT_ID
+                            
+                            FOR XML PATH (''))
+                            , 1, 1, '') as varchar(4000) ),
+				farmasi = 
+                            cast(STUFF(
+                            (SELECT ',' + tob.description
+                            FROM treatment_obat tob
+                            WHERE tob.trans_id =(pv.trans_id)
+                            
+                            FOR XML PATH (''))
+                            , 1, 1, '') as varchar(4000) )
+
+                from EXAMINATION_INFO pd inner join PASIEN_VISITATION pv
+				on pv.visit_id = pd.VISIT_ID
+                where pv.NO_REGISTRATION = '{$visit['no_registration']}'
+                and (pv.CLASS_ROOM_ID is null 
+                or pv.CLASS_ROOM_ID = '')
                 "
             )->getResultArray());
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
@@ -2643,7 +2707,7 @@ class medis extends \App\Controllers\BaseController
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class on class.CLASS_ID = cr.CLASS_ID
             left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = pd.NO_REGISTRATION
-            left outer join EXAMINATION_INFO ei on ei.body_id = pd.BODY_ID
+            left outer join EXAMINATION_DETAIL ei on ei.body_id = pd.BODY_ID
             LEFT OUTER JOIN ASSESSMENT_LOKALIS ALO ON PD.BODY_ID = ALO.DOCUMENT_ID
             left outer join ASSESSMENT_GCS gcs on pd.BODY_ID = gcs.DOCUMENT_ID,
             pasien p 
@@ -2773,15 +2837,16 @@ class medis extends \App\Controllers\BaseController
             c.NAME_OF_CLASS as kelas,
             pd.DESCRIPTION as keterangan,
 		    pd.INSTRUCTION as tindakan,
-            st.SPECIALIST_TYPE as department
+            st.SPECIALIST_TYPE as department,
+            inasis_kontrol.valid_user
    
             FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
-            inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
+            inner join PASIEN_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
             left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class c on c.CLASS_ID = cr.CLASS_ID
             left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
-            where  INASIS_KONTROL.NOSEP = '0701R0011218V004912' 
+            where  INASIS_KONTROL.NOSEP = '" . $visit['no_skp'] . "' 
             and surattype = '1'
             and pd.DIAG_CAT =  1")->getResultArray());
             if (isset($select[0])) {
@@ -2825,26 +2890,36 @@ class medis extends \App\Controllers\BaseController
             convert(varchar,PV.tgl_lahir,105) as date_of_birth,
             CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + 
             CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' AS UMUR,
-            Pd.DIAGNOSA_DESC as diagnosis,
-            PD.DIAGNOSA_ID as kode_diagnosa,
-            pd.TERAPHY_DESC as farmakologi,
+            pds.DIAGNOSA_DESC as diagnosis,
+            pds.DIAGNOSA_ID as kode_diagnosa,
+            farmakologi = 
+                            cast(STUFF(
+                            (SELECT ',' + tob.description
+                            FROM treatment_obat tob
+                            WHERE tob.trans_id =(pv.trans_id)
+                            
+                            FOR XML PATH (''))
+                            , 1, 1, '') as varchar(4000) ),
             igt.nama as alasan_kontrol,
             pd.DOCTOR as dpjp,
             pv.IN_DATE as tgl_masuk,
             cr.NAME_OF_CLASS as bangsal,
             pd.BED_ID no_tt,
             c.NAME_OF_CLASS as kelas,
-            st.SPECIALIST_TYPE as department
-   
-            FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
-            inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
+            st.SPECIALIST_TYPE as department,
+            INASIS_KONTROL.valid_user,
+            INASIS_KONTROL.valid_pasien,
+            INASIS_KONTROL.valid_date
+			from PASIEN_TRANSFER pt inner join
+            INASIS_KONTROL on pt.DOCUMENT_ID = INASIS_KONTROL.NOSURATKONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
+            inner join pasien_DIAGNOSA pD on inasis_kontrol.VISIT_ID = pv.VISIT_ID
+            left outer join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
             left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class c on c.CLASS_ID = cr.CLASS_ID
             left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
-            where  INASIS_KONTROL.NOSEP = '0701R0011218V004912' 
-            and surattype = '1'
-            and pd.DIAG_CAT =  1")->getResultArray());
+            where  pt.body_id = '" . $vactination_id . "' 
+            and surattype = '1'")->getResultArray());
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/18-surat-bpjs.php", [
                     "visit" => $visit,
@@ -2852,10 +2927,7 @@ class medis extends \App\Controllers\BaseController
                     "val" => $select[0]
                 ]);
             } else {
-                return view("admin/patient/profilemodul/formrm/rm/MEDIS/18-surat-bpjs.php", [
-                    "visit" => $visit,
-                    'title' => $title
-                ]);
+                return json_encode("Tidak ada data");
             }
         }
     }
@@ -2896,17 +2968,21 @@ class medis extends \App\Controllers\BaseController
             c.NAME_OF_CLASS as kelas,
             st.SPECIALIST_TYPE as department,
             polikontrol_nmpoli as bangsal,
-            PD.INSTRUCTION as INTRUKSI--,
-            --PD.STANDING_ORDER as INTRUKSITAMBAHAN
-            FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
+            PD.INSTRUCTION as INTRUKSI,
+            INASIS_KONTROL.valid_user,
+            INASIS_KONTROL.valid_pasien,
+            INASIS_KONTROL.valid_date,
+            pt.notes
+            
+            from PASIEN_TRANSFER pt inner join
+            INASIS_KONTROL on pt.DOCUMENT_ID = INASIS_KONTROL.NOSURATKONTROL left outer join  pasien_visitation pv on inasis_kontrol.visit_id = pv.visit_id 
             inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
             left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class c on c.CLASS_ID = cr.CLASS_ID
             left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
-            where  INASIS_KONTROL.NOSEP = '0701R0011218V004912' 
-            and surattype = '2'
-            and pd.DIAG_CAT = '1'")->getResultArray());
+            where  pt.body_id = '" . $vactination_id . "' 
+            and surattype = '2'")->getResultArray());
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/19-surat-perintah.php", [
                     "visit" => $visit,
@@ -2914,11 +2990,7 @@ class medis extends \App\Controllers\BaseController
                     "val" => $select[0]
                 ]);
             } else {
-                return view("admin/patient/profilemodul/formrm/rm/MEDIS/19-surat-perintah.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => []
-                ]);
+                return json_encode("Tidak ada data");
             }
         }
     }
@@ -2959,7 +3031,10 @@ class medis extends \App\Controllers\BaseController
             c.NAME_OF_CLASS as kelas,
             st.SPECIALIST_TYPE as department,
             polikontrol_nmpoli as bangsal,
-            PD.INSTRUCTION as INTRUKSI--,
+            PD.INSTRUCTION as INTRUKSI,
+            INASIS_KONTROL.valid_user,
+            INASIS_KONTROL.valid_pasien,
+            INASIS_KONTROL.valid_date
             --PD.STANDING_ORDER as INTRUKSITAMBAHAN
             FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
             inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
@@ -2967,7 +3042,7 @@ class medis extends \App\Controllers\BaseController
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class c on c.CLASS_ID = cr.CLASS_ID
             left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
-            where  INASIS_KONTROL.NOSEP = '0701R0011218V004912' 
+            where  INASIS_KONTROL.NOSEP = '" . $visit['no_skp'] . "' 
             and surattype = '2'
             and pd.DIAG_CAT = '1'")->getResultArray());
 

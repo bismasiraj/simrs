@@ -623,6 +623,7 @@ class keperawatan extends \App\Controllers\BaseController
     }
     public function cetak_keperawatan($visit, $vactination_id = null, $titlekeperawatan = null)
     {
+
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
@@ -678,15 +679,14 @@ class keperawatan extends \App\Controllers\BaseController
                     where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ed.DOCUMENT_ID order by EXAMINATION_DATE desc) ,'') as FALL_DESC,
                     ea.fullname as dokter
                 FROM EXAMINATION_INFO ei
-					left outer join EXAMINATION_DETAIL ed ON ei.PASIEN_DIAGNOSA_ID = ed.DOCUMENT_ID
+					left outer join EXAMINATION_DETAIL ed ON ei.body_id = ed.DOCUMENT_ID
                     left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = ed.NO_REGISTRATION
                     left outer join ASSESSMENT_GCS gcs on ei.body_id = gcs.DOCUMENT_ID
                     left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on ei.body_id = EDU.DOCUMENT_ID
                     left outer join ASSESSMENT_REPRODUCTION arp on ei.body_id = arp.DOCUMENT_ID
                     LEFT OUTER JOIN ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE
-                    left outer join employee_all ea on ea.employee_id = ei.employee_id
-                WHERE ei.BODY_ID = '" . $vactination_id . "' 
-
+                    left outer join employee_all ea on ea.employee_id = ei.employee_id  
+                WHERE ei.BODY_ID = '" . $vactination_id . "'
                 group by 
 				ei.VISIT_ID,
                     ei.ANAMNASE, 
@@ -841,27 +841,27 @@ class keperawatan extends \App\Controllers\BaseController
                 "
             )->getResultArray() ?? []);
 
-            $neurosensoris = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_NEUROSENSORIS', 'ASES038', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $neurosensoris = $this->query_assessment_column_style('ASSESSMENT_NEUROSENSORIS', 'ASES038', $visit['visit_id'], $vactination_id);
 
-            $circulation = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_CIRCULATION', 'ASES039', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $circulation = $this->query_assessment_column_style('ASSESSMENT_CIRCULATION', 'ASES039', $visit['visit_id'], $vactination_id);
 
-            $pencernaan = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_DIGESTION', 'ASES040', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $pencernaan = $this->query_assessment_column_style('ASSESSMENT_DIGESTION', 'ASES040', $visit['visit_id'], $vactination_id);
 
-            $pernapasan = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_RESPIRATION', 'ASES041', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $pernapasan = $this->query_assessment_column_style('ASSESSMENT_RESPIRATION', 'ASES041', $visit['visit_id'], $vactination_id);
 
-            $perkemihan = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_BLADDER', 'ASES042', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $perkemihan = $this->query_assessment_column_style('ASSESSMENT_BLADDER', 'ASES042', $visit['visit_id'], $vactination_id);
 
-            $reproduksi = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_REPRODUCTION', 'ASES043', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $reproduksi = $this->query_assessment_column_style('ASSESSMENT_REPRODUCTION', 'ASES043', $visit['visit_id'], $vactination_id);
 
-            $thtdanmata = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_VISION_HEARING', 'ASES044', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $thtdanmata = $this->query_assessment_column_style('ASSESSMENT_VISION_HEARING', 'ASES044', $visit['visit_id'], $vactination_id);
 
-            $tidurdanistirahat = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_SLEEPING', 'ASES046', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $tidurdanistirahat = $this->query_assessment_column_style('ASSESSMENT_SLEEPING', 'ASES046', $visit['visit_id'], $vactination_id);
 
-            $dekubitus = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_DEKUBITUS', 'ASES047', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $dekubitus = $this->query_assessment_column_style('ASSESSMENT_DEKUBITUS', 'ASES047', $visit['visit_id'], $vactination_id);
 
-            $integumen = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_INTEGUMEN', 'ASES036', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $integumen = $this->query_assessment_column_style('ASSESSMENT_INTEGUMEN', 'ASES036', $visit['visit_id'], $vactination_id);
 
-            $sosialekonomi = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_SOCEC', 'ASES037', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            $sosialekonomi = $this->query_assessment_column_style('ASSESSMENT_SOCEC', 'ASES037', $visit['visit_id'], $vactination_id);
 
 
             $pediatri = $this->lowerKey($db->query(
@@ -891,10 +891,24 @@ class keperawatan extends \App\Controllers\BaseController
                 "
             )->getRowArray() ?? []);
 
+            $diag = $this->lowerKey($db->query(
+                "
+                select pds.diagnosan_id, pds.diag_notes from PASIEN_DIAGNOSA_NURSE pdn
+                inner join pasien_diagnosas_nurse pds on pdn.BODY_ID = pds.BODY_ID
+                where document_id = '$vactination_id'                    
+                "
+            )->getResultArray() ?? []);
+
+
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
 
             $sign = $this->checkSignDocs($vactination_id, 3);
+
+            // return json_encode($vactination_id);
             $selectinfo = $visit;
+
+            // return json_encode($reproduksi);
+
 
             return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/5-ranap-neonatus.php", [
                 "visit" => $visit,
@@ -920,6 +934,185 @@ class keperawatan extends \App\Controllers\BaseController
                 "organization" => $selectorganization,
                 "info" => $selectinfo,
                 "pediatri" => $pediatri,
+                "diag" => $diag,
+                "sign" => $sign
+            ]);
+        }
+    }
+    public function cetak_kebidanan($visit, $vactination_id = null, $titlekeperawatan = null)
+    {
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            // return json_encode($vactination_id);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("
+                SELECT
+					ei.VISIT_ID,
+                    ei.ANAMNASE as anamnesis,
+                    ei.DESCRIPTION AS riwayat_penyakit_sekarang,
+                    gcs.GCS_E,
+                    gcs.GCS_m,
+                    gcs.GCS_V, 
+                    gcs.GCS_SCORE as gcs,
+                    gcs.GCS_DESC,
+                    ei.isrj,
+                    max(case when apv.PARAMETER_ID = '01' and apv.VALUE_SCORE = GCS_E then apv.VALUE_DESC else '' end ) as GSC_E_DESC,
+                    max(case when apv.PARAMETER_ID = '02' and apv.VALUE_SCORE = GCS_M then apv.VALUE_DESC else '' end ) as GSC_M_DESC,
+                    max(case when apv.PARAMETER_ID = '03' and apv.VALUE_SCORE = GCS_V then apv.VALUE_DESC else '' end ) as GSC_V_DESC,
+                    max(case when PH.value_id = 'G0090601'  then histories else null end ) as haid,
+                    max(case when PH.value_id = 'G0090602'  then histories else null end) as menarche,
+                    max(case when PH.value_id = 'G0090603'  then histories else null end ) as siklus,
+                    max(case when PH.value_id = 'G0090604'  then histories else null end ) as lama,
+                    max(case when PH.value_id = 'G0090605'  then histories else null end ) as jumlah,
+                    max(case when PH.value_id = 'G0090606'  then histories else null end ) as hpht,
+                    max(case when PH.value_id = 'G0090607'  then histories else null end ) as hpl,
+                    max(case when PH.value_id = 'G0090608'  then histories else null end ) as keluhan,
+                    MAX(CASE WHEN EDU.INFORMATION_RECEIVER = '1' THEN 'Penerima Pasien' + ' materi `edukasi `: '   + edu.education_material
+                    else 'Kerabat Pasien dengan nama : ' + edu.family_name + ' materi edukasi : ' + edu.education_material  end ) as edukasi_pasien,
+                    isnull((select top(1) total_score from ASSESSMENT_FALL_RISK
+                    where ASSESSMENT_FALL_RISK.DOCUMENT_ID = ei.body_id order by EXAMINATION_DATE desc) ,'') as FALL_SCORE,
+					isnull((select top(1) ASSESSMENT_FALL_RISK.DESCRIPTION from ASSESSMENT_FALL_RISK
+                    where ASSESSMENT_FALL_RISK.DOCUMENT_ID = ei.body_id order by EXAMINATION_DATE desc) ,'') as FALL_DESC,
+                    isnull((select top(1) total_score from ASSESSMENT_PAIN_MONITORING
+                    where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ei.body_id order by EXAMINATION_DATE desc) ,'') as PAIN_SCORE,
+					isnull((select top(1) ASSESSMENT_PAIN_MONITORING.DESCRIPTION from ASSESSMENT_PAIN_MONITORING
+                    where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ei.body_id order by EXAMINATION_DATE desc) ,'') as FALL_DESC,
+                    isnull(ea.fullname, ei.modified_by) as dokter,
+                    ei.modified_by,
+                    ei.teraphy_desc as asesmen
+                FROM EXAMINATION_INFO ei
+                    left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = ei.NO_REGISTRATION
+                    left outer join ASSESSMENT_GCS gcs on ei.body_id = gcs.DOCUMENT_ID
+                    left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on ei.body_id = EDU.DOCUMENT_ID
+                    left outer join ASSESSMENT_REPRODUCTION arp on ei.body_id = arp.DOCUMENT_ID
+                    left outer join ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE
+                    left outer join users u on u.username = ei.modified_by
+                    left outer join employee_all ea on ea.employee_id = u.employee_id
+                WHERE ei.BODY_ID = '" . $vactination_id . "' 
+                group by 
+                ei.body_id,
+				ei.VISIT_ID,
+                    ei.ANAMNASE, 
+                    ei.DESCRIPTION,
+                    gcs.GCS_E,
+                    gcs.GCS_m,
+                    gcs.GCS_V, 
+                    gcs.GCS_SCORE,
+                    gcs.GCS_DESC,
+                    ei.PASIEN_DIAGNOSA_ID,
+                    ei.isrj,
+                    ea.fullname,
+                    ei.modified_by,
+                    ea.fullname,
+                    ei.teraphy_desc
+        ")->getRowArray() ?? []);
+
+            $selectDetail = $this->lowerKey($db->query("select
+            ed.examination_date,
+            ed.tfu,
+            ed.child_position,
+            ed.heart_sound,
+            ed.oedema,
+            ed.urine,
+            ed.tension_upper,
+            ed.tension_below,
+            ed.weight
+            from examination_detail ed where ed.visit_id = '" . $visit['visit_id'] . "' order by examination_Date desc ")->getResultArray());
+
+            $pregnancy = $this->lowerKey($db->query("select * from birth_history where no_registration = '" . $visit['no_registration'] . "'")->getResultArray());
+
+            $lab = $db->query("SELECT REPLACE(replace( STUFF(
+                                (SELECT ';' +  ' Pemeriksaan : ' + tr.treatment + '  '
+                                from TREATMENT_BILL tr where
+                                -- tr.TRANS_ID = 'trans_id'  and
+                                tr.VISIT_ID= ?  and
+                                tr.CLINIC_ID = 'P013' 	 
+                                order by tr.TREATMENT
+                                FOR XML PATH (''))
+                                , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksalab
+                                from ORGANIZATIONUNIT
+                            ", [$visit['visit_id']])->getRowArray();
+
+            $rad = $db->query("SELECT REPLACE(replace( STUFF(
+                    (SELECT ';' +  ' Pemeriksaan : ' + tr.treatment + '  '
+                    from TREATMENT_BILL tr where
+                    -- tr.TRANS_ID = 'trans_id'  and
+                    tr.VISIT_ID= ?  and
+                    tr.CLINIC_ID = 'P016' 	 
+                    order by tr.TREATMENT
+                    FOR XML PATH (''))
+                    , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksarad
+                    from ORGANIZATIONUNIT
+                ", [$visit['visit_id']])->getRowArray();
+
+            // return json_encode($rad);
+
+            $tindakLanjut = $this->lowerKey($db->query("SELECT 
+                            CASE 
+                                WHEN ISINTERNAL = 2 THEN 'DIRUJUK'
+                                WHEN ISINTERNAL = 3 THEN 'DI RUJUK KE UNIT LAIN (KONSUL)'
+                                WHEN ISINTERNAL = 4 THEN 'PERAWATAN JALAN (KONTROL)'
+                                WHEN ISINTERNAL = 5 THEN 'RAWAT INAP'
+                                WHEN ISINTERNAL = 10 THEN 'TRANSFER INTERNAL'
+                                WHEN ISINTERNAL = 11 THEN 'Pengobatan Selesai'
+                                ELSE ''
+                            END AS tindak_lanjut
+                        FROM PASIEN_TRANSFER
+                        WHERE visit_id = ?
+                        AND ISINTERNAL <> 11;", [$visit['visit_id']])->getRowArray());
+
+            $farma = $db->query("SELECT  STUFF(
+                        (SELECT ', ' +  description + ' ( ' + isnull(description2,'') + ' ) '   from  treatment_obat where 
+                        treatment_obat.visit_id  = ?
+                        and DESCRIPTION <> '%jasa%' 
+                            group by description ,isnull(description2,'')
+                        FOR XML PATH (''))
+                        ,1, 2, '') terapi
+                        from ORGANIZATIONUNIT ;
+                        ", [$visit['visit_id']])->getRowArray();
+
+            // return json_encode($select);
+
+            $title = "Asesmen Keperawatan ";
+            if (!is_null($visit['class_room_id']) && $visit['class_room_id'] != '') {
+                $title .= 'Rawat Inap ';
+            } else {
+                $title .= 'Rawat Jalan ';
+            }
+            if ($titlekeperawatan != null) {
+                $title .= $titlekeperawatan;
+            }
+
+
+            $sosialekonomi = $this->lowerKey($db->query($this->query_assessment('ASSESSMENT_SOCEC', 'ASES037', $visit['visit_id'], $vactination_id))->getResultArray() ?? []);
+            if ($lab) {
+                $select['laboratorium'] = $lab['periksalab'];
+            }
+            if ($rad) {
+                $select['radiologi'] = $rad['periksarad'];
+            }
+            if ($farma) {
+                $select['farmakologia'] = $farma['terapi'];
+            }
+            if ($tindakLanjut) {
+                $select['rencana_tl'] = $tindakLanjut['tindak_lanjut'];
+            }
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+
+            $sign = $this->checkSignDocs($vactination_id, 3);
+            $selectinfo = $visit;
+
+            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/cetak_kebidanan.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $select,
+                "detail" => $selectDetail,
+                "pregnancy" => $pregnancy,
+                "sosialekonomi" => $sosialekonomi,
+                "organization" => $selectorganization,
+                "info" => $selectinfo,
                 "sign" => $sign
             ]);
         }
@@ -1789,7 +1982,7 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
             $kopprintData = $this->kopprint();
-            $select = $this->lowerKey($db->query("SELECT MODIFIED_DATE as date, EDUCATION_MATERIAL as education, FAMILY_NAME, FAMILY_RELATION, MODIFIED_BY as staff
+            $select = $this->lowerKey($db->query("SELECT MODIFIED_DATE as date, isnull(EDUCATION_MATERIAL, '') as education, FAMILY_NAME, FAMILY_RELATION, MODIFIED_BY as staff
                                                          from ASSESSMENT_EDUCATION_FORMULIR where VISIT_ID = '" . $visit['visit_id'] . "'")->getResultArray());
 
             if (isset($select)) {
@@ -1824,7 +2017,7 @@ class keperawatan extends \App\Controllers\BaseController
             $selectFamily =  $this->lowerKey($db->query("SELECT F.*, FS.FAMILY_STATUS 
                                 FROM FAMILY F
                                 JOIN FAMILY_STATUS FS ON F.FAMILY_STATUS_ID = FS.FAMILY_STATUS_ID
-                                WHERE F.NO_REGISTRATION = '0086029';")->getResultArray());
+                                WHERE F.NO_REGISTRATION = '{$visit['no_registration']}';")->getResultArray());
 
             return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/15-identitas.php", [
                 "visit" => $visit,
@@ -2232,6 +2425,24 @@ class keperawatan extends \App\Controllers\BaseController
 
             $select = $this->lowerKey($db->query($query)->getResultArray());
 
+            $ap = $this->lowerKey($db->query("select * from assessment_parameter where p_type in ('GEN0003','GEN0004')")->getResultArray());
+            $av = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type in ('GEN0005')")->getResultArray());
+
+
+            foreach ($select as $key => $value) {
+                foreach ($ap as $key1 => $value1) {
+                    if ($value['intervensi'] == $value1['parameter_id'] && $value1['p_type'] == 'GEN0003')
+                        $select[$key]['intervensi'] = $value1['parameter_desc'];
+
+                    if ($value['rute'] == $value1['parameter_id'] && $value1['p_type'] == 'GEN0004')
+                        $select[$key]['rute'] = $value1['parameter_desc'];
+                }
+                foreach ($av as $key1 => $value1) {
+                    if ($value['reassessment'] == $value1['value_score'])
+                        $select[$key]['reassessment'] = $value1['value_desc'];
+                }
+            }
+
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
             $selectinfo = $this->query_template_info($db, $visit['visit_id'], $vactination_id);
@@ -2263,8 +2474,12 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
             $query = "
-            SELECT ASSESSMENT_FALL_RISK.BODY_ID, EMPLOYEE_ALL.DESCRIPTION AS DOCTOR, ASSESSMENT_PARAMETER_TYPE.P_DESCRIPTION AS ALAT_UKUR, ASSESSMENT_FALL_RISK.DESCRIPTION AS INTERVENSI, ASSESSMENT_FALL_RISK.EXAMINATION_DATE AS TANGGAL,
-            SUM(ASSESSMENT_FALL_RISK_DETAIL.VALUE_SCORE) AS total_value_score
+            SELECT ASSESSMENT_FALL_RISK.BODY_ID, EMPLOYEE_ALL.DESCRIPTION AS DOCTOR, ASSESSMENT_PARAMETER_TYPE.P_DESCRIPTION AS ALAT_UKUR, 
+            max(case when (ASSESSMENT_FALL_RISK_DETAIL.parameter_id = '08' and ASSESSMENT_FALL_RISK_DETAIL.p_type = 'ASES020')
+            or (ASSESSMENT_FALL_RISK_DETAIL.parameter_id = '07' and ASSESSMENT_FALL_RISK_DETAIL.p_type = 'ASES019')
+            then ASSESSMENT_FALL_RISK_DETAIL.value_desc else null end) as INTERVENSI, ASSESSMENT_FALL_RISK.EXAMINATION_DATE AS TANGGAL,
+            SUM(ASSESSMENT_FALL_RISK_DETAIL.VALUE_SCORE) AS total_value_score,
+            ASSESSMENT_FALL_RISK.modified_by
             FROM ASSESSMENT_FALL_RISK_DETAIL
             INNER JOIN ASSESSMENT_FALL_RISK ON ASSESSMENT_FALL_RISK_DETAIL.BODY_ID = ASSESSMENT_FALL_RISK.BODY_ID
             INNER JOIN ASSESSMENT_PARAMETER_TYPE ON ASSESSMENT_FALL_RISK_DETAIL.P_TYPE = ASSESSMENT_PARAMETER_TYPE.P_TYPE
@@ -2274,7 +2489,7 @@ class keperawatan extends \App\Controllers\BaseController
             if (!is_null($vactination_id)) {
                 $query .= "and ASSESSMENT_FALL_RISK_DETAIL.body_id = '$vactination_id'";
             }
-            $query .= "group by ASSESSMENT_FALL_RISK.BODY_ID, EMPLOYEE_ALL.DESCRIPTION , ASSESSMENT_PARAMETER_TYPE.P_DESCRIPTION, ASSESSMENT_FALL_RISK.DESCRIPTION, ASSESSMENT_FALL_RISK.EXAMINATION_DATE";
+            $query .= "group by ASSESSMENT_FALL_RISK.BODY_ID, EMPLOYEE_ALL.DESCRIPTION , ASSESSMENT_PARAMETER_TYPE.P_DESCRIPTION, ASSESSMENT_FALL_RISK.DESCRIPTION, ASSESSMENT_FALL_RISK.EXAMINATION_DATE, ASSESSMENT_FALL_RISK.modified_by";
             $select = $this->lowerKey($db->query($query)->getResultArray());
 
             // dd($select);
@@ -2328,7 +2543,7 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $riwayat = $this->lowerKey($db->query("SELECT 'riwayat_imunisasi' as riwayat_imunisasi from examination_info where visit_id='" . $visit['visit_id'] . "'")->getResultArray());
+            $riwayat = $this->lowerKey($db->query("SELECT histories as riwayat_imunisasi from PASIEN_HISTORY where no_registration='" . $visit['no_registration'] . "' and value_id = 'G0090403'")->getResultArray());
             $status = $this->lowerKey($db->query("SELECT KELUAR_ID, CARA_KELUAR from CARA_KELUAR where KELUAR_ID='" . $visit['keluar_id'] . "' ")->getResultArray());
             $oprasi = $this->lowerKey($db->query("SELECT operasi = CAST(STUFF((SELECT ',' + tt.TARIF_NAME
                                                                         FROM PASIEN_operasi po
@@ -2338,11 +2553,16 @@ class keperawatan extends \App\Controllers\BaseController
                                                                 FROM pasien_visitation pv WHERE 
                                                                     pv.NO_REGISTRATION = '" . $visit['no_registration'] . "' 
                                                                     AND pv.visit_id = '" . $visit['visit_id'] . "';")->getResultArray());
-            $statusPulang = $this->lowerKey($db->query("SELECT pd.RENCANATL, it.NAMA
+            $pasienDiagnosa = $this->lowerKey($db->query("SELECT pd.RENCANATL, it.NAMA, pd.pasien_diagnosa_id
                                                                         FROM PASIEN_DIAGNOSA pd
-                                                                        LEFT OUTER JOIN INASIS_GET_TINDAKLANJUT it ON pd.rencanaTL = it.KODE where pd.VISIT_ID ='" . $visit['keluar_id'] . "' ")->getResultArray());
-            $diagnosis = $this->lowerKey($db->query("select PASIEN_DIAGNOSA_ID, DIAGNOSA_ID, DIAGNOSA_NAME, DIAG_CAT from PASIEN_DIAGNOSAS where pasien_diagnosa_id = '20240612091917506' ORDER BY diag_cat;")->getResultArray());
-            $procedure = $this->lowerKey($db->query("select PASIEN_DIAGNOSA_ID, DIAGNOSA_ID, DIAGNOSA_NAME from PASIEN_PROCEDURES where pasien_diagnosa_id = '20240612091917506'")->getResultArray());
+                                                                        LEFT OUTER JOIN INASIS_GET_TINDAKLANJUT it ON pd.rencanaTL = it.KODE where pd.VISIT_ID ='" . $visit['visit_id'] . "' ")->getResultArray());
+            $diagnosaId = '';
+            if (isset($pasienDiagnosa[0])) {
+                $diagnosaId = $pasienDiagnosa[0]['pasien_diagnosa_id'];
+            }
+
+            $diagnosis = $this->lowerKey($db->query("select PASIEN_DIAGNOSA_ID, DIAGNOSA_ID, DIAGNOSA_NAME, DIAG_CAT from PASIEN_DIAGNOSAS where pasien_diagnosa_id = '$diagnosaId' ORDER BY diag_cat;")->getResultArray());
+            $procedure = $this->lowerKey($db->query("select PASIEN_DIAGNOSA_ID, DIAGNOSA_ID, DIAGNOSA_NAME from PASIEN_PROCEDURES where pasien_diagnosa_id = '$diagnosaId'")->getResultArray());
             $pasien = $this->lowerKey($db->query("SELECT 
                                             p.EMPLOYEE_ID AS pekerjaan,
                                             p.NATION_ID AS warganegara,
@@ -2394,34 +2614,68 @@ class keperawatan extends \App\Controllers\BaseController
                     'prod' => $procedure,
                     'kop' => $kopprintData[0],
                     'kondisi' => $status[0],
-                    'statusP' => !$statusPulang ? $statusPulang : $statusPulang[0],
+                    // 'status' => !$statusPulang ? $statusPulang : $statusPulang[0],
                     'tindakan' => $oprasi,
                     'riwayat' => $riwayat
                 ]);
             } else {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/23-ringkasan-masuk-keluar.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "pasien" => $pasien[0],
-                    'kop' => $kopprintData[0]
-                ]);
+                return json_encode("Data tidak ditemukan");
             }
         }
     }
-    public function transfer_internal($visit, $aValue, $vactination_id = null)
+    public function transfer_internal($visit, $vactination_id = null)
     {
         $title = "Transfer Pasien Internal";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
-            $visit = $visit['visit'];
-            // dd($visit);
             $db = db_connect();
 
             $kopprintData = $this->kopprint();
-            $select = $this->lowerKey($db->query("select CLINIC_ID, CLINC_ID_TO,visit_id,body_id, document_id, document_id2 from pasien_transfer where body_id='202406070348269862WA'")->getResultArray());
-            $document = $this->lowerKey($db->query("select * from EXAMINATION_INFO where body_id='" . $select[0]['document_id'] . "'")->getResultArray());
-            $document2 = $this->lowerKey($db->query("select * from EXAMINATION_INFO where body_id='" . $select[0]['document_id2'] . "'")->getResultArray());
+            $select = $this->lowerKey($db->query("select CLINIC_ID, CLINC_ID_TO,visit_id,body_id, document_id, document_id3 from pasien_transfer where body_id = '$vactination_id'")->getResultArray());
+            $stabilitas = $db->query("
+                                                        select av.value_desc from ASSESSMENT_INDICATOR ai inner join ASSESSMENT_INDICATOR_DETAIL aid
+                                                                    on ai.BODY_ID = aid.BODY_ID
+                                                                    inner join ASSESSMENT_PARAMETER_VALUE av on aid.VALUE_ID = av.VALUE_ID
+                                                        where DOCUMENT_ID = '" . $select[0]['body_id'] . "'")->getRow(0, 'array');
+            $document = $this->lowerKey($db->query("select ei.*,ed.TENSION_UPPER,
+                ed.TENSION_BELOW,
+                ed.NADI,
+                ed.NAFAS,
+                ed.WEIGHT,
+                ed.HEIGHT,
+                ed.IMT_SCORE,
+                ed.IMT_DESC,
+                ed.SATURASI,
+                ed.ARM_DIAMETER,
+                ed.OXYGEN_USAGE,
+                ed.OXYGEN_USAGE_SCORE,
+                ed.TEMPERATURE_SCORE,
+                ed.TENSION_UPPER_SCORE,
+                ed.TENSION_BELOW_SCORE,
+                ed.NADI_SCORE,
+                ed.NAFAS_SCORE,
+                ed.SATURASI_SCORE,
+                ed.AWARENESS,
+                ed.PAIN,
+                ed.LOCHIA,
+                ed.GENERAL_CONDITION,
+                ed.CARDIOVASCULER,
+                ed.RESPIRATION,
+                ed.PROTEINURIA,
+                ed.CERVIX,
+                ed.DJJ,
+                ed.HIS_FREQ,
+                ed.HIS_DURATION,
+                ed.HIS_POWER,
+                ed.HIS_SIMETRY,
+                ed.CHILD_POSITION,
+                ed.HEART_SOUND,
+                ed.OEDEMA,
+                ed.URINE,
+                ed.TFU,
+                ed.UTERUS from EXAMINATION_INFO ei inner join examination_detail ed on ei.body_id = ed.body_id where ed.body_id='" . $select[0]['document_id'] . "'")->getResultArray());
+            $document2 = $this->lowerKey($db->query("select * from EXAMINATION_detail where body_id='" . $select[0]['document_id3'] . "'")->getResultArray());
             $subyektif = $this->lowerKey($db->query("select 
             pd.NO_REGISTRATION as no_RM,
             p.NAME_OF_PASIEN as nama,
@@ -2508,7 +2762,7 @@ class keperawatan extends \App\Controllers\BaseController
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class on class.CLASS_ID = cr.CLASS_ID
             left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = pd.NO_REGISTRATION
-            left outer join EXAMINATION_INFO ei on ei.body_id = pd.BODY_ID
+            left outer join EXAMINATION_DETAIL ei on ei.body_id = pd.BODY_ID
             LEFT OUTER JOIN ASSESSMENT_LOKALIS ALO ON PD.BODY_ID = ALO.DOCUMENT_ID
             left outer join ASSESSMENT_GCS gcs on pd.BODY_ID = gcs.DOCUMENT_ID
             LEFT OUTER JOIN ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE,
@@ -2575,7 +2829,8 @@ class keperawatan extends \App\Controllers\BaseController
                     'doc2' => $document2[0],
                     'sub' => $subyektif !== null  ? $subyektif : $subyektif[0],
                     'val' => $select !== null  ? $select : $select[0],
-                    'kop' => $kopprintData[0]
+                    'kop' => $kopprintData[0],
+                    'stabil' => $stabilitas
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/25-transfer-pasien-internal.php", [

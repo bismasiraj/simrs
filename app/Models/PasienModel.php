@@ -51,7 +51,8 @@ class PasienModel extends Model
         'sspasien_id',
         'father',
         'mother',
-        'spouse'
+        'spouse',
+        'sign_file'
     ];
 
     // Dates

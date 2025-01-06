@@ -44,6 +44,9 @@
                                                 <th class="text-center p-1">Formulir Skrining</th>
                                                 <th class="text-center" width="1%">Total Skor</th>
                                                 <th class="text-center" style="width:100px;">Kesimpulan</th>
+                                                <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
+                                                    <th style="width:1% !important;" class="text-center p-1"><i class="fas fa-signature"></i></th>
+                                                <?php endif; ?>
                                                 <th style="width:1% !important;" class="text-center p-1"><i class="fas fa-print"></i></th>
                                                 <th style="width:1% !important;" class="text-center p-1"><i class="fas fa-edit"></i></th>
                                                 <th style="width:1% !important;" class="text-center p-1"><i class="fas fa-trash-alt"></i></th>
@@ -71,9 +74,10 @@
                                             <tr>
                                                 <th width="1%">No.</th>
                                                 <th class="text-center">Dokumen</th>
+                                                <th width="1%" class="text-center"><i class="fas fa-upload"></i></th>
                                                 <th width="1%" class="text-center"><i class="fas fa-print"></i></th>
                                                 <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
-                                                    <!-- <th width="1%" class="text-center"><i class="fas fa-clipboard-check"></i></th> -->
+                                                    <th width="1%" class="text-center"><i class="fas fa-signature"></i></th>
                                                 <?php endif; ?>
                                                 <th width="1%" class="text-center"><i class="fas fa-tasks"></i></th>
                                                 <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
@@ -860,7 +864,7 @@
                             <div class="form-group">
                                 <label for="" class="form-label fw-bold">Kategori Formulir</label>
                                 <select class="form-select" id="select_skrining_gizi" name="p_type">
-                                    <option selected>Pilih kategori</option>
+                                    <option value="" selected>Pilih kategori</option>
                                     <option value="GIZ0601">Anak 1 bulan - 18 tahun (Adaptasi Strong-kids)</option>
                                     <option value="GIZ0602">Malnutrition Screening Tool (MST)</option>
                                     <option value="GIZ0603">Mini Nutritional Assessment (MNA)</option>
@@ -914,7 +918,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary" id="btnSaveSkrining"><i class="fas fa-save"></i> Simpan</button>
+                <button type="button" class="btn btn-primary" id="btnSaveSkrining" disabled><i class="fas fa-save"></i> Simpan</button>
             </div>
         </div>
     </div>
@@ -939,7 +943,7 @@
                             <div class="form-group">
                                 <label for="" class="form-label fw-bold">Kategori Formulir</label>
                                 <select class="form-select" id="edit_select_skrining_gizi" name="p_type">
-                                    <option selected>Pilih kategori</option>
+                                    <option value="" selected>Pilih kategori</option>
                                     <option value="GIZ0601">Anak 1 bulan - 18 tahun (Adaptasi Strong-kids)</option>
                                     <option value="GIZ0602">Malnutrition Screening Tool (MST)</option>
                                     <option value="GIZ0603">Mini Nutritional Assessment (MNA)</option>
@@ -997,6 +1001,71 @@
                 <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
                     <button type="button" class="btn btn-primary" id="btnUpdateSkrining"><i class="fas fa-save"></i> Simpan</button>
                 <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Tanda Tangan -->
+<div class="modal fade" id="signSignGiziModal" tabindex="-1" aria-labelledby="signSignGiziModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signSignGiziModalLabel">Tanda Tangan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSignGizi" method="POST" action="">
+                    <input type="hidden" name="id" id="gizi_sign_id">
+                    <input type="hidden" name="thename" value="<?= $visit['diantar_oleh']; ?>">
+                    <div class="mb-3">
+                        <label for="signuser_type_gizi">Penandatangan</label>
+                        <div class="form-group">
+                            <select name='user_type' id="signuser_type_gizi" class="form-select" style="width:100%">
+                                <option value="1">Tenaga Medis</option>
+                                <!-- <option value="2">Pasien</option>
+                                <option value="3">Wali Pasien</option> -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSubmitSignGizi">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadFileGizi" tabindex="-1" aria-labelledby="uploadFileGiziLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadFileGiziLabel">Upload File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST" id="formUploadGizi" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Upload File Anda :</label>
+                        <input class="form-control" name="file" type="file" id="formFile">
+                    </div>
+                </form>
+                <div class="d-flex justify-content-end" id="wrapLinkGizi" style="visibility: hidden;">
+                    Link File : <span id="linkUploadGizi" class="text-primary text-decoration-underline" style="cursor: pointer;"><span>Upload File</span></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnUploadGizi">Upload</button>
             </div>
         </div>
     </div>

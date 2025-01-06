@@ -239,11 +239,12 @@ foreach ($aValue as $key => $value) {
                 //     localStorage.removeItem(key);
                 // })
                 // $("#arpModal").modal("hide")
-                let formData = new FormData(document.getElementById("formaddarp"))
+                // let formData = new FormData(document.getElementById("formaddarp"))
                 let formDataObject = {};
-                formData.forEach(function(value, key) {
-                    formDataObject[key] = value
-                });
+                // formData.forEach(function(value, key) {
+                //     formDataObject[key] = value
+                // });
+                formDataObject = data.perawat
                 var isNewDocument = 0
                 $.each(examForassessment, function(key, value) {
                     if (value.body_id == formDataObject.body_id) {
@@ -276,6 +277,9 @@ foreach ($aValue as $key => $value) {
                     displayTableAssessmentKeperawatan();
                     displayTableAssessmentKeperawatanForVitalSign();
                 }
+
+                riwayatAll = data.perawat.pasienHistory
+
 
                 disableARP()
 
@@ -687,9 +691,16 @@ foreach ($aValue as $key => $value) {
     }
 
     const fillDataArp = async (index) => {
+        $("#bodyDiagPerawat").html("")
+        $("#formaddarpqrcode1").html("")
+        $("#formaddarpsigner1").html("")
+        $("#formaddarpqrcode2").html("")
+        $("#formaddarpsigner2").html("")
+
         var ex = examForassessment[index]
         $.each(ex, function(key, value) {
-            $("#arp" + key).val(value)
+            if (!Array.isArray(value))
+                $("#arp" + key.replace(/([.#:,\[\]\/])/g, '\\$1')).val(value)
         })
         let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
         $("#arpclinic_id").html($('<option></option>')
@@ -1012,7 +1023,7 @@ foreach ($aValue as $key => $value) {
     }
 
     const signArp = async () => {
-        $("#formeditarpid").trigger("click")
+        // $("#formeditarpid").trigger("click")
         //const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title)
         let titlenya = $("#arpTitle").html()
         let titlerj = ''
@@ -1052,47 +1063,87 @@ foreach ($aValue as $key => $value) {
 
         $.each(examForassessment, function(key, value) {
             var pd = examForassessment[key]
-            if (value.account_id == '2')
+            if (value.account_id == '2') {
+                var titlekeperawatan = '';
+                if (value.vs_status_id == 1) {
+                    titlekeperawatan = 'Dewasa'
+                }
+                if (value.vs_status_id == 4) {
+                    titlekeperawatan = 'Neonatus'
+                }
+                if (value.vs_status_id == 5) {
+                    titlekeperawatan = 'Anak'
+                }
+                if (value.vs_status_id == 10) {
+                    titlekeperawatan = 'Obsetric'
+                }
+
+
                 if (key == index) {
-                    $("#assessmentKeperawatanHistoryBody").append($("<tr>")
-                        .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                        .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
-                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                        .append($("<td>").append($("<b>").html(value.anamnase)))
-                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
-                            value.temperature + '°C; ' +
-                            value.nadi + '/menit; ' +
-                            value.tension_upper + 'mmHg; ' +
-                            value.tension_below + 'mmHg; ' +
-                            value.saturasi + 'SpO2%; ' +
-                            value.nafas + '/menit; ' +
-                            value.arm_diameter + 'cm; ')))
-                        .append($("<td>").append($("<b>").html()))
-                        .append($("<td>").append($("<b>").html()))
-                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
-                    )
+                    var rowHtml = `
+                        <tr>
+                            <td><b><i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i></b></td>
+                            <td><b>${formatedDatetimeFlat(value.examination_date)}</b></td>
+                            <td><b>${value.name_of_clinic}</b></td>
+                            <td><b>${value.anamnase}</b></td>
+                            <td>
+                                <b>
+                                    BB: ${value.weight}Kg; 
+                                    TB: ${value.height}cm; 
+                                    ${value.temperature}°C; 
+                                    ${value.nadi}/menit; 
+                                    ${value.tension_upper}mmHg; 
+                                    ${value.tension_below}mmHg; 
+                                    ${value.saturasi}SpO2%; 
+                                    ${value.nafas}/menit; 
+                                    ${value.arm_diameter}cm;
+                                </b>
+                            </td>
+                            <td><b><i>--Silahkan klik tombol lihat--</i></b></td>
+                            <td><b>${value.instruction}</b></td>
+                            <td rowspan="6">
+                                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                    <button type="button" class="btn btn-success" onclick="fillDataArp(${key})">Lihat</button>
+                                    <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit))) ?>/${value.body_id}/${titlekeperawatan}')">Cetak</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    $("#assessmentKeperawatanHistoryBody").append(rowHtml);
                     $('html, body').animate({
                         scrollTop: 0
                     }, 800);
                 } else {
-                    $("#assessmentKeperawatanHistoryBody").append($("<tr>")
-                        .append($("<td>"))
-                        .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
-                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                        .append($("<td>").append($("<b>").html(value.anamnase)))
-                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
-                            value.temperature + '°C; ' +
-                            value.nadi + '/menit; ' +
-                            value.tension_upper + 'mmHg; ' +
-                            value.tension_below + 'mmHg; ' +
-                            value.saturasi + 'SpO2%; ' +
-                            value.nafas + '/menit; ' +
-                            value.arm_diameter + 'cm; ')))
-                        .append($("<td>").append($("<b>").html()))
-                        .append($("<td>").append($("<b>").html()))
-                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
-                    )
+                    var rowHtml = `
+                        <tr>
+                            <td></td>
+                            <td><b>${formatedDatetimeFlat(value.examination_date)}</b></td>
+                            <td><b>${value.name_of_clinic}</b></td>
+                            <td><b>${value.anamnase}</b></td>
+                            <td>
+                                <b>BB: ${value.weight}Kg; 
+                                TB: ${value.height}cm; 
+                                ${value.temperature}°C; 
+                                ${value.nadi}/menit; 
+                                ${value.tension_upper}mmHg; 
+                                ${value.tension_below}mmHg; 
+                                ${value.saturasi}SpO2%; 
+                                ${value.nafas}/menit; 
+                                ${value.arm_diameter}cm;</b>
+                            </td>
+                            <td><b><i>--Silahkan klik tombol lihat--</i></b></td>
+                            <td><b>${value.instruction}</b></td>
+                            <td rowspan="6">
+                                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                    <button type="button" class="btn btn-success" onclick="fillDataArp(${key})">Lihat</button>
+                                    <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit))) ?>/${value.body_id}/${titlekeperawatan}')">Cetak</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    $("#assessmentKeperawatanHistoryBody").append(rowHtml);
                 }
+            }
         })
         vsStatusId = [2, 7];
 
@@ -1139,7 +1190,7 @@ foreach ($aValue as $key => $value) {
         if ($("#arpvalid_user").val() != '') {
             $("#formaddarpbtnid").slideUp()
             $("#formeditarpid").slideUp()
-            $("#formsignarpid").slideUp()
+            $("#formsignarpid").slideDown()
             $("#formaddarp").find(".btn-add-doc").remove()
         } else {
             $("#formaddarpbtnid").slideDown()
@@ -1171,17 +1222,6 @@ foreach ($aValue as $key => $value) {
         }
 
         openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '/' + titlekeperawatan)
-        // var win = window.open('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '/' + titlekeperawatan, '_blank');
-        // $.ajax({
-        //     url: '<?= base_url() . '/admin/rm/assessment/cetakKeperawatan' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val(),
-        //     type: "GET",
-        //     success: function(data) {
-        //         // Insert fetched content into modal
-        //         // $("#cetakarpbody").html(data);
-        //         $("#pdfFrame").attr("src", "data:application/pdf;base64," + data);
-        //         // Display the modal
-        //         $("#cetakarp").modal('show');
-        //     }
-        // });
+
     }
 </script>

@@ -265,6 +265,8 @@ class Signature extends BaseController
         }
         // return json_encode($sign_id);
         $select = $model->find($sign_id);
+
+
         // return json_encode($sign_id);
         if (!isset($select) || !is_array($select)) {
             return json_encode(['error' => 'Data Tidak Ditemukan']);
@@ -284,12 +286,11 @@ class Signature extends BaseController
         }
         ksort($dataDoc);
 
-        // return json_encode($dataDoc);
+        // return json_encode($user_type);
         // Validate login and password
         if ($user_type == 1) {
             $checkpass = $this->checkpass($dataForm['user_id'] ?? null, $dataForm['password'] ?? null);
         } else if ($user_type == 2) {
-
 
 
             $pModel = new PasienModel();
@@ -312,15 +313,15 @@ class Signature extends BaseController
                 mkdir($lokalisPath, 0777, true);
             }
 
-            $filenameLokalis = $nik . '.gif';
+            $filenameLokalis = $no_registration . '.gif';
             $fullPathLokalis = $lokalisPath . $filenameLokalis;
             if (file_put_contents($fullPathLokalis, $decodedLokalis)) {
-                $model = new PasienModel();
+                $pasienModel = new PasienModel();
                 $db = [
                     'no_registration' => $no_registration,
                     'sign_file' => $filenameLokalis
                 ];
-                if ($model->save($db)) {
+                if ($pasienModel->save($db)) {
                     $checkpass = true;
                 } else {
                     $checkpass = false;
@@ -365,6 +366,8 @@ class Signature extends BaseController
             }
         }
 
+        // return json_encode($checkpass);
+
         if ($checkpass) {
             // Create signature for docData
             $signedData = $this->createSignature(json_encode($dataDoc));
@@ -378,6 +381,20 @@ class Signature extends BaseController
                 ->where("sign_ke", $sign_ke)->delete();
             $dataForm["sign"] = $signedData;
             $return = $docModel->insert($dataForm);
+
+            if ($user_type == 1) {
+                $model->update($sign_id, [
+                    "valid_user" => $this->get_bodyid()
+                ]);
+            } else if ($user_type == 2) {
+                $model->update($sign_id, [
+                    "valid_pasien" => $this->get_bodyid()
+                ]);
+            } else {
+                // $model->update($sign_id, [
+                //     "valid_user" => $signedData
+                // ]);
+            }
 
             return json_encode($dataForm);
         }
@@ -641,26 +658,31 @@ class Signature extends BaseController
                 // }
             }
         }
-
+        $family = new FamilyPasienModel();
         if ($user_type == 2) {
             $pasien = new PasienModel();
-            $data = $this->lowerKeyOne($family->where("no_registration", $no_registration)->first());
+            $data = $pasien->where("no_registration", $no_registration)->first();
+            if (!is_null($data)) {
+                $data = $this->lowerKeyOne($data);
 
-            $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
-            if (file_exists($filepath)) {
-                $filedata = file_get_contents($filepath);
-                $filedata64 = base64_encode($filedata);
-                $data['sign_file'] = $filedata64;
+                $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
+                if (file_exists($filepath)) {
+                    $filedata = file_get_contents($filepath);
+                    $filedata64 = base64_encode($filedata);
+                    $data['sign_file'] = $filedata64;
+                }
             }
         } else if ($user_type == 3) {
-            $family = new FamilyPasienModel();
-            $data = $this->lowerKeyOne($family->where("nik", $nik)->first());
+            $data = $family->where("nik", $nik)->first();
+            if (!is_null($data)) {
+                $data = $this->lowerKeyOne($data);
 
-            $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
-            if (file_exists($filepath)) {
-                $filedata = file_get_contents($filepath);
-                $filedata64 = base64_encode($filedata);
-                $data['sign_file'] = $filedata64;
+                $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
+                if (file_exists($filepath)) {
+                    $filedata = file_get_contents($filepath);
+                    $filedata64 = base64_encode($filedata);
+                    $data['sign_file'] = $filedata64;
+                }
             }
         }
 

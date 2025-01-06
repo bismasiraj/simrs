@@ -12,10 +12,18 @@ use App\Models\SkriningNutritionModel;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\Database\RawSql;
 use Exception;
+use Myth\Auth\Config\Auth as AuthConfig;
+use Myth\Auth\Entities\User;
+use Myth\Auth\Models\UserModel;
+
 
 class Gizi extends \App\Controllers\BaseController
 {
-
+    protected $auth;
+    public function __construct()
+    {
+        $this->auth   = service('authentication');
+    }
     public function getAsuhanGizi()
     {
         $request = service('request');
@@ -145,6 +153,18 @@ class Gizi extends \App\Controllers\BaseController
         $model = new GiziModel();
 
         $results = $this->lowerKey($model->where('visit_id', $formData->visit_id)->findAll() ?? []);
+
+        // Iterate through each result by reference
+        foreach ($results as &$data) {
+            // Check if 'treat_image' exists and is not empty
+            if (!empty($data['treat_image']) && file_exists(WRITEPATH . $data['treat_image'])) {
+                // Get file content and encode it to base64
+                $data['treat_image_base64'] = 'data:' . mime_content_type(WRITEPATH . $data['treat_image']) . ';base64,' . base64_encode(file_get_contents(WRITEPATH . $data['treat_image']));
+            } else {
+                // Set to null if file does not exist or 'treat_image' is empty
+                $data['treat_image_base64'] = null;
+            }
+        }
 
         return $this->response->setJSON([
             'message' => 'Data retrieved successfully.',
@@ -372,26 +392,18 @@ class Gizi extends \App\Controllers\BaseController
     {
         try {
             $formData = $this->request->getJSON();
-            // $data = [];
-            // foreach ($formData as $key => $value) {
-            //     if (!is_array($value) && $value !== null && $value !== '') {
-            //         $data[strtolower($key)] = $value;
-            //     }
-            // }
-            // $data['body_id'] = $this->get_bodyid();
-            // $data['document_id'] = $this->get_bodyid();
-            // $data['modified_by'] = user()->username;
 
             $model = new GiziModel();
             $existingEntry = $this->lowerKey($model->where('visit_id', $formData->visit_id)->where('body_id', $formData->body_id)->first() ?? []);
             $data = $existingEntry;
+            $data['valid_date'] = NULL;
+            $data['valid_user'] = NULL;
+            $data['valid_pasien'] = NULL;
             $data['body_id'] = $this->get_bodyid();
             $data['document_id'] = $this->get_bodyid();
             $data['modified_by'] = user()->username;
             $data['modified_date'] = date("Y-m-d H:i:s");
-            // echo '<pre>';
-            // var_dump($data);
-            // die();
+
             $model->insert($data);
 
             return $this->response->setJSON([
@@ -926,10 +938,14 @@ class Gizi extends \App\Controllers\BaseController
         WHERE visit_id = '" . $formData->visit_id . "' AND no_registration = '" . $formData->no_registration . "' ORDER BY EXAMINATION_DATE DESC");
         $results = $this->lowerKey($query->getResultArray() ?? []);
 
+        $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EXAMINATION_DETAIL WHERE VISIT_ID = '" . $formData->visit_id . "' AND ((WEIGHT != 0 OR WEIGHT IS NULL) AND (HEIGHT !=0 OR HEIGHT IS NULL)) ORDER BY EXAMINATION_DATE DESC")->getRowArray();
+
+
         return $this->response->setJSON([
             'message' => 'Data retrieved successfully.',
             'respon'  => true,
             'data'    => $results,
+            'exam_info' => $exam_info ?? []
         ]);
     }
 
@@ -1182,5 +1198,164 @@ class Gizi extends \App\Controllers\BaseController
                 'gramasi'       => $gramasi,
             ],
         ]);
+    }
+
+    public function signGizi()
+    {
+        $request  = service('request');
+        $formData = $request->getJSON();
+
+        $id       = $formData->id;
+        $type     = $formData->type;
+        $pasien   = $formData->thename;
+        $username = $formData->username;
+        $password = base64_decode($formData->password);
+
+        if ($this->auth === null) {
+            return $this->response->setJSON(['respon' => false, 'message' => 'Auth service not loaded.']);
+        }
+
+        if ($this->auth->attempt(['username' => $username, 'password' => $password])) {
+
+            $model = $type == 'asuhan_gizi' ? new GiziModel() : new SkriningNutritionModel();
+
+            $data = [
+                'valid_user'    => $username,
+                'valid_date'    => date("Y-m-d H:i:s"),
+                'valid_pasien'  => $pasien,
+            ];
+
+            $model->set($data)
+                ->where('body_id', $id)
+                ->update();
+
+            return $this->response->setJSON([
+                'respon' => true,
+                'message' => 'berhasil menandatangani dokumen',
+                'data' => ['valid_user' => $username, 'valid_date' => date("Y-m-d H:i:s")]
+            ]);
+        } else {
+            return $this->response->setJSON(['respon' => false, 'message' => 'username & password tidak sesuai']);
+        }
+    }
+
+    public function uploadFile()
+    {
+        $db = db_connect();
+        $request  = service('request');
+        $formData = $request->getPost();
+        $formFile = $request->getFile('file');
+
+        $data = [];
+        foreach ($formData as $key => $value) {
+            if ($value !== null && $value !== '') {
+                $data[$key] = $value;
+            }
+        }
+
+        $db->transBegin();
+        try {
+            if (!empty($formFile->getSize()) && !empty($formFile->getClientName())) {
+
+                $fileMimeType = $formFile->getMimeType();
+                $allowedMimeTypes = [
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg',
+                    'image/webp',
+                    'application/pdf'
+                ];
+
+                if (!in_array($fileMimeType, $allowedMimeTypes)) {
+                    throw new Exception('Gagal Upload File, Format tidak mendukung.');
+                }
+
+                $uploadPath = 'uploads/' . $data['type'] . '/' . $data['visit_id'] . '/';
+                $pathInfo = pathinfo($formFile->getClientName());
+                $extension = $pathInfo['extension'];
+                $newFileName = $data['id'] . '.' . $extension;
+                $filePath = $uploadPath . $newFileName;
+
+                if (!is_dir($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+
+                $existingFiles = glob($uploadPath . $data['id'] . '.*');
+
+                foreach ($existingFiles as $file) {
+                    unlink($file);
+                }
+
+                $formFile->move(WRITEPATH . $uploadPath, $newFileName);
+
+                $dataUpdate = [
+                    'treat_image' => $filePath ?? null,
+                    'filename' => $pathInfo['basename'] ?? null,
+                ];
+
+                $model = $data['type'] == 'asuhan_gizi' ? new GiziModel() : new SkriningNutritionModel();
+                $uploadData = $model->where('body_id', $data['id'])->where('visit_id', $data['visit_id'])->set($dataUpdate)->update();
+
+                if (!$uploadData) {
+                    throw new \Exception('Upload file Failed');
+                }
+                $db->transCommit();
+                return $this->response->setJSON([
+                    'message' => 'File uploaded successfully.',
+                    'status' => true,
+                    'file_name' => $pathInfo['basename'],
+                    'treat_image' => $filePath,
+                ]);
+            }
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return $this->response->setJSON(['message' => 'Failed to process data: ' . $e->getMessage(), 'status' => false]);
+        }
+    }
+
+    public function preview($visit, $type, $body_id)
+    {
+        $title = "Asuhan Gizi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $model = new GiziModel();
+
+            $results = $this->lowerKey($model->where('visit_id', $visit['visit_id'])->where('body_id', $body_id)->first() ?? []);
+            $fileInfo = pathinfo($results['treat_image']);
+
+            // Get the file extension (format)
+            $fileExtension = $fileInfo['extension'];
+            if (!empty($results['treat_image']) && file_exists(WRITEPATH . $results['treat_image'])) {
+                // Get file content and encode it to base64
+                $results['treat_image_base64'] = 'data:' . mime_content_type(WRITEPATH . $results['treat_image']) . ';base64,' . base64_encode(file_get_contents(WRITEPATH . $results['treat_image']));
+            }
+
+            $mimeType = strstr($results['treat_image_base64'], ';', true);
+            echo '<embed src="' . $results['treat_image_base64'] . '" type="application/pdf" width="100%" height="600px" />';
+
+            die();
+            if ($fileExtension != 'pdf') {
+                // It's an image (JPEG, PNG, etc.), display it in an img tag
+                echo '<img src="' . $results['treat_image_base64'] . '" alt="Treat Image" class="img-fluid" />';
+            } elseif ($mimeType === 'application/pdf') {
+                // It's a PDF, embed it in a PDF viewer (like PDF.js or HTML embed)
+                echo '<embed src="' . $results['treat_image_base64'] . '" type="application/pdf" width="100%" height="600px" />';
+            } else {
+                echo 'Unsupported file format.';
+            }
+            die();
+            return view("admin/patient/cetak/radiologi_preview.php", [
+                "url" => $results['treat_image'],
+            ]);
+            return view("admin/patient/cetak/laporan-gizi.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "url" => $results['treat_image'],
+                "format" => $fileExtension,
+            ]);
+        }
     }
 }

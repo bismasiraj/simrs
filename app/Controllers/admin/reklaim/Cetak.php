@@ -31,7 +31,6 @@ class Cetak extends \App\Controllers\BaseController
         ]);
     }
 
-
     public function cetakAllGrouping($visit)
     {
         if ($this->request->is('get')) {
@@ -77,12 +76,9 @@ class Cetak extends \App\Controllers\BaseController
                 'anestesi' => $anestesi
             ];
 
-            // return json_encode("asdf");
-            // return json_encode("wer");
-            return view("admin/patient/profilemodul/formrm/reklaim/cetak-all.php", $data);
-
-            if ($view === "RIF") {
-            } elseif ($view === "RJF") {
+            if ($view === "RIF")
+                return view("admin/patient/profilemodul/formrm/reklaim/cetak-all.php", $data);
+            elseif ($view === "RJF") {
                 return view("admin/patient/profilemodul/formrm/reklaim/cetak-all-poli.php", $data);
             } elseif ($view === "RJI") {
                 return view("admin/patient/profilemodul/formrm/reklaim/cetak-all-igd.php", $data);
@@ -147,6 +143,7 @@ class Cetak extends \App\Controllers\BaseController
                     tb.doctor,
                     tb.thename,
 					tb.sell_price,
+                    tb.CLINIC_ID,
 					tb.QUANTITY * tb.sell_price as subtotal,
 					tb.QUANTITY,
                     tt.TARIF_ID AS tarif_id_tt,
@@ -163,6 +160,7 @@ class Cetak extends \App\Controllers\BaseController
                     CASEMIX cm ON tt.CASEMIX_ID = cm.CASEMIX_ID
                 WHERE 
                     tb.VISIT_ID = ?
+                    AND tb.QUANTITY <> 0
                 GROUP BY 
                     tb.VISIT_ID,
                     tb.TARIF_ID,
@@ -170,6 +168,7 @@ class Cetak extends \App\Controllers\BaseController
                     tb.NO_REGISTRATION,
                     tb.BILL_ID,
 					tb.QUANTITY,
+                    tb.CLINIC_ID,
 					tb.sell_price,
                     tb.doctor,
                     tb.thename,
@@ -239,8 +238,10 @@ class Cetak extends \App\Controllers\BaseController
 
     private function getKirimlisDataE($db, $queryTreatmenBill)
     {
-
-        $billIds = array_column($queryTreatmenBill, 'bill_id');
+        $filteredBills = array_filter($queryTreatmenBill, function ($item) {
+            return $item['clinic_id'] === "P013";
+        });
+        $billIds = array_column($filteredBills, 'bill_id');
 
         if (empty($billIds)) {
             return [];
@@ -274,11 +275,7 @@ class Cetak extends \App\Controllers\BaseController
         }
 
         $kode_kunjunganString = implode("','", $kode_kunjungan);
-
-        // exit();
-        // visit_date
-
-        return $this->lowerKey(
+        $oprasi = $this->lowerKey(
             $db->query(
                 "SELECT 
                         H.nolab_lis, 
@@ -342,6 +339,33 @@ class Cetak extends \App\Controllers\BaseController
                     "
             )->getResultArray()
         );
+
+
+        $doctor = $this->lowerKey($db->query("SELECT fullname from EMPLOYEE_ALL where NONACTIVE= 0 and employee_id in (select employee_id from DOCTOR_SCHEDULE where clinic_id ='P013')")->getRowArray());
+        $username_valid = $this->lowerKey($db->query("SELECT users.username,
+                                            isnull(EMPLOYEE_ALL.fullname, users.username) as fullname
+                                        FROM 
+                                            USERS
+                                        left outer JOIN 
+                                            EMPLOYEE_ALL 
+                                            ON USERS.employee_id = EMPLOYEE_ALL.employee_id
+                                            WHERE users.username = '" . user()->username . "'  
+                                            
+                                ")->getRowArray());
+
+        if ($username_valid) {
+            $visit['valid_users_p'] = $username_valid['fullname'];
+        }
+
+
+        if ($doctor) {
+            $visit['doctor_responsible'] = $doctor['fullname'];
+        }
+
+        return ([
+            'visit' => $visit,
+            'data' => $oprasi
+        ]);
     }
 
     private function getVisitationDataE($db, $visit_id)
@@ -868,7 +892,7 @@ class Cetak extends \App\Controllers\BaseController
 
     private function operasiE($visit, $vactination_id = null)
     {
-        $title = "Laporan Oprasi";
+        $title = "Laporan Pembedahan";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
@@ -899,8 +923,7 @@ class Cetak extends \App\Controllers\BaseController
             WHERE OPERATION_ID = '" . $vactination_id . "' ORDER BY OPERATION_TASK.TASK_ID ASC
             ")->getResultArray() ?? []);
 
-            $diagnosas = $this->lowerKey($db->query("
-            select diagnosa_name,diag_cat,suffer_type.suffer from PASIEN_DIAGNOSAS 
+            $diagnosas = $this->lowerKey($db->query("SELECT diagnosa_desc as diagnosa_name,diag_cat,suffer_type.suffer from PASIEN_DIAGNOSAS 
             inner join suffer_type on pasien_diagnosas.suffer_type = suffer_type.suffer_type
             where pasien_diagnosa_id = '" . $vactination_id . "' and diag_cat IN('13','14','15')
             ")->getResultArray() ?? []);
@@ -925,6 +948,10 @@ class Cetak extends \App\Controllers\BaseController
             $db = db_connect();
             $visit_id = $visit['visit_id'];
 
+            $oprasi = $this->lowerKey($db->query("SELECT Top (1) * FROM PASIEN_OPERASI where VISIT_ID = '$visit_id' order by START_OPERATION DESC")->getRowArray() ?? []);
+            $vactination_id = isset($oprasi) && !empty($oprasi) ? $oprasi['vactination_id'] : "";
+
+
             $query = $this->lowerKey($db->query(
                 "SELECT TOP 1 *,
                         ASSESSMENT_ANESTHESIA.org_unit_code as org_unit_code,
@@ -948,7 +975,6 @@ class Cetak extends \App\Controllers\BaseController
                 "
             )->getRowArray() ?? []);
 
-            $vactination_id = isset($query) && !empty($query) ? $query['vactination_id'] : "";
             $aldrete_score = $this->lowerKey($db->query(
                 "
                 select 

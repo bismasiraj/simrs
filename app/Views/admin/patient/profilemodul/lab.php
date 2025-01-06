@@ -244,10 +244,10 @@ $permissions = user()->getPermissions();
                                             class="btn btn-primary me-2">
                                             <i class="fa fa-check-circle"></i> Simpan
                                         </button>
-                                        <button type="button" id="formsign" name="signrm" onclick="signRM()"
+                                        <!-- <button type="button" id="formsign" name="signrm" onclick="signRM()"
                                             data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
                                             <i class="fa fa-signature"></i> Sign
-                                        </button>
+                                        </button> -->
                                     </div>
                                 <?php
                                 } ?>

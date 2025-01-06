@@ -223,7 +223,7 @@ $permissions = user()->getPermissions();
                                             </table>
                                             <?php if (user()->checkPermission("medicalitem", "c")) {
                                             ?>
-                                                <div id="medItemBtnGroup" class="row">
+                                                <div id="" class="row">
                                                     <div class="col-md-12">
                                                         <div id="eresepAdds" class="box-tab-tools text-center">
                                                             <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg btn-to-hide" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
@@ -274,13 +274,13 @@ $permissions = user()->getPermissions();
                                             } ?>
                                             <?php if (user()->checkPermission("medicalitem", "c")) {
                                             ?>
-                                                <div id="medItemBtnGroup" class="row">
+                                                <!-- <div id="" class="row">
                                                     <div class="col-md-12">
                                                         <div id="eresepAdds" class="box-tab-tools text-center">
                                                             <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg btn-to-hide" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             <?php
                                             } ?>
                                         </div>

@@ -13,8 +13,10 @@
             $.each(avalue, function(key1, value1) {
                 if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
 
-                    let matchedData = data.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase()) ?? '';
-
+                    let matchedData = null;
+                    if (data && Array.isArray(data) && data.length > 0) {
+                        matchedData = data?.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase());
+                    }
                     let description = matchedData ? matchedData.value_desc : '';
 
                     accordionContent += `
@@ -71,8 +73,20 @@
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     };
 
-                    let matchedData = props?.data?.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase());
-                    img.src = matchedData.filedata64 ? img.src = 'data:image/png;base64,' + matchedData.filedata64 : img.src = '<?= base_url() ?>assets/img/asesmen' + value1.value_info;
+                    let matchedData = null;
+
+                    // Check if props?.data exists and is not empty
+                    if (props?.data && Array.isArray(props.data) && props.data.length > 0) {
+                        matchedData = props?.data?.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase());
+                    }
+
+                    // Check if matchedData exists and has filedata64
+                    if (matchedData && matchedData.filedata64) {
+                        img.src = 'data:image/png;base64,' + matchedData.filedata64;
+                    } else {
+                        // Fallback if matchedData doesn't exist or filedata64 is missing
+                        img.src = '<?= base_url() ?>assets/img/asesmen' + (value1?.value_info || '');
+                    }
 
 
                     canvas.addEventListener('mousedown', startDrawing);
@@ -260,7 +274,6 @@
     }
 
     const assessmentPraOperasi = (props) => {
-        console.log(props?.vactination_id);
         const visit = <?= json_encode($visit) ?>;
         postData({
             body_id: props?.vactination_id
@@ -353,7 +366,7 @@
         $bloodUsage = array_filter($aValue, function ($value) {
             return $value['p_type'] === 'BLOD001';
         });
-        $bloodOptions = array_map(fn($value) => ['value' => $value['value_score'], 'desc' => $value['value_desc']], $bloodUsage);
+        $bloodOptions = array_map(fn ($value) => ['value' => $value['value_score'], 'desc' => $value['value_desc']], $bloodUsage);
         ?>
 
         let bloodOptions = [];

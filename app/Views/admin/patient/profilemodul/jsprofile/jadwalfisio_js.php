@@ -1,14 +1,14 @@
 <?php
 $db = db_connect();
 
-$getDataTarif = $db->query("
-SELECT
-    TREAT_TARIF.TARIF_NAME as text, 
-    TREAT_TARIF.TARIF_ID as id
-FROM TREAT_TARIF
-INNER JOIN treatment ON treatment.treat_id = TREAT_TARIF.treat_id
-WHERE TREATMENT.TREAT_TYPE IN ('16')
-ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
+$getDataTarif = $db->query("SELECT 
+                                TREAT_TARIF.TARIF_NAME AS text,
+                                TREAT_TARIF.TARIF_ID AS id
+                            FROM TREAT_TARIF
+                            INNER JOIN treatment tt ON tt.treat_id = TREAT_TARIF.treat_id
+                            WHERE tt.TREAT_TYPE IN ('16')
+                            AND TREAT_TARIF.perda_id = 1
+                            ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
 
 ?>
 <script type="text/javascript">
@@ -21,8 +21,6 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
             renderNonFisioterapiTemplate()
             btnActionSaveUpdate()
 
-
-
             btnSaveRequestJadwalFisio();
             btnActionSaveUpdateFisioterapiDetail();
             tandaTangan()
@@ -32,6 +30,7 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
 
 
         function addRowJadwalFisio(SelectID, data = null) {
+
             // id="flatdate-req-fisio"
             var newRow = `
                 <tr>
@@ -157,7 +156,7 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
 
                                     body {
                                         width: 21cm;
-                                        height: 29.7cm;
+                                   
                                         margin: 0;
                                         font-size: 12px;
                                     }
@@ -322,8 +321,10 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
 
                 printWindow.document.head.appendChild(style);
                 printWindow.document.close();
+                setTimeout(() => {
+                    printWindow.print();
 
-                printWindow.print();
+                }, 2000);
             });
         };
 
@@ -358,6 +359,8 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
 
         const getDataTableJadwalFisio = (props) => {
             $("#jadwalFisioTab").off().on("click", function(e) {
+                console.log("Jadwal fiso 20/12/2024 20:50");
+
                 e.preventDefault();
 
                 if ($("#JfisioDocument").is(":visible")) {
@@ -372,8 +375,13 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
         };
 
         const renderKop = (props) => {
-            $('.kop-name').text(props?.kop.name_of_org_unit || '');
-            $('.kop-address').text(props?.kop.contact_address || '');
+            let {
+                kop
+            } = props
+            $('.kop-name').text(kop?.name_of_org_unit || '');
+            $('.kop-address').html(kop?.contact_address + ',' + kop?.phone + ', Fax:' + kop?.fax + ',' + kop?.kota +
+                '<br>' + kop?.sk
+            );
         }
 
         const renderDiagnosa = (props) => {
@@ -892,16 +900,20 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
             let visit = <?= json_encode($visit) ?>;
             $('#inputformujirehab').empty();
             if (props?.data?.vactination_id) {
-                $("#save-form-uji-rehab").text("Update");
+                $("#formaddaujirehabbtnid").text("Update");
                 $("#print-uji-rehab").show();
+                $("#formsignUjiRehab").show();
+
 
                 printJfisio({
                     id_button: "print-uji-rehab",
                     id_formTab: "formulirUjiFisio"
                 });
             } else {
-                $("#save-form-uji-rehab").text("Simpan");
+                $("#formaddaujirehabbtnid").text("Simpan");
                 $("#print-uji-rehab").hide();
+                $("#formsignUjiRehab").hide();
+
             }
 
             let nameValue = [
@@ -964,6 +976,15 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                 updateTreatmentResult();
             });
 
+
+
+            $("#formsignUjiRehab").off().on("click", function(e) {
+                e.preventDefault()
+                addSignUser("formaddaujirehab", "aujirehab", "vactination_id-uji-fisio-val",
+                    "formaddaujirehabbtnid", 1, 1, 1, "UJIREHAB")
+            })
+
+
             initializeFlatpickrFisioterapi();
 
         };
@@ -997,10 +1018,10 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
         }
 
         const btnActionSaveUpdateFisioterapiDetail = (props) => {
-            $("#save-form-uji-rehab").off().on("click", function(e) {
+            $("#formaddaujirehabbtnid").off().on("click", function(e) {
                 e.preventDefault();
 
-                let formElement = document.getElementById('form-uji-rehab-medic');
+                let formElement = document.getElementById('formaddaujirehab');
 
                 let dataSend = new FormData(formElement);
                 let jsonObj = {};
@@ -1050,26 +1071,44 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
             renderDiagnosa();
 
             data.forEach((each, index) => {
-                addRowJadwalFisio('tarif-fisio' + index, each);
-                initializeSearchTarifFisio('tarif-fisio' + index, each?.tarif_id, each
+                addRowJadwalFisio('tarif-fisio' + (index + 1), each);
+                initializeSearchTarifFisio('tarif-fisio' + (index + 1), each?.tarif_id, each
                     ?.treatment_program)
-
             })
 
             $('#addJadwalFisio').off('click').on('click', function() {
-                let jadwalFisioCount = $('#tbody-jadwal-fisio tr').length;
-                // if (jadwalFisioCount < 3) {
-                //     $(this).hide();
+                let jadwalFisio = $('#tbody-jadwal-fisio tr');
+                let selectedPrograms = [];
 
-                addRowJadwalFisio('tarif-fisio' + jadwalFisioCount + 1);
-                initializeSearchTarifFisio('tarif-fisio' + jadwalFisioCount + 1)
+                jadwalFisio.each(function() {
+                    let programValue = $(this).find('select[name="program[]"]').val();
+                    let rowId = $(this).find('select[name="program[]"]').attr(
+                        'id');
+                    selectedPrograms.push({
+                        id: rowId,
+                        value: programValue
+                    });
+                });
 
+                let jadwalFisioCount = jadwalFisio.length;
 
-                // }
+                let lastProgram = selectedPrograms[selectedPrograms.length - 1];
+
+                let hasDuplicate = selectedPrograms.some(
+                    (item, index, array) =>
+                    array.findIndex(el => el.value === item.value) !== index
+                );
+
+                if (!selectedPrograms.some(item => !item.value) && !hasDuplicate) {
+                    addRowJadwalFisio('tarif-fisio' + (jadwalFisioCount + 1));
+                    initializeSearchTarifFisio('tarif-fisio' + (jadwalFisioCount + 1));
+                } else {
+                    if (hasDuplicate) {
+                        errorSwal("Program Sudah Ada")
+                        $(`#${lastProgram?.id}`).closest('tr').remove();
+                    }
+                }
             });
-
-
-
         } // baru havin 26 09
 
         const btnSaveRequestJadwalFisio = () => {
