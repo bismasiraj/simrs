@@ -63,7 +63,7 @@
                 type: "hidden",
                 name: "org_unit_code",
                 value: props?.data?.org_unit_code ?? props?.visit?.org_unit_code,
-                id: "org_unit_code",
+                id: "treatInten_org_unit_code",
                 class: ""
             },
             {
@@ -71,7 +71,7 @@
                 type: "hidden",
                 name: "visit_id",
                 value: props?.data?.visit_id ?? props?.visit?.visit_id,
-                id: "visit_id",
+                id: "treatInten_visit_id",
                 class: ""
             },
             {
@@ -79,7 +79,7 @@
                 type: "hidden",
                 name: "trans_id",
                 value: props?.data?.trans_id ?? props?.visit?.trans_id,
-                id: "trans_id",
+                id: "treatInten_trans_id",
                 class: ""
             },
             {
@@ -87,7 +87,7 @@
                 type: "hidden",
                 name: "body_id",
                 value: props?.data?.body_id ?? get_bodyid(),
-                id: "body_id",
+                id: "treatInten_body_id",
                 class: ""
             },
             {
@@ -95,7 +95,7 @@
                 type: "hidden",
                 name: "document_id",
                 value: props?.data?.document_id ?? props?.visit?.session_id,
-                id: "document_id",
+                id: "treatInten_document_id",
                 class: ""
             },
             {
@@ -104,7 +104,7 @@
                 name: "examination_date",
                 value: props?.data?.examination_date ? moment(props?.data?.examination_date).format(
                     "DD/MM/YYYY HH:mm") : moment(new Date()).format("DD/MM/YYYY HH:mm"),
-                id: "examination_date",
+                id: "treatInten_examination_date",
                 class: "dateflatpickr-treatintensive"
             },
             {
@@ -112,7 +112,7 @@
                 type: "select",
                 name: "treatment_id",
                 value: props?.data?.treatment_id ?? "",
-                id: "treatment_id-treatInten",
+                id: "treatInten_treatment_id-treatInten",
                 class: ""
             },
             {
@@ -120,7 +120,7 @@
                 type: "hidden",
                 name: "treatment_name",
                 value: props?.data?.treatment_name ?? "",
-                id: "treatment_name-treat",
+                id: "treatInten_treatment_name-treat",
                 class: ""
             },
             {
@@ -128,7 +128,7 @@
                 type: "hidden",
                 name: "p_type",
                 value: props?.data?.p_type ?? "",
-                id: "p_type-treat",
+                id: "treatInten_p_type-treat",
                 class: ""
             },
             {
@@ -136,7 +136,7 @@
                 type: "hidden",
                 name: "parameter_id",
                 value: props?.data?.parameter_id ?? "",
-                id: "parameter_id-treat",
+                id: "treatInten_parameter_id-treat",
                 class: ""
             },
             {
@@ -144,7 +144,7 @@
                 type: "text",
                 name: "results",
                 value: props?.data?.results ?? "",
-                id: "results",
+                id: "treatInten_results",
                 class: ""
             },
 
@@ -198,15 +198,15 @@
         });
         initialFlatpicTreatInten()
 
-        $("#treatment_id-treatInten").on("change", function() {
+        $("#treatInten_treatment_id-treatInten").on("change", function() {
             const selectedOption = $(this).find(":selected");
             const toolName = selectedOption.data("name") || "";
             const type = selectedOption.data("type") || "";
             const param = selectedOption.data("param") || "";
 
-            $("#treatment_name-treat").val(toolName);
-            $("#p_type-treat").val(type);
-            $("#parameter_id-treat").val(param);
+            $("#treatInten_treatment_name-treat").val(toolName);
+            $("#treatInten_p_type-treat").val(type);
+            $("#treatInten_parameter_id-treat").val(param);
         });
         saveAssessmenTreatIntensive()
     };
@@ -246,7 +246,7 @@
             }
         });
 
-        $("#treatment_id-treatInten").html(`<option value="">Pilih</option>` + result);
+        $("#treatInten_treatment_id-treatInten").html(`<option value="">Pilih</option>` + result);
     };
 
 

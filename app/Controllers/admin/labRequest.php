@@ -11,15 +11,14 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
 
 class labRequest extends \App\Controllers\BaseController
 {
-    public function getData()
-    {
+    public function getData() {
         $formData = $this->request->getJSON();
         $db = db_connect();
 
         $start = isset($formData->startDate) ? $formData->startDate : date('Y-m-01 00:00:00');
         $end = isset($formData->endDate) ? $formData->endDate : date('Y-m-d 23:59:59');
-        $no = isset($formData->noRegis) ? $formData->noRegis : '';
-        $trans_id = isset($formData->trans_id) ? $formData->trans_id : '';
+        $no = isset($formData->noRegis) ? $formData->noRegis : ''; 
+        $trans_id = isset($formData->trans_id) ? $formData->trans_id : ''; 
 
         $start = $db->escapeString($start);
         $end = $db->escapeString($end);
@@ -95,7 +94,7 @@ class labRequest extends \App\Controllers\BaseController
 
         // var_dump('debug', "Query: $query");
         // die();
-
+    
         $queryInspection = $this->lowerKey($db->query($queryInspection)->getResultArray());
         $queryBridging = $this->lowerKey($db->query($queryBridging)->getResultArray());
 
@@ -115,20 +114,20 @@ class labRequest extends \App\Controllers\BaseController
                                                         k.No_Pasien,       
                                                         h.nolab_lis;       
                                                         ")->getResultArray());
-
+    
         $responseData = [
             'Inspection' => $queryInspection,
-            'Bridging' => $queryBridging,
-            'hasilLis' => $getDataHasilLis
+            'Bridging'=>$queryBridging,
+            'hasilLis'=>$getDataHasilLis
         ];
-
+    
         $formattedResponseData = $this->lowerKey($responseData);
         return $this->response->setStatusCode(200)->setJSON([
-            'no_registration' => isset($formData->noRegis) ? $formData->noRegis : 'null',
+            'no_registration' => isset($formData->noRegis) ? $formData->noRegis : 'null', 
             'value' => $formattedResponseData
         ]);
     }
-
+    
     public function saveLabLIS()
     {
         $db = db_connect();
@@ -136,11 +135,11 @@ class labRequest extends \App\Controllers\BaseController
         $start = isset($formData->startDate) ? $formData->startDate : date('Y-m-01 00:00:00');
         $end = isset($formData->endDate) ? $formData->endDate : date('Y-m-d 23:59:59');
         $username = user()->username;
-
-
+        
+      
         $selectedDetails = isset($formData->details) ? $formData->details : [];
         $noRegistrationsList = isset($formData->noRegistrationsList) ? $formData->noRegistrationsList : [];
-
+        
         if (!is_array($selectedDetails)) {
             $selectedDetails = [];
         }
@@ -155,7 +154,7 @@ class labRequest extends \App\Controllers\BaseController
             if (count($selectedDetails) === 0 && count($noRegistrationsList) > 0) {
                 $noRegistrationCodes = array_map('trim', $noRegistrationsList);
                 $noRegistrationCodesString = "'" . implode("','", $noRegistrationCodes) . "'";
-
+                
                 $sqlDeleteOldData = "DELETE FROM sharelis.dbo.kirimlis
                                         WHERE kode IN (
                                             SELECT bill_id 
@@ -168,19 +167,19 @@ class labRequest extends \App\Controllers\BaseController
                 $db->query($sqlDeleteOldData);
 
                 $sqlUpdateBill = "UPDATE treatment_bill
-                        SET quantity = 0, tagihan = 0, amount_paid = 0, amount=0
+                        SET quantity = 0, tagihan = 0, amount_paid = 0, amount=0, islunas = 0
                         WHERE bill_id IN (
                          SELECT bill_id FROM treatment_bill WHERE no_registration IN ({$noRegistrationCodesString}) AND clinic_id = 'P013' AND treat_date BETWEEN  '$start' AND '$end'
                     )";
-                $db->query($sqlUpdateBill);
+                    $db->query($sqlUpdateBill);
             } else {
                 if (count($selectedDetails) > 0) {
-                    $noRegistrationCodes = array_map(function ($item) {
+                    $noRegistrationCodes = array_map(function($item) {
                         return $item->no_registration;
                     }, $selectedDetails);
 
                     $noRegistrationCodesString = "'" . implode("','", $noRegistrationCodes) . "'";
-
+                    
                     $sqlDeleteOldData = "DELETE FROM sharelis.dbo.kirimlis
                                         WHERE kode IN (
                                             SELECT bill_id 
@@ -191,15 +190,15 @@ class labRequest extends \App\Controllers\BaseController
                                         )
                                        AND (modified_by = '{$username}' OR modified_by IS NULL)";
                     $db->query($sqlDeleteOldData);
-
+                    
                     $sqlUpdateBill = "UPDATE treatment_bill
-                    SET quantity = 0, tagihan = 0, amount_paid = 0, amount = 0
+                    SET quantity = 0, tagihan = 0, amount_paid = 0, amount = 0, islunas = 0
                     WHERE bill_id IN (
                     SELECT bill_id FROM treatment_bill WHERE no_registration IN ({$noRegistrationCodesString}) AND clinic_id = 'P013' AND treat_date BETWEEN  '$start' AND '$end'
                 )";
-                    $db->query($sqlUpdateBill);
+                $db->query($sqlUpdateBill);
                 }
-
+                
                 $tgl_skrg = date('Y-m-d H:i:s');
                 foreach ($selectedDetails as $data) {
                     // if (!isset($data->bill_id, $data->tagihan, $data->amount, $data->citoCheckbox)) {
@@ -213,7 +212,7 @@ class labRequest extends \App\Controllers\BaseController
                     $amount = $data->amount ?? 0;
                     $amount_sell = $data->sell_price ?? 0;
 
-
+                    
                     $sqlInsert = "INSERT INTO sharelis.dbo.kirimlis
                                 (kode, modified_date, No_Pasien, NOLAB_LIS, Kode_Kunjungan, Nama, Email, Date_of_birth,
                                 UmurTahun, UmurBulan, UmurHari, Gender, Alamat, Diagnosa, Tgl_Periksa, pengirim_name,
@@ -235,12 +234,13 @@ class labRequest extends \App\Controllers\BaseController
                             JOIN status_pasien s ON tb.status_pasien_id = s.STATUS_PASIEN_ID
                             WHERE tb.clinic_id = 'P013'
                             AND tb.BILL_ID = '{$billId}'";
-
+                    
                     $db->query($sqlInsert);
-
+               
                     $sqlUpdateBill = "UPDATE treatment_bill
                             SET 
-                                quantity = 1, 
+                                quantity = 1,
+                                 islunas = 1,
                                 tagihan = {$amount_sell}, 
                                 amount_paid = {$amount_sell}, 
                                 amount = {$amount_sell},
@@ -259,10 +259,11 @@ class labRequest extends \App\Controllers\BaseController
                             days.DAY_NAME = dn.NAMA_HARI
                             ) AS subquery
                             WHERE bill_id = '{$billId}';";
-                    $db->query($sqlUpdateBill);
+                $db->query($sqlUpdateBill);
+
                 }
             }
-
+            
             $db->transCommit();
             return $this->response->setJSON(['message' => 'Data has been processed successfully', 'status' => true]);
         } catch (\Exception $e) {
@@ -275,51 +276,51 @@ class labRequest extends \App\Controllers\BaseController
     {
         $db = db_connect();
         $formData = $this->request->getJSON(true);
-
+    
         if (!isset($formData['dokumen_Bridge']) || !isset($formData['visit_id']) || !isset($formData['bill_id'])) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Missing required fields in payload']);
         }
-
+    
         $fileData = $formData['dokumen_Bridge'];
         $visitId = $formData['visit_id'];
         $billId = $formData['bill_id'];
         $nota_no = $formData['nota_no'];
-
+    
         if (!isset($fileData['content']) || !isset($fileData['extension']) || !isset($fileData['type'])) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid file data']);
         }
-
+    
         $base64Content = $fileData['content'];
         $fileContent = base64_decode($base64Content);
-        $fileExtension = strtolower($fileData['extension']);
-        $fileType = $fileData['type'];
-
+        $fileExtension = strtolower($fileData['extension']); 
+        $fileType = $fileData['type']; 
+    
         $fileName = $billId . '.' . $fileExtension;
         $relativeFilePath = 'uploads/lab/' . $visitId . '/' . $fileName;
         $absoluteFilePath = WRITEPATH . $relativeFilePath;
-
-
+    
+      
         if (!is_dir(dirname($absoluteFilePath))) {
             if (!mkdir(dirname($absoluteFilePath), 0755, true)) {
                 return $this->response->setJSON(['status' => 'error', 'message' => 'Failed to create directories']);
             }
         }
-
+    
         try {
             $username = user()->username;
-
+    
             $checkSql = "SELECT BODY_ID, file_image FROM pasien_penunjang WHERE BODY_ID = ? AND CLINIC_ID = 'P013' AND VISIT_ID = ?";
-            $result = $db->query($checkSql, [$nota_no, $visitId])->getRow(0, 'array');
-
+            $result = $db->query($checkSql, [$nota_no, $visitId])->getRow();
+    
             if ($result) {
-
+            
                 if (!empty($result->file_image)) {
                     $oldFilePath = WRITEPATH . $result->file_image;
                     if (file_exists($oldFilePath)) {
-                        unlink($oldFilePath);
+                        unlink($oldFilePath); 
                     }
                 }
-
+    
                 $updateSql = "UPDATE pasien_penunjang SET 
                     file_image = ?
                     WHERE BODY_ID = ? AND CLINIC_ID = 'P013' AND VISIT_ID = ?";
@@ -343,13 +344,14 @@ class labRequest extends \App\Controllers\BaseController
                     NULL AS VALID_USER, NULL AS VALID_PASIEN, ? AS file_image
                 FROM TREATMENT_BILL I
                 WHERE I.BILL_ID = ? AND I.VISIT_ID = ? AND I.CLINIC_ID = 'P013'";
-
+                
                 $db->query($insertSql, [$username, $relativeFilePath, $billId, $visitId]);
             }
 
             file_put_contents($absoluteFilePath, $fileContent);
-
+    
             return $this->response->setJSON(['status' => 'success', 'message' => 'File and data saved successfully']);
+    
         } catch (\Exception $e) {
             return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -359,19 +361,19 @@ class labRequest extends \App\Controllers\BaseController
     {
         $db = db_connect();
         $formData = $this->request->getJSON(true);
-
+    
         if (!isset($formData['nota_no']) || !isset($formData['visit_id'])) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Missing required fields in payload']);
         }
-
+    
         $nota_no = $formData['nota_no'];
         $visitId = $formData['visit_id'];
-
+    
         $checkSql = "SELECT * FROM pasien_penunjang WHERE BODY_ID = ? AND CLINIC_ID = 'P013' AND VISIT_ID = ?";
         $result = $db->query($checkSql, [$nota_no, $visitId])->getRow();
-
+        
         if ($result) {
-
+            
             if (isset($result->file_image) && $result->file_image) {
                 $filePath = WRITEPATH . $result->file_image;
                 if (file_exists($filePath)) {
@@ -384,7 +386,7 @@ class labRequest extends \App\Controllers\BaseController
             } else {
                 $result->file_image_base64 = null;
             }
-
+    
             return $this->response->setJSON(['status' => 'success', 'data' => $result]);
         } else {
             return $this->response->setJSON(['status' => 'error', 'message' => 'No data found for the given parameters']);
@@ -395,14 +397,14 @@ class labRequest extends \App\Controllers\BaseController
     {
         $db = db_connect();
         $formData = $this->request->getJSON(true);
-
+    
         if (!isset($formData['no_registration']) || !isset($formData['trans_id'])) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'Missing required fields in payload']);
         }
-
+    
         $no_registration = $formData['no_registration'];
         $trans_id = $formData['trans_id'];
-
+    
         $checkSql = "SELECT
                             tb.bill_id, 
                             tb.visit_id, 
@@ -436,16 +438,16 @@ class labRequest extends \App\Controllers\BaseController
 
 
         $result = $db->query($checkSql, [$no_registration, $trans_id])->getResultArray();
-
-        $diag = $this->lowerKey($db->query("SELECT TOP 1 diagnosa_desc as diagnosaDesc		
+        
+        $diag = $this->lowerKey( $db->query("SELECT TOP 1 diagnosa_desc as diagnosaDesc		
                 FROM pasien_diagnosa
                 WHERE NO_REGISTRATION = ?
                 ORDER BY DATE_OF_DIAGNOSA DESC", [$no_registration])->getRowArray() ?? []);
-
+                
         return $this->response->setStatusCode(200)->setJSON([
-            'no_registration' => isset($no_registration) ? $no_registration : 'null',
+            'no_registration' => isset($no_registration) ? $no_registration : 'null', 
             'value' => $result,
-            'diag' =>  $diag
+            'diag'=>  $diag
         ]);
     }
 
@@ -477,20 +479,20 @@ class labRequest extends \App\Controllers\BaseController
                                 k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name, h.flag_hl
                         ORDER BY urut_bound, kode_kunjungan, tarif_id, kel_pemeriksaan";
 
-        $dataTables = $this->lowerKey($db->query($query, [
-            $noPasien,
-            $tarifId,
-            $startDate,
-            $endDate
-        ])->getResultArray());
+            $dataTables = $this->lowerKey($db->query($query, [
+                $noPasien,
+                $tarifId,
+                $startDate,
+                $endDate
+            ])->getResultArray());
 
-
+       
 
         if ($dataTables) {
             return $this->response->setJSON([
                 'message' => 'successful',
                 'respon' => true,
-                'dataTables' => $dataTables
+               'dataTables' => $dataTables
             ])->setStatusCode(200);
         } else {
             return $this->response->setJSON([
@@ -499,4 +501,6 @@ class labRequest extends \App\Controllers\BaseController
             ]);
         }
     }
+
+
 }

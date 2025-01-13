@@ -412,7 +412,7 @@ class lainnya extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("SELECT * from EXAMINATION_INFO where visit_id = '202408030835470650684' ORDER BY examination_date DESC ")->getResultArray());
+            $select = $this->lowerKey($db->query("SELECT * from examination_detail where visit_id = '{$visit['visit_id']}' ORDER BY examination_date DESC ")->getResultArray());
             $kopprintData = $this->kopprint();
 
 

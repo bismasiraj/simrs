@@ -1,15 +1,15 @@
 <script type="text/javascript">
+(function() {
     $(document).ready(function() {
-        console.log("saraf")
         // Event click untuk modal
         $("#pemeriksaanSarafTab").off("click").on("click", function(e) {
             e.preventDefault();
             getLoadingscreen("contentToHide-pemeriksaanSaraf", "load-content-pemeriksaanSaraf")
-            groupeActionInTabSaraf()
+            groupeActionNeuInTab()
         });
     });
 
-    const groupeActionInTabSaraf = async () => {
+    const groupeActionNeuInTab = async () => {
         let visit = <?= json_encode($visit) ?>;
         await getDataAssessmenNeurologi({
             visit: visit
@@ -29,21 +29,21 @@
                 type: "hidden",
                 name: "org_unit_code",
                 value: props?.data?.org_unit_code ?? props?.visit?.org_unit_code,
-                id: "org_unit_code",
+                id: "neu_org_unit_code",
                 class: ""
             }, {
                 label: "",
                 type: "hidden",
                 name: "visit_id",
                 value: props?.data?.visit_id ?? props?.visit?.visit_id,
-                id: "visit_id",
+                id: "neu_visit_id",
                 class: ""
             }, {
                 label: "",
                 type: "hidden",
                 name: "trans_id",
                 value: props?.data?.trans_id ?? props?.visit?.trans_id,
-                id: "trans_id",
+                id: "neu_trans_id",
                 class: ""
             },
             {
@@ -51,7 +51,7 @@
                 type: "hidden",
                 name: "body_id",
                 value: props?.data?.body_id ?? get_bodyid(),
-                id: "body_id",
+                id: "neu_body_id",
                 class: ""
             },
             {
@@ -59,7 +59,7 @@
                 type: "hidden",
                 name: "document_id",
                 value: props?.data?.document_id ?? props?.visit?.session_id,
-                id: "document_id",
+                id: "neu_document_id",
                 class: ""
             },
             {
@@ -67,7 +67,7 @@
                 type: "hidden",
                 name: "no_registration",
                 value: props?.data?.no_registration ?? props?.visit?.no_registration,
-                id: "no_registration",
+                id: "neu_no_registration",
                 class: ""
             },
             {
@@ -75,7 +75,7 @@
                 type: "hidden",
                 name: "examination_date",
                 value: moment(new Date()).format("YYYY-MM-DD HH:mm"),
-                id: "examination_date",
+                id: "neu_examination_date",
                 class: ""
             },
 
@@ -84,7 +84,7 @@
                 type: "text",
                 name: "vas_nrs",
                 value: props?.data?.vas_nrs || "",
-                id: "vas_nrs",
+                id: "neu_vas_nrs",
                 class: "groupe-val"
             }, {
                 group: "Pupil Kiri",
@@ -93,7 +93,7 @@
                         type: "text",
                         name: "left_diameter",
                         value: props?.data?.left_diameter || "",
-                        id: "left_diameter",
+                        id: "neu_left_diameter",
                         class: "groupe-val"
                     },
                     {
@@ -101,7 +101,7 @@
                         type: "text",
                         name: "left_light_reflex",
                         value: props?.data?.left_light_reflex || "",
-                        id: "left_light_reflex",
+                        id: "neu_left_light_reflex",
                         class: "groupe-val"
                     },
                     {
@@ -109,7 +109,7 @@
                         type: "text",
                         name: "left_cornea",
                         value: props?.data?.left_cornea || "",
-                        id: "left_cornea",
+                        id: "neu_left_cornea",
                         class: "groupe-val"
                     },
                     {
@@ -117,7 +117,7 @@
                         type: "text",
                         name: "left_isokor_anisokor",
                         value: props?.data?.left_isokor_anisokor || "",
-                        id: "left_isokor_anisokor",
+                        id: "neu_left_isokor_anisokor",
                         class: "groupe-val"
                     }
                 ]
@@ -129,7 +129,7 @@
                         type: "text",
                         name: "right_diameter",
                         value: props?.data?.right_diameter || "",
-                        id: "right_diameter",
+                        id: "neu_right_diameter",
                         class: "groupe-val"
                     },
                     {
@@ -137,7 +137,7 @@
                         type: "text",
                         name: "right_light_reflex",
                         value: props?.data?.right_light_reflex || "",
-                        id: "right_light_reflex",
+                        id: "neu_right_light_reflex",
                         class: "groupe-val"
                     },
                     {
@@ -145,7 +145,7 @@
                         type: "text",
                         name: "right_cornea",
                         value: props?.data?.right_cornea || "",
-                        id: "right_cornea",
+                        id: "neu_right_cornea",
                         class: "groupe-val"
                     },
                     {
@@ -153,7 +153,7 @@
                         type: "text",
                         name: "right_isokor_anisokor",
                         value: props?.data?.right_isokor_anisokor || "",
-                        id: "right_isokor_anisokor",
+                        id: "neu_right_isokor_anisokor",
                         class: "groupe-val"
                     }
                 ]
@@ -165,7 +165,7 @@
                         type: "text",
                         name: "stiff_neck",
                         value: props?.data?.stiff_neck || "",
-                        id: "stiff_neck",
+                        id: "neu_stiff_neck",
                         class: "groupe-val"
                     },
                     {
@@ -173,7 +173,7 @@
                         type: "text",
                         name: "meningeal_sign",
                         value: props?.data?.meningeal_sign || "",
-                        id: "meningeal_sign",
+                        id: "neu_meningeal_sign",
                         class: "groupe-val"
                     },
                     {
@@ -181,7 +181,7 @@
                         type: "text",
                         name: "brudzinki_i_iv",
                         value: props?.data?.brudzinki_i_iv || "",
-                        id: "brudzinki_i_iv",
+                        id: "neu_brudzinki_i_iv",
                         class: "groupe-val"
                     },
                     {
@@ -189,7 +189,7 @@
                         type: "text",
                         name: "kernig_sign",
                         value: props?.data?.kernig_sign || "",
-                        id: "kernig_sign",
+                        id: "neu_kernig_sign",
                         class: "groupe-val"
                     },
                     {
@@ -197,7 +197,7 @@
                         type: "text",
                         name: "dolls_eye_phenomenon",
                         value: props?.data?.dolls_eye_phenomenon || "",
-                        id: "dolls_eye_phenomenon",
+                        id: "neu_dolls_eye_phenomenon",
                         class: "groupe-val"
                     },
                     {
@@ -205,7 +205,7 @@
                         type: "text",
                         name: "vertebra",
                         value: props?.data?.vertebra || "",
-                        id: "vertebra",
+                        id: "neu_vertebra",
                         class: "groupe-val"
                     },
                     {
@@ -213,7 +213,7 @@
                         type: "text",
                         name: "extremity",
                         value: props?.data?.extremity || "",
-                        id: "extremity",
+                        id: "neu_extremity",
                         class: "groupe-val"
                     },
 
@@ -226,7 +226,7 @@
                         type: "text",
                         name: "motion_upper_left",
                         value: props?.data?.motion_upper_left || "",
-                        id: "motion_upper_left",
+                        id: "neu_motion_upper_left",
                         class: "groupe-val"
                     },
                     {
@@ -234,7 +234,7 @@
                         type: "text",
                         name: "motion_upper_right",
                         value: props?.data?.motion_upper_right || "",
-                        id: "motion_upper_right",
+                        id: "neu_motion_upper_right",
                         class: "groupe-val"
                     },
                     {
@@ -242,7 +242,7 @@
                         type: "text",
                         name: "motion_lower_left",
                         value: props?.data?.motion_lower_left || "",
-                        id: "motion_lower_left",
+                        id: "neu_motion_lower_left",
                         class: "groupe-val"
                     },
                     {
@@ -250,7 +250,7 @@
                         type: "text",
                         name: "motion_lower_right",
                         value: props?.data?.motion_lower_right || "",
-                        id: "motion_lower_right",
+                        id: "neu_motion_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -262,7 +262,7 @@
                         type: "text",
                         name: "strength_upper_left",
                         value: props?.data?.strength_upper_left || "",
-                        id: "strength_upper_left",
+                        id: "neu_strength_upper_left",
                         class: "groupe-val"
                     },
                     {
@@ -270,7 +270,7 @@
                         type: "text",
                         name: "strength_upper_right",
                         value: props?.data?.strength_upper_right || "",
-                        id: "strength_upper_right",
+                        id: "neu_strength_upper_right",
                         class: "groupe-val"
                     },
                     {
@@ -278,7 +278,7 @@
                         type: "text",
                         name: "strength_lower_left",
                         value: props?.data?.strength_lower_left || "",
-                        id: "strength_lower_left",
+                        id: "neu_strength_lower_left",
                         class: "groupe-val"
                     },
                     {
@@ -286,7 +286,7 @@
                         type: "text",
                         name: "strength_lower_right",
                         value: props?.data?.strength_lower_right || "",
-                        id: "strength_lower_right",
+                        id: "neu_strength_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -298,7 +298,7 @@
                         type: "text",
                         name: "physiological_reflex_upper_left",
                         value: props?.data?.physiological_reflex_upper_left || "",
-                        id: "physiological_reflex_upper_left",
+                        id: "neu_physiological_reflex_upper_left",
                         class: "groupe-val"
                     },
                     {
@@ -306,7 +306,7 @@
                         type: "text",
                         name: "physiological_reflex_upper_right",
                         value: props?.data?.physiological_reflex_upper_right || "",
-                        id: "physiological_reflex_upper_right",
+                        id: "neu_physiological_reflex_upper_right",
                         class: "groupe-val"
                     },
                     {
@@ -314,7 +314,7 @@
                         type: "text",
                         name: "physiological_reflex_lower_left",
                         value: props?.data?.physiological_reflex_lower_left || "",
-                        id: "physiological_reflex_lower_left",
+                        id: "neu_physiological_reflex_lower_left",
                         class: "groupe-val"
                     },
                     {
@@ -322,7 +322,7 @@
                         type: "text",
                         name: "physiological_reflex_lower_right",
                         value: props?.data?.physiological_reflex_lower_right || "",
-                        id: "physiological_reflex_lower_right",
+                        id: "neu_physiological_reflex_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -334,7 +334,7 @@
                         type: "text",
                         name: "pathologycal_reflex_upper_left",
                         value: props?.data?.pathologycal_reflex_upper_left || "",
-                        id: "pathologycal_reflex_upper_left",
+                        id: "neu_pathologycal_reflex_upper_left",
                         class: "groupe-val"
                     },
                     {
@@ -342,7 +342,7 @@
                         type: "text",
                         name: "pathologycal_reflex_upper_right",
                         value: props?.data?.pathologycal_reflex_upper_right || "",
-                        id: "pathologycal_reflex_upper_right",
+                        id: "neu_pathologycal_reflex_upper_right",
                         class: "groupe-val"
                     },
                     {
@@ -350,7 +350,7 @@
                         type: "text",
                         name: "pathologycal_reflex_lower_left",
                         value: props?.data?.pathologycal_reflex_lower_left || "",
-                        id: "pathologycal_reflex_lower_left",
+                        id: "neu_pathologycal_reflex_lower_left",
                         class: "groupe-val"
                     },
                     {
@@ -358,7 +358,7 @@
                         type: "text",
                         name: "pathologycal_reflex_lower_right",
                         value: props?.data?.pathologycal_reflex_lower_right || "",
-                        id: "pathologycal_reflex_lower_right",
+                        id: "neu_pathologycal_reflex_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -370,7 +370,7 @@
                         type: "text",
                         name: "clonus",
                         value: props?.data?.clonus || "",
-                        id: "clonus",
+                        id: "neu_clonus",
                         class: "groupe-val"
                     },
                     {
@@ -378,7 +378,7 @@
                         type: "text",
                         name: "sensibility",
                         value: props?.data?.sensibility || "",
-                        id: "sensibility",
+                        id: "neu_sensibility",
                         class: "groupe-val"
                     },
 
@@ -446,17 +446,41 @@
         $("#contentAssessmen_Neurologi_Hide").html(`<div class="row">${contentHtmlHide}</div>`);
 
 
+        initializeNeuFlatpickr();
         saveAssessmenNeurologi();
-        setDefaultValuesSaraf()
+        setDefaultNeuValues()
     };
 
-    const setDefaultValuesSaraf = () => {
+    const setDefaultNeuValues = () => {
         $("#default-value-groupe-neurologi").on("click", function() {
             $("#contentAssessmen_Neurologi_Show .groupe-val").each(function() {
                 $(this).val("Dalam batas normal");
             });
         });
     };
+
+    const initializeNeuFlatpickr = () => {
+        flatpickr(".datetimeflatpickr", {
+            enableTime: true,
+            dateFormat: "d/m/Y H:i", // Display format
+            time_24hr: true, // 24-hour time format
+        });
+
+        $(".datetimeflatpickr").prop("readonly", false);
+
+        $(".datetimeflatpickr").on("change", function() {
+            let theid = $(this).attr("id");
+            theid = theid.replace("flat", "");
+            let thevalue = $(this).val();
+
+            if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
+                let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+                    "YYYY-MM-DD HH:mm"
+                );
+                $("#" + theid).val(formattedDate);
+            } else {}
+        });
+    }
 
     const getDataAssessmenNeurologi = (props) => {
         return new Promise((resolve) => {
@@ -465,7 +489,7 @@
                 org_unit_code: props?.visit?.org_unit_code,
                 session_id: props?.visit?.session_id,
             }, 'admin/AssNeurology/getData', (res) => {
-                templateNeurologi({
+                renderDataTabelsAssessmenNeurologi({
                     data: res?.value?.data?.dataAll
                 })
             }, (beforesend) => {
@@ -542,11 +566,11 @@
                 [10, 25, 50, 'All']
             ]
         });
-        actionButtonInTabelss(props)
+        actionButtonInNeuTabelss(props)
     }
 
 
-    const actionButtonInTabelss = (props) => {
+    const actionButtonInNeuTabelss = (props) => {
         $("#bodydatapemeriksaanSaraf").on("click", ".formEditNeurologi", function() {
             const id = $(this).data("id");
             const selectedData = props.data.find(item => item.body_id === id);
@@ -612,4 +636,7 @@
             }
         });
     }
+
+
+})();
 </script>

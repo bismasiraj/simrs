@@ -288,70 +288,22 @@
                 </tr>
             </tbody>
         </table>
+        <?php if (count($nutrition) > 0) {
+        ?>
+            <div class="row">
+                <h5 class="text-start">Skrining Gizi</h5>
+            </div>
+            <div class="d-flex flex-wrap mb-3">
+                <?php foreach ($nutrition as $key => $tidur) : ?>
+                    <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <b><?= $tidur['parameter_desc'] ?></b>
+                        <p class="m-0 mt-1 p-0"> @$tidur['value_desc']></p>
+                    </div>
+                <?php endforeach ?>
+            </div>
+        <?php
+        } ?>
 
-        <div class="row">
-            <h5 class="text-start">Skrining Gizi</h5>
-        </div>
-        <table class="table table-bordered">
-            <tbody>
-                <tr class="d-flex">
-                    <td class="p-1 col-4">
-                        <b>Pasien Operasi >= 65 Tahun ?</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b>Gangguan Makan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['nadi']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b>Masalah yang berhubungan dengan nutrisi</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                </tr>
-                <tr class="d-flex">
-                    <td class="p-1 col-4">
-                        <b>Masalah Makan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b>Nutrisi melalui NGT</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['nadi']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b>Mukosa Mulut/Lidah</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                </tr>
-                <tr class="d-flex">
-                    <td class="p-1 col-4">
-                        <b>Penyakit</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b>Gangguan Metabolik</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['nadi']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b>Status Gangguan Metabolik</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                </tr>
-                <tr class="d-flex">
-                    <td class="p-1 col-4">
-                        <b>Kategori Usia</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b></b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['nadi']; ?></p>
-                    </td>
-                    <td class="p-1 col-4">
-                        <b>Resiko mainutrisi</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 
         <table class="table table-bordered">
             <tbody>
@@ -386,7 +338,7 @@
                     <div class="d-flex  border-custom">
                         <div style="width: 100%;" class="p-1">
                             <b><?= $hiper['parameter_desc'] ?></b>
-                            <p class="m-0 mt-1 p-0"><?= (@$hiper['value_score'] != '0' ? @$hiper['value_desc'] : '-'); ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$hiper['value_desc']; ?></p>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -523,7 +475,7 @@
                 <?php foreach ($integumen as $key => $integu) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $integu['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$integu['value_score'] != '0' ? @$integu['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$integu['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -538,7 +490,7 @@
                 <?php foreach ($sosialekonomi as $key => $sosec) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $sosec['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$sosec['value_score'] != '0' ? @$sosec['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$sosec['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -554,7 +506,7 @@
                 <?php foreach ($neurosensoris as $key => $neuro) : ?>
                     <div class="col-3 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $neuro['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$neuro['value_score'] != '0' ? @$neuro['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$neuro['value_desc'] != '0'); ?></p>
                     </div>
                 <?php endforeach ?>
                 <div class="col-9 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
@@ -580,7 +532,7 @@
                 <?php foreach ($circulation as $key => $circu) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $circu['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$circu['value_score'] != '0' ? @$circu['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$circu['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -596,7 +548,7 @@
                 <?php foreach ($pencernaan as $key => $cernaan) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $cernaan['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$cernaan['value_score'] != '0' ? @$cernaan['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$cernaan['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -611,7 +563,7 @@
                 <?php foreach ($pernapasan as $key => $napas) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $napas['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$napas['value_score'] != '0' ? @$napas['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$napas['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -627,7 +579,7 @@
                 <?php foreach ($perkemihan as $key => $kemih) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $kemih['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$kemih['value_score'] != '0' ? @$kemih['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$kemih['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -663,7 +615,7 @@
                 <?php foreach ($thtdanmata as $key => $tht) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $tht['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$tht['value_score'] != '0' ? @$tht['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$tht['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -784,7 +736,7 @@
                 <?php foreach ($tidurdanistirahat as $key => $tidur) : ?>
                     <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $tidur['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$tidur['value_score'] != '0' ? @$tidur['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$tidur['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -800,7 +752,7 @@
                 <?php foreach ($dekubitus as $key => $deku) : ?>
                     <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $deku['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$deku['value_score'] != '0' ? @$deku['value_desc'] : '-'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$deku['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -861,7 +813,7 @@
                 <div class="mb-1">
                     <div id="qrcode"></div>
                 </div>
-                <p class="p-0 m-0 py-1" id="qrcode_name">(<?= @$val['dokter']; ?>)</p>
+                <p class="p-0 m-0 py-1" id="qrcode_name">(<?= @$val['petugas_name']; ?>)</p>
                 <i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i>
             </div>
             <div class="col-md-4"></div>

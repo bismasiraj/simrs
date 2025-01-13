@@ -8,63 +8,109 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         <div id="accordionCatatan" class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingThree1000">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree1000" aria-expanded="false" aria-controls="flush-collapseThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseThree1000" aria-expanded="false"
+                        aria-controls="flush-collapseThree">
                         LAPORAN ANESTHESI & SEDASI
                     </button>
                 </h2>
-                <div id="flush-collapseThree1000" class="accordion-collapse collapse" aria-labelledby="flush-headingThree1000" data-bs-parent="#accordionCatatan">
+                <div id="flush-collapseThree1000" class="accordion-collapse collapse"
+                    aria-labelledby="flush-headingThree1000" data-bs-parent="#accordionCatatan">
                     <div class="accordion-body" id="informasiMedis-laporan">
 
                     </div>
                     <div class="card-body">
                         <!-- ------------------ -->
-                        <div id="vitalSignLaporanAnesthesi" class="card border-1 rounded-4 m-4 p-4" style="display: none;">
+                        <div id="vitalSignLaporanAnesthesi" class="card border-1 rounded-4 m-4 p-4"
+                            style="display: none;">
                             <div class="card-body">
-                                <form id="formvitalsign-laporanAnesthesi" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                <form id="formvitalsign-laporanAnesthesi" accept-charset="utf-8" action=""
+                                    enctype="multipart/form-data" method="post" class="ptt10">
                                     <div class="modal-body pt0 pb0">
-                                        <input id="clinic_id-laporanAnesthesi" name="clinic_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['clinic_id']; ?>" />
-                                        <input id="class_room_id-laporanAnesthesi" name="class_room_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['class_room_id']; ?>" />
-                                        <input id="bed_id-laporanAnesthesi" name="bed_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['bed_id']; ?>" />
-                                        <input id="keluar_id-laporanAnesthesi" name="keluar_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['keluar_id']; ?>" />
-                                        <input id="employee_id-laporanAnesthesi" name="employee_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['employee_id']; ?>" />
-                                        <input id="no_registration-laporanAnesthesi" name="no_registration" placeholder="" type="hidden" class="form-control block" value="<?= $visit['no_registration']; ?>" />
-                                        <input id="visit_id-laporanAnesthesi" name="visit_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['visit_id']; ?>" />
-                                        <input id="org_unit_code-laporanAnesthesi" name="org_unit_code" placeholder="" type="hidden" class="form-control block" value="<?= $visit['org_unit_code']; ?>" />
-                                        <input id="doctor-laporanAnesthesi" name="doctor" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
-                                        <input id="kal_id-laporanAnesthesi" name="kal_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['kal_id']; ?>" />
-                                        <input id="theid-laporanAnesthesi" name="theid" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-                                        <input id="thename-laporanAnesthesi" name="thename" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-                                        <input id="theaddress-laporanAnesthesi" name="theaddress" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-                                        <input id="status_pasien_id-laporanAnesthesi" name="status_pasien_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['status_pasien_id']; ?>" />
-                                        <input id="isrj-laporanAnesthesi" name="isrj" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['isrj']; ?>" />
-                                        <input id="gender-laporanAnesthesi" name="gender" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['gender']; ?>" />
-                                        <input id="ageyear-laporanAnesthesi" name="ageyear" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageyear']; ?>" />
-                                        <input id="agemonth-laporanAnesthesi" name="agemonth" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['agemonth']; ?>" />
-                                        <input id="ageday-laporanAnesthesi" name="ageday" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageday']; ?>" />
-                                        <input id="body_id-laporanAnesthesi" name="body_id_vt" placeholder="" type="hidden" class="form-control block" value="" />
-                                        <input id="modified_by-laporanAnesthesi" name="modified_by" placeholder="" type="hidden" class="form-control block" value="<?= user()->username ?>" />
-                                        <input id="trans_id-laporanAnesthesi" name="trans_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['trans_id']; ?>" />
+                                        <input id="clinic_id-laporanAnesthesi" name="clinic_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['clinic_id']; ?>" />
+                                        <input id="class_room_id-laporanAnesthesi" name="class_room_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['class_room_id']; ?>" />
+                                        <input id="bed_id-laporanAnesthesi" name="bed_id" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= $visit['bed_id']; ?>" />
+                                        <input id="keluar_id-laporanAnesthesi" name="keluar_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['keluar_id']; ?>" />
+                                        <input id="employee_id-laporanAnesthesi" name="employee_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['employee_id']; ?>" />
+                                        <input id="no_registration-laporanAnesthesi" name="no_registration"
+                                            placeholder="" type="hidden" class="form-control block"
+                                            value="<?= $visit['no_registration']; ?>" />
+                                        <input id="visit_id-laporanAnesthesi" name="visit_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['visit_id']; ?>" />
+                                        <input id="org_unit_code-laporanAnesthesi" name="org_unit_code" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['org_unit_code']; ?>" />
+                                        <input id="doctor-laporanAnesthesi" name="doctor" placeholder="" type="hidden"
+                                            class="form-control block"
+                                            value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
+                                        <input id="kal_id-laporanAnesthesi" name="kal_id" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['kal_id']; ?>" />
+                                        <input id="theid-laporanAnesthesi" name="theid" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                        <input id="thename-laporanAnesthesi" name="thename" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                        <input id="theaddress-laporanAnesthesi" name="theaddress" placeholder=""
+                                            type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                        <input id="status_pasien_id-laporanAnesthesi" name="status_pasien_id"
+                                            placeholder="" type="hidden" class="form-control block"
+                                            value="<?= @$visit['status_pasien_id']; ?>" />
+                                        <input id="isrj-laporanAnesthesi" name="isrj" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['isrj']; ?>" />
+                                        <input id="gender-laporanAnesthesi" name="gender" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['gender']; ?>" />
+                                        <input id="ageyear-laporanAnesthesi" name="ageyear" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['ageyear']; ?>" />
+                                        <input id="agemonth-laporanAnesthesi" name="agemonth" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= @$visit['agemonth']; ?>" />
+                                        <input id="ageday-laporanAnesthesi" name="ageday" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['ageday']; ?>" />
+                                        <input id="body_id-laporanAnesthesi" name="body_id_vt" placeholder=""
+                                            type="hidden" class="form-control block" value="" />
+                                        <input id="modified_by-laporanAnesthesi" name="modified_by" placeholder=""
+                                            type="hidden" class="form-control block" value="<?= user()->username ?>" />
+                                        <input id="trans_id-laporanAnesthesi" name="trans_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= @$visit['trans_id']; ?>" />
                                         <div class="row">
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                                     <div class="row mt-4 mb-4" style="display: none">
-                                                        <label for="anamnase-laporanAnesthesi" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(S) Anamnesis</label>
+                                                        <label for="anamnase-laporanAnesthesi"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">(S)
+                                                            Anamnesis</label>
                                                         <div class="col-sm-10">
-                                                            <textarea type="text" class="form-control" id="anamnase-laporanAnesthesi" name="anamnase" placeholder=""></textarea>
+                                                            <textarea type="text" class="form-control"
+                                                                id="anamnase-laporanAnesthesi" name="anamnase"
+                                                                placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-4">
                                                         <h3><b>Vital Sign</b></h3>
                                                         <hr>
-                                                        <label class="col-xs-6 col-sm-6 col-md-2 col-form-label">Pemeriksaan Fisik</label>
+                                                        <label
+                                                            class="col-xs-6 col-sm-6 col-md-2 col-form-label">Pemeriksaan
+                                                            Fisik</label>
                                                         <div class="col-xs-6 col-sm-6 col-md-10">
                                                             <div class="row mb-2">
                                                                 <!--==new -->
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Jenis EWS</label>
-                                                                        <select class="form-select" name="vs_status_id" id="vs_status_id-laporanAnesthesi">
-                                                                            <option value="" selected>-- pilih --</option>
+                                                                        <select class="form-select" name="vs_status_id"
+                                                                            id="vs_status_id-laporanAnesthesi">
+                                                                            <option value="" selected>-- pilih --
+                                                                            </option>
                                                                             <option value="1">Dewasa</option>
                                                                             <option value="4">Anak</option>
                                                                             <option value="5">Neonatus</option>
@@ -77,8 +123,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>BB(Kg)</label>
                                                                         <div class=" position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="weight-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-bb-laporanAnesthesi"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="weight"
+                                                                                id="weight-laporanAnesthesi"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-bb-laporanAnesthesi"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -86,8 +138,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Tinggi(cm)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="height" id="height-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-height-laporanAnesthesi"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="height"
+                                                                                id="height-laporanAnesthesi"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-height-laporanAnesthesi"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -95,31 +153,57 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Suhu(°C)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="temperature-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-temperature-laporanAnesthesi"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="temperature"
+                                                                                id="temperature-laporanAnesthesi"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-temperature-laporanAnesthesi"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                                <div
+                                                                    class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
                                                                     <div class="form-group">
                                                                         <label>Nadi(/menit)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="nadi-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-nadi-laporanAnesthesi"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="nadi"
+                                                                                id="nadi-laporanAnesthesi"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-nadi-laporanAnesthesi"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                        <div class="col-sm-12 "
+                                                                            style="display: flex;  align-items: center;">
                                                                             <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="tension_upper-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                                <span class="h6" id="badge-tension_upper-laporanAnesthesi"></span>
+                                                                                <input onchange="vitalsignInput(this)"
+                                                                                    type="text" name="tension_upper"
+                                                                                    id="tension_upper-laporanAnesthesi"
+                                                                                    placeholder="" value=""
+                                                                                    class="form-control vitalsignclass"
+                                                                                    autocomplete="off">
+                                                                                <span class="h6"
+                                                                                    id="badge-tension_upper-laporanAnesthesi"></span>
                                                                             </div>
                                                                             <h4 class="mx-2">/</h4>
                                                                             <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="tension_below-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                                <span class="h6" id="badge-tension_below-laporanAnesthesi"></span>
+                                                                                <input onchange="vitalsignInput(this)"
+                                                                                    type="text" name="tension_below"
+                                                                                    id="tension_below-laporanAnesthesi"
+                                                                                    placeholder="" value=""
+                                                                                    class="form-control vitalsignclass"
+                                                                                    autocomplete="off">
+                                                                                <span class="h6"
+                                                                                    id="badge-tension_below-laporanAnesthesi"></span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -128,8 +212,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Saturasi(SpO2%)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="saturasi-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-saturasi-laporanAnesthesi"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="saturasi"
+                                                                                id="saturasi-laporanAnesthesi"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-saturasi-laporanAnesthesi"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -137,8 +227,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Nafas/RR(/menit)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="nafas-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-nafas-laporanAnesthesi"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="nafas"
+                                                                                id="nafas-laporanAnesthesi"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-nafas-laporanAnesthesi"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -146,19 +242,28 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Kesadaran</label>
-                                                                        <select class="form-select" name="awareness" id="awareness-laporanAnesthesi" onchange="vitalsignInput(this)">
+                                                                        <select class="form-select" name="awareness"
+                                                                            id="awareness-laporanAnesthesi"
+                                                                            onchange="vitalsignInput(this)">
                                                                             <option value="0">Sadar</option>
                                                                             <option value="3">Nyeri</option>
                                                                             <option value="10">Unrespon</option>
                                                                         </select>
-                                                                        <span class="h6" id="badge-awareness-laporanAnesthesi"></span>
+                                                                        <span class="h6"
+                                                                            id="badge-awareness-laporanAnesthesi"></span>
                                                                     </div>
                                                                 </div>
                                                                 <div id="container-vitalsign-laporanAnesthesi">
 
                                                                 </div>
                                                                 <div class="col-sm-12 mt-2">
-                                                                    <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="pemeriksaan-laporanAnesthesi" placeholder="" value="" class="form-control"></textarea></div>
+                                                                    <div class="form-group">
+                                                                        <label>Pemeriksaan</label><textarea
+                                                                            name="pemeriksaan"
+                                                                            id="pemeriksaan-laporanAnesthesi"
+                                                                            placeholder="" value=""
+                                                                            class="form-control"></textarea>
+                                                                    </div>
                                                                 </div>
                                                                 <!-- <div class="col-sm-12">
                                                             <div class="mb-4">
@@ -169,28 +274,46 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                         </div>
                                                     </div>
                                                     <div class="row mt-4 mb-4" style="display: none">
-                                                        <label for="description-laporanAnesthesi" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(A) Assesment</label>
+                                                        <label for="description-laporanAnesthesi"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">(A)
+                                                            Assesment</label>
                                                         <div class="col-sm-10">
-                                                            <textarea type="text" class="form-control" id="description-laporanAnesthesi" name="description" placeholder=""></textarea>
+                                                            <textarea type="text" class="form-control"
+                                                                id="description-laporanAnesthesi" name="description"
+                                                                placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="row mt-4 mb-4" style="display: none">
-                                                        <label for="instruction-laporanAnesthesi" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(P) Rencana Penatalaksanaan</label>
+                                                        <label for="instruction-laporanAnesthesi"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">(P)
+                                                            Rencana Penatalaksanaan</label>
                                                         <div class="col-sm-10">
-                                                            <textarea type="text" class="form-control" id="instruction-laporanAnesthesi" name="instruction" placeholder=""></textarea>
+                                                            <textarea type="text" class="form-control"
+                                                                id="instruction-laporanAnesthesi" name="instruction"
+                                                                placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="row mt-4 mb-4">
-                                                        <label for="examination_date-laporanAnesthesi" class="col-xs-6 col-sm-6 col-md-3 col-form-label">Tanggal Periksa</label>
+                                                        <label for="examination_date-laporanAnesthesi"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">Tanggal
+                                                            Periksa</label>
                                                         <div class="col-sm-10">
-                                                            <div class="input-group" id="examinationdate--laporanAnesthesi">
-                                                                <input id="flatexamination_date-laporanAnesthesi" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
-                                                                <input id="examination_date-laporanAnesthesi" name="examination_date" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
+                                                            <div class="input-group"
+                                                                id="examinationdate--laporanAnesthesi">
+                                                                <input id="flatexamination_date-laporanAnesthesi"
+                                                                    type="text"
+                                                                    class="form-control datetimeflatpickr-oprs"
+                                                                    placeholder="yyyy-mm-dd">
+                                                                <input id="examination_date-laporanAnesthesi"
+                                                                    name="examination_date" type="hidden"
+                                                                    class="form-control" placeholder="yyyy-mm-dd">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div><!--./col-lg-7-->
-                                            </div><!--./row-->
+                                                </div>
+                                                <!--./col-lg-7-->
+                                            </div>
+                                            <!--./row-->
                                             <!-- <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="examination_date">Tgl Periksa</label>
@@ -198,7 +321,10 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                         </div>
                                     </div> -->
                                             <div class="col-sm-6" style="display: none;">
-                                                <div class="form-group"><label>Perawat</label><input type="text" name="petugas-laporanAnesthesi" id="petugas-laporanAnesthesi" placeholder="" value="<?= user_id(); ?>" class="form-control"></div>
+                                                <div class="form-group"><label>Perawat</label><input type="text"
+                                                        name="petugas-laporanAnesthesi" id="petugas-laporanAnesthesi"
+                                                        placeholder="" value="<?= user_id(); ?>" class="form-control">
+                                                </div>
                                             </div>
                                         </div>
                                         <span id="total_score-laporanAnesthesi"></span>
@@ -207,7 +333,9 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                             </div>
                         </div>
                         <div class="box-tab-tools text-center mt-4">
-                            <a data-toggle="modal" onclick="setDataVitalSignLaporanAnesthesi()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Vitalsign</a>
+                            <a data-toggle="modal" onclick="setDataVitalSignLaporanAnesthesi()"
+                                class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
+                                Vitalsign</a>
                         </div>
                         <h3>Histori Vital Sign</h3>
                         <table class="table table-striped table-hover">
@@ -215,7 +343,8 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                 <tr>
                                     <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
                                     <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
-                                    <th class="text-center" colspan="6" style="width: 70%;">SOAP</th class="text-center">
+                                    <th class="text-center" colspan="6" style="width: 70%;">SOAP</th
+                                        class="text-center">
                                     <th class="text-center" style="width: 5%;"></th class="text-center">
                                     <th class="text-center" style="width: 5%;"></th class="text-center">
                                 </tr>
@@ -238,7 +367,8 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                 <i class="fas fa-print"></i> Cetak
             </button>
 
-            <button type="button" id="btn-save-laporan-anesthesi" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
+            <button type="button" id="btn-save-laporan-anesthesi" class="btn btn-primary btn-save-operasi"><i
+                    class="fas fa-save"></i> Simpan</button>
         </div>
     </form>
 </div>
@@ -370,18 +500,19 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
     const addRowVitalSigncatatanLaporanAnesthesi = (examselect, key) => {
         $("#vitalSignBodyLaporanAnesthesi").append($("<tr>")
-                .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
-                .append($("<td rowspan='7'>").html(examselect.petugas))
+                .append($("<td rowspan='2'>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td rowspan='2'>").html(examselect.petugas))
                 .append($("<td>").html(''))
                 .append($("<td>").html('<b>Tekanan Darah</b>'))
                 .append($("<td>").html('<b>Nadi</b>'))
                 .append($("<td>").html('<b>Nafas/RR</b>'))
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="copyVitalSignLaporanAnesthesi(' + key +
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="copyVitalSignLaporanAnesthesi(' +
+                    key +
                     ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>'
                 ))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="removeRacik(\'' + examselect
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="removeRacik(\'' + examselect
                     .body_id +
                     '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'
                 ))
@@ -393,26 +524,6 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                 .append($("<td>").html(examselect.nafas + '/menit'))
                 .append($("<td>").html(examselect.temperature + '/°C'))
                 .append($("<td>").html(examselect.saturasi + '/SpO2%'))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>S</b>"))
-                .append($("<td colspan='5'>").html(examselect.anamnase))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>O</b>"))
-                .append($("<td colspan='5'>").html(examselect.pemeriksaan))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>A</b>"))
-                .append($("<td colspan='5'>").html(examselect.description))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>P</b>"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("Instruksi"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
             )
     }
 

@@ -1,15 +1,15 @@
 <script type="text/javascript">
+(function() {
     $(document).ready(function() {
-        console.log("dermatologi masuk")
         // Event click untuk modal
         $("#pemeriksaanKulitTab").off("click").on("click", function(e) {
             e.preventDefault();
             getLoadingscreen("contentToHide-pemeriksaanKulit", "load-content-pemeriksaanKulit")
-            groupeActionInTabKulit()
+            groupeActiondermInTab()
         });
     });
 
-    const groupeActionInTabKulit = async () => {
+    const groupeActiondermInTab = async () => {
         let visit = <?= json_encode($visit) ?>;
         await getDataAssessmenDermatovenerologi({
             visit: visit
@@ -29,21 +29,21 @@
                 type: "hidden",
                 name: "org_unit_code",
                 value: props?.data?.org_unit_code ?? props?.visit?.org_unit_code,
-                id: "org_unit_code",
+                id: "derm_org_unit_code",
                 class: ""
             }, {
                 label: "",
                 type: "hidden",
                 name: "visit_id",
                 value: props?.data?.visit_id ?? props?.visit?.visit_id,
-                id: "visit_id",
+                id: "derm_visit_id",
                 class: ""
             }, {
                 label: "",
                 type: "hidden",
                 name: "trans_id",
                 value: props?.data?.trans_id ?? props?.visit?.trans_id,
-                id: "trans_id",
+                id: "derm_trans_id",
                 class: ""
             },
             {
@@ -51,7 +51,7 @@
                 type: "hidden",
                 name: "body_id",
                 value: props?.data?.body_id ?? get_bodyid(),
-                id: "body_id",
+                id: "derm_body_id",
                 class: ""
             },
             {
@@ -59,7 +59,7 @@
                 type: "hidden",
                 name: "document_id",
                 value: props?.data?.document_id ?? props?.visit?.session_id,
-                id: "document_id",
+                id: "derm_document_id",
                 class: ""
             },
             {
@@ -67,7 +67,7 @@
                 type: "hidden",
                 name: "no_registration",
                 value: props?.data?.no_registration ?? props?.visit?.no_registration,
-                id: "no_registration",
+                id: "derm_no_registration",
                 class: ""
             },
             {
@@ -75,7 +75,7 @@
                 type: "hidden",
                 name: "examination_date",
                 value: moment(new Date()).format("YYYY-MM-DD HH:mm"),
-                id: "examination_date",
+                id: "derm_examination_date",
                 class: ""
             },
             {
@@ -85,7 +85,7 @@
                         type: "text",
                         name: "sd_ins_location",
                         value: props?.data?.sd_ins_location || "",
-                        id: "sd_ins_location",
+                        id: "derm_sd_ins_location",
                         class: "groupe-val"
                     },
                     {
@@ -93,7 +93,7 @@
                         type: "text",
                         name: "sd_ins_ukk",
                         value: props?.data?.sd_ins_ukk || "",
-                        id: "sd_ins_ukk",
+                        id: "derm_sd_ins_ukk",
                         class: "groupe-val"
                     },
                     {
@@ -101,7 +101,7 @@
                         type: "text",
                         name: "sd_ins_distribution",
                         value: props?.data?.sd_ins_distribution || "",
-                        id: "sd_ins_distribution",
+                        id: "derm_sd_ins_distribution",
                         class: "groupe-val"
                     },
                     {
@@ -109,7 +109,7 @@
                         type: "text",
                         name: "sd_ins_configuration",
                         value: props?.data?.sd_ins_configuration || "",
-                        id: "sd_ins_configuration",
+                        id: "derm_sd_ins_configuration",
                         class: "groupe-val"
                     },
                     {
@@ -117,7 +117,7 @@
                         type: "text",
                         name: "sd_palpation",
                         value: props?.data?.sd_palpation || "",
-                        id: "sd_palpation",
+                        id: "derm_sd_palpation",
                         class: "groupe-val"
                     },
                     {
@@ -125,7 +125,7 @@
                         type: "text",
                         name: "sd_others",
                         value: props?.data?.sd_others || "",
-                        id: "sd_others",
+                        id: "derm_sd_others",
                         class: "groupe-val"
                     }
                 ]
@@ -137,7 +137,7 @@
                         type: "text",
                         name: "sv_inspection",
                         value: props?.data?.sv_inspection || "",
-                        id: "sv_inspection",
+                        id: "derm_sv_inspection",
                         class: "groupe-val"
                     },
                     {
@@ -145,7 +145,7 @@
                         type: "text",
                         name: "sv_palpation",
                         value: props?.data?.sv_palpation || "",
-                        id: "sv_palpation",
+                        id: "derm_sv_palpation",
                         class: "groupe-val"
                     },
                 ]
@@ -182,8 +182,13 @@
                 const uniqueId = group.id || `input-${group.name}`;
                 if (group.type === "hidden") {
                     contentHtmlHide += `
-                        <input type="${group.type}" class="form-control ${group?.class ?? ""}" id="${uniqueId}" name="${group.name}" value="${group.value}">
-                        `;
+                        <div class="col-6" hidden>
+                            <div class="mb-3 row">
+                                <div class="col-sm-8">
+                                    <input type="${group.type}" class="form-control ${group?.class ?? ""}" id="${uniqueId}" name="${group.name}" value="${group.value}">
+                                </div>
+                            </div>
+                        </div>`;
                 } else {
                     contentHtml += `
                             <div class="col-6">
@@ -208,12 +213,12 @@
         $("#contentAssessmen_Dermatovenerologi_Hide").html(`<div class="row">${contentHtmlHide}</div>`);
 
 
-
+        initializeDermFlatpickr();
         saveAssessmenDermatovenerologi();
-        setDefaultValuesKulit()
+        setDefaultDermValues()
     };
 
-    const setDefaultValuesKulit = () => {
+    const setDefaultDermValues = () => {
         $("#default-value-groupe-dermatovenerologi").on("click", function() {
             $("#contentAssessmen_Dermatovenerologi_Show .groupe-val").each(function() {
                 $(this).val("Dalam batas normal");
@@ -221,28 +226,28 @@
         });
     };
 
-    // const initializeDiagFlatpickr = () => {
-    //     flatpickr(".datetimeflatpickr", {
-    //         enableTime: true,
-    //         dateFormat: "d/m/Y H:i", // Display format
-    //         time_24hr: true, // 24-hour time format
-    //     });
+    const initializeDermFlatpickr = () => {
+        flatpickr(".datetimeflatpickr", {
+            enableTime: true,
+            dateFormat: "d/m/Y H:i", // Display format
+            time_24hr: true, // 24-hour time format
+        });
 
-    //     $(".datetimeflatpickr").prop("readonly", false);
+        $(".datetimeflatpickr").prop("readonly", false);
 
-    //     $(".datetimeflatpickr").on("change", function() {
-    //         let theid = $(this).attr("id");
-    //         theid = theid.replace("flat", "");
-    //         let thevalue = $(this).val();
+        $(".datetimeflatpickr").on("change", function() {
+            let theid = $(this).attr("id");
+            theid = theid.replace("flat", "");
+            let thevalue = $(this).val();
 
-    //         if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
-    //             let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
-    //                 "YYYY-MM-DD HH:mm"
-    //             );
-    //             $("#" + theid).val(formattedDate);
-    //         } else {}
-    //     });
-    // }
+            if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
+                let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+                    "YYYY-MM-DD HH:mm"
+                );
+                $("#" + theid).val(formattedDate);
+            } else {}
+        });
+    }
 
     const getDataAssessmenDermatovenerologi = (props) => {
         return new Promise((resolve) => {
@@ -251,12 +256,9 @@
                 org_unit_code: props?.visit?.org_unit_code,
                 session_id: props?.visit?.session_id,
             }, 'admin/AssDermatovenerologi/getData', (res) => {
-                templateDermatovenerologi({
+                renderDataTabelsAssessmenDermatovenerologi({
                     data: res?.value?.data?.dataAll
                 })
-                // renderDataTabelsAssessmenDermatovenerologi({
-                //     data: res?.value?.data?.dataAll
-                // })
             }, (beforesend) => {
                 getLoadingGlobalServices('bodydatapemeriksaanKulit')
             })
@@ -407,4 +409,7 @@
             }
         });
     }
+
+
+})();
 </script>

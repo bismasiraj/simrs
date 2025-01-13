@@ -518,7 +518,7 @@
             $("#transferBodyHistory").append($("<tr>")
                 .append($("<td>").append(formatedDatetimeFlat(examselect.examination_date)))
                 .append($("<td>").html(examselect.petugas))
-                .append($("<td colspan='4'>").html(getFollowUpName(examselect.isinternal)))
+                .append($("<td colspan='7'>").html(getFollowUpName(examselect.isinternal)))
                 // .append($("<td colspan=\"2\">").html(examselect.isinternal))
                 // .append($("<td colspan=\"2\">").html(examselect.isinternal))
                 // .append($("<td colspan=\"2\">").html(examselect.isinternal))
@@ -536,7 +536,7 @@
             $("#transferBodyHistory").append($("<tr>")
                 .append($("<td>").append(formatedDatetimeFlat(examselect.examination_date)))
                 .append($("<td>").html(examselect.petugas))
-                .append($("<td colspan='4'>").html(getFollowUpName(examselect.isinternal)))
+                .append($("<td colspan='7'>").html(getFollowUpName(examselect.isinternal)))
                 // .append($("<td colspan=\"2\">").html(examselect.isinternal))
                 // .append($("<td colspan=\"2\">").html(examselect.isinternal))
                 // .append($("<td colspan=\"2\">").html(examselect.isinternal))
@@ -583,13 +583,9 @@
             $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
         } else {
             isnew = true
-            $.each(initialexam, function(key, value) {
-                $("#atransfer1" + key).val(value)
-            })
+            fillExaminationDetail(initialexam, 'atransfer1')
+            fillExaminationDetail(initialexam, 'atransfer3')
 
-            $.each(initialexam, function(key, value) {
-                $("#atransfer3" + key).val(value)
-            })
 
             $("#atransfer1clinic_id").val('<?= $visit['clinic_id']; ?>')
             $("#atransfer1class_room_id").val('<?= $visit['class_room_id']; ?>')
@@ -829,6 +825,8 @@
             openPopUpTab('<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id)
         } else if (isinternal == '5') {
             openPopUpTab('<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id)
+        } else if (isinternal == '2') {
+            openPopUpTab('<?= base_url() . '/admin/rm/lainnya/surat_rujukan/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id)
         } else {
             openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id)
         }
@@ -1795,15 +1793,10 @@
             $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
         } else {
             isnew = true
-            $.each(initialexam, function(key, value) {
-                $("#atransfer1" + key).val(value)
-            })
-            $.each(initialexam, function(key, value) {
-                $("#atransfer2" + key).val(value)
-            })
-            $.each(initialexam, function(key, value) {
-                $("#atransfer3" + key).val(value)
-            })
+            fillExaminationDetail(initialexam, 'atransfer1')
+            fillExaminationDetail(initialexam, 'atransfer2')
+            fillExaminationDetail(initialexam, 'atransfer3')
+
 
             $("#atransfer1clinic_id").val('<?= $visit['clinic_id']; ?>')
             $("#atransfer1class_room_id").val('<?= $visit['class_room_id']; ?>')
@@ -2080,9 +2073,6 @@
 </script>
 
 
-<script src="<?php echo base_url(); ?>assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 
 <script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>

@@ -351,14 +351,14 @@ class Gizi extends \App\Controllers\BaseController
             $polaMakanExist = $this->lowerKey($db->query(
                 "
                 SELECT * FROM ASSESSMENT_NUTRITION_HABIT
-                WHERE HABIT_ID = '" . $data['pola_makan'] . "'
+                WHERE HABIT_ID = '" . @$data['pola_makan'] . "'
                 "
             )->getRowArray() ?? []);
 
             if (empty($polaMakanExist)) {
                 $lastId = $db->query("select top 1 HABIT_ID from ASSESSMENT_NUTRITION_HABIT order by HABIT_ID desc")->getRowArray()['HABIT_ID'];
-                $queryHabit = $db->query("INSERT INTO ASSESSMENT_NUTRITION_HABIT (HABIT_ID, DIETARY_HABIT) VALUES ('" . $lastId + 1 . "','" . strtolower($data['pola_makan']) . "')");
-                $data['pola_makan'] = $lastId + 1;
+                $queryHabit = $db->query("INSERT INTO ASSESSMENT_NUTRITION_HABIT (HABIT_ID, DIETARY_HABIT) VALUES ('" . $lastId + 1 . "','" . strtolower(@$data['pola_makan']) . "')");
+                @$data['pola_makan'] = $lastId + 1;
             }
             $data['body_id'] = $this->get_bodyid();
             $data['document_id'] = $this->get_bodyid();

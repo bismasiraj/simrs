@@ -16,7 +16,7 @@
         });
     });
 
-    const convertDate1 = (dateString) => {
+    const convertCairanDate1 = (dateString) => {
         const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm"];
         const parsedDate = moment(dateString, formats, true);
         if (parsedDate.isValid()) {
@@ -29,14 +29,14 @@
     const getCairanGen0023 = () => {
         $("#cairanTab").off().on("click", function(e) {
             getRequestData0023()
-            getCategory()
+            getCategoryCairan()
         });
 
         $("#btn-print-cairangen0023").off().on("click", function(e) {
             let visit = <?= json_encode($visit) ?>;
 
-            const formattedStartDate = convertDate1($('#startDateCairan').val());
-            const formattedEndDate = convertDate1($('#endDateCairan').val());
+            const formattedStartDate = convertCairanDate1($('#startDateCairan').val());
+            const formattedEndDate = convertCairanDate1($('#endDateCairan').val());
 
             const start = formattedStartDate ? `${formattedStartDate} 00:00:01` : null;
             const end = formattedEndDate ? `${formattedEndDate} 23:59:59` : null;
@@ -59,8 +59,8 @@
             const startDate = $('#startDateCairan').val();
             const endDate = $('#endDateCairan').val();
 
-            const formattedStartDate = convertDate1(startDate);
-            const formattedEndDate = convertDate1(endDate);
+            const formattedStartDate = convertCairanDate1(startDate);
+            const formattedEndDate = convertCairanDate1(endDate);
 
             const start = formattedStartDate ? `${formattedStartDate} 00:00:01` : null;
             const end = formattedEndDate ? `${formattedEndDate} 23:59:59` : null;
@@ -83,7 +83,7 @@
         }, 'admin/cairan/getData', (res) => {
             beratBadanInfo = res?.exam
             if (res?.data.length > 0) {
-                renderTable(res?.data);
+                renderTableCairan(res?.data);
             } else {
                 // $("#btn-print-cairangen0023").attr("disabled", true)
                 $("#bodydatagen0023").html(tempTablesNull());
@@ -93,7 +93,7 @@
         });
     };
 
-    const getCategory = (props) => {
+    const getCategoryCairan = (props) => {
         let visit = <?= json_encode($visit) ?>;
 
         getDataList('admin/cairan/getCategory', (res) => {
@@ -123,7 +123,7 @@
 
     }
 
-    const renderTable = (data) => {
+    const renderTableCairan = (data) => {
 
         let aValue = <?= json_encode($aValue) ?>;
         let filteredDataValue = aValue?.filter(item => item?.p_type === "GEN0023");
@@ -159,17 +159,18 @@
         $("#bodydatagen0023").html(dataRender);
         let groupColumn = 0;
         let table = $('#tableDat-cairan0023').DataTable({
-            dom: '<"mb-3"B>rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
+            dom: '<"mb-3">rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
             lengthChange: true,
             ordering: false,
             order: [
                 [groupColumn, 'asc']
             ],
             lengthMenu: [
-                [10, ],
-                [10, ]
+                [10],
+                [10]
             ],
             displayLength: 10,
+            buttons: [], // Tidak ada tombol di sini
             drawCallback: function(settings) {
                 let api = this.api();
                 let rows = api.rows({
@@ -182,12 +183,10 @@
                     })
                     .data()
                     .each(function(dateString, i) {
-                        let [datePart, timePart] = dateString?.split(
-                            ' ');
-                        let [day, month, year] = datePart?.split(
-                            '/');
+                        let [datePart, timePart] = dateString?.split(' ');
+                        let [day, month, year] = datePart?.split('/');
                         let date = new Date(year, month - 1, day, ...timePart.split(':'));
-                        let formattedDate = moment(date).format("DD-MM-YYYY HH")
+                        let formattedDate = moment(date).format("DD-MM-YYYY HH");
 
                         if (last !== formattedDate) {
                             $(rows)
@@ -202,6 +201,7 @@
                     });
             }
         });
+
 
         $('#tableDat-cairan0023 tbody').on('click', 'tr.group', function() {
             var currentOrder = table.order()[0];

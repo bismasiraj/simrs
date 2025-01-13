@@ -246,7 +246,7 @@ $permissions = user()->getPermissions();
 
                                 <div class="card-body">
                                     <div class="mb-3 row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="table-responsive col-xs-12 col-sm-12 col-md-12">
                                             <input type="hidden" name="visit" id="eresepvisit" value="<?= base64_encode(json_encode($visit)); ?>">
                                             <table id="eresepTable" class="table table-hover table-prescription" style="display: block;">
                                                 <thead class="table-primary" style="text-align: center;">
@@ -295,7 +295,7 @@ $permissions = user()->getPermissions();
                                     <div class="mb-3 row">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <input type="hidden" name="visit" id="eresepvisit" value="<?= base64_encode(json_encode($visit)); ?>">
-                                            <div id="eresepsRacikBody">
+                                            <div id="eresepsRacikBody" class="table-responsive">
 
                                             </div>
                                             <?php if (user()->checkPermission("eresep", "c")) {

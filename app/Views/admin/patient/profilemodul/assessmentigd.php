@@ -31,30 +31,30 @@ $menu['tidur'] = 1;
 
 
 if ($visit['clinic_id'] == 'P012') {
-    // $menu['fallrisk'] = 1;
-    // $menu['painmonitoring'] = 1;
-    // $menu['triase'] = 1;
-    // $menu['apgar'] = 0;
-    // $menu['skrininggizi'] = 1;
-    // $menu['adl'] = 0;
-    // $menu['dekubitus'] = 0;
-    // $menu['stabilitas'] = 0;
-    // $menu['edukasiintegrasi'] = 0;
-    // $menu['formedukasi'] = 0;
-    // $menu['gcs'] = 0;
-    // $menu['integumen'] = 1;
-    // $menu['anak'] = 0; //?
-    // $menu['neonatus'] = 0; //?
-    // $menu['neurosensoris'] = 1;
-    // $menu['pencernaan'] = 0;
-    // $menu['pernapasan'] = 0;
-    // $menu['perkemihan'] = 1;
-    // $menu['psikologi'] = 0;
-    // $menu['sirkulasi'] = 1;
-    // $menu['seksual'] = 0;
-    // $menu['social'] = 0;
-    // $menu['tht'] = 0; //hearing
-    // $menu['tidur'] = 0;
+    $menu['fallrisk'] = 1;
+    $menu['painmonitoring'] = 1;
+    $menu['triase'] = 1;
+    $menu['apgar'] = 0;
+    $menu['skrininggizi'] = 1;
+    $menu['adl'] = 0;
+    $menu['dekubitus'] = 0;
+    $menu['stabilitas'] = 0;
+    $menu['edukasiintegrasi'] = 0;
+    $menu['formedukasi'] = 0;
+    $menu['gcs'] = 0;
+    $menu['integumen'] = 1;
+    $menu['anak'] = 0; //?
+    $menu['neonatus'] = 0; //?
+    $menu['neurosensoris'] = 1;
+    $menu['pencernaan'] = 0;
+    $menu['pernapasan'] = 1;
+    $menu['perkemihan'] = 0;
+    $menu['psikologi'] = 0;
+    $menu['sirkulasi'] = 1;
+    $menu['seksual'] = 0;
+    $menu['social'] = 0;
+    $menu['tht'] = 0; //hearing
+    $menu['tidur'] = 0;
 } else if ($visit['isrj'] == '0') {
     $menu['fallrisk'] = 1;
     $menu['painmonitoring'] = 1;
@@ -598,6 +598,7 @@ if ($visit['clinic_id'] == 'P012') {
                             <input type="hidden" id="arpkal_id" name="kal_id">
                             <input type="hidden" id="arppetugas_id" name="petugas_id">
                             <input type="hidden" id="arppetugas" name="petugas">
+                            <input type="hidden" id="arppetugas_type" name="petugas_type">
                             <input type="hidden" id="arpaccount_id" name="account_id">
                             <input type="hidden" id="arpkesadaran" name="kesadaran">
                             <input type="hidden" id="arpisvalid" name="isvalid">
@@ -676,7 +677,7 @@ if ($visit['clinic_id'] == 'P012') {
                                         <div id="arpTriage_Group" class="accordion-item">
                                             <h2 class="accordion-header" id="004">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse004" aria-expanded="true" aria-controls="collapse004">
-                                                    <b>Triase</b>
+                                                    <b>TRIASE</b>
                                                 </button>
                                             </h2>
                                             <div id="collapse004" class="accordion-collapse collapse" aria-labelledby="004" style="">
@@ -726,7 +727,7 @@ if ($visit['clinic_id'] == 'P012') {
                                         <div id="arpPainMonitoring_Group" class="accordion-item">
                                             <h2 class="accordion-header" id="002">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse002" aria-expanded="true" aria-controls="collapse002">
-                                                    <b>Monitoring Nyeri</b>
+                                                    <b>MONITORING NYERI</b>
                                                 </button>
                                             </h2>
                                             <div id="collapse002" class="accordion-collapse collapse" aria-labelledby="002" style="">

@@ -2871,6 +2871,7 @@ class medis extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
+
             $select = $this->lowerKey($db->query("SELECT
             INASIS_KONTROL.NOSEP,  
             INASIS_KONTROL.TGLRENCKONTROL AS TGL_KONTROL_SELANJUTNYA,  
@@ -2911,8 +2912,9 @@ class medis extends \App\Controllers\BaseController
             INASIS_KONTROL.valid_pasien,
             INASIS_KONTROL.valid_date
 			from PASIEN_TRANSFER pt inner join
-            INASIS_KONTROL on pt.DOCUMENT_ID = INASIS_KONTROL.NOSURATKONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
-            inner join pasien_DIAGNOSA pD on inasis_kontrol.VISIT_ID = pv.VISIT_ID
+            INASIS_KONTROL on pt.DOCUMENT_ID = INASIS_KONTROL.NOSURATKONTROL 
+            left outer join  pasien_visitation pv on inasis_kontrol.VISIT_ID = pv.VISIT_ID 
+            left outer join pasien_DIAGNOSA pD on inasis_kontrol.VISIT_ID = pD.VISIT_ID
             left outer join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
             left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
@@ -2975,7 +2977,8 @@ class medis extends \App\Controllers\BaseController
             pt.notes
             
             from PASIEN_TRANSFER pt inner join
-            INASIS_KONTROL on pt.DOCUMENT_ID = INASIS_KONTROL.NOSURATKONTROL left outer join  pasien_visitation pv on inasis_kontrol.visit_id = pv.visit_id 
+            INASIS_KONTROL on pt.DOCUMENT_ID = INASIS_KONTROL.NOSURATKONTROL 
+            left outer join  pasien_visitation pv on inasis_kontrol.visit_id = pv.visit_id 
             inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
             left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
@@ -3036,7 +3039,8 @@ class medis extends \App\Controllers\BaseController
             INASIS_KONTROL.valid_pasien,
             INASIS_KONTROL.valid_date
             --PD.STANDING_ORDER as INTRUKSITAMBAHAN
-            FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
+            FROM INASIS_KONTROL 
+            left outer join  pasien_visitation pv on inasis_kontrol.visit_id = pv.visit_id
             inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
             left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID

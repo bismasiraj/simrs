@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+        rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -23,47 +25,47 @@
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <style>
-        .form-control:disabled,
-        .form-control[readonly] {
-            background-color: #FFF;
-            opacity: 1;
-        }
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #FFF;
+        opacity: 1;
+    }
 
-        .form-control,
-        .input-group-text {
-            background-color: #fff;
-            border: 1px solid #fff;
-            font-size: 12px;
-        }
+    .form-control,
+    .input-group-text {
+        background-color: #fff;
+        border: 1px solid #fff;
+        font-size: 12px;
+    }
 
-        @page {
-            size: A4;
-        }
+    @page {
+        size: A4;
+    }
 
-        body {
-            width: 21cm;
-            height: 29.7cm;
-            margin: 0;
-            font-size: 12px;
-        }
+    body {
+        width: 21cm;
+        height: 29.7cm;
+        margin: 0;
+        font-size: 12px;
+    }
 
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-            margin-bottom: .3rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+        margin-bottom: .3rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
     </style>
 </head>
 
@@ -77,7 +79,8 @@
                 <h3><?= @$organization['name_of_org_unit'] ?></h3>
                 <!-- <h3>Surakarta</h3> -->
                 <p><?= @$organization['contact_address'] ?></p>
-                <p class="mb-0"><?= @$organization['contact_address'] ?>, <?= @$organization['phone']; ?>, Fax: <?= @$organization['fax']; ?>, <?= @$organization['kota']; ?></p>
+                <p class="mb-0"><?= @$organization['contact_address'] ?>, <?= @$organization['phone']; ?>, Fax:
+                    <?= @$organization['fax']; ?>, <?= @$organization['kota']; ?></p>
                 <p><?= @$organization['sk']; ?></p>
             </div>
             <div class="col-auto text-center">
@@ -109,7 +112,8 @@
             <tr>
                 <td class="p-1" style="width:33.3%">
                     <b>Tanggal Lahir (Usia)</b>
-                    <p class="m-0 mt-1 p-0"><?= tanggal_indo($visit['date_of_birth']) . ' (' . @$visit['age'] . ')'; ?></p>
+                    <p class="m-0 mt-1 p-0"><?= tanggal_indo($visit['date_of_birth']) . ' (' . @$visit['age'] . ')'; ?>
+                    </p>
 
                 </td>
                 <td class="p-1" style="width:66.3%" colspan="2">
@@ -150,16 +154,18 @@
     <div class="d-flex flex-wrap mb-3">
         <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
             <b>Waktu Operasi</b>
-            <p><?= @tanggal_indo(date_format(date_create(@$operasi['vactination_date']), 'Y-m-d')) . ' ' . date_format(date_create($operasi['vactination_date']), 'H:i'); ?></p>
+            <p> <?= isset($val['examination_date']) 
+                ? tanggal_indo(date_format(date_create($val['examination_date']), 'Y-m-d')) . ' ' . date_format(date_create($val['examination_date']), 'H:i') 
+                : ''; ?></p>
         </div>
         <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
             <b>Riwayat Alergi</b>
             <?php if (isset($riwayat_alergi)) : ?>
-                <ul>
-                    <?php foreach ($riwayat_alergi as $alergi) : ?>
-                        <li><?= $alergi['value_desc'] . ': ' . $alergi['histories'] ?></li>
-                    <?php endforeach; ?>
-                </ul>
+            <ul>
+                <?php foreach ($riwayat_alergi as $alergi) : ?>
+                <li><?= $alergi['value_desc'] . ': ' . $alergi['histories'] ?></li>
+                <?php endforeach; ?>
+            </ul>
             <?php endif; ?>
         </div>
         <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
@@ -185,16 +191,29 @@
         <div class="col-12 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
             <b>Diagnosis</b>
             <?php if (isset($diagnosa)) : ?>
-                <ul>
-                    <?php foreach ($diagnosa as $diag) : ?>
-                        <li><?= $diag['diagnosa_desc']; ?></li>
-                    <?php endforeach; ?>
-                </ul>
+            <ul>
+                <?php foreach ($diagnosa as $diag) : ?>
+                <li><?= $diag['diagnosa_desc']; ?></li>
+                <?php endforeach; ?>
+            </ul>
             <?php endif; ?>
         </div>
         <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
             <b>Estimasi Waktu Operasi</b>
-            <p><?= @tanggal_indo(date_format(date_create(@$operasi['vactination_date']), 'Y-m-d')) . ' ' . date_format(date_create($operasi['vactination_date']), 'H:i'); ?></p>
+            <p>
+                <?php 
+                    if (isset($operasi['start_operation']) && isset($operasi['end_operation'])) {
+                        $start = date_create($operasi['start_operation']);
+                        $end = date_create($operasi['end_operation']);
+
+                        $startFormatted = tanggal_indo(date_format($start, 'Y-m-d')) . ' ' . date_format($start, 'H:i');
+                        $endFormatted = tanggal_indo(date_format($end, 'Y-m-d')) . ' ' . date_format($end, 'H:i');
+                        
+                        echo $startFormatted . ' - ' . $endFormatted;
+                    }
+                ?>
+            </p>
+
         </div>
         <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
             <b>Alat Khusus</b>
@@ -202,57 +221,58 @@
         <div class="col-4 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
             <b>Produk Darah</b>
             <?php if (isset($blood_request)) : ?>
-                <ul>
-                    <?php foreach ($blood_request as $blood) : ?>
-                        <li><?= $blood['usagetype'] . ' (' . $blood['blood_quantity'] . ' ' . $blood['measurement'] . ')'; ?></li>
-                    <?php endforeach; ?>
-                </ul>
+            <ul>
+                <?php foreach ($blood_request as $blood) : ?>
+                <li><?= $blood['usagetype'] . ' (' . $blood['blood_quantity'] . ' ' . $blood['measurement'] . ')'; ?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
             <?php endif; ?>
         </div>
     </div>
     <h5>Checklist Persiapan Operasi</h5>
     <?php if (isset($informasiMedis)) : ?>
-        <div class=" d-flex flex-wrap mb-3">
-            <?php foreach ($informasiMedis as $key => $medis) : ?>
-                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <input type="checkbox" <?= @$medis == 1 ? 'checked' : ''; ?> onclick="return false;">
-                    <b><?= $key ?></b>
-                </div>
-            <?php endforeach ?>
+    <div class=" d-flex flex-wrap mb-3">
+        <?php foreach ($informasiMedis as $key => $medis) : ?>
+        <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <input type="checkbox" <?= @$medis == 1 ? 'checked' : ''; ?> onclick="return false;">
+            <b><?= $key ?></b>
         </div>
+        <?php endforeach ?>
+    </div>
     <?php endif; ?>
 
     <h5>Riwayat Penyakit</h5>
     <?php if (isset($riwayat_penyakit)) : ?>
-        <div class=" d-flex flex-wrap mb-3">
-            <?php foreach ($riwayat_penyakit as $key => $riwayat) : ?>
-                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+    <div class=" d-flex flex-wrap mb-3">
+        <?php foreach ($riwayat_penyakit as $key => $riwayat) : ?>
+        <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
 
-                    <?php if ($riwayat['item_id'] == '34') : ?>
-                        <b><?= $riwayat['value_desc'] ?></b>
-                        <p class="pb-0 my-0"><?= $riwayat['histories']; ?></p>
-                    <?php else : ?>
-                        <input type="checkbox" <?= !empty(@$riwayat['histories']) ? 'checked' : ''; ?> onclick="return false;">
-                        <b><?= $riwayat['value_desc'] ?></b>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach ?>
+            <?php if ($riwayat['item_id'] == '34') : ?>
+            <b><?= $riwayat['value_desc'] ?></b>
+            <p class="pb-0 my-0"><?= $riwayat['histories']; ?></p>
+            <?php else : ?>
+            <input type="checkbox" <?= !empty(@$riwayat['histories']) ? 'checked' : ''; ?> onclick="return false;">
+            <b><?= $riwayat['value_desc'] ?></b>
+            <?php endif; ?>
         </div>
+        <?php endforeach ?>
+    </div>
     <?php endif; ?>
 
     <?php if (!empty($lokalis)) : ?>
-        <h5>Lokasi Operasi</h5>
-        <div class=" d-flex flex-wrap mb-3">
-            <?php foreach ($lokalis as $key => $value) : ?>
-                <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <?php if (isset($value['filedata64'])) : ?>
-                        <img class="mt-3" src="<?= 'data:image/png;base64,' . $value['filedata64'] ?>" width="300px">
-                    <?php else : ?>
-                        <img class="mt-3" src="<?= base_url('assets/img/asesmen/' . $value['value_info']) ?>" width="300px">
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
+    <h5>Lokasi Operasi</h5>
+    <div class=" d-flex flex-wrap mb-3">
+        <?php foreach ($lokalis as $key => $value) : ?>
+        <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <?php if (isset($value['filedata64'])) : ?>
+            <img class="mt-3" src="<?= 'data:image/png;base64,' . $value['filedata64'] ?>" width="300px">
+            <?php else : ?>
+            <img class="mt-3" src="<?= base_url('assets/img/asesmen/' . $value['value_info']) ?>" width="300px">
+            <?php endif; ?>
         </div>
+        <?php endforeach; ?>
+    </div>
     <?php endif; ?>
 
 
@@ -277,43 +297,45 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
 
 </body>
 
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `<?= $visit['fullname']; ?>`,
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: `<?= $visit['fullname']; ?>`,
+    width: 150,
+    height: 150,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H // High error correction
+});
 </script>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: `<?= $visit['diantar_oleh']; ?>`,
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+var qrcode = new QRCode(document.getElementById("qrcode1"), {
+    text: `<?= $visit['diantar_oleh']; ?>`,
+    width: 150,
+    height: 150,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H // High error correction
+});
 </script>
 
 <style>
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-        }
-
-        .container {
-            width: 210mm;
-            /* Sesuaikan dengan lebar kertas A4 */
-        }
+@media print {
+    @page {
+        margin: none;
+        scale: 85;
     }
+
+    .container {
+        width: 210mm;
+        /* Sesuaikan dengan lebar kertas A4 */
+    }
+}
 </style>
 <script type="text/javascript">
 

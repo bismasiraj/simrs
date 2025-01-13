@@ -74,7 +74,7 @@ $currency_symbol = "Rp. ";
                                                                 <div>
                                                                     <div class="input-group" id="mulai">
                                                                         <input type="text" id="mulai-date" name="mulai"
-                                                                            class="form-control  dateflatpickr">
+                                                                            class="form-control  dateFlatTime-rl">
                                                                         <!-- <input name="mulai" type="text" class="form-control"
                                                                         placeholder="yyyy-mm-dd"
                                                                         data-date-format="yyyy-mm-dd"
@@ -97,7 +97,7 @@ $currency_symbol = "Rp. ";
                                                                 <div>
                                                                     <div class="input-group" id="akhir">
                                                                         <input type="text" id="akhir-date" name="akhir"
-                                                                            class="form-control   dateflatpickr">
+                                                                            class="form-control   dateFlatTime-rl">
                                                                         <!-- <input name="akhir" type="text" class="form-control"
                                                                         placeholder="yyyy-mm-dd"
                                                                         data-date-format="yyyy-mm-dd"
@@ -286,6 +286,20 @@ $currency_symbol = "Rp. ";
                                                             </div>
                                                         </div>
                                                     <?php } ?>
+                                                    <?php if (!empty($goods)) { ?>
+                                                        <div class="col-sm-2 col-md-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis Barang </label><small class="req"> *</small>
+                                                                <select id="goods" class="form-control" name="goods">
+                                                                    <option value="%">Semua</option>
+                                                                    <?php foreach ($goods as $key => $value) { ?>
+                                                                        <option value="<?= $value['isalkes']; ?>">
+                                                                            <?= $value['thealkes']; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
                                                     <?php if (!empty($diagnosa)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group"><label for="diag_awal">Diagnosis</label>
@@ -336,6 +350,36 @@ $currency_symbol = "Rp. ";
                                                             </div>
                                                         </div>
                                                     <?php } ?>
+                                                    <?php if (!empty($employee_allDoctor)) { ?>
+                                                        <div class="col-sm-2 col-md-2">
+                                                            <div class="form-group"><label for="diag_awal">Dokter</label>
+                                                                <div class="p-2 select2-full-width mt-n5"
+                                                                    style="margin-top: -8px;">
+                                                                    <select name="employee_allDoctor"
+                                                                        class="form-control patient_list_ajax"
+                                                                        id="employee_allDoctor">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+
+                                                    <?php if (!empty($fillTop)) { ?>
+                                                        <div class="col-sm-1 col-md-1">
+                                                            <div class="mb-3">
+                                                                <label>Filter Top</label>
+                                                                <div>
+                                                                    <div class="input-group" id="fill_top">
+                                                                        <input type="number" id="fill_top" name="fill_top"
+                                                                            class="form-control" value="10">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    <?php } ?>
+
+
                                                     <?php if (!empty($treatTarif)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
@@ -726,8 +770,8 @@ $currency_symbol = "Rp. ";
             const endDate = $("#akhir-date").val();
 
 
-            const formattedStartDate = convertDate(startDate);
-            const formattedEndDate = convertDate(endDate);
+            const formattedStartDate = convertDateRl(startDate);
+            const formattedEndDate = convertDateRl(endDate);
 
 
             if (formattedEndDate && moment(formattedEndDate).isBefore(moment(formattedStartDate))) {
@@ -744,8 +788,8 @@ $currency_symbol = "Rp. ";
             const startDate = $("#mulai-date").val();
             const endDate = $(this).val();
 
-            const formattedStartDate = convertDate(startDate);
-            const formattedEndDate = convertDate(endDate);
+            const formattedStartDate = convertDateRl(startDate);
+            const formattedEndDate = convertDateRl(endDate);
 
             if (formattedEndDate && formattedEndDate < formattedStartDate) {
                 errorSwal("End date cannot be earlier than start date!");
@@ -755,9 +799,18 @@ $currency_symbol = "Rp. ";
         });
 
 
+
+        flatpickr(".dateFlatTime-rl", {
+            enableTime: false,
+            dateFormat: "d/m/Y",
+
+            onChange: function(selectedDates, dateStr, instance) {}
+        });
+        $(".dateFlatTime-rl").prop("readonly", false)
+
     });
 
-    const convertDate = (dateString) => {
+    const convertDateRl = (dateString) => {
         const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm"];
         const parsedDate = moment(dateString, formats, true);
         if (parsedDate.isValid()) {
@@ -780,11 +833,11 @@ $currency_symbol = "Rp. ";
         const startDate = formData.get('mulai');
         const endDate = formData.get('akhir');
         if (startDate) {
-            const formattedStartDate = convertDate(startDate);
+            const formattedStartDate = convertDateRl(startDate);
             formData.set('mulai', formattedStartDate);
         }
         if (endDate) {
-            const formattedEndDate = convertDate(endDate);
+            const formattedEndDate = convertDateRl(endDate);
             formData.set('akhir', formattedEndDate);
         }
         $.ajax({
@@ -995,7 +1048,6 @@ $currency_symbol = "Rp. ";
 
         tab_text += "</table>";
 
-
         const myBlob = new Blob([tab_text], {
             type: "application/vnd.ms-excel"
         });
@@ -1092,6 +1144,27 @@ $currency_symbol = "Rp. ";
         });
     </script>
 <?php } ?>
+<?php if (!empty($employee_allDoctor)) { ?>
+    <script>
+        let employee_allDoctor = <?= json_encode($employee_allDoctor); ?>;
+
+        employee_allDoctor.unshift({
+            id: '%',
+            text: 'Semua'
+        });
+
+        $('#employee_allDoctor').select2({
+            placeholder: 'Pilih Dokter',
+            allowClear: false,
+            width: '100%',
+            data: employee_allDoctor
+        });
+
+        $('#employee_allDoctor').val('%').trigger('change');
+    </script>
+
+<?php } ?>
+
 <?php if (!empty($itemName)) { ?>
     <script type="text/javascript">
         function rinciObatAlkes(id, namaobat, tgl) {

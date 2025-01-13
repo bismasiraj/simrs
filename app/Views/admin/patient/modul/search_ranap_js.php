@@ -2042,7 +2042,7 @@
     const addRowCPPT = (examselect, key, base64json) => {
         if (examselect.account_id == "3") {
             $("#historyCpptBody").append($("<tr>")
-                .append($("<td rowspan='8'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td colspan='6'>").html(''))
                 // .append($("<td>").html('<b>Tekanan Darah</b>'))
@@ -2051,7 +2051,7 @@
                 // .append($("<td>").html('<b>Temp</b>'))
                 // .append($("<td>").html('<b>SpO2</b>'))
 
-                .append($("<td rowspan='8' colspan='2'>")
+                .append($("<td rowspan='7' colspan='2'>")
                     .append(examselect.modified_by == '<?= user()->username; ?>' ? $('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                         .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect.visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id + '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Pilih Sesi</i></button>') : ''
                     ))
@@ -2067,16 +2067,16 @@
             // )
         } else {
             $("#historyCpptBody").append($("<tr>")
-                .append($("<td rowspan='6'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td rowspan='5'>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
-                .append($("<td colspan='6'>").html(''))
+                .append($("<td colspan='5'>").html(''))
                 // .append($("<td>").html('<b>Tekanan Darah</b>'))
                 // .append($("<td>").html('<b>Nadi</b>'))
                 // .append($("<td>").html('<b>Nafas/RR</b>'))
                 // .append($("<td>").html('<b>Temp</b>'))
                 // .append($("<td>").html('<b>SpO2</b>'))
 
-                .append($("<td rowspan='6'>")
+                .append($("<td rowspan='5'>")
                     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                         .append('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-primary" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
                             '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'
@@ -2086,7 +2086,7 @@
                             } ?>
                         )
                     ))
-                .append($("<td rowspan='6'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                .append($("<td rowspan='5'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
 
         }
@@ -2126,10 +2126,10 @@
                     .append($("<td>").html("<b>P</b>"))
                     .append($("<td colspan='5'>").html(examselect.instruction))
                 )
-                .append($("<tr>")
-                    .append($("<td>").html("Instruksi"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
-                )
+            // .append($("<tr>")
+            //     .append($("<td>").html("Instruksi"))
+            //     .append($("<td colspan='5'>").html(examselect.instruction))
+            // )
         } else {
             $("#historyCpptBody")
                 .append($("<tr>")
@@ -2149,10 +2149,10 @@
                     .append($("<td>").html("<b>R</b>"))
                     .append($("<td colspan='5'>").html(examselect.instruction))
                 )
-                .append($("<tr>")
-                    .append($("<td>").html("Instruksi"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
-                )
+            // .append($("<tr>")
+            //     .append($("<td>").html("Instruksi"))
+            //     .append($("<td colspan='5'>").html(examselect.instruction))
+            // )
         }
     }
 </script>

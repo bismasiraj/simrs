@@ -20,8 +20,8 @@ async function fetchDataDiet() {
         let result = res.data;
         let diet_type = result.diet_type;
         let diet_warning = result.diet_warning;
-        window.arrayBentuk = diet_type
-        window.arrayPeringatan = diet_warning
+        window.arrayBentukOrdersGizi = diet_type
+        window.arrayPeringatanOrdersGizi = diet_warning
 
         initializeDietTypes({
             data: diet_type
@@ -35,15 +35,15 @@ async function fetchDataDiet() {
 // }
 
 const initializeDietTypes = (props) => {
-    let arrayBentuk = props?.data;
+    let arrayBentukOrdersGizi = props?.data;
 
     let rowContainer = $('<div class="row"></div>');
     let column1 = $('<div class="col-6"></div>');
     let column2 = $('<div class="col-6"></div>');
 
-    const halfLength = Math.ceil(arrayBentuk.length / 2);
+    const halfLength = Math.ceil(arrayBentukOrdersGizi.length / 2);
 
-    $.each(arrayBentuk, function(key, value) {
+    $.each(arrayBentukOrdersGizi, function(key, value) {
         const checkbox = `
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="dtype${key}" value="${value}">
@@ -71,7 +71,7 @@ const initializeDietTypes = (props) => {
         var bentukValue = '';
         var bentukDesc = '';
 
-        $.each(arrayBentuk, function(key, value) {
+        $.each(arrayBentukOrdersGizi, function(key, value) {
             if ($("#dtype" + key).is(":checked")) {
                 bentukValue += ',' + $("#dtype" + key).val()
             }
@@ -108,12 +108,12 @@ function isiBentukGizi(container) {
 
 <script>
 const initializeDietWarning = (props) => {
-    let arrayPeringatan = props?.data
+    let arrayPeringatanOrdersGizi = props?.data
 
     let rowContainer = $('<div class="row"></div>');
     let columns = [$('<div class="col-4"></div>'), $('<div class="col-4"></div>'), $('<div class="col-4"></div>')];
 
-    $.each(arrayPeringatan, function(key, value) {
+    $.each(arrayPeringatanOrdersGizi, function(key, value) {
         var textnya = `<div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="peringatan${key}" value="${value}">
                             <label class="form-check-label" for="peringatan${key}">
@@ -135,7 +135,7 @@ const initializeDietWarning = (props) => {
         const id = container?.split("pantangan_pagi");
         var peringatan = '';
 
-        $.each(arrayPeringatan, function(key, value) {
+        $.each(arrayPeringatanOrdersGizi, function(key, value) {
             if ($("#peringatan" + key).is(":checked")) {
                 peringatan += ',' + $("#peringatan" + key).val()
             }
@@ -165,6 +165,50 @@ function isiPeringatanGizi(container) {
 </script>
 <script>
 function addOrderGizi(flag, counter, document_id, container) {
+    if (counter > 1) {
+        let previousForm = $("#formGiziRequest" + (counter - 1));
+
+        if (previousForm.length === 0) {
+            console.error("Form sebelumnya tidak ditemukan!");
+            return;
+        }
+
+        let isAnyFieldFilled = false;
+
+        const requiredFields = [
+            "dtype_pagi",
+            "dtype_siang",
+            "dtype_malam",
+            "pantangan_pagi",
+            "pantangan_siang",
+            "pantangan_malam",
+            "dtype_iddesc",
+            "dtype_siangdesc",
+            "dtype_malamdesc",
+            "penunggu_pagi",
+            "penunggu_siang",
+            "penunggu_malam"
+        ];
+
+        for (let field of requiredFields) {
+            previousForm.find(`input[name^='${field}']`).each(function() {
+                if ($(this).val()) {
+                    isAnyFieldFilled = true;
+                    return false;
+                }
+            });
+            if (isAnyFieldFilled) break;
+        }
+
+        if (!isAnyFieldFilled) {
+            errorSwal("Harap di isi");
+            return;
+        }
+
+
+    }
+
+
     var bodyId = get_bodyid()
     var content = `<form id="formGiziRequest` + counter + `" action="">
                     <input type="hidden" id="ordergiziorg_unit_code` + counter + `" name="org_unit_code" value="<?= @$visit['org_unit_code']; ?>">
@@ -197,7 +241,7 @@ function addOrderGizi(flag, counter, document_id, container) {
                             <tbody id="ordergizi` + counter +
         `" class="table-group-divider">
                                 <tr>
-                                    <td rowspan="4">1.</td>
+                                    <td rowspan="4">${counter}.</td>
                                     <td rowspan="4">
                                     <input type="text" class="form-control" id="flatordergizidiet_date${counter}">
                                     <input type="hidden" class="form-control" name="diet_date" id="ordergizidiet_date${counter}">
@@ -304,7 +348,7 @@ function addOrderGizi(flag, counter, document_id, container) {
             bentuk = String(bentuk).split(",")
             var bentukDesc = ''
 
-            $.each(window.arrayBentuk, function(key, value) {
+            $.each(window.arrayBentukOrdersGizi, function(key, value) {
                 if (bentuk.includes(key)) {
                     console.log(value)
                     bentukDesc += ', ' + value
@@ -329,9 +373,13 @@ function addOrderGizi(flag, counter, document_id, container) {
         $("#formGiziRequest" + counter).find("input").prop("disabled", false)
     }
 
-    $("#ordergiziAdd").html(`<a data-toggle="modal" onclick="addOrderGizi(1,` + counter + 1 +
+
+    $("#ordergiziAdd").empty()
+
+    $("#ordergiziAdd").html(`<a data-toggle="modal" onclick="addOrderGizi(1,` + (counter + 1) +
         `, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>`
     )
+    counter += 1;
 
 }
 const deleteOrderIgizi = (container, counter, bodyId) => {

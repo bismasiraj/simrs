@@ -34,7 +34,7 @@ $menu = [
     'fisio' => 0,
     'rekammedis' => 0,
     'tindakan' => 0,
-    'charges' => 1,
+    'charges' => 0,
     'rm' => 0,
     'pain' => 0,
     'fall' => 0,
@@ -59,7 +59,7 @@ $menu = [
     'gizi' => 0,
     'patologi' => 0,
     'asuhancairan' => 0,
-    'penunjang' => 0,
+    'penunjang' => 1,
     'riwayatHamil' => 0,
     'permintaandarah' => 0,
     'pemeriksaanSaraf' => 0,
@@ -67,24 +67,7 @@ $menu = [
     'reportEKlaim' => 0,
     'treatintensive' => 0
 ];
-if ($visit['specialist_type_id'] == '1.05') {
-    $menu['nifas'] = 1;
-    $menu['persalinan'] = 1;
-    $menu['suratketeranganlahir'] = 1;
-    $menu['riwayatHamil'] = 1;
-}
-if ($visit['specialist_type_id'] == '1.12') {
-    $menu['pemeriksaanKulit'] = 1;
-}
-if ($visit['specialist_type_id'] == '1.16') {
-    $menu['pemeriksaanSaraf'] = 1;
-}
-if (@$gsPoli == 'P002') {
-    $menu['patientOperationRequest'] = 1;
-}
-if ($visit['isrj'] == 0) {
-    $menu['permintaandarah'] = 1;
-}
+
 if (user()->checkPermission("assessmentmedis", "r"))
     $menu['assessmentmedis'] = 1;
 if (user()->checkPermission("assessmentperawat", "r"))
@@ -153,6 +136,27 @@ if (user()->checkPermission("patologi", "r"))
     $menu['patologi'] = 1;
 if (user()->checkPermission("reportEKlaim", "r"))
     $menu['reportEKlaim'] = 1;
+
+if ($visit['specialist_type_id'] == '1.05') {
+    $menu['nifas'] = 1;
+    $menu['persalinan'] = 1;
+    $menu['suratketeranganlahir'] = 1;
+    $menu['riwayatHamil'] = 1;
+    $menu['assessmentperawat'] = 0;
+    $menu['assessmentbidan'] = 1;
+}
+if ($visit['specialist_type_id'] == '1.12') {
+    $menu['pemeriksaanKulit'] = 1;
+}
+if ($visit['specialist_type_id'] == '1.16') {
+    $menu['pemeriksaanSaraf'] = 1;
+}
+if (@$gsPoli == 'P002') {
+    $menu['patientOperationRequest'] = 1;
+}
+if ($visit['isrj'] == 0) {
+    $menu['permintaandarah'] = 1;
+}
 ?>
 
 <?php $this->section('content') ?>

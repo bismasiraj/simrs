@@ -1520,10 +1520,10 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $data['modified_by'] = user()->username;
 
         if (isset($bloodblood_request)) {
-            $bloodblood_request = [
-                '202412040411113432R6',
-                '20241204041114617B4V'
-            ];
+            // $bloodblood_request = [
+            //     '202412040411113432R6',
+            //     '20241204041114617B4V'
+            // ];
 
             $bloodmodel = new BloodRequestModel();
 
@@ -1569,8 +1569,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     'reaction_desc' => !empty(@$bloodreaction_desc[$key]) ? @$bloodreaction_desc[$key] : null,
                 ];
                 echo '<pre>';
-                var_dump($datablood);
-                die();
+               
                 $bloodmodel->insert($datablood);
             }
         }
@@ -1600,14 +1599,27 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 $data['examination_date'] = str_replace("T", " ", $examination_date);
             if (isset($time))
                 $data['time'] = str_replace("T", " ", $time);
+            
+            if (isset($start_operation)) 
+                $data['start_operation'] = str_replace("T", " ", $start_operation);
+        
+            if (isset($end_operation)) 
+                $data['end_operation'] = str_replace("T", " ", $end_operation);
         }
         $data['modified_by'] = user()->username;
 
         // return json_encode($data);
 
         $model = new AssessmentPraOperasi();
+        $oprasi = new PatientOperationRequestModel();
 
         $model->delete($body_id);
+        
+
+        $oprasi->update($data['body_id'], [
+            'start_operation' => $data['start_operation'] ?? null, 
+            'end_operation' => $data['end_operation'] ?? null 
+        ]);
 
         $model->save($data);
 
@@ -1967,6 +1979,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         try {
 
+
             $model = new AssessmentAnesthesiaModel();
             $existingRecord = $model->where('document_id', $data['document_id'])->first();
 
@@ -2106,7 +2119,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             }
 
             // Uncomment and test if necessary
-            if (isset($formData['diagnosa']) && is_array($formData['diagnosa'])) {
+            if (!empty($formData['diagnosa']) && is_array($formData['diagnosa'])) {
 
                 $pds = new PasienDiagnosasModel();
 

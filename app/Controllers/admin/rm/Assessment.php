@@ -1356,7 +1356,12 @@ class Assessment extends BaseController
         $no_registration = $body['nomor'];
 
         $db = db_connect();
-        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname from pasien_diagnosa pd left join employee_all ea on pd.employee_id = ea.employee_id left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
+        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname, st.specialist_type
+                                                            from pasien_diagnosa pd 
+                                                            left join employee_all ea on pd.employee_id = ea.employee_id 
+                                                            left join clinic c on pd.clinic_id = c.clinic_id 
+                                                            left join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPECIALIST_TYPE_ID
+                                                            where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
         $selectexam = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname 
                                                     from examination_info pd 
                                                     left join employee_all ea on pd.employee_id = ea.employee_id 
@@ -1747,7 +1752,98 @@ class Assessment extends BaseController
 
         $db = db_connect();
 
-        $select = $this->lowerKey($db->query("select * from treatment_perawat where visit_id = '$visit' order by treat_date asc")->getResultArray());
+        $select = $this->lowerKey($db->query("select org_unit_code,
+        bill_id,
+        no_registration,
+        visit_id,
+        tarif_id,
+        class_id,
+        clinic_id,
+        clinic_id_from,
+        treatment,
+        treat_date,
+        amount,
+        cast(quantity as decimal(10,2)) as quantity,
+        pokok_jual,
+        ppn,
+        margin,
+        subsidi,
+        embalace,
+        profesi,
+        discount,
+        pay_method_id,
+        payment_date,
+        islunas,
+        duedate_angsuran,
+        description,
+        kuitansi_id,
+        nota_no,
+        iscetak,
+        print_date,
+        class_room_id,
+        keluar_id,
+        bed_id,
+        perda_id,
+        employee_id,
+        description2,
+        modified_by,
+        modified_date,
+        modified_from,
+        doctor,
+        exit_date,
+        fa_v,
+        task_id,
+        employee_id_from,
+        doctor_from,
+        status_pasien_id,
+        amount_paid,
+        thename,
+        theaddress,
+        theid,
+        serial_nb,
+        treatment_plafond,
+        amount_plafond,
+        amount_paid_plafond,
+        class_id_plafond,
+        payor_id,
+        pembulatan,
+        isrj,
+        ageyear,
+        agemonth,
+        ageday,
+        gender,
+        kal_id,
+        correction_by,
+        karyawan,
+        account_id,
+        sell_price,
+        diskon,
+        invoice_id,
+        potongan,
+        bayar,
+        retur,
+        tarif_type,
+        ppnvalue,
+        tagihan,
+        koreksi,
+        status_obat,
+        subsidisat,
+        printq,
+        printed_by,
+        stock_available,
+        status_tarif,
+        clinic_type,
+        package_id,
+        module_id,
+        profession,
+        theorder,
+        cashier,
+        trans_id,
+        nosep,
+        pasien_id,
+        total_tagihan,
+        tarif_id_plafond,
+        treatment_type from treatment_perawat where visit_id = '$visit' order by treat_date asc")->getResultArray());
 
 
         return json_encode($select);
@@ -1787,7 +1883,7 @@ class Assessment extends BaseController
         } else {
             $where = '';
         }
-
+        $selectexd = [];
         if ($isrj == 1) {
             $selectex = $this->lowerKey($db->query("
             select top($top) 
@@ -1805,35 +1901,6 @@ class Assessment extends BaseController
             ex.exit_date,
             ex.keluar_id,
             ex.examination_date,
-            exd.temperature,
-            exd.tension_upper,
-            exd.tension_below,
-            exd.nadi,
-            exd.nafas,
-            exd.weight,
-            exd.height,
-            exd.imt_score,
-            exd.imt_desc,
-            exd.saturasi,
-            exd.arm_diameter,
-
-            exd.oxygen_usage,
-            exd.oxygen_usage_score,
-            exd.temperature_score,
-            exd.tension_upper_score,
-            exd.tension_below_score,
-            exd.nadi_score,
-            exd.nafas_score,
-            exd.saturasi_score,
-            exd.awareness,
-            exd.pain,
-            exd.lochia,
-            exd.general_condition,
-            exd.cardiovasculer,
-            exd.respiration,
-            exd.proteinuria,
-            exd.vs_status_id,
-
             ex.anamnase,
             ex.alo_anamnase,
             ex.pemeriksaan,
@@ -1872,7 +1939,6 @@ class Assessment extends BaseController
             when '19' then 'G'
             end as kode_PPA
             from examination_info ex 
-            left join examination_detail exd on ex.body_id = exd.document_id
             inner join pasien_visitation pv on pv.visit_id = ex.visit_id
             left join employee_all ea on ex.employee_id = ea.employee_id 
             left join clinic c on ex.clinic_id = c.clinic_id
@@ -1880,6 +1946,22 @@ class Assessment extends BaseController
             where ex.no_registration = '$no_registration' $where
             order by examination_date desc
             ")->getResultArray());
+
+            if (count($selectex) > 0) {
+                $primaryPD = "";
+                foreach ($selectex as $key => $value) {
+                    $primaryPD .= "'" . $value['visit_id'] . "',";
+                }
+                $primaryPD = substr($primaryPD, 0, -1);
+                $where = "and (visit_id in($primaryPD))";
+                $selectexd = $this->lowerKey($db->query("
+                    select top($top) 
+                    *
+                    from examination_detail exd
+                    where exd.no_registration = '$no_registration'
+                    order by examination_date desc
+                    ")->getResultArray());
+            }
         } else {
             $selectex = $this->lowerKey($db->query("
             select top($top)
@@ -1972,6 +2054,14 @@ class Assessment extends BaseController
             where ex.no_registration = '$no_registration' and ex.visit_id = '$visit_id' 
             order by examination_date desc
             ")->getResultArray());
+
+            $selectexd = $this->lowerKey($db->query("
+            select top($top) 
+            exd.*
+            from examination_detail exd
+            where exd.no_registration = '$no_registration' and exd.visit_id = '$visit_id' 
+            order by examination_date desc
+            ")->getResultArray());
         }
 
 
@@ -1980,8 +2070,9 @@ class Assessment extends BaseController
 
         return $this->response->setJSON([
             'examInfo' => $selectex,
+            'examDetail' => $selectexd,
             'pasienHistory' => $selecthistory,
-        ]); //havin
+        ]);
     }
     public function getVitalSign()
     {
@@ -2046,11 +2137,15 @@ class Assessment extends BaseController
             exd.cardiovasculer,
             exd.respiration,
             exd.proteinuria,
-            exd.vs_status_id
+            exd.vs_status_id,
+            isnull(ea.fullname, exd.modified_by) as petugas
             from examination_detail exd
             inner join pasien_visitation pv on pv.visit_id = exd.visit_id
             left outer join ASSESSMENT_GCS gcs on exd.BODY_ID = gcs.DOCUMENT_ID
+            left outer join users u on u.username = exd.modified_by
+            left outer join employee_all ea on u.employee_id = ea.employee_id
             where exd.no_registration = '$no_registration' $where
+            order by examination_date desc
             ")->getResultArray());
         } else {
             $selectex = $this->lowerKey($db->query("
@@ -2086,10 +2181,14 @@ class Assessment extends BaseController
             exd.cardiovasculer,
             exd.respiration,
             exd.proteinuria,
-            exd.vs_status_id
+            exd.vs_status_id,
+            isnull(ea.fullname, exd.modified_by) as petugas
             from examination_detail exd
             inner join pasien_visitation pv on pv.visit_id = exd.visit_id
+            left outer join users u on u.username = exd.modified_by
+            left outer join employee_all ea on u.employee_id = ea.employee_id
             where exd.no_registration = '$no_registration' and exd.visit_id = '$visit_id' 
+            order by examination_date desc
             ")->getResultArray());
         }
 
@@ -3573,7 +3672,7 @@ class Assessment extends BaseController
         }
 
 
-        return json_encode('berhasil');
+        return json_encode($data);
     }
     public function getFallRisk()
     {

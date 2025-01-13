@@ -525,7 +525,7 @@
             var doctor = doctor
             var employeeId = '<?= $visit['employee_id']; ?>'
             var employeeIdFrom = '<?= $visit['employee_id']; ?>'
-            var doctorFrom = '<?= $visit['fullname']; ?>'
+            var doctorFrom = "<?= $visit['fullname']; ?>"
             var statusObat = toItem.status_pasien_id
             var tarifId = "1201008"
             var treatment = "PEMBELIAN OBAT RACIKAN"
@@ -618,7 +618,7 @@
             $("#aorno_registration" + billId).val('<?= $visit['no_registration']; ?>');
             $("#aortrans_id" + billId).val('<?= $visit['trans_id']; ?>');
             $("#aormodified_from" + billId).val('<?= $visit['clinic_id']; ?>');
-            $("#aormodified_by" + billId).val('<?= user()->username; ?>');
+            $("#aormodified_by" + billId).val("<?= user()->username; ?>");
             $("#aormodified_date" + billId).val(get_date());
             $("#aorisrj" + billId).val('<?= $visit['isrj']; ?>');
             $("#aorthename" + billId).val('<?= $visit['diantar_oleh']; ?>');
@@ -803,7 +803,6 @@
                     </tbody>
                 </table>`)
         } else {
-            // $("#modalPrescriptionTitle").html(`<?= user()->getFullname(); ?> | ${resepSelected} | ${get_date()}`)
             $("#modalPrescriptionTitle").html(`E-Resep`)
 
 
@@ -1126,7 +1125,7 @@
             var status_tarif = <?= $visit['isrj'] == 1 ? 0 : 1; ?>;
             var iscetak = 1;
             var bodyId = '<?= $visit['session_id']; ?>'
-            var modified_by = '<?= user()->username; ?>'
+            var modified_by = "<?= user()->username; ?>"
             if (racikan == 1)
                 var measureIdName = 'Bks';
             else
@@ -1457,6 +1456,10 @@
                         }
                     }
                     // let origDose = $(`#aororig_dose${billId}`).val()
+                    let jmlBks = $(`#aorjml_bks${billId}`).val()
+                    let dosePresc = jmlBks * result;
+                    $(`#aordose_presc${billId}`).val(dosePresc)
+                } else if (result < 1) {
                     let jmlBks = $(`#aorjml_bks${billId}`).val()
                     let dosePresc = jmlBks * result;
                     $(`#aordose_presc${billId}`).val(dosePresc)

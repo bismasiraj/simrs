@@ -222,7 +222,7 @@ $result = array_change_key_case($result);
                         <tr>
                             <td width="20%">Alamat</td>
                             <td width="1%">:</td>
-                            <td colspan="2"><?= $visit['contact_address']; ?></td>
+                            <td colspan="2"><?= $visit['visitor_address']; ?></td>
                             <td width="20%">Dokter</td>
                             <td width="1%">:</td>
                             <td id="doctor_penunjang"></td>

@@ -110,60 +110,96 @@ class AssessmentMedis extends BaseController
             $mesej = 'update';
         }
 
+        $dataexam = [];
         if ($body_id != '') {
-            $dataexam = [];
             $dataexam = [
-                'org_unit_code' => @$org_unit_code,
-                'body_id' => @$body_id,
-                'document_id' => @$document_id,
-                'vs_status_id' => @$vs_status_id,
-                'no_registration' => @$no_registration,
-                'visit_id' => @$visit_id,
-                'trans_id' => @$trans_id,
-                'clinic_id' => @$clinic_id,
-                'examination_date' => str_replace('T', ' ', $date_of_diagnosa),
-                'account_id' => @$account_id,
-                'temperature' => @$temperature,
-                'tension_upper' => @$tension_upper,
-                'tension_below' => @$tension_below,
-                'nadi' => @$nadi,
-                'nafas' => @$nafas,
-                'weight' => @$weight,
-                'height' => @$height,
-                'imt_score' => @$imt_score,
-                'imt_desc' => @$imt_desc,
-                'saturasi' => @$saturasi,
+                'account_id' => '1',
+                'account_id' => 1,
+                'ageday' => @$ageday,
+                'agemonth' => @$agemonth,
+                'ageyear' => @$ageyear,
+                'agemonth' => @$agemonth,
+                'ageday' => @$ageday,
+                'alo_anamnase' => @$alloanamnase,
+                'anamnase' => @$anamnase,
                 'arm_diameter' => @$arm_diameter,
-                'oxygen_usage' => @$oxygen_usage,
-                'oxygen_usage_score' => @$oxygen_usage_score,
-                'temperature_score' => @$temperature_score,
-                'tension_upper_score' => @$tension_upper_score,
-                'tension_below_score' => @$tension_below_score,
-                'nadi_score' => @$nadi_score,
-                'nafas_score' => @$nafas_score,
-                'saturasi_score' => @$saturasi_score,
                 'awareness' => @$awareness,
-                'pain' => @$pain,
-                'lochia' => @$lochia,
-                'general_condition' => @$general_condition,
+                'bed_id' => @$bed_id,
+                'body_id' => @$body_id,
+                'body_id' => @$pasien_diagnosa_id,
                 'cardiovasculer' => @$cardiovasculer,
-                'respiration' => @$respiration,
-                'proteinuria' => @$proteinuria,
+                'child_position' => @$child_position,
+                'clinic_id' => @$clinic_id,
                 'cervix' => @$cervix,
                 'djj' => @$djj,
-                'his_freq' => @$his_freq,
+                'class_room_id' => @$class_room_id,
+                'description' => @$description,
+                'doctor' => @$doctor,
+                'document_id' => @$body_id,
+                'employee_id' => @$employee_id,
+                'exit_date' => @$exit_date,
+                'examination_date' => str_replace('T', ' ', $date_of_diagnosa),
+                'general_condition' => @$general_condition,
+                'gender' => @$gender,
+                'heart_sound' => @$heart_sound,
                 'his_duration' => @$his_duration,
+                'his_freq' => @$his_freq,
                 'his_power' => @$his_power,
                 'his_simetry' => @$his_simetry,
-                'child_position' => @$child_position,
-                'heart_sound' => @$heart_sound,
-                'oedema' => @$oedema,
-                'urine' => @$urine,
-                'tfu' => @$tfu,
-                'uterus' => @$uterus,
+                'height' => @$height,
+                'in_date' => @$in_date,
+                'instruction' => @$instruction,
+                'isrj' => @$isrj,
+                'lochia' => @$lochia,
+                'modified_by' => @$modified_by,
                 'modified_date' => new RawSql('getdate()'),
-                'modified_by' => @$modified_by
+                'modified_from' => @$clinic_id,
+                'keluar_id' => @$keluar_id,
+                'nafas' => @$nafas,
+                'nafas_score' => @$nafas_score,
+                'nadi' => @$nadi,
+                'nadi_score' => @$nadi_score,
+                'no_registration' => @$no_registration,
+                'oedema' => @$oedema,
+                'org_unit_code' => @$org_unit_code,
+                'oxygen_usage' => @$oxygen_usage,
+                'oxygen_usage_score' => @$oxygen_usage_score,
+                'pain' => @$pain,
+                'modified_by' => @$modified_by,
+                'modified_date' => @$modified_date,
+                'modified_from' => @$clinic_id,
+                'pemeriksaan' => @$pemeriksaan,
+                'petugas' => user()->getFullname(),
+                'petugas_id' => user()->getOneRoles(),
+                'pasien_diagnosa_id' => @$pasien_diagnosa_id,
+                'proteinuria' => @$proteinuria,
+                'respiration' => @$respiration,
+                'status_pasien_id' => @$status_pasien_id,
+                'saturasi' => @$saturasi,
+                'saturasi_score' => @$saturasi_score,
+                'temperature' => @$temperature,
+                'temperature_score' => @$temperature_score,
+                'tension_below' => @$tension_below,
+                'tension_upper' => @$tension_upper,
+                'teraphy_desc' => @$teraphy_desc,
+                'theaddress' => @$theaddress,
+                'theid' => @$theid,
+                'thename' => @$thename,
+                'tfu' => @$tfu,
+                'tension_below' => @$tension_below,
+                'tension_below_score' => @$tension_below_score,
+                'tension_upper' => @$tension_upper,
+                'tension_upper_score' => @$tension_upper_score,
+                'trans_id' => @$trans_id,
+                'urine' => @$urine,
+                'vs_status_id' => @$vs_status_id,
+                'valid_date' => @$valid_date,
+                'valid_pasien' => @$valid_pasien,
+                'valid_user' => @$valid_user,
+                'visit_id' => @$visit_id,
+                'weight' => @$weight
             ];
+
             // return $dataexam;
 
             foreach ($body as $key => $value) {
@@ -302,6 +338,10 @@ class AssessmentMedis extends BaseController
         }
 
 
+        $data['exam'] = $dataexam;
+
+
+
         $db = db_connect();
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where VALUE_SCORE in (2, 3, 4, 5) and P_TYPE = 'GEN0002'")->getResultArray());
 
@@ -313,6 +353,7 @@ class AssessmentMedis extends BaseController
         // return json_encode($lokalisG0020206);
         $lokalisModel = new LokalisModel();
         $lokalisArray = [];
+
         foreach ($select as $key => $value) {
             if (isset(${'lokalis' . $value['value_id']}) && $value['value_score'] == 3) {
                 $dataImage = explode(',', (string)${'lokalis' . $value['value_id']});
@@ -339,7 +380,8 @@ class AssessmentMedis extends BaseController
                         'value_desc' => ${'lokalis' . $value['value_id'] . 'desc'},
                         'value_detail' => $filenameLokalis,
                         'value_info' => $value['value_info'],
-                        'modified_by' => user()->username
+                        'modified_by' => user()->username,
+                        'filedata64' => $encodedLokalis
                     ];
                     $db->query("delete from assessment_lokalis where body_id = '$pasien_diagnosa_id' and value_id = '" . $value['value_id'] . "'");
                     $lokalisModel->insert($dataLokalis);
@@ -387,25 +429,35 @@ class AssessmentMedis extends BaseController
         }
         $data['lokalis'] = $lokalisArray;
 
-        $pasienHistory = new PasienHistoryModel();
+        $pasienHistory = [];
 
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'GEN0009'")->getResultArray());
         $db->query("delete from pasien_history where no_registration = '$no_registration'");
         $i = 0;
         foreach ($select as $key => $value) {
             if (isset(${$value['value_id']})) {
+
                 $i++;
-                $dataHistory = [
+                $db->query("MERGE INTO pasien_history AS target
+                USING (VALUES ('$org_unit_code', '$no_registration', '$i', '" . $value['value_id'] . "', '" . $value['value_desc'] . "', '" . ${$value['value_id']} . "', '" . user()->username . "', getdate())) AS source 
+                (org_unit_code, no_registration, item_id, value_id,value_desc, histories,modified_by, modified_date)
+                        ON target.no_registration = source.no_registration and target.value_id = source.value_id
+                        WHEN MATCHED THEN
+                            UPDATE SET target.org_unit_code = source.org_unit_code, target.item_id = source.item_id, 
+                            target.histories = source.histories, target.modified_by = source.modified_by, target.modified_date = getdate()
+                            WHEN NOT MATCHED BY TARGET THEN
+                            INSERT (org_unit_code, no_registration, item_id, value_id,value_desc, histories,modified_by, modified_date)
+                            VALUES ('$org_unit_code', '$no_registration', '$i', '" . $value['value_id'] . "', '" . $value['value_desc'] . "', '" . ${$value['value_id']} . "', '" . user()->username . "', getdate());");
+                $pasienHistory[] = [
                     'org_unit_code' => $org_unit_code,
                     'no_registration' => $no_registration,
                     'item_id' => $i,
                     'value_id' => $value['value_id'],
                     'value_desc' => $value['value_desc'],
                     'histories' => ${$value['value_id']},
-                    'modified_by' => user()->username
+                    'modified_by' => user()->username,
+                    'modified_date' => Time::now()
                 ];
-                // $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
-                $pasienHistory->insert($dataHistory);
             }
         }
 
@@ -440,16 +492,18 @@ class AssessmentMedis extends BaseController
                 $pcs->insert($dataProc);
             }
         }
-
         if (@$clinic_id == 'P012') {
             $pv = new PasienVisitationModel();
             $pvdata = [
                 'patient_category_id' => $emergency,
+                'employee_id' => @$employee_id,
                 'visit_id' => $visit_id
             ];
             // return json_encode($pvdata);
             $pv->save($pvdata);
         }
+        $data['pasienHistory'] = $pasienHistory;
+
         $array   = array('status' => 'success', 'error' => '', 'message' => $mesej . ' riwayat rekam medis berhasil', 'data' => $data);
         return ($array);
     }

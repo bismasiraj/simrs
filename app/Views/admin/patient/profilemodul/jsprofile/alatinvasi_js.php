@@ -63,7 +63,7 @@
                 type: "hidden",
                 name: "org_unit_code",
                 value: props?.data?.org_unit_code ?? props?.visit?.org_unit_code,
-                id: "org_unit_code",
+                id: "tools_org_unit_code",
                 class: ""
             },
             {
@@ -71,7 +71,7 @@
                 type: "hidden",
                 name: "visit_id",
                 value: props?.data?.visit_id ?? props?.visit?.visit_id,
-                id: "visit_id",
+                id: "tools_visit_id",
                 class: ""
             },
             {
@@ -79,7 +79,7 @@
                 type: "hidden",
                 name: "trans_id",
                 value: props?.data?.trans_id ?? props?.visit?.trans_id,
-                id: "trans_id",
+                id: "tools_trans_id",
                 class: ""
             },
             {
@@ -87,7 +87,7 @@
                 type: "hidden",
                 name: "body_id",
                 value: props?.data?.body_id ?? get_bodyid(),
-                id: "body_id",
+                id: "tools_body_id",
                 class: ""
             },
             {
@@ -95,7 +95,7 @@
                 type: "hidden",
                 name: "document_id",
                 value: props?.data?.document_id ?? props?.visit?.session_id,
-                id: "document_id",
+                id: "tools_document_id",
                 class: ""
             },
             {
@@ -104,7 +104,7 @@
                 name: "examination_date",
                 value: props?.data?.examination_date ? moment(props?.data?.examination_date).format(
                     "DD/MM/YYYY") : moment(new Date()).format("DD/MM/YYYY"),
-                id: "examination_date",
+                id: "tools_examination_date",
                 class: "dateflatpickr-tools"
             },
             {
@@ -112,7 +112,7 @@
                 type: "select",
                 name: "tool_id",
                 value: props?.data?.tool_id ?? "",
-                id: "tool_id-gear",
+                id: "tools_tool_id-gear",
                 class: ""
             },
             {
@@ -120,7 +120,7 @@
                 type: "hidden",
                 name: "tool_name",
                 value: props?.data?.tool_name ?? "",
-                id: "tool_name",
+                id: "tools_tool_name",
                 class: ""
             },
             {
@@ -128,7 +128,7 @@
                 type: "text",
                 name: "tool_location",
                 value: props?.data?.tool_location ?? "",
-                id: "tool_location",
+                id: "tools_tool_location",
                 class: ""
             },
             {
@@ -136,7 +136,7 @@
                 type: "text",
                 name: "tool_size",
                 value: props?.data?.tool_size ?? "",
-                id: "tool_size",
+                id: "tools_tool_size",
                 class: ""
             }
         ];
@@ -187,12 +187,12 @@
         renderDataModalGear({
             data_val: props?.data?.tool_id ?? ""
         });
-        initialFlatpic()
+        initialFlatpicToolsInvasi()
 
-        $("#tool_id-gear").on("change", function() {
+        $("#tools_tool_id-gear").on("change", function() {
             const selectedOption = $(this).find(":selected");
             const toolName = selectedOption.data("name") || "";
-            $("#tool_name").val(toolName);
+            $("#tools_tool_name").val(toolName);
         });
         saveAssessmenInvasifTools()
     };
@@ -209,11 +209,11 @@
                 `<option value="${e.parameter_id}" data-name='${e.parameter_desc}' ${isSelected}>${e.parameter_desc}</option>`;
         });
 
-        $("#tool_id-gear").html(`<option value="">Pilih</option>` + result);
+        $("#tools_tool_id-gear").html(`<option value="">Pilih</option>` + result);
     };
 
 
-    const initialFlatpic = () => {
+    const initialFlatpicToolsInvasi = () => {
         flatpickr(".dateflatpickr-tools", {
             enableTime: false,
             dateFormat: "d/m/Y",

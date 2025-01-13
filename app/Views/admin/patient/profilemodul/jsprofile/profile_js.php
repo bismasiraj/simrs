@@ -33,7 +33,10 @@ foreach ($examDetail as $key => $value) {
     var atype = <?= json_encode($aType); ?>;
     var avalueparent = <?= json_encode($aValueParent); ?>;
     var pasienVisitation = JSON.parse('<?= json_encode($visit); ?>')
+    var visit = <?= json_encode($visit) ?>;
+
     var fallRiskScore = Array();
+    var painjson = [];
     var painMonitoring;
     var painMonitoringDetil;
     var painIntervensi;
@@ -79,12 +82,12 @@ foreach ($examDetail as $key => $value) {
     $("#formeditfallriskbtn").on("click", function() {
         $("#formeditfallriskbtn").slideUp()
         $("#formsavefallriskbtn").slideDown()
-        $("#formfallrisk").find("iput, select, textarea").prop("disabled", true)
+        $("#formfallrisk").find("input, select, textarea").prop("disabled", true)
     })
     $("#formeditfallriskbtnmedis").on("click", function() {
         $("#formeditfallriskbtnmedis").slideUp()
         $("#formsavefallriskbtnmedis").slideDown()
-        $("#formfallriskmedis").find("iput, select, textarea").prop("disabled", true)
+        $("#formfallriskmedis").find("input, select, textarea").prop("disabled", true)
     })
 </script>
 <script>
@@ -133,6 +136,47 @@ foreach ($examDetail as $key => $value) {
     // })
 </script>
 <script type="text/javascript">
+    function fillExaminationDetail(data, identifier) {
+        $(`#${identifier}temperature`).val(data?.temperature)
+        $(`#${identifier}tension_upper`).val(data?.tension_upper)
+        $(`#${identifier}tension_below`).val(data?.tension_below)
+        $(`#${identifier}nadi`).val(data?.nadi)
+        $(`#${identifier}nafas`).val(data?.nafas)
+        $(`#${identifier}weight`).val(data?.weight)
+        $(`#${identifier}height`).val(data?.height)
+        $(`#${identifier}imt_score`).val(data?.imt_score)
+        $(`#${identifier}imt_desc`).val(data?.imt_desc)
+        $(`#${identifier}saturasi`).val(data?.saturasi)
+        $(`#${identifier}arm_diameter`).val(data?.arm_diameter)
+        $(`#${identifier}oxygen_usage`).val(data?.oxygen_usage)
+        $(`#${identifier}oxygen_usage_score`).val(data?.oxygen_usage_score)
+        $(`#${identifier}temperature_score`).val(data?.temperature_score)
+        $(`#${identifier}tension_upper_score`).val(data?.tension_upper_score)
+        $(`#${identifier}tension_below_score`).val(data?.tension_below_score)
+        $(`#${identifier}nadi_score`).val(data?.nadi_score)
+        $(`#${identifier}nafas_score`).val(data?.nafas_score)
+        $(`#${identifier}saturasi_score`).val(data?.saturasi_score)
+        $(`#${identifier}awareness`).val(data?.awareness)
+        $(`#${identifier}pain`).val(data?.pain)
+        $(`#${identifier}lochia`).val(data?.lochia)
+        $(`#${identifier}general_condition`).val(data?.general_condition)
+        $(`#${identifier}cardiovascular`).val(data?.cardiovascular)
+        $(`#${identifier}respiration`).val(data?.respiration)
+        $(`#${identifier}proteinuria`).val(data?.proteinuria)
+        $(`#${identifier}cervix`).val(data?.cervix)
+        $(`#${identifier}djj`).val(data?.djj)
+        $(`#${identifier}his_freq`).val(data?.his_freq)
+        $(`#${identifier}his_duration`).val(data?.his_duration)
+        $(`#${identifier}his_power`).val(data?.his_power)
+        $(`#${identifier}his_symmetry`).val(data?.his_symmetry)
+        $(`#${identifier}child_position`).val(data?.child_position)
+        $(`#${identifier}heart_sound`).val(data?.heart_sound)
+        $(`#${identifier}oedema`).val(data?.oedema)
+        $(`#${identifier}urine`).val(data?.urine)
+        $(`#${identifier}tfu`).val(data?.tfu)
+        $(`#${identifier}uterus`).val(data?.uterus)
+    }
+
     function getAssessmentMedis(diagCat) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentMedis',
@@ -162,12 +206,13 @@ foreach ($examDetail as $key => $value) {
                 lokalisAll = data.lokalis
 
                 if (pasienDiagnosaAll.length > 0) {
-                    if (diagCat == 99) {
-                        fillDataProfileRM(pasienDiagnosaAll.length - 1)
-                    } else {
-                        fillDataArm(pasienDiagnosaAll.length - 1)
-                        fillRiwayat()
-                    }
+                    // if (diagCat == 99) {
+                    //     fillDataProfileRM(pasienDiagnosaAll.length - 1)
+                    // } else {
+                    //     fillDataArm(pasienDiagnosaAll.length - 1)
+                    //     fillRiwayat()
+                    // }
+                    displayTableAssessmentMedis()
                 } else {
                     initialAddArm()
                 }
@@ -5584,7 +5629,7 @@ foreach ($examDetail as $key => $value) {
         $("#formSocialEditBtn" + bodyId).on("click", function() {
             $("#formSocialSaveBtn" + bodyId).slideDown()
             $("#formSocialEditBtn" + bodyId).slideUp()
-            $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formSocial" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
         $("#formSocial" + bodyId).append('<input name="org_unit_code" id="socialorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="socialvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
@@ -6333,8 +6378,6 @@ foreach ($examDetail as $key => $value) {
                     )
                     .append($('<div id="rowmalnutritiondetail' + bodyId + '" class="mb-3 row" style="display: none">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
-
-
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
                                     .append('<label for="" class="col-form-label mb-4">Masalah yang berhubungan dengan mal nutrisi</label>')

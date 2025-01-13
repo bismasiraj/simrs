@@ -79,7 +79,6 @@ class AssessmentPerawat extends BaseController
         $body = $this->request->getBody();
         $body = json_decode($body, true);
 
-        //bisma
         $menu['fallrisk'] = 1;
         $menu['painmonitoring'] = 1;
         $menu['triase'] = 1;

@@ -7,7 +7,6 @@
     var retur = 0.0;
     var total = 0.0;
     var lastOrder = 0;
-    var painjson = [];
     painjson = <?= json_encode($exam); ?>;
     $(document).ready(function(e) {
         var nomor = '<?= $visit['no_registration']; ?>';

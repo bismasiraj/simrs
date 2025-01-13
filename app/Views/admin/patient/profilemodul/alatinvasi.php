@@ -83,7 +83,7 @@ table.table-fit tfoot td {
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                     id="close-create-modal-gear">Keluar</button>
                 <button type="button" class="btn btn-primary" id="btn-save-tools-modal">Simpan</button>
             </div>

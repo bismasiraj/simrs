@@ -25,9 +25,11 @@ $postOPv = array_filter($aValue, function ($value) {
                             <h4><b><?= $value['p_description']; ?></b></h4>
                             <hr>
                             <ol class="list-group list-group-numbered">
-                                <?php foreach (array_filter($postOPp, function ($value) use ($postOP, $key) {
-                                    return $value['p_type'] == $postOP[$key]['p_type'];
-                                }) as $key1 => $value1) {
+                                <?php foreach (
+                                    array_filter($postOPp, function ($value) use ($postOP, $key) {
+                                        return $value['p_type'] == $postOP[$key]['p_type'];
+                                    }) as $key1 => $value1
+                                ) {
                                     if ($value1['entry_type'] == '1') {
                                 ?>
                                         <li class="list-group-item col-xs-12 col-sm-12 col-md-12 ">
@@ -59,9 +61,11 @@ $postOPv = array_filter($aValue, function ($value) {
                                             <div class="form-group">
                                                 <div class=" position-relative">
                                                     <select type="text" name="<?= $value1['column_name'] ?? ''; ?>" id="prsl<?= $value1['p_type'] . $value1['parameter_id']; ?>" placeholder="" value="" class="form-control">
-                                                        <?php foreach (array_filter($postOPv, function ($values) use ($value1) {
-                                                            return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
-                                                        }) as $key2 => $value2) {
+                                                        <?php foreach (
+                                                            array_filter($postOPv, function ($values) use ($value1) {
+                                                                return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
+                                                            }) as $key2 => $value2
+                                                        ) {
                                                         ?>
                                                             <option value="<?= $value2['value_id']; ?>"><?= $value2['value_desc']; ?></option>
                                                         <?php
@@ -110,9 +114,11 @@ $postOPv = array_filter($aValue, function ($value) {
                                             <label><?= $value1['parameter_desc']; ?></label>
                                             <div class="form-group">
                                                 <div class="row position-relative">
-                                                    <?php foreach (array_filter($postOPv, function ($values) use ($value1) {
-                                                        return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
-                                                    }) as $key2 => $value2) {
+                                                    <?php foreach (
+                                                        array_filter($postOPv, function ($values) use ($value1) {
+                                                            return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
+                                                        }) as $key2 => $value2
+                                                    ) {
                                                     ?>
                                                         <!-- <option value="<?= $value2['value_id']; ?>"><?= $value2['value_desc']; ?></option> -->
                                                         <div class="col-md-12">
@@ -174,9 +180,11 @@ $postOPv = array_filter($aValue, function ($value) {
                             <h4><b><?= $value['p_description']; ?></b></h4>
                             <hr>
 
-                            <?php foreach (array_filter($persiapanOperasip, function ($value) use ($persiapanOperasi, $key) {
-                                return $value['p_type'] == $persiapanOperasi[$key]['p_type'];
-                            }) as $key1 => $value1) {
+                            <?php foreach (
+                                array_filter($persiapanOperasip, function ($value) use ($persiapanOperasi, $key) {
+                                    return $value['p_type'] == $persiapanOperasi[$key]['p_type'];
+                                }) as $key1 => $value1
+                            ) {
                                 if ($value1['entry_type'] == '1') {
                             ?>
                                     <div class="list-group-item col-xs-12 col-sm-12 col-md-12 ">
@@ -205,9 +213,11 @@ $postOPv = array_filter($aValue, function ($value) {
                                             <label><?= $value1['parameter_desc']; ?></label>
                                             <div class=" position-relative">
                                                 <select type="text" name="<?= $value1['column_name'] ?? ''; ?>" id="prsl<?= $value1['p_type'] . $value1['parameter_id']; ?>" placeholder="" value="" class="form-control">
-                                                    <?php foreach (array_filter($persiapanOperasiv, function ($values) use ($value1) {
-                                                        return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
-                                                    }) as $key2 => $value2) {
+                                                    <?php foreach (
+                                                        array_filter($persiapanOperasiv, function ($values) use ($value1) {
+                                                            return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
+                                                        }) as $key2 => $value2
+                                                    ) {
                                                     ?>
                                                         <option value="<?= $value2['value_id']; ?>"><?= $value2['value_desc']; ?></option>
                                                     <?php
@@ -255,9 +265,11 @@ $postOPv = array_filter($aValue, function ($value) {
                                         <div class="form-group">
                                             <label><?= $value1['parameter_desc']; ?></label>
                                             <div class="row position-relative">
-                                                <?php foreach (array_filter($persiapanOperasiv, function ($values) use ($value1) {
-                                                    return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
-                                                }) as $key2 => $value2) {
+                                                <?php foreach (
+                                                    array_filter($persiapanOperasiv, function ($values) use ($value1) {
+                                                        return $values['p_type'] == $value1['p_type'] && $values['parameter_id'] == $value1['parameter_id'];
+                                                    }) as $key2 => $value2
+                                                ) {
                                                 ?>
                                                     <!-- <option value="<?= $value2['value_id']; ?>"><?= $value2['value_desc']; ?></option> -->
                                                     <div class="col-md-12">

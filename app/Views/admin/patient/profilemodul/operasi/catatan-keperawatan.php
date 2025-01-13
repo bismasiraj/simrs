@@ -8,53 +8,94 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         <div id="accordionCatatan" class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
                         CATATAN KEPERAWATAN PRA OPERASI
                     </button>
                 </h2>
-                <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionCatatan">
+                <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree"
+                    data-bs-parent="#accordionCatatan">
                     <div class="card-body">
                         <!-- ------------------ -->
                         <div id="vitalSignKeperawatan" class="card border-1 rounded-4 m-4 p-4" style="display: none;">
                             <div class="card-body">
-                                <form id="formvitalsign-catatanKeperawatan" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                <form id="formvitalsign-catatanKeperawatan" accept-charset="utf-8" action=""
+                                    enctype="multipart/form-data" method="post" class="ptt10">
                                     <div class="modal-body pt0 pb0">
-                                        <input id="clinic_id-catatanKeperawatan" name="clinic_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['clinic_id']; ?>" />
-                                        <input id="class_room_id-catatanKeperawatan" name="class_room_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['class_room_id']; ?>" />
-                                        <input id="bed_id-catatanKeperawatan" name="bed_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['bed_id']; ?>" />
-                                        <input id="keluar_id-catatanKeperawatan" name="keluar_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['keluar_id']; ?>" />
-                                        <input id="employee_id-catatanKeperawatan" name="employee_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['employee_id']; ?>" />
-                                        <input id="no_registration-catatanKeperawatan" name="no_registration" placeholder="" type="hidden" class="form-control block" value="<?= $visit['no_registration']; ?>" />
-                                        <input id="visit_id-catatanKeperawatan" name="visit_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['visit_id']; ?>" />
-                                        <input id="org_unit_code-catatanKeperawatan" name="org_unit_code" placeholder="" type="hidden" class="form-control block" value="<?= $visit['org_unit_code']; ?>" />
-                                        <input id="doctor-catatanKeperawatan" name="doctor" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
-                                        <input id="kal_id-catatanKeperawatan" name="kal_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['kal_id']; ?>" />
-                                        <input id="theid-catatanKeperawatan" name="theid" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-                                        <input id="thename-catatanKeperawatan" name="thename" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-                                        <input id="theaddress-catatanKeperawatan" name="theaddress" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-                                        <input id="status_pasien_id-catatanKeperawatan" name="status_pasien_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['status_pasien_id']; ?>" />
-                                        <input id="isrj-catatanKeperawatan" name="isrj" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['isrj']; ?>" />
-                                        <input id="gender-catatanKeperawatan" name="gender" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['gender']; ?>" />
-                                        <input id="ageyear-catatanKeperawatan" name="ageyear" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageyear']; ?>" />
-                                        <input id="agemonth-catatanKeperawatan" name="agemonth" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['agemonth']; ?>" />
-                                        <input id="ageday-catatanKeperawatan" name="ageday" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageday']; ?>" />
-                                        <input id="body_id-catatanKeperawatan" name="body_id_vt" placeholder="" type="hidden" class="form-control block" value="" />
-                                        <input id="modified_by-catatanKeperawatan" name="modified_by" placeholder="" type="hidden" class="form-control block" value="<?= user()->username ?>" />
-                                        <input id="trans_id-catatanKeperawatan" name="trans_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['trans_id']; ?>" />
+                                        <input id="clinic_id-catatanKeperawatan" name="clinic_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['clinic_id']; ?>" />
+                                        <input id="class_room_id-catatanKeperawatan" name="class_room_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['class_room_id']; ?>" />
+                                        <input id="bed_id-catatanKeperawatan" name="bed_id" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= $visit['bed_id']; ?>" />
+                                        <input id="keluar_id-catatanKeperawatan" name="keluar_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['keluar_id']; ?>" />
+                                        <input id="employee_id-catatanKeperawatan" name="employee_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['employee_id']; ?>" />
+                                        <input id="no_registration-catatanKeperawatan" name="no_registration"
+                                            placeholder="" type="hidden" class="form-control block"
+                                            value="<?= $visit['no_registration']; ?>" />
+                                        <input id="visit_id-catatanKeperawatan" name="visit_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['visit_id']; ?>" />
+                                        <input id="org_unit_code-catatanKeperawatan" name="org_unit_code" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= $visit['org_unit_code']; ?>" />
+                                        <input id="doctor-catatanKeperawatan" name="doctor" placeholder="" type="hidden"
+                                            class="form-control block"
+                                            value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
+                                        <input id="kal_id-catatanKeperawatan" name="kal_id" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['kal_id']; ?>" />
+                                        <input id="theid-catatanKeperawatan" name="theid" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                        <input id="thename-catatanKeperawatan" name="thename" placeholder=""
+                                            type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                        <input id="theaddress-catatanKeperawatan" name="theaddress" placeholder=""
+                                            type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                        <input id="status_pasien_id-catatanKeperawatan" name="status_pasien_id"
+                                            placeholder="" type="hidden" class="form-control block"
+                                            value="<?= @$visit['status_pasien_id']; ?>" />
+                                        <input id="isrj-catatanKeperawatan" name="isrj" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['isrj']; ?>" />
+                                        <input id="gender-catatanKeperawatan" name="gender" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['gender']; ?>" />
+                                        <input id="ageyear-catatanKeperawatan" name="ageyear" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= @$visit['ageyear']; ?>" />
+                                        <input id="agemonth-catatanKeperawatan" name="agemonth" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= @$visit['agemonth']; ?>" />
+                                        <input id="ageday-catatanKeperawatan" name="ageday" placeholder="" type="hidden"
+                                            class="form-control block" value="<?= @$visit['ageday']; ?>" />
+                                        <input id="body_id-catatanKeperawatan" name="body_id_vt" placeholder=""
+                                            type="hidden" class="form-control block" value="" />
+                                        <input id="modified_by-catatanKeperawatan" name="modified_by" placeholder=""
+                                            type="hidden" class="form-control block" value="<?= user()->username ?>" />
+                                        <input id="trans_id-catatanKeperawatan" name="trans_id" placeholder=""
+                                            type="hidden" class="form-control block"
+                                            value="<?= @$visit['trans_id']; ?>" />
                                         <div class="row">
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                                     <div class="row mt-4 mb-4" style="display: none">
-                                                        <label for="anamnase-catatanKeperawatan" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(S)
+                                                        <label for="anamnase-catatanKeperawatan"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">(S)
                                                             Anamnesis</label>
                                                         <div class="col-sm-10">
-                                                            <textarea type="text" class="form-control" id="anamnase-catatanKeperawatan" name="anamnase" placeholder=""></textarea>
+                                                            <textarea type="text" class="form-control"
+                                                                id="anamnase-catatanKeperawatan" name="anamnase"
+                                                                placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-4">
                                                         <h3><b>Vital Sign</b></h3>
                                                         <hr>
-                                                        <label class="col-xs-6 col-sm-6 col-md-2 col-form-label">Pemeriksaan
+                                                        <label
+                                                            class="col-xs-6 col-sm-6 col-md-2 col-form-label">Pemeriksaan
                                                             Fisik</label>
                                                         <div class="col-xs-6 col-sm-6 col-md-10">
                                                             <div class="row mb-2">
@@ -62,8 +103,10 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Jenis EWS</label>
-                                                                        <select class="form-select" name="vs_status_id" id="vs_status_id-catatanKeperawatan">
-                                                                            <option value="" selected>-- pilih --</option>
+                                                                        <select class="form-select" name="vs_status_id"
+                                                                            id="vs_status_id-catatanKeperawatan">
+                                                                            <option value="" selected>-- pilih --
+                                                                            </option>
                                                                             <option value="1">Dewasa</option>
                                                                             <option value="4">Anak</option>
                                                                             <option value="5">Neonatus</option>
@@ -76,8 +119,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>BB(Kg)</label>
                                                                         <div class=" position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="weight-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-bb-catatanKeperawatan"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="weight"
+                                                                                id="weight-catatanKeperawatan"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-bb-catatanKeperawatan"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -85,8 +134,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Tinggi(cm)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="height" id="height-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-height-catatanKeperawatan"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="height"
+                                                                                id="height-catatanKeperawatan"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-height-catatanKeperawatan"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -94,31 +149,57 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Suhu(°C)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="temperature-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-temperature-catatanKeperawatan"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="temperature"
+                                                                                id="temperature-catatanKeperawatan"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-temperature-catatanKeperawatan"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                                <div
+                                                                    class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
                                                                     <div class="form-group">
                                                                         <label>Nadi(/menit)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="nadi-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-nadi-catatanKeperawatan"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="nadi"
+                                                                                id="nadi-catatanKeperawatan"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-nadi-catatanKeperawatan"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                        <div class="col-sm-12 "
+                                                                            style="display: flex;  align-items: center;">
                                                                             <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="tension_upper-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                                <span class="h6" id="badge-tension_upper-catatanKeperawatan"></span>
+                                                                                <input onchange="vitalsignInput(this)"
+                                                                                    type="text" name="tension_upper"
+                                                                                    id="tension_upper-catatanKeperawatan"
+                                                                                    placeholder="" value=""
+                                                                                    class="form-control vitalsignclass"
+                                                                                    autocomplete="off">
+                                                                                <span class="h6"
+                                                                                    id="badge-tension_upper-catatanKeperawatan"></span>
                                                                             </div>
                                                                             <h4 class="mx-2">/</h4>
                                                                             <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="tension_below-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                                <span class="h6" id="badge-tension_below-catatanKeperawatan"></span>
+                                                                                <input onchange="vitalsignInput(this)"
+                                                                                    type="text" name="tension_below"
+                                                                                    id="tension_below-catatanKeperawatan"
+                                                                                    placeholder="" value=""
+                                                                                    class="form-control vitalsignclass"
+                                                                                    autocomplete="off">
+                                                                                <span class="h6"
+                                                                                    id="badge-tension_below-catatanKeperawatan"></span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -127,8 +208,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Saturasi(SpO2%)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="saturasi-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-saturasi-catatanKeperawatan"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="saturasi"
+                                                                                id="saturasi-catatanKeperawatan"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-saturasi-catatanKeperawatan"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -136,8 +223,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                     <div class="form-group">
                                                                         <label>Nafas/RR(/menit)</label>
                                                                         <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="nafas-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-nafas-catatanKeperawatan"></span>
+                                                                            <input onchange="vitalsignInput(this)"
+                                                                                type="text" name="nafas"
+                                                                                id="nafas-catatanKeperawatan"
+                                                                                placeholder="" value=""
+                                                                                class="form-control vitalsignclass"
+                                                                                autocomplete="off">
+                                                                            <span class="h6"
+                                                                                id="badge-nafas-catatanKeperawatan"></span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -145,12 +238,15 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Kesadaran</label>
-                                                                        <select class="form-select" name="awareness" id="awareness-catatanKeperawatan" onchange="vitalsignInput(this)">
+                                                                        <select class="form-select" name="awareness"
+                                                                            id="awareness-catatanKeperawatan"
+                                                                            onchange="vitalsignInput(this)">
                                                                             <option value="0">Sadar</option>
                                                                             <option value="3">Nyeri</option>
                                                                             <option value="10">Unrespon</option>
                                                                         </select>
-                                                                        <span class="h6" id="badge-awareness-catatanKeperawatan"></span>
+                                                                        <span class="h6"
+                                                                            id="badge-awareness-catatanKeperawatan"></span>
                                                                     </div>
                                                                 </div>
                                                                 <div id="container-vitalsign-catatanKeperawatan">
@@ -158,7 +254,11 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                                 </div>
                                                                 <div class="col-sm-12 mt-2">
                                                                     <div class="form-group">
-                                                                        <label>Pemeriksaan</label><textarea name="pemeriksaan" id="pemeriksaan-catatanKeperawatan" placeholder="" value="" class="form-control"></textarea>
+                                                                        <label>Pemeriksaan</label><textarea
+                                                                            name="pemeriksaan"
+                                                                            id="pemeriksaan-catatanKeperawatan"
+                                                                            placeholder="" value=""
+                                                                            class="form-control"></textarea>
                                                                     </div>
                                                                 </div>
                                                                 <!-- <div class="col-sm-12">
@@ -170,26 +270,39 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                         </div>
                                                     </div>
                                                     <div class="row mt-4 mb-4" style="display: none">
-                                                        <label for="description-catatanKeperawatan" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(A)
+                                                        <label for="description-catatanKeperawatan"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">(A)
                                                             Assesment</label>
                                                         <div class="col-sm-10">
-                                                            <textarea type="text" class="form-control" id="description-catatanKeperawatan" name="description" placeholder=""></textarea>
+                                                            <textarea type="text" class="form-control"
+                                                                id="description-catatanKeperawatan" name="description"
+                                                                placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="row mt-4 mb-4" style="display: none">
-                                                        <label for="instruction-catatanKeperawatan" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(P)
+                                                        <label for="instruction-catatanKeperawatan"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">(P)
                                                             Rencana Penatalaksanaan</label>
                                                         <div class="col-sm-10">
-                                                            <textarea type="text" class="form-control" id="instruction-catatanKeperawatan" name="instruction" placeholder=""></textarea>
+                                                            <textarea type="text" class="form-control"
+                                                                id="instruction-catatanKeperawatan" name="instruction"
+                                                                placeholder=""></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="row mt-4 mb-4">
-                                                        <label for="examination_date-catatanKeperawatan" class="col-xs-6 col-sm-6 col-md-3 col-form-label">Tanggal
+                                                        <label for="examination_date-catatanKeperawatan"
+                                                            class="col-xs-6 col-sm-6 col-md-3 col-form-label">Tanggal
                                                             Periksa</label>
                                                         <div class="col-sm-10">
-                                                            <div class="input-group" id="examinationdate--catatanKeperawatan">
-                                                                <input id="flatexamination_date-catatanKeperawatan" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
-                                                                <input id="examination_date-catatanKeperawatan" name="examination_date" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
+                                                            <div class="input-group"
+                                                                id="examinationdate--catatanKeperawatan">
+                                                                <input id="flatexamination_date-catatanKeperawatan"
+                                                                    type="text"
+                                                                    class="form-control datetimeflatpickr-oprs"
+                                                                    placeholder="yyyy-mm-dd">
+                                                                <input id="examination_date-catatanKeperawatan"
+                                                                    name="examination_date" type="hidden"
+                                                                    class="form-control" placeholder="yyyy-mm-dd">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -204,7 +317,10 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                         </div>
                                     </div> -->
                                             <div class="col-sm-6" style="display: none;">
-                                                <div class="form-group"><label>Perawat</label><input type="text" name="petugas-catatanKeperawatan" id="petugas-catatanKeperawatan" placeholder="" value="<?= user_id(); ?>" class="form-control"></div>
+                                                <div class="form-group"><label>Perawat</label><input type="text"
+                                                        name="petugas-catatanKeperawatan"
+                                                        id="petugas-catatanKeperawatan" placeholder=""
+                                                        value="<?= user_id(); ?>" class="form-control"></div>
                                             </div>
                                         </div>
                                         <span id="total_score-catatanKeperawatan"></span>
@@ -214,7 +330,8 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         </div>
 
                         <div class="box-tab-tools text-center mt-4">
-                            <a data-toggle="modal" onclick="setDataVitalSignKeperawatan()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
+                            <a data-toggle="modal" onclick="setDataVitalSignKeperawatan()"
+                                class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
                                 Vitalsign</a>
                         </div>
                         <h3>Histori Vital Sign</h3>
@@ -222,9 +339,11 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                             <table class="table table-striped table-hover">
                                 <thead class=" table-primary" style="text-align: center;">
                                     <tr>
-                                        <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
+                                        <th class="text-center" style="width: 10%;">Tanggal & Jam</th
+                                            class="text-center">
                                         <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
-                                        <th class="text-center" colspan="6" style="width: 70%;">SOAP</th class="text-center">
+                                        <th class="text-center" colspan="6" style="width: 70%;">SOAP</th
+                                            class="text-center">
                                         <th class="text-center" style="width: 5%;"></th class="text-center">
                                         <th class="text-center" style="width: 5%;"></th class="text-center">
                                     </tr>
@@ -246,12 +365,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         <div class="row">
                             <div class="col-md-12">
                                 <h3>Daftar Instrumen</h3>
-                                <table class="table table-bordered" id="instrumenTable" aria-labelledby="instrumenTableLabel">
+                                <table class="table table-bordered" id="instrumenTable"
+                                    aria-labelledby="instrumenTableLabel">
                                     <thead class="thead-light text-center">
                                         <tr>
                                             <th scope="col" width="98%">Nama Alat</th>
                                             <th scope="col" width="1%">Jumlah Sebelum</th>
-                                            <th scope="col" width="1%" class="text-center"><i class="fas fa-trash-alt"></i></th>
+                                            <th scope="col" width="1%" class="text-center"><i
+                                                    class="fas fa-trash-alt"></i></th>
                                         </tr>
                                     </thead>
                                     <tbody id="body-instrumen">
@@ -263,7 +384,8 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                         <div class="row mt-3 pt-3">
                             <div class="col text-center mb-3">
                                 <label for="addInstrumen" class="form-label visually-hidden">Tambah Instrumen</label>
-                                <button type="button" id="addInstrumen" name="addInstrumen" data-body="body-instrumen" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary">
+                                <button type="button" id="addInstrumen" name="addInstrumen" data-body="body-instrumen"
+                                    data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary">
                                     <i class="fas fa-plus"></i> <span>Tambah</span>
                                 </button>
                             </div>
@@ -276,11 +398,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingThreess">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThreess" aria-expanded="false" aria-controls="flush-collapseThreess">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseThreess" aria-expanded="false"
+                        aria-controls="flush-collapseThreess">
                         CATATAN KEPERAWATAN INTRA OPERATIF
                     </button>
                 </h2>
-                <div id="flush-collapseThreess" class="accordion-collapse collapse" aria-labelledby="flush-headingThreess" data-bs-parent="#accordionCatatan">
+                <div id="flush-collapseThreess" class="accordion-collapse collapse"
+                    aria-labelledby="flush-headingThreess" data-bs-parent="#accordionCatatan">
                     <div class="accordion-body" id="cKeperawatanIntraOperatif">
 
                     </div>
@@ -291,11 +416,14 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingThrees">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThrees" aria-expanded="false" aria-controls="flush-collapseThrees">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseThrees" aria-expanded="false"
+                        aria-controls="flush-collapseThrees">
                         CATATAN KEPERAWATAN PASCA OPERASI
                     </button>
                 </h2>
-                <div id="flush-collapseThrees" class="accordion-collapse collapse" aria-labelledby="flush-headingThrees" data-bs-parent="#accordionCatatan">
+                <div id="flush-collapseThrees" class="accordion-collapse collapse" aria-labelledby="flush-headingThrees"
+                    data-bs-parent="#accordionCatatan">
                     <div class="accordion-body">
                         <div class="row" id="cKeperawatanPascaOperatif">
 
@@ -316,7 +444,8 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             <button type="button" id="btn-print-catatan-keperawatan" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
             </button>
-            <button type="button" id="btn-save-catatan-keperawatan" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
+            <button type="button" id="btn-save-catatan-keperawatan" class="btn btn-primary btn-save-operasi"><i
+                    class="fas fa-save"></i> Simpan</button>
         </div>
     </form>
 </div>
@@ -487,18 +616,18 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
     const addRowVitalSigncatatanKeperawatan = (examselect, key) => {
         $("#vitalSignBodyKeperawatan").append($("<tr>")
-                .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
-                .append($("<td rowspan='7'>").html(examselect.petugas))
+                .append($("<td rowspan='2'>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td rowspan='2'>").html(examselect.petugas))
                 .append($("<td>").html(''))
                 .append($("<td>").html('<b>Tekanan Darah</b>'))
                 .append($("<td>").html('<b>Nadi</b>'))
                 .append($("<td>").html('<b>Nafas/RR</b>'))
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="copyVitalSignKeperawatan(' + key +
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="copyVitalSignKeperawatan(' + key +
                     ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>'
                 ))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="removeRacik(\'' + examselect
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="removeRacik(\'' + examselect
                     .body_id +
                     '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'
                 ))
@@ -511,26 +640,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                 .append($("<td>").html(examselect.temperature + '/°C'))
                 .append($("<td>").html(examselect.saturasi + '/SpO2%'))
             )
-            .append($("<tr>")
-                .append($("<td>").html("<b>S</b>"))
-                .append($("<td colspan='5'>").html(examselect.anamnase))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>O</b>"))
-                .append($("<td colspan='5'>").html(examselect.pemeriksaan))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>A</b>"))
-                .append($("<td colspan='5'>").html(examselect.description))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>P</b>"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("Instruksi"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
-            )
+
     }
 
     function vitalsignInputcatatanKeperawatan(prop) {

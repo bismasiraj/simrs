@@ -10172,4 +10172,164 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+    public function rFarmaiRekapitulasiDrugDoctor()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PEMAKAIAN OBAT/ALKES PER DOKTER';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+        $db = db_connect();
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [73])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [73])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+        $goods = $this->lowerKey($db->query("SELECT BRAND_ID as isalkes ,name as thealkes from goods where ISACTIVE = 1")->getResultArray());
+        $employee_all = $this->lowerKey($db->query("SELECT employee_id as id , fullname as text from employee_all where OBJECT_CATEGORY_ID = 20 and NONACTIVE = 0")->getResultArray());
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                    <th class="p-1 align-middle text-center">No</th>
+                    <th class="p-1 align-middle text-center">Dokter</th>
+                    <th class="p-1 align-middle text-center">Nama Obat</th>
+                    <th class="p-1 align-middle text-center">Jumlah Obat</th>
+                </tr>
+                ';
+
+        $isrj = ['0', '1'];
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'isrj' => $isrj,
+            // 'status' => $status,
+            'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            // 'header' => $header
+            // 'dokterfill' => '1',
+            'goods' => $goods,
+            'employee_allDoctor' => $employee_all,
+            // 'fillTop'=>'1',
+            'header' => $header
+
+
+
+        ]);
+    }
+
+    public function rFarmaiRekapitulasiDrugDoctorpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $clinic = $this->request->getPost('clinic_id');
+        $isrj = $this->request->getPost('isrj');
+        $goods = $this->request->getPost('goods');
+        $doctor = $this->request->getPost('employee_allDoctor');
+
+
+        $query = "
+       	DECLARE @mulai DATETIME;
+        DECLARE @akhir DATETIME;
+        DECLARE @top INT;
+        DECLARE @klinik NVARCHAR(50);
+        DECLARE @isrj NVARCHAR(50);
+        DECLARE @obat NVARCHAR(50);
+        DECLARE @dokter NVARCHAR(50);
+
+        SET @mulai = CONVERT(DATETIME, '$mulai', 120);
+        SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+   
+        SET @klinik = '$clinic';
+        SET @isrj = '$isrj';
+        SET @obat = '$goods';
+        SET @dokter = '$doctor';
+
+        SELECT	T.brand_id,
+                t.description, 
+                sum(t.quantity) as jml,		  
+                CAST(SUM(t.quantity) AS NVARCHAR) + ' ' + ISNULL(M.MEASUREMENT, '') AS jml_obat,
+                t.employee_id,
+                ea.fullname,
+                M.MEASUREMENT,
+        sum(t.amount_paid) as total,
+        t.isrj
+            FROM treatment_obat t LEFT OUTER JOIN MEASUREMENT M ON T.MEASURE_ID = M.MEASURE_ID,
+            employee_all ea 
+        where brand_id is not null and
+                t.treat_date between dateadd(hour,0,@mulai) and dateadd(minute,1439,@akhir) 
+                and (EA.fullname like @dokter or EA.EMPLOYEE_ID LIKE @DOKTER) 
+                and ea.employee_id = t.EMPLOYEE_ID
+                And t.CLINIC_ID like @klinik   
+                and (t.BRAND_ID like @obat or t.description like @obat)    
+                and  t.ISRJ like @isrj
+                
+        group by  t.isrj ,
+        t.EMPLOYEE_ID
+        ,ea.fullname,BRAND_ID, 
+        t.DESCRIPTION, M.MEASUREMENT
+        ";
+
+        $data = $this->lowerKey($db->query($query)->getResultArray());
+
+        $dt_data = [];
+        $index = 1;
+        // var_dump($data);
+        // exit();
+
+
+        foreach ($data as $value) {
+            $row = [];
+            $row[] = $index++;
+            $row[] = $value['fullname'];
+            $row[] = $value['description'];
+            $row[] = $value['jml_obat'];
+
+
+            $dt_data[] = $row;
+        }
+
+        $json_data = array(
+            "body" => $dt_data
+        );
+        echo json_encode($json_data);
+    }
 }

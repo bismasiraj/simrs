@@ -662,12 +662,12 @@
     $("#formeditfallriskbtn").on("click", function() {
         $("#formeditfallriskbtn").slideUp()
         $("#formsavefallriskbtn").slideDown()
-        $("#formfallrisk").find("iput, select, textarea").prop("disabled", true)
+        $("#formfallrisk").find("input, select, textarea").prop("disabled", true)
     })
     $("#formeditfallriskbtnmedis").on("click", function() {
         $("#formeditfallriskbtnmedis").slideUp()
         $("#formsavefallriskbtnmedis").slideDown()
-        $("#formfallriskmedis").find("iput, select, textarea").prop("disabled", true)
+        $("#formfallriskmedis").find("input, select, textarea").prop("disabled", true)
     })
 
 

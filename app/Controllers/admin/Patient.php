@@ -908,7 +908,7 @@ This Function is used to Add Patient
         if ($poli == 'P013' || $poli == 'P016' || $poli == 'P015') {
             $pv = new PasienPenunjangModel();
 
-            $kunjungan = $this->lowerKey($pv->getKunjunganPenunjang($this->escapeString($nama, true), $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
+            $kunjungan = $this->lowerKey($pv->getKunjunganPenunjang($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
         } else {
             $pv = new PasienVisitationModel();
 
@@ -981,6 +981,7 @@ This Function is used to Add Patient
                         $kunjungan[$key]['name_of_clinic_from'] = $clinic[$key1]['name_of_clinic'];
                     }
                 }
+                $kunjungan[$key]['name_of_class_room'] = '';
                 if (!is_null($kunjungan[$key]['class_room_id']) && ($kunjungan[$key]['class_room_id'] != '')) {
                     // dd($value['class_room_id']);
                     foreach ($classRoom as $key1 => $value1) {
@@ -990,6 +991,8 @@ This Function is used to Add Patient
                         }
                     }
                 }
+                $kunjungan[$key]['fullname'] = '';
+                $kunjungan[$key]['fullname_from'] = '';
                 foreach ($employee as $key1 => $value1) {
                     if ($employee[$key1]['employee_id'] == @$kunjungan[$key]['employee_id']) {
                         $kunjungan[$key]['fullname'] = $employee[$key1]['fullname'];
@@ -1001,6 +1004,8 @@ This Function is used to Add Patient
                         $kunjungan[$key]['fullname_inap'] = $employee[$key1]['fullname'];
                     }
                 }
+                $kunjungan[$key]['name_of_class'] = '';
+                $kunjungan[$key]['name_of_class_plafond'] = '';
                 foreach ($class as $key1 => $value1) {
                     if ($kunjungan[$key]['class_id'] == @$class[$key1]['class_id']) {
                         $kunjungan[$key]['name_of_class'] = $class[$key1]['name_of_class'];
@@ -1167,6 +1172,17 @@ This Function is used to Add Patient
         }
 
         $nama = $kode;
+        // return json_encode([
+        //     $nama,
+        //     $kode,
+        //     $alamat,
+        //     $poli,
+        //     $mulai,
+        //     $akhir,
+        //     $sudah,
+        //     $dokter,
+        //     $nokartu
+        // ]);
         $kunjungan = $this->lowerKey($pv->getKunjunganOperasi($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
 
 
@@ -1312,26 +1328,32 @@ This Function is used to Add Patient
                 $kunjungan[$key]['name_of_class_plafond'] = null;
                 $kunjungan[$key]['payor'] = null;
 
+                $kunjungan[$key]['way'] = '';
                 foreach ($way as $key1 => $value1) {
                     if ($kunjungan[$key]['way_id'] == $way[$key1]['way_id']) {
                         $kunjungan[$key]['way'] = $way[$key1]['way'];
                     }
                 }
+                $kunjungan[$key]['name_of_status_pasien'] = '';
                 foreach ($statusPasien as $key1 => $value1) {
                     if ($kunjungan[$key]['status_pasien_id'] == $statusPasien[$key1]['status_pasien_id']) {
                         $kunjungan[$key]['name_of_status_pasien'] = $statusPasien[$key1]['name_of_status_pasien'];
                     }
                 }
+                $kunjungan[$key]['name_of_gender'] = '';
                 foreach ($sex as $key1 => $value1) {
                     if ($kunjungan[$key]['gender'] == $sex[$key1]['gender']) {
                         $kunjungan[$key]['name_of_gender'] = $sex[$key1]['name_of_gender'];
                     }
                 }
+                $kunjungan[$key]['nama_agama'] = '';
                 foreach ($agama as $key1 => $value1) {
                     if ($kunjungan[$key]['kode_agama'] == $agama[$key1]['kode_agama']) {
                         $kunjungan[$key]['nama_agama'] = $agama[$key1]['nama_agama'];
                     }
                 }
+                $kunjungan[$key]['name_of_clinic'] = '';
+                $kunjungan[$key]['name_of_clinic_from'] = '';
                 foreach ($clinic as $key1 => $value1) {
                     if ($kunjungan[$key]['clinic_id'] == $clinic[$key1]['clinic_id']) {
                         $kunjungan[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
@@ -1340,16 +1362,20 @@ This Function is used to Add Patient
                         $kunjungan[$key]['name_of_clinic_from'] = $clinic[$key1]['name_of_clinic'];
                     }
                 }
+                $kunjungan[$key]['fullname'] = '';
                 foreach ($employee as $key1 => $value1) {
                     if ($kunjungan[$key]['employee_id'] == $employee[$key1]['employee_id']) {
                         $kunjungan[$key]['fullname'] = $employee[$key1]['fullname'];
                     }
                 }
+                $kunjungan[$key]['cara_keluar'] = '';
                 foreach ($caraKeluar as $key1 => $value1) {
                     if ($kunjungan[$key]['keluar_id'] == $caraKeluar[$key1]['keluar_id']) {
                         $kunjungan[$key]['cara_keluar'] = $caraKeluar[$key1]['cara_keluar'];
                     }
                 }
+                $kunjungan[$key]['name_of_class'] = '';
+                $kunjungan[$key]['name_of_class_plafond'] = '';
                 foreach ($class as $key1 => $value1) {
                     if ($kunjungan[$key]['class_id'] == $class[$key1]['class_id']) {
                         $kunjungan[$key]['name_of_class'] = $class[$key1]['name_of_class'];
@@ -1358,6 +1384,7 @@ This Function is used to Add Patient
                         $kunjungan[$key]['name_of_class_plafond'] = $class[$key1]['name_of_class'];
                     }
                 }
+                $kunjungan[$key]['payor'] = '';
                 foreach ($payor as $key1 => $value1) {
                     if ($kunjungan[$key]['payor_id'] == $payor[$key1]['payor_id']) {
                         $kunjungan[$key]['payor'] = $payor[$key1]['payor'];
@@ -2191,6 +2218,7 @@ This Function is used to Add Patient
         if (!isset($visit['name_of_clinic'])) {
             $visit['name_of_clinic'] = '';
         }
+        $visit['gendername'] = '';
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
                 $visit['gendername'] = $gender[$key]['name_of_gender'];
@@ -2298,7 +2326,6 @@ This Function is used to Add Patient
 
         // return json_encode(user()->getOneRoles());
 
-        // dd($clinic);
         return view('admin/patient/profile', [
             'title' => '',
             'orgunit' => $orgunit,
@@ -2336,6 +2363,10 @@ This Function is used to Add Patient
 
         $pv = new PasienVisitationModel();
         $visit = $this->lowerKey($pv->find($id));
+
+        if (count($visit) == 0) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
 
 
 

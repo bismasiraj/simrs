@@ -677,7 +677,7 @@ class keperawatan extends \App\Controllers\BaseController
                     where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ed.DOCUMENT_ID order by EXAMINATION_DATE desc) ,'') as PAIN_SCORE,
 					isnull((select top(1) ASSESSMENT_PAIN_MONITORING.DESCRIPTION from ASSESSMENT_PAIN_MONITORING
                     where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ed.DOCUMENT_ID order by EXAMINATION_DATE desc) ,'') as FALL_DESC,
-                    ea.fullname as dokter
+                    isnull(ea.fullname, petugas) as petugas_name
                 FROM EXAMINATION_INFO ei
 					left outer join EXAMINATION_DETAIL ed ON ei.body_id = ed.DOCUMENT_ID
                     left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = ed.NO_REGISTRATION
@@ -685,7 +685,8 @@ class keperawatan extends \App\Controllers\BaseController
                     left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on ei.body_id = EDU.DOCUMENT_ID
                     left outer join ASSESSMENT_REPRODUCTION arp on ei.body_id = arp.DOCUMENT_ID
                     LEFT OUTER JOIN ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE
-                    left outer join employee_all ea on ea.employee_id = ei.employee_id  
+                    left outer join users u on u.username = ei.petugas_id
+                    left outer join employee_all ea on ea.employee_id = u.employee_id  
                 WHERE ei.BODY_ID = '" . $vactination_id . "'
                 group by 
 				ei.VISIT_ID,
@@ -708,7 +709,8 @@ class keperawatan extends \App\Controllers\BaseController
                     ei.PASIEN_DIAGNOSA_ID,
                     ed.vs_status_id,
                     ei.isrj,
-                    ea.fullname
+                    ea.fullname,
+                    ei.petugas
 
         ")->getRowArray() ?? []);
 
@@ -863,6 +865,9 @@ class keperawatan extends \App\Controllers\BaseController
 
             $sosialekonomi = $this->query_assessment_column_style('ASSESSMENT_SOCEC', 'ASES037', $visit['visit_id'], $vactination_id);
 
+            $nutrition = $this->query_assessment_column_style('ASSESSMENT_SCREENING_NUTRITION', 'GIZI001', $visit['visit_id'], $vactination_id);
+
+            // return json_encode($nutrition);
 
             $pediatri = $this->lowerKey($db->query(
                 "
@@ -934,6 +939,7 @@ class keperawatan extends \App\Controllers\BaseController
                 "organization" => $selectorganization,
                 "info" => $selectinfo,
                 "pediatri" => $pediatri,
+                "nutrition" => $nutrition,
                 "diag" => $diag,
                 "sign" => $sign
             ]);
@@ -1074,7 +1080,7 @@ class keperawatan extends \App\Controllers\BaseController
 
             // return json_encode($select);
 
-            $title = "Asesmen Keperawatan ";
+            $title = "Asesmen Kebidanan ";
             if (!is_null($visit['class_room_id']) && $visit['class_room_id'] != '') {
                 $title .= 'Rawat Inap ';
             } else {
@@ -1217,14 +1223,11 @@ class keperawatan extends \App\Controllers\BaseController
             $select = $this->lowerKey($db->query(
                 "
                 select ei.examination_date , ei.body_id, ed.trans_id,
-                case when ei.petugas_type = '11' then 'D'
-                when ei.petugas_type = '13' then 'P'
-                when ei.petugas_type = '27' then 'Far'
-                when ei.petugas_type = '52' then 'B'
-                    when ei.petugas_type = '19' then 'G'
-                    when ei.petugas_type = '51' then 'Fis'
-                    else '' end as kode_PPA,
-                    ea.FULLNAME as nama_ppa ,
+                case petugas_type when  '11' then 'D'
+                    when '13' then 'P' 
+                    when '19' then 'G'
+                    end as kode_PPA,
+                    ei.petugas as nama_ppa ,
                     ei.ANAMNASE as Subyectif,
                     'BB : ' + cast(WEIGHT as varchar(10))  + 'Kg , ' +'TB : ' + cast(height as varchar(10)) + ' cm , ' +
                     'Tensi : '+ cast(TENSION_UPPER as varchar(10)) + ' / ' + cast(TENSION_BELOW as varchar(10)) + ' mmHg , ' + 

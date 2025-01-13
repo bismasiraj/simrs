@@ -7,7 +7,7 @@
     let familyAction = []
     let visitAction = []
     $(document).ready(function() {
-        getDataTable();
+        getDataTableInf();
     });
 
     const getDataParameter = () => {
@@ -34,7 +34,7 @@
 
 
     // select doc
-    const selectParam = (props) => {
+    const selectParamInf = (props) => {
         let res = aPramInf
         let fill = res?.filter(item => item?.p_type === "GEN0017");
         let data = [];
@@ -42,26 +42,26 @@
             data +=
                 `<option value=${e?.parameter_id}>${e?.parameter_desc}</option>`;
         });
-        $("#parameter_id").html(`<option selected disabled value="">Pilih Dokumen</option>` + data);
+        $("#inf_parameter_id").html(`<option selected disabled value="">Pilih Dokumen</option>` + data);
     };
 
-    const actionParam = (props) => {
-        $("#parameter_id").on("change", (e) => {
-            let val = $("#parameter_id").val();
-            actionViewParam({
+    const actionParamInf = (props) => {
+        $("#inf_parameter_id").on("change", (e) => {
+            let val = $("#inf_parameter_id").val();
+            actionViewParamInf({
                 id_param: val
             });
         });
     };
 
-    const contentHide = () => {
+    const contentHideInf = () => {
         return `
             <div hidden>
-                <input class="form-control disabled" list="datalistOptions" id="body_id" name="body_id" value='${generateCode()}'>
-                <input class="form-control disabled" list="datalistOptions" id="org_unit_code" name="org_unit_code" value='<?php echo $visit['org_unit_code'] ?>' >
-                <input class="form-control disabled" list="datalistOptions" id="visit_id"name="visit_id" value='<?php echo $visit['visit_id'] ?>' >
-                <input class="form-control disabled" list="datalistOptions" id="trans_id" name="trans_id"value='<?php echo $visit['trans_id'] ?>' >
-                <input class="form-control disabled" list="datalistOptions" id="p_type" name="p_type"value='GEN0017' >
+                <input class="form-control disabled" list="datalistOptions" id="inf_body_id" name="body_id" value='${generateCodeInf()}'>
+                <input class="form-control disabled" list="datalistOptions" id="inf_org_unit_code" name="org_unit_code" value='<?php echo $visit['org_unit_code'] ?>' >
+                <input class="form-control disabled" list="datalistOptions" id="inf_visit_id"name="visit_id" value='<?php echo $visit['visit_id'] ?>' >
+                <input class="form-control disabled" list="datalistOptions" id="inf_trans_id" name="trans_id"value='<?php echo $visit['trans_id'] ?>' >
+                <input class="form-control disabled" list="datalistOptions" id="inf_p_type" name="p_type"value='GEN0017' >
             </div>
         `;
     };
@@ -70,14 +70,14 @@
 
     // const fetchEntryTypes = () => {
     //     return new Promise((resolve, reject) => {
-    //         getDataList('admin/InformedConsent/getType', (res) => {
+    //         getDataList('admin/InformedConsent/getTypeInf', (res) => {
     //             entryTypes = res;
     //             resolve();
     //         });
     //     });
     // };
 
-    const getType = (props) => {
+    const getTypeInf = (props) => {
         return new Promise((resolve) => {
             // let entry = entryTypes.find(item => item.entry_id === parseInt(props.code));
             let htmlContent = '';
@@ -225,7 +225,7 @@
 
 
 
-    const actionViewParam = (props) => {
+    const actionViewParamInf = (props) => {
         let res = aValueInf;
         let filteredData = res?.filter(item => item?.p_type === "GEN0017" && item?.parameter_id
             .replaceAll(' ',
@@ -238,7 +238,7 @@
             if (!(e.value_score === 9 || e.value_score === 8 || !e.value_score || e
                     .value_desc ===
                     "")) {
-                promises.push(getType({
+                promises.push(getTypeInf({
                     code: e.value_score,
                     valueId: e.value_id,
                     tb: e?.value_info,
@@ -263,23 +263,23 @@
 
         if (props?.action === "detail" || props?.action === "edit") {
             return Promise.all(promises).then((htmlContents) => {
-                $("#content-param").html(contentHide() + dataHtml);
-                initializeQuillEditors();
+                $("#content-param").html(contentHideInf() + dataHtml);
+                initializeQuillEditorsInf();
             }).catch((error) => {
                 console.error('Error updating content:', error);
             });
         } else {
             return Promise.all(promises).then((htmlContents) => {
-                $("#content-param").html(contentHide() + dataHtml);
+                $("#content-param").html(contentHideInf() + dataHtml);
 
-                initializeQuillEditors();
+                initializeQuillEditorsInf();
             }).catch((error) => {
                 console.error('Error updating content:', error);
             });
         }
     };
 
-    const initializeQuillEditors = () => {
+    const initializeQuillEditorsInf = () => {
         document.querySelectorAll('[id^="editor-"]').forEach((element) => {
 
             const editorId = element.id;
@@ -307,7 +307,7 @@
         });
     };
 
-    const syncQuillEditorsToForm = () => {
+    const syncQuillEditorsToFormInf = () => {
         document.querySelectorAll('[id^="editor-"]').forEach((element) => {
             const editorId = element.id;
             const hiddenInputId = `hidden-value_info-${editorId.replace('editor-', '')}`;
@@ -319,12 +319,12 @@
     };
 
 
-    const btnSaveAction = () => {
+    const btnSaveActionInf = () => {
         $("#btn-save-inf-modal").off().on("click", function(e) {
             e.preventDefault();
 
 
-            syncQuillEditorsToForm();
+            syncQuillEditorsToFormInf();
 
             let formElement = document.getElementById('formDokument');
             let dataSend = new FormData(formElement);
@@ -342,7 +342,7 @@
                     $('#formDokument')[0].reset();
                     let visit_id = '<?php echo $visit['visit_id']; ?>';
 
-                    getDataTables({
+                    getDataTablesInf({
                         visit_id: visit_id
                     });
                 }
@@ -350,7 +350,7 @@
         });
     };
 
-    const generateCode = () => {
+    const generateCodeInf = () => {
         let now = new Date();
         let code = "" + now.getFullYear() +
             ('0' + (now.getMonth() + 1)).slice(-2) +
@@ -364,7 +364,7 @@
     };
 
     // get data
-    const getDataTable = async (props) => {
+    const getDataTableInf = async (props) => {
         $("#informConcentTab").off("click").on("click", async function(e) {
             e.preventDefault();
 
@@ -374,23 +374,23 @@
                 getLoadingscreen("contentToHide", "load-content-inf");
 
                 const visit_id = '<?= $visit['visit_id']; ?>';
-                await getDataTables({
+                await getDataTablesInf({
                     visit_id
                 });
 
                 $("#btn-create").off().on("click", (e) => {
                     e.preventDefault();
-                    selectParam();
-                    actionViewParam();
-                    btnSaveAction();
-                    actionParam();
+                    selectParamInf();
+                    actionViewParamInf();
+                    btnSaveActionInf();
+                    actionParamInf();
                     $('#btn-save-inf-modal').removeAttr('hidden');
                     $('#btn-edit-inf-modal').attr('hidden', true);
                     $('#formsignInf').attr('hidden', true);
 
                     $("#create-modal").modal("show");
-                    $('#parameter_id').prop('disabled', false);
-                    $('#parameter_id').select2();
+                    $('#inf_parameter_id').prop('disabled', false);
+                    $('#inf_parameter_id').select2();
                 });
 
                 $("#close-create-modal").off().on("click", (e) => {
@@ -399,14 +399,14 @@
                 });
 
                 $('#create-modal').on('shown.bs.modal', function() {
-                    $('#parameter_id').select2({
+                    $('#inf_parameter_id').select2({
                         dropdownParent: $('#create-modal')
                     });
                     $('#formsignInf').on('click', function() {
                         $("#digitalSignModalOperation").modal("show");
                         $('#create-modal').modal('hide');
                     });
-                    btnUpdateData();
+                    btnUpdateDataInf();
                 });
 
             } catch (error) {
@@ -417,7 +417,7 @@
     };
 
 
-    const getDataTables = async (props) => {
+    const getDataTablesInf = async (props) => {
         return new Promise((resolve, reject) => {
             postData({
                     visit_id: props.visit_id
@@ -425,7 +425,7 @@
                 "admin/InformedConsent/getData",
                 (res) => {
                     if (res.length >= 1) {
-                        renderTables(res);
+                        renderTablesInf(res);
                     } else {
                         $("#bodydata").html(tempTablesNull());
                     }
@@ -439,7 +439,7 @@
     };
 
 
-    const getDataReadSign = () => {
+    const getDataReadSignInf = () => {
         $('.btn-show-sign').on('click', function(e) {
             postData({
                 body_id: $(this).data('id'),
@@ -447,7 +447,7 @@
                 parameter_id: $(this).data('param_id')
             }, 'admin/InformedConsent/getDetail', (res) => {
 
-                modalViewDetail({
+                modalViewDetailInf({
                     data: res,
                     view: "Sign"
                 });
@@ -455,7 +455,7 @@
         });
     };
 
-    const getDataRead = () => {
+    const getDataReadInf = () => {
         $('.btn-show-detail').on('click', function(e) {
             postData({
                 body_id: $(this).data('id'),
@@ -463,14 +463,14 @@
                 parameter_id: $(this).data('param_id')
             }, 'admin/InformedConsent/getDetail', (res) => {
 
-                modalViewDetail({
+                modalViewDetailInf({
                     data: res,
                     view: "Detail"
                 });
             });
         });
     };
-    const getDataEdit = () => {
+    const getDataEditInf = () => {
         $('.btn-show-edit').on('click', function(e) {
             postData({
                 body_id: $(this).data('id'),
@@ -478,31 +478,31 @@
                 parameter_id: $(this).data('param_id')
             }, 'admin/InformedConsent/getDetail', (res) => {
 
-                modalViewEdit({
+                modalViewEditInf({
                     data: res
                 });
             });
         });
     };
 
-    const modalViewEdit = (data) => {
-        $('#parameter_id').prop('disabled', true);
-        $('#parameter_id').select2();
+    const modalViewEditInf = (data) => {
+        $('#inf_parameter_id').prop('disabled', true);
+        $('#inf_parameter_id').select2();
 
         let resultData = data;
-        selectParam();
+        selectParamInf();
         let result = resultData.data[0];
 
-        actionViewParam({
+        actionViewParamInf({
             id_param: result.parameter_id.replace(/\s+/g, ""),
             action: "edit"
         }).then(() => {
-            $("#body_id").val(result?.body_id);
-            $("#org_unit_code").val(result.org_unit_code);
-            $("#visit_id").val(result.visit_id);
-            $("#trans_id").val(result.trans_id);
-            $("#p_type").val(result.p_type);
-            $("#parameter_id").val(result.parameter_id.replace(/\s+/g, ""));
+            $("#inf_body_id").val(result?.body_id);
+            $("#inf_org_unit_code").val(result.org_unit_code);
+            $("#inf_visit_id").val(result.visit_id);
+            $("#inf_trans_id").val(result.trans_id);
+            $("#inf_p_type").val(result.p_type);
+            $("#inf_parameter_id").val(result.parameter_id.replace(/\s+/g, ""));
 
             let res = aValueInf;
             let filteredData = res?.filter(item => item?.p_type === "GEN0017" && item
@@ -522,7 +522,7 @@
 
                     if (getResultArray.length > 0) {
                         if (item.value_score === 7) {
-                            promises.push(getType({
+                            promises.push(getTypeInf({
                                 code: item.value_score,
                                 valueId: item.value_id,
                                 tb: item.value_info,
@@ -542,7 +542,7 @@
                                 }
                             }));
                         } else {
-                            promises.push(getType({
+                            promises.push(getTypeInf({
                                 code: item.value_score,
                                 valueId: item.value_id,
                                 tb: item.value_info,
@@ -606,16 +606,16 @@
 
             $('#btn-save-inf-modal').attr('hidden', true);
             $('#btn-edit-inf-modal').removeAttr('hidden');
-            btnUpdateData();
+            btnUpdateDataInf();
         });
     };
 
 
-    const btnUpdateData = () => {
+    const btnUpdateDataInf = () => {
         $('#btn-edit-inf-modal').off().on("click", (e) => {
             e.preventDefault();
 
-            syncQuillEditorsToForm()
+            syncQuillEditorsToFormInf()
 
             let formElement = document.getElementById('formDokument');
             let dataSend = new FormData(formElement);
@@ -627,7 +627,7 @@
 
 
             if (!jsonObj['parameter_id']) {
-                jsonObj['parameter_id'] = $("#parameter_id").val();
+                jsonObj['parameter_id'] = $("#inf_parameter_id").val();
             }
 
             let validJsonObj = {};
@@ -657,7 +657,7 @@
                         $('#formDokument')[0].reset();
                         let visit_id = '<?php echo $visit['visit_id']; ?>';
 
-                        getDataTables({
+                        getDataTablesInf({
                             visit_id: visit_id
                         });
                     } else {
@@ -670,27 +670,27 @@
         });
     };
 
-    const modalViewDetail = (props) => {
-        $('#parameter_id').prop('disabled', true);
-        $('#parameter_id').select2();
+    const modalViewDetailInf = (props) => {
+        $('#inf_parameter_id').prop('disabled', true);
+        $('#inf_parameter_id').select2();
 
         let resultData = props?.data;
-        selectParam();
+        selectParamInf();
         let result = resultData[0];
 
         console.log(resultData);
 
 
-        actionViewParam({
+        actionViewParamInf({
             id_param: result?.parameter_id.replace(/\s+/g, ""),
             action: "edit"
         }).then(() => {
-            $("#body_id").val(result?.body_id);
-            $("#org_unit_code").val(result?.org_unit_code);
-            $("#visit_id").val(result?.visit_id);
-            $("#trans_id").val(result?.trans_id);
-            $("#p_type").val(result?.p_type);
-            $("#parameter_id").val(result.parameter_id.replace(/\s+/g, ""));
+            $("#inf_body_id").val(result?.body_id);
+            $("#inf_org_unit_code").val(result?.org_unit_code);
+            $("#inf_visit_id").val(result?.visit_id);
+            $("#inf_trans_id").val(result?.trans_id);
+            $("#inf_p_type").val(result?.p_type);
+            $("#inf_parameter_id").val(result.parameter_id.replace(/\s+/g, ""));
 
             let res = aValueInf;
             let filteredData = res?.filter(item => item?.p_type === "GEN0017" && item
@@ -710,7 +710,7 @@
 
                     if (getResultArray.length > 0) {
                         if (item.value_score === 7) {
-                            promises.push(getType({
+                            promises.push(getTypeInf({
                                 code: item.value_score,
                                 valueId: item.value_id,
                                 tb: item.value_info,
@@ -730,7 +730,7 @@
                                 }
                             }));
                         } else {
-                            promises.push(getType({
+                            promises.push(getTypeInf({
                                 code: item.value_score,
                                 valueId: item.value_id,
                                 tb: item.value_info,
@@ -817,7 +817,7 @@
     };
 
 
-    const renderTables = (data) => {
+    const renderTablesInf = (data) => {
         let res = aPramInf
 
         let fill = res?.filter(item => item?.p_type === "GEN0017");
@@ -883,14 +883,14 @@
 
 
         $("#bodydata").html(tableRows);
-        getDataRead();
-        getDataReadSign()
-        getDataEdit();
-        deleteModal();
-        actionCetak();
+        getDataReadInf();
+        getDataReadSignInf()
+        getDataEditInf();
+        deleteModalInf();
+        actionCetakInf();
     };
 
-    const deleteModal = () => {
+    const deleteModalInf = () => {
         $('.btn-show-delete').on('click', function(e) {
             let id = $(this).data('id');
             let visit = $(this).data('visit_id');
@@ -913,7 +913,7 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    deleteAction({
+                    deleteActionInf({
                         id: id,
                         visit: visit
                     });
@@ -928,7 +928,7 @@
         });
     };
 
-    const deleteAction = (props) => {
+    const deleteActionInf = (props) => {
         postData({
             id: props.id,
             visit: props.visit
@@ -936,7 +936,7 @@
             if (res.respon === true) {
                 successSwal('Data berhasil Dihapus.');
                 let visit_id = '<?php echo $visit['visit_id']; ?>';
-                getDataTables({
+                getDataTablesInf({
                     visit_id: visit_id
                 });
             } else {
@@ -945,7 +945,7 @@
         });
     };
 
-    const actionCetak = () => {
+    const actionCetakInf = () => {
         $(".btn-show-print").on('click', function(e) {
             let RequestCentakInf = {
                 body_id: $(this).data('id'),

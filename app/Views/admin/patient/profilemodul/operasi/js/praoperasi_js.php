@@ -1,21 +1,25 @@
 <script>
     let coba = [];
+
     $(document).ready(function() {
         // appendDiagnosa(accordionId, bodyId, pasienDiagnosa)
         // appendLokalisOperation("accordionPraOperasiSurgeryBody")
+
+
     })
     const appendLokalisOperation = (accordionId, data) => {
         let filteredData = aparameter?.filter(item => item?.p_type === 'OPRS002');
         let accordionContent = ``;
 
-
         $.each(filteredData, function(key, value) {
             $.each(avalue, function(key1, value1) {
-                if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+                if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1
+                    .value_score == '3') {
 
                     let matchedData = null;
                     if (data && Array.isArray(data) && data.length > 0) {
-                        matchedData = data?.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase());
+                        matchedData = data?.find(item => item.value_id.toUpperCase() === value1.value_id
+                            .toUpperCase());
                     }
                     let description = matchedData ? matchedData.value_desc : '';
 
@@ -61,7 +65,8 @@
             $.each(avalue, function(key1, value1) {
                 if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id &&
                     value1.value_score == '3') {
-                    var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+                    var canvas = document.getElementById('canvas' + value1.p_type + value1
+                        .parameter_id + value1.value_id);
                     const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
                     var ctx = canvas.getContext('2d');
                     var drawing = false;
@@ -77,7 +82,8 @@
 
                     // Check if props?.data exists and is not empty
                     if (props?.data && Array.isArray(props.data) && props.data.length > 0) {
-                        matchedData = props?.data?.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase());
+                        matchedData = props?.data?.find(item => item.value_id.toUpperCase() === value1
+                            .value_id.toUpperCase());
                     }
 
                     // Check if matchedData exists and has filedata64
@@ -114,10 +120,12 @@
                         const x = e.offsetX;
                         const y = e.offsetY;
 
-                        ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                        ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas
+                            .getBoundingClientRect().top);
                         ctx.stroke();
                         ctx.beginPath();
-                        ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                        ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas
+                            .getBoundingClientRect().top);
                         line.push({
                             x,
                             y
@@ -139,9 +147,11 @@
                         };
                         // Reset to the image from value_detail if available
                         if (matchedData && matchedData.value_detail) {
-                            img.src = '<?= base_url('assets/img/asesmen') ?>' + matchedData.value_detail;
+                            img.src = '<?= base_url('assets/img/asesmen') ?>' + matchedData
+                                .value_detail;
                         } else {
-                            img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
+                            img.src = '<?= base_url('assets/img/asesmen') ?>' + value1
+                                .value_info;
                         }
                     });
 
@@ -192,6 +202,17 @@
 
         enablePraOperasi()
         let opsSelected = props
+        // console.log(props)
+        let examinationDate = moment(pasienOperasiSelected?.examination_date).format("DD/MM/YYYY HH:mm")
+        let startOprationDate = moment(pasienOperasiSelected?.start_operation).format("DD/MM/YYYY HH:mm")
+        let endOprationDate = moment(pasienOperasiSelected?.end_operation).format("DD/MM/YYYY HH:mm")
+        $("#apoexamination_date").val(examinationDate)
+        $("#apostart_operation").val(startOprationDate)
+        $("#flatapostart_operation").val(startOprationDate)
+        $("#apoend_operation").val(endOprationDate)
+        $("#flatapoend_operation").val(endOprationDate)
+
+
 
         // $("#apoexamination_date").val(get_date())
         // $("#apostart_operation").val(opsSelected.start_operation)
@@ -208,11 +229,11 @@
         })
         $.each(historyAlergy, function(key, value) {
             if (value.value_id == 'G0090101') {
-                $("#aporiwayatobat").val(value.histories)
+                $("#aporiwayatobat").html(value.histories)
             }
 
             if (value.value_id == 'G0090102') {
-                $("#aporiwayatnonobat").val(value.histories)
+                $("#aporiwayatnonobat").html(value.histories)
             }
         })
 
@@ -223,6 +244,9 @@
             let blood = res?.blood
 
             coba = blood
+
+            //bisma
+
 
             $.each(diagnosa, function(key, value) {
                 if (value.pasien_diagnosa_id == props?.body_id) {
@@ -248,6 +272,12 @@
                         if (key1 == 'modified_date') {
                             let valdate = String(value1).substring(0, 16)
                             $("#apo" + key1).val(valdate)
+                        }
+                        if (key1 == 'examination_date') {
+                            let examinationDate = moment(value.examination_date).format("DD/MM/YYYY HH:mm")
+                            $("#flatapoexamination_date").val(examinationDate).trigger("change")
+                            console.log(value.examination_date)
+                            console.log(examinationDate)
                         }
                     }
                 })
@@ -366,7 +396,7 @@
         $bloodUsage = array_filter($aValue, function ($value) {
             return $value['p_type'] === 'BLOD001';
         });
-        $bloodOptions = array_map(fn ($value) => ['value' => $value['value_score'], 'desc' => $value['value_desc']], $bloodUsage);
+        $bloodOptions = array_map(fn($value) => ['value' => $value['value_score'], 'desc' => $value['value_desc']], $bloodUsage);
         ?>
 
         let bloodOptions = [];

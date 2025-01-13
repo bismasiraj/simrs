@@ -6,12 +6,12 @@ $(document).ready(function(e) {
     $('#endDateBloodRequest').val(moment().format("DD/MM/YYYY"));
     // dateLab()
 
-    initialFlatpic()
+    initialFlatpicLab()
 
 
 })
 
-const convertDate = (dateString) => {
+const convertLabDate = (dateString) => {
     const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm"];
     const parsedDate = moment(dateString, formats, true);
     if (parsedDate.isValid()) {
@@ -21,7 +21,7 @@ const convertDate = (dateString) => {
     }
 };
 
-const convertDate2 = (dateString) => {
+const convertLabDate2 = (dateString) => {
     const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm"];
     const parsedDate = moment(dateString, formats, true);
     if (parsedDate.isValid()) {
@@ -52,8 +52,8 @@ const dateLab = () => {
         const endDate = $("#endDateLISHasil").val();
 
 
-        const formattedStartDate = convertDate(startDate);
-        const formattedEndDate = convertDate(endDate);
+        const formattedStartDate = convertLabDate(startDate);
+        const formattedEndDate = convertLabDate(endDate);
 
         if (formattedEndDate && formattedStartDate && formattedEndDate < formattedStartDate) {
             $("#endDateLISHasil").val(moment(formattedStartDate).format("DD/MM/YYYY"));
@@ -67,8 +67,8 @@ const dateLab = () => {
         const endDate = $(this).val();
 
 
-        const formattedStartDate = convertDate(startDate);
-        const formattedEndDate = convertDate(endDate);
+        const formattedStartDate = convertLabDate(startDate);
+        const formattedEndDate = convertLabDate(endDate);
 
         if (formattedEndDate && formattedStartDate && formattedEndDate < formattedStartDate) {
             errorSwal("End date cannot be earlier than start date!");
@@ -82,8 +82,8 @@ const dateLab = () => {
         const endDate = $("#endDateLab").val();
 
 
-        const formattedStartDate = convertDate(startDate);
-        const formattedEndDate = convertDate(endDate);
+        const formattedStartDate = convertLabDate(startDate);
+        const formattedEndDate = convertLabDate(endDate);
 
 
         if (formattedEndDate && moment(formattedEndDate).isBefore(moment(formattedStartDate))) {
@@ -98,8 +98,8 @@ const dateLab = () => {
         const startDate = $("#startDateLab").val();
         const endDate = $(this).val();
 
-        const formattedStartDate = convertDate(startDate);
-        const formattedEndDate = convertDate(endDate);
+        const formattedStartDate = convertLabDate(startDate);
+        const formattedEndDate = convertLabDate(endDate);
 
         if (formattedEndDate && formattedEndDate < formattedStartDate) {
             errorSwal("End date cannot be earlier than start date!");
@@ -110,8 +110,8 @@ const dateLab = () => {
 
 
     $("#btn-search-lab").off().on("click", function() {
-        const start = convertDate($("#startDateLab").val());
-        const end = convertDate($("#endDateLab").val());
+        const start = convertLabDate($("#startDateLab").val());
+        const end = convertLabDate($("#endDateLab").val());
 
         if (start && end) {
             getBillPoli(nomor, ke, start, end, lunas, 'P013', rj, status, $("#notaNoLab").val(), trans);
@@ -129,8 +129,8 @@ const dateLab = () => {
         const endDate = $("#endDateLIS").val();
 
 
-        const formattedStartDate = convertDate(startDate);
-        const formattedEndDate = convertDate(endDate);
+        const formattedStartDate = convertLabDate(startDate);
+        const formattedEndDate = convertLabDate(endDate);
 
         if (formattedEndDate && formattedStartDate && formattedEndDate < formattedStartDate) {
             $("#endDateLIS").val(moment(formattedStartDate).format("DD/MM/YYYY"));
@@ -144,8 +144,8 @@ const dateLab = () => {
         const endDate = $(this).val();
 
 
-        const formattedStartDate = convertDate(startDate);
-        const formattedEndDate = convertDate(endDate);
+        const formattedStartDate = convertLabDate(startDate);
+        const formattedEndDate = convertLabDate(endDate);
 
         if (formattedEndDate && formattedStartDate && formattedEndDate < formattedStartDate) {
             errorSwal("End date cannot be earlier than start date!");
@@ -165,8 +165,8 @@ $("#btn-cetak").off().on("click", function() {
     const no_pasien = nomor;
     const visit = <?= json_encode($visit); ?>;
 
-    let start_request = convertDate($("#startDateLab").val())
-    let end_request = convertDate($("#endDateLab").val())
+    let start_request = convertLabDate($("#startDateLab").val())
+    let end_request = convertLabDate($("#endDateLab").val())
 
     visit.nolist = nolist;
     visit.no_pasien = no_pasien;
@@ -184,7 +184,7 @@ $("#btn-cetak").off().on("click", function() {
 
 $("#labTab").off().on("click", function() {
     $('#notaNoLab').html(`<option value="%">Semua</option>`)
-    getListRequestLab(nomor, visit)
+    // getListRequestLab(nomor, visit)
 
     getBillPoli(nomor, ke, mulai, akhir, lunas, 'P013', rj, status, nota, trans);
     getDataTabels()
@@ -196,8 +196,8 @@ $("#labTab").off().on("click", function() {
 
     getDataBlood({
         visit_id: visit,
-        start_date: convertDate2($("#startDateBloodRequest").val()),
-        end_date: convertDate2($('#endDateBloodRequest').val()),
+        start_date: convertLabDate2($("#startDateBloodRequest").val()),
+        end_date: convertLabDate2($('#endDateBloodRequest').val()),
     });
 
 })
@@ -233,7 +233,6 @@ $("#notaNoLab").on("change", function() {
 </script>
 <script type='text/javascript'>
 function addBillLab(container) {
-
     let nota_no = $("#notaNoLab").val();
     let sesi = '<?= $visit['session_id']; ?>';
 
@@ -243,70 +242,89 @@ function addBillLab(container) {
         $("#notaNoLab").append($("<option>").val(nota_no).text(nota_no))
         $("#notaNoLab").val(nota_no)
         $("#labChargesBody").html("")
+        // getBillPoli(nomor, ke, mulai, akhir, lunas, 'P013', rj, status, nota_no, trans)
     }
+    setTimeout(() => {
+        tarifDataJson = $(`#${container}`).val();
+        tarifData = JSON.parse(tarifDataJson);
+
+        $("#searchTarifLab").val(null).trigger('change');
 
 
-    tarifDataJson = $(`#${container}`).val();
-    tarifData = JSON.parse(tarifDataJson);
+        let tarifIds = [];
+        $('#labChargesBody input[name="tarif_id[]"]').each(function() {
+            tarifIds.push($(this).val());
+        });
 
-    $("#searchTarifLab").val(null).trigger('change');
+        let filtterData = billJson.filter(e => e?.clinic_id === "P013" && e?.nota_no === nota_no)
+        let resultDilter = filtterData.map(e => ({
+            tarif_id: e.tarif_id,
+            nota_no: e.nota_no
+        }));
+        let tarifIdsInResult = resultDilter.map(e => e.tarif_id);
+
+        if (!(tarifIds.includes(tarifData.tarif_id) || tarifIdsInResult.includes(tarifData.tarif_id))) {
+
+            let codeData = get_bodyid();
+
+            let indexNum = $("#labChargesBody tr.number").length + 1;
+
+            var key = `lab${indexNum}`
 
 
-    let tarifIds = [];
-    $('#labChargesBody input[name="tarif_id[]"]').each(function() {
-        tarifIds.push($(this).val());
-    });
-
-
-    if (!tarifIds.includes(tarifData.tarif_id)) {
-
-        let indexNum = $("#labChargesBody tr.number").length + 1;
-
-        var key = `lab${indexNum}`
-
-
-        $("#labChargesBody").append($("<tr id=\"" + key + "\" class='number'>")
-            .append($("<td rowspan='2' class='align-middle'>").html(String(indexNum) + "."))
-            .append($("<td>").attr("id", "alabdisplaytreatment" + key).html(tarifData.tarif_name))
-            .append($("<td>").html('<select id="alabemployee_id' + key +
-                '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'alab\',\'' + key +
-                '\')">' +
-                chargesDropdownDoctor() +
-                `</select>` +
-                '<input id="alabdoctor' + key +
-                '" class="form-control" style="display: none" type="text" readonly>'
-            ))
-            .append($("<td>").attr("id", "alabdisplaytreat_date" + key).html(moment().format("DD/MM/YYYY HH:mm"))
-                .append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
-            // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
-            .append($("<td>").attr("id", "alabdisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData
-                .amount))).append($("<p>").html("")))
-            .append($("<td>")
-                .append('<input type="text" name="quantity[]" id="alabquantity' + key +
-                    '" placeholder="" value="0" class="form-control" readonly>')
-                .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
-            )
-            .append($("<td rowspan='2'>").attr("id", "asubsidi" + key).html(formatCurrency(0)))
-            .append($("<td rowspan='2' class='align-middle'>")
-                .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
-                    // '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
-                    '<button id="alabsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key +
-                    '\', \'alab\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">simpan</button>' +
-                    '<button id="alabeditDeleteCharge' + key +
-                    '" type="button" onclick="editBillCharge(\'alab\', \'' +
+            $("#labChargesBody").append($("<tr id=\"" + key + "\" class='number " + (billJson?.bill_id ??
+                    codeData) + "'>")
+                .append($("<td rowspan='2' class='align-middle'>").html(String(indexNum) + "."))
+                .append($("<td>").attr("id", "alabdisplaytreatment" + key).html(tarifData.tarif_name))
+                .append($("<td>").html('<select id="alabemployee_id' + key +
+                    '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'alab\',\'' +
                     key +
-                    '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off" style="display: none">Edit</button>' +
-                    '<button id="delBillBtnlabChargesBodyalab' + key +
-                    '" type="button" onclick="delBill(\'alab\', \'' +
-                    key +
-                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
-                    // '</div>' +
-                    '</div>')
+                    '\')">' +
+                    chargesDropdownDoctor() +
+                    `</select>` +
+                    '<input id="alabdoctor' + key +
+                    '" class="form-control" style="display: none" type="text" readonly>'
+                ))
+                .append($("<td>").attr("id", "alabdisplaytreat_date" + key).html(moment().format(
+                        "DD/MM/YYYY HH:mm"))
+                    .append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
+                // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
+                .append($("<td>").attr("id", "alabdisplaysell_price" + key).html(formatCurrency(
+                    parseFloat(
+                        tarifData
+                        .amount))).append($("<p>").html("")))
+                .append($("<td>")
+                    .append('<input type="text" name="quantity[]" id="alabquantity' + key +
+                        '" placeholder="" value="0" class="form-control" readonly>')
+                    .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
+                )
+                .append($("<td rowspan='2'>").attr("id", "asubsidi" + key).html(formatCurrency(0)))
+                .append($("<td rowspan='2' class='align-middle'>")
+                    .append(
+                        '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                        // '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                        '<button id="alabsimpanBillBtn' + key +
+                        '" type="button" onclick="simpanBillCharge(\'' +
+                        key +
+                        '\', \'alab\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">simpan</button>' +
+                        '<button id="alabeditDeleteCharge' + key +
+                        '" type="button" onclick="editBillCharge(\'alab\', \'' +
+                        key +
+                        '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off" style="display: none">Edit</button>' +
+                        '<button id="delBillBtnlabChargesBodyalab' + key +
+                        '" type="button" onclick="delBill(\'alab\', \'' + key +
+                        '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                        // '</div>' +
+                        '</div>')
+                )
             )
-        )
 
-        $("#labChargesBody").append($("<tr style='height: 80px;'>")
-            .append($("<td>").attr("colspan", "2").html(`
+
+            $("#labChargesBody").append($("<tr>", {
+                    style: "height: 80px;",
+                    class: key + ' ' + (billJson?.bill_id ?? codeData)
+                })
+                .append($("<td>").attr("colspan", "2").html(`
                         <div class="form-group">
                         <label class="form-label fw-bold">Diagnosis Klinis</label>
                             <div class="input-group">
@@ -319,7 +337,7 @@ function addBillLab(container) {
                             </div>
                         </div>
                     `))
-            .append($("<td>").attr("colspan", "4").html(`
+                .append($("<td>").attr("colspan", "4").html(`
                         <div class="form-group">
                             <label class="form-label fw-bold">Indikasi Medis</label>
                             <div class="input-group">
@@ -332,220 +350,216 @@ function addBillLab(container) {
                             </div>
                         </div>
                     `))
-        );
+                .append($("<td>", {
+                    style: "display: none;"
+                }).html(`
+                <input type="hidden" name="quantity[]" id="alabquantity${key}" value="0" class="form-control">
+                <input type="hidden" name="treatment[]" id="alabtreatment${key}" value="${tarifData.tarif_name}" class="form-control">
+                <input type="hidden" name="treat_date[]" id="alabtreat_date${key}" value="${get_date()}" class="form-control">
+                <input type="hidden" name="sell_price[]" id="alabsell_price${key}" value="${tarifData.amount}" class="form-control">
+                <input type="hidden" name="amount_paid[]" id="alabamount_paid${key}" value="${tarifData.amount}" class="form-control">
+                <input type="hidden" name="discount[]" id="alabdiscount${key}" value="0" class="form-control">
+                <input type="hidden" name="subsidisat[]" id="alabsubsidisat${key}" value="0" class="form-control">
+                <input type="hidden" name="subsidi[]" id="alabsubsidi${key}" value="0" class="form-control">
+                <input type="hidden" name="bill_id[]" id="alabbill_id${key}" value="${billJson?.bill_id ?? codeData}" class="form-control">
+                <input type="hidden" name="trans_id[]" id="alabtrans_id${key}" value="<?= $visit['trans_id']; ?>" class="form-control">
+                <input type="hidden" name="no_registration[]" id="alabno_registration${key}" value="<?= $visit['no_registration']; ?>" class="form-control">
+                <input type="hidden" name="theorder[]" id="alabtheorder${key}" value="${billJson?.length + 1}" class="form-control">
+                <input type="hidden" name="visit_id[]" id="alabvisit_id${key}" value="<?= $visit['visit_id']; ?>" class="form-control">
+                <input type="hidden" name="org_unit_code[]" id="alaborg_unit_code${key}" value="<?= $visit['org_unit_code']; ?>" class="form-control">
+                <input type="hidden" name="class_id[]" id="alabclass_id${key}" value="<?= $visit['class_id']; ?>" class="form-control">
+                <input type="hidden" name="class_id_plafond[]" id="alabclass_id_plafond${key}" value="<?= $visit['class_id_plafond']; ?>" class="form-control">
+                <input type="hidden" name="payor_id[]" id="alabpayor_id${key}" value="<?= $visit['payor_id']; ?>" class="form-control">
+                <input type="hidden" name="karyawan[]" id="alabkaryawan${key}" value="<?= $visit['karyawan']; ?>" class="form-control">
+                <input type="hidden" name="theid[]" id="alabtheid${key}" value="<?= $visit['pasien_id']; ?>" class="form-control">
+                <input type="hidden" name="thename[]" id="alabthename${key}" value="<?= $visit['diantar_oleh']; ?>" class="form-control">
+                <input type="hidden" name="theaddress[]" id="alabtheaddress${key}" value="<?= $visit['visitor_address']; ?>" class="form-control">
+                <input type="hidden" name="status_pasien_id[]" id="alabstatus_pasien_id${key}" value="<?= $visit['status_pasien_id']; ?>" class="form-control">
+                <input type="hidden" name="isrj[]" id="alabisrj${key}" value="<?= $visit['isrj']; ?>" class="form-control">
+                <input type="hidden" name="gender[]" id="alabgender${key}" value="<?= $visit['gender']; ?>" class="form-control">
+                <input type="hidden" name="ageyear[]" id="alabageyear${key}" value="<?= $visit['ageyear']; ?>" class="form-control">
+                <input type="hidden" name="agemonth[]" id="alabagemonth${key}" value="<?= $visit['agemonth']; ?>" class="form-control">
+                <input type="hidden" name="ageday[]" id="alabageday${key}" value="<?= $visit['ageday']; ?>" class="form-control">
+                <input type="hidden" name="kal_id[]" id="alabkal_id${key}" value="<?= $visit['kal_id']; ?>" class="form-control">
+                <input type="hidden" name="karyawan[]" id="alabkaryawan${key}" value="<?= $visit['karyawan']; ?>" class="form-control">
+                <input type="hidden" name="class_room_id[]" id="alabclass_room_id${key}" value="<?= $visit['class_room_id']; ?>" class="form-control">
+                <input type="hidden" name="bed_id[]" id="alabbed_id${key}" value="<?= $visit['bed_id']; ?>" class="form-control">
+                <input type="hidden" name="clinic_id[]" id="alabclinic_id${key}" value="P013" class="form-control">
+                <input type="hidden" name="clinic_id_from[]" id="alabclinic_id_from${key}" value="<?= $visit['clinic_id']; ?>" class="form-control">
+                <input type="hidden" name="exit_date[]" id="alabexit_date${key}" value="${get_date()}" class="form-control">
+                <input type="hidden" name="cashier[]" id="alabcashier${key}" value="<?= user_id(); ?>" class="form-control">
+                <input type="hidden" name="modified_from[]" id="alabmodified_from${key}" value="<?= user()->username ?>" class="form-control">
+                <input type="hidden" name="islunas[]" id="alabislunas${key}" value="0" class="form-control">
+                <input type="hidden" name="measure_id[]" id="alabmeasure_id${key}" value="" class="form-control">
+                <input type="hidden" name="tarif_id[]" id="alabtarif_id${key}" value="${tarifData.tarif_id}" class="form-control">
+                <input type="hidden" name="body_id[]" id="alabbody_id${key}" value="${tarifData.body_id ?? '<?= @$visit['session_id'] ?>'}" class="form-control">
+            `))
+            );
 
 
-        $("#labChargesBody")
-            .append('<input type="hidden" name="quantity[]" id="alabquantity' + key +
-                '" placeholder="" value="0" class="form-control" >')
-            .append('<input name="treatment[]" id="alabtreatment' + key + '" type="hidden" value="' + tarifData
-                .tarif_name +
-                '" class="form-control" />')
-            .append('<input name="treat_date[]" id="alabtreat_date' + key + '" type="hidden" value="' + get_date() +
-                '" class="form-control" />')
-            .append('<input name="sell_price[]" id="alabsell_price' + key + '" type="hidden" value="' + tarifData
-                .amount +
-                '" class="form-control" />')
-            .append('<input name="amount_paid[]" id="alabamount_paid' + key + '" type="hidden" value="' + tarifData
-                .amount +
-                '" class="form-control" />')
-            .append('<input name="discount[]" id="alabdiscount' + key + '" type="hidden" value="' + 0 +
-                '" class="form-control" />')
-            .append('<input name="subsidisat[]" id="alabsubsidisat' + key + '" type="hidden" value="' + 0 +
-                '" class="form-control" />')
-            .append('<input name="subsidi[]" id="alabsubsidi' + key + '" type="hidden" value="' + 0 +
-                '" class="form-control" />')
-
-            .append('<input name="bill_id[]" id="alabbill_id' + key +
-                '" type="hidden" value="" class="form-control" />')
-            .append('<input name="trans_id[]" id="alabtrans_id' + key +
-                '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="no_registration[]" id="alabno_registration' + key +
-                '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="theorder[]" id="alabtheorder' + key + '" type="hidden" value="' + (billJson?.length +
-                    1) +
-                '" class="form-control" />')
-            .append('<input name="visit_id[]" id="alabvisit_id' + key +
-                '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="org_unit_code[]" id="alaborg_unit_code' + key +
-                '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="class_id[]" id="alabclass_id' + key +
-                '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
-            .append('<input name="class_id_plafond[]" id="alabclass_id_plafond' + key +
-                '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            .append('<input name="payor_id[]" id="alabpayor_id' + key +
-                '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="alabkaryawan' + key +
-                '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="theid[]" id="alabtheid' + key +
-                '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
-            .append('<input name="thename[]" id="alabthename' + key +
-                '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
-            .append('<input name="theaddress[]" id="alabtheaddress' + key +
-                '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
-            .append('<input name="status_pasien_id[]" id="alabstatus_pasien_id' + key +
-                '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isrj[]" id="alabisrj' + key +
-                '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
-            .append('<input name="gender[]" id="alabgender' + key +
-                '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
-            .append('<input name="ageyear[]" id="alabageyear' + key +
-                '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
-            .append('<input name="agemonth[]" id="alabagemonth' + key +
-                '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
-            .append('<input name="ageday[]" id="alabageday' + key +
-                '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
-            .append('<input name="kal_id[]" id="alabkal_id' + key +
-                '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="alabkaryawan' + key +
-                '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="class_room_id[]" id="alabclass_room_id' + key +
-                '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
-            .append('<input name="bed_id[]" id="alabbed_id' + key +
-                '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
-            .append('<input name="clinic_id[]" id="alabclinic_id' + key +
-                '" type="hidden" value="P013" class="form-control" />')
-            .append('<input name="clinic_id_from[]" id="alabclinic_id_from' + key +
-                '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
-            .append('<input name="exit_date[]" id="alabexit_date' + key + '" type="hidden" value="' + get_date() +
-                '" class="form-control" />')
-            .append('<input name="cashier[]" id="alabcashier' + key +
-                '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
-            .append('<input name="modified_from[]" id="alabmodified_from' + key +
-                '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
-            .append('<input name="islunas[]" id="alabislunas' + key +
-                '" type="hidden" value="0" class="form-control" />')
-            .append('<input name="measure_id[]" id="alabmeasure_id' + key +
-                '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tarif_id[]" id="alabtarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id +
-                '" class="form-control" />')
-            .append('<input name="body_id[]" id="alabbody_id' + key +
-                '" type="hidden" value="' + (tarifData?.body_id ?? "<?= @$visit['session_id']; ?>") +
-                '" class="form-control" />');
-
-
-        if ('<?= $visit['isrj']; ?>' == '0') {
-            $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
-            $("#abed_id" + key).val('<?= $visit['bed_id']; ?>');
-            <?php
+            if ('<?= $visit['isrj']; ?>' == '0') {
+                $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
+                $("#abed_id" + key).val('<?= $visit['bed_id']; ?>');
+                <?php
                             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
                             ?>
-            $("#" + key)
-                .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
-                    '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
-                    '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
+                $("#" + key)
+                    .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />'
+                    )
+                    .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
+                        '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
 
-            <?php
+                <?php
                             } else {
                             ?>
-            $("#" + key)
-                .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
-                    '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
-                .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
-                    '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
+                $("#" + key)
+                    .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
+                        '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
 
-            <?php
+                <?php
                             }
                             ?>
-        } else {
-            <?php
+            } else {
+                <?php
                             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
                             ?>
-            $("#" + key)
-                .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
-                    '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
-                    '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
+                $("#" + key)
+                    .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />'
+                    )
+                    .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
+                        '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
 
-            <?php
+                <?php
                             } else {
                             ?>
+                $("#" + key)
+                    .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
+                        '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
+                <?php
+                            }
+                            ?>
+            }
             $("#" + key)
-                .append('<input name="employee_id_from[]" id="alabemployee_id_from' + key +
+                .append('<input name="employee_id[]" id="alabemployee_id' + key +
                     '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                .append('<input name="doctor_from[]" id="alabdoctor_from' + key +
+                .append('<input name="doctor[]" id="alabdoctor' + key +
                     '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-            <?php
-                            }
-                            ?>
-        }
-        $("#" + key)
-            .append('<input name="employee_id[]" id="alabemployee_id' + key +
-                '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-            .append('<input name="doctor[]" id="alabdoctor' + key +
-                '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-            .append('<input name="amount[]" id="alabamount' + key + '" type="hidden" value="' + tarifData.amount +
-                '" class="form-control" />')
-            .append('<input name="nota_no[]" id="alabnota_no' + key + '" type="hidden" value="' + nota_no +
-                '" class="form-control" />')
-            .append('<input name="profesi[]" id="alabprofesi' + key +
-                '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tagihan[]" id="alabtagihan' + key + '" type="hidden" value="' + tarifData.amount * $(
-                "#alabquantity" + key).val() + '" class="form-control" />')
-            .append('<input name="treatment_plafond[]" id="alabtreatment_plafond' + key + '" type="hidden" value="' +
-                tarifData.amount + '" class="form-control" />')
-            .append('<input name="tarif_type[]" id="alabtarif_type' + key + '" type="hidden" value="' + tarifData
-                .tarif_type + '" class="form-control" />')
+                .append('<input name="amount[]" id="alabamount' + key + '" type="hidden" value="' +
+                    tarifData
+                    .amount +
+                    '" class="form-control" />')
+                .append('<input name="nota_no[]" id="alabnota_no' + key + '" type="hidden" value="' +
+                    nota_no +
+                    '" class="form-control" />')
+                .append('<input name="profesi[]" id="alabprofesi' + key +
+                    '" type="hidden" value="" class="form-control" />')
+                .append('<input name="tagihan[]" id="alabtagihan' + key + '" type="hidden" value="' +
+                    tarifData
+                    .amount *
+                    $(
+                        "#alabquantity" + key).val() + '" class="form-control" />')
+                .append('<input name="treatment_plafond[]" id="alabtreatment_plafond' + key +
+                    '" type="hidden" value="' +
+                    tarifData.amount + '" class="form-control" />')
+                .append('<input name="tarif_type[]" id="alabtarif_type' + key + '" type="hidden" value="' +
+                    tarifData
+                    .tarif_type + '" class="form-control" />')
 
-        if ('<?= $visit['class_id']; ?>' != '<?= $visit['class_id_plafond']; ?>') {
-            var tarifKelas = getPlafond('<?= $visit['class_id_plafond']; ?>', tarifData.tarif_name, tarifData.isCito);
-            if (tarifKelas > 0 && '<?= $visit['payor_id']; ?>' != 0 && '<?= $visit['class_id_plafond']; ?>' != 99) {
-                $("#" + key).append('<input name="amount_plafond[]" id="alabamount_plafond' + key +
-                    '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
-                $("#" + key).append('<input name="amount_paid_plafond[]" id="alabamount_paid_plafond' + key +
-                    '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
-                $("#" + key).append('<input name="class_id_plafond[]" id="alabclass_id_plafond' + key +
-                    '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-                $("#" + key).append('<input name="tarif_id_plafond[]" id="alabtarif_id_plafond' + key +
-                    '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+            if ('<?= $visit['class_id']; ?>' != '<?= $visit['class_id_plafond']; ?>') {
+                var tarifKelas = getPlafond('<?= $visit['class_id_plafond']; ?>', tarifData.tarif_name,
+                    tarifData
+                    .isCito);
+                if (tarifKelas > 0 && '<?= $visit['payor_id']; ?>' != 0 &&
+                    '<?= $visit['class_id_plafond']; ?>' !=
+                    99) {
+                    $("#" + key).append('<input name="amount_plafond[]" id="alabamount_plafond' + key +
+                        '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
+                    $("#" + key).append('<input name="amount_paid_plafond[]" id="alabamount_paid_plafond' +
+                        key +
+                        '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
+                    $("#" + key).append('<input name="class_id_plafond[]" id="alabclass_id_plafond' + key +
+                        '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />'
+                    )
+                    $("#" + key).append('<input name="tarif_id_plafond[]" id="alabtarif_id_plafond' + key +
+                        '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+                } else {
+                    $("#" + key).append('<input name="amount_plafond[]" id="alabamount_plafond' + key +
+                        '" type="hidden" value="0" class="form-control" />')
+                    $("#" + key).append('<input name="amount_paid_plafond[]" id="alabamount_paid_plafond' +
+                        key +
+                        '" type="hidden" value="0" class="form-control" />')
+                    $("#" + key).append('<input name="class_id_plafond[]" id="alabclass_id_plafond' + key +
+                        '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />'
+                    )
+                    $("#" + key).append('<input name="tarif_id_plafond[]" id="alabtarif_id_plafond' + key +
+                        '" type="hidden" value="" class="form-control" />')
+                }
             } else {
                 $("#" + key).append('<input name="amount_plafond[]" id="alabamount_plafond' + key +
                     '" type="hidden" value="0" class="form-control" />')
-                $("#" + key).append('<input name="amount_paid_plafond[]" id="alabamount_paid_plafond' + key +
+                $("#" + key).append('<input name="amount_paid_plafond[]" id="alabamount_paid_plafond' +
+                    key +
                     '" type="hidden" value="0" class="form-control" />')
                 $("#" + key).append('<input name="class_id_plafond[]" id="alabclass_id_plafond' + key +
-                    '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+                    '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />'
+                )
                 $("#" + key).append('<input name="tarif_id_plafond[]" id="alabtarif_id_plafond' + key +
                     '" type="hidden" value="" class="form-control" />')
             }
+
+            $("#alabquantity" + key).keydown(function(e) {
+                !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e
+                    .keyCode >= 96 &&
+                    e
+                    .keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 ==
+                    e
+                    .keyCode ||
+                    46 == e
+                    .keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val()
+                    .indexOf(
+                        ".") &&
+                    190 ==
+                    e
+                    .keyCode && e.preventDefault();
+            });
+            $('#alabquantity' + key).on("input", function() {
+                var dInput = this.value;
+                $("#alabamount_paid" + key).val($("#alabamount" + key).val() * dInput)
+                $("#alabdisplayamount_paid" + key).html(formatCurrency($("#alabamount" + key)
+                    .val() *
+                    dInput))
+                $("#alabtagihan" + key).val($("#alabamount" + key).val() * dInput)
+                $("#alabamount_paid_plafond" + key).val($("#alabamount_plafond" + key).val() *
+                    dInput)
+                $("#alabdisplayamount_paid_plafond" + key).html(formatCurrency($(
+                        "#alabamount_plafond" +
+                        key)
+                    .val() *
+                    dInput))
+            })
         } else {
-            $("#" + key).append('<input name="amount_plafond[]" id="alabamount_plafond' + key +
-                '" type="hidden" value="0" class="form-control" />')
-            $("#" + key).append('<input name="amount_paid_plafond[]" id="alabamount_paid_plafond' + key +
-                '" type="hidden" value="0" class="form-control" />')
-            $("#" + key).append('<input name="class_id_plafond[]" id="alabclass_id_plafond' + key +
-                '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            $("#" + key).append('<input name="tarif_id_plafond[]" id="alabtarif_id_plafond' + key +
-                '" type="hidden" value="" class="form-control" />')
+            errorSwal("Tarif sudah Ada ")
+            let indexLenghtLabTable = $("#labChargesBody tr.number").length;
+            if (indexLenghtLabTable === 0) {
+                getBillPoli(nomor, ke, mulai, akhir, lunas, 'P013', rj, status, nota_no, trans)
+
+            }
         }
 
-        $("#alabquantity" + key).keydown(function(e) {
-            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e
-                .keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode ||
-                46 == e
-                .keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 ==
-                e
-                .keyCode && e.preventDefault();
-        });
-        $('#alabquantity' + key).on("input", function() {
-            var dInput = this.value;
-            $("#alabamount_paid" + key).val($("#alabamount" + key).val() * dInput)
-            $("#alabdisplayamount_paid" + key).html(formatCurrency($("#alabamount" + key).val() * dInput))
-            $("#alabtagihan" + key).val($("#alabamount" + key).val() * dInput)
-            $("#alabamount_paid_plafond" + key).val($("#alabamount_plafond" + key).val() * dInput)
-            $("#alabdisplayamount_paid_plafond" + key).html(formatCurrency($("#alabamount_plafond" + key)
-                .val() *
-                dInput))
-        })
-    } else {
-        errorSwal("Tarif sudah Ada ")
-    }
-
-
+    }, 500);
     // tarifData.amount
 
 }
+
+
+
+
 
 
 
@@ -577,7 +591,8 @@ function getHasilLab(nomor, visit) {
 
             hasilLabJson.forEach((element, key) => {
                 $("#viewlab" + hasilLabJson[key].periksa_tgl).append($("<tr>")
-                    .append($("<td>").append($("<p>").html(hasilLabJson[key].parameter_name)))
+                    .append($("<td>").append($("<p>").html(hasilLabJson[key]
+                        .parameter_name)))
                     .append($("<td>").html(hasilLabJson[key].hasil))
                     .append($("<td>").html(hasilLabJson[key].satuan))
                     .append($("<td>").html(hasilLabJson[key].nilai_rujukan))
@@ -591,39 +606,39 @@ function getHasilLab(nomor, visit) {
     });
 }
 
-function getListRequestLab(nomor, visit) {
-    $.ajax({
-        url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestLab',
-        type: "POST",
-        data: JSON.stringify({
-            'nomor': nomor,
-            'visit': visit
-        }),
-        dataType: 'json',
-        contentType: false,
-        cache: false,
-        processData: false,
-        success: function(data) {
+// function getListRequestLab(nomor, visit) {
+//     $.ajax({
+//         url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestLab',
+//         type: "POST",
+//         data: JSON.stringify({
+//             'nomor': nomor,
+//             'visit': visit
+//         }),
+//         dataType: 'json',
+//         contentType: false,
+//         cache: false,
+//         processData: false,
+//         success: function(data) {
 
-            hasilLabJson = data
+//             hasilLabJson = data
 
-            $("#listRequestLab").html("")
+//             $("#listRequestLab").html("")
 
 
-            hasilLabJson.forEach((element, key) => {
-                $("#listRequestLab").append(
-                    '<div class="col-md-3"> <div class = "card bg-light border border-1 rounded-4 m-4" ><div class = "card-body" ><h3> Periksa Lab </h3> <p> Tanggal ' +
-                    element.vactination_date +
-                    ' </p> <div class = "text-end" ><a class = "btn btn-secondary" href="<?= base_url(); ?>/admin/rekammedis/getLabOnlineRequest/' +
-                    btoa('<?= json_encode($visit); ?>') + '/' + element.vactination_id +
-                    '" target="_blank"> Lihat </a> </div> </div> </div> </div>')
-            });
-        },
-        error: function() {
+//             hasilLabJson.forEach((element, key) => {
+//                 $("#listRequestLab").append(
+//                     '<div class="col-md-3"> <div class = "card bg-light border border-1 rounded-4 m-4" ><div class = "card-body" ><h3> Periksa Lab </h3> <p> Tanggal ' +
+//                     element.vactination_date +
+//                     ' </p> <div class = "text-end" ><a class = "btn btn-secondary" href="<?= base_url(); ?>/admin/rekammedis/getLabOnlineRequest/' +
+//                     btoa('<?= json_encode($visit); ?>') + '/' + element.vactination_id +
+//                     '" target="_blank"> Lihat </a> </div> </div> </div> </div>')
+//             });
+//         },
+//         error: function() {
 
-        }
-    });
-}
+//         }
+//     });
+// }
 </script>
 <script>
 function filterBillLab() {
@@ -653,8 +668,8 @@ $("#searchLIS").off().on("click", function() {
     const startDate = $("#startDateLIS").val();
     const endDate = $("#endDateLIS").val();
 
-    const formattedStartDate = convertDate(startDate);
-    const formattedEndDate = convertDate(endDate);
+    const formattedStartDate = convertLabDate(startDate);
+    const formattedEndDate = convertLabDate(endDate);
 
     const start = formattedStartDate ? `${formattedStartDate} 00:00:01` : null;
     const end = formattedEndDate ? `${formattedEndDate} 23:59:59` : null;
@@ -673,8 +688,8 @@ $("#searchLISHasil").off().on("click", function() {
     let hasil = $("#searchTarifLabHasil").val();
     let parsedHasil = JSON.parse(hasil);
 
-    let formattedStartDate = convertDate(startDate);
-    let formattedEndDate = convertDate(endDate);
+    let formattedStartDate = convertLabDate(startDate);
+    let formattedEndDate = convertLabDate(endDate);
     let tarifId = parsedHasil?.tarif_id;
     let noPasien = nomor
 
@@ -1066,8 +1081,8 @@ $("#saveLabLIS").off().on("click", () => {
     const startDate = $("#startDateLIS").val();
     const endDate = $("#endDateLIS").val();
 
-    const formattedStartDate = convertDate(startDate);
-    const formattedEndDate = convertDate(endDate);
+    const formattedStartDate = convertLabDate(startDate);
+    const formattedEndDate = convertLabDate(endDate);
     const start = formattedStartDate ? `${formattedStartDate} 00:00:01` : null;
     const end = formattedEndDate ? `${formattedEndDate} 23:59:59` : null;
 
@@ -1325,10 +1340,9 @@ $('#searchBloodRequest').off().on('click', function(e) {
     let jsonObj = {};
 
     formData.forEach((value, key) => {
-        console.log(key);
 
         if (key === 'start_date' || key === 'end_date') {
-            jsonObj[key] = convertDate2(value);
+            jsonObj[key] = convertLabDate2(value);
         } else {
             jsonObj[key] = value;
         }
@@ -1339,7 +1353,7 @@ $('#searchBloodRequest').off().on('click', function(e) {
 })
 
 
-const initialFlatpic = () => {
+const initialFlatpicLab = () => {
     flatpickr(".dateflatpickr-lab", {
         enableTime: false,
         dateFormat: "d/m/Y",
@@ -1468,7 +1482,7 @@ const getDataBlood = (props) => {
                 enableTime: true,
                 time_24hr: true,
                 onChange: function(selectedDates, dateStr, instance) {
-                    console.log(selectedDates);
+                    // console.log(selectedDates);
                 }
             });
 
@@ -1525,18 +1539,20 @@ const getDataBlood = (props) => {
                             successSwal('Data berhasil Diduplikat.');
                             getDataBlood({
                                 visit_id: visit,
-                                start_date: convertDate2($("#startDateBloodRequest")
+                                start_date: convertLabDate2($(
+                                        "#startDateBloodRequest")
                                     .val()),
-                                end_date: convertDate2($('#endDateBloodRequest')
+                                end_date: convertLabDate2($('#endDateBloodRequest')
                                     .val()),
                             });
                         } else {
                             errorSwal(res?.message)
                             getDataBlood({
                                 visit_id: visit,
-                                start_date: convertDate2($("#startDateBloodRequest")
+                                start_date: convertLabDate2($(
+                                        "#startDateBloodRequest")
                                     .val()),
-                                end_date: convertDate2($('#endDateBloodRequest')
+                                end_date: convertLabDate2($('#endDateBloodRequest')
                                     .val()),
                             });
                         }

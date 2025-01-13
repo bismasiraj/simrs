@@ -30,14 +30,14 @@
         var titlerj = '';
 
         if (pasienDiagnosa?.class_room_id != '' && pasienDiagnosa?.class_room_id != null) {
-            titlerj = ' RAWAT JALAN'
+            titlerj = ' RAWAT JALAN '
         } else {
-            titlerj = ' RAWAT JALAN'
+            titlerj = ' RAWAT JALAN '
         }
+        titleDoc = ("ASESMEN MEDIS " + pasienDiagnosa?.specialist_type + titlerj)
 
         // $.each(mapAssessment, function(key, value) {
         //     if (value?.doc_type == 1 && value?.specialist_type_id == pasienDiagnosa?.specialist_type_id) {
-        //         titleDoc = ("ASESMEN MEDIS " + value?.specialist_type + titlerj)
         //     }
         // })
         var accordionContent = `
@@ -47,7 +47,7 @@
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosaPerawat` +
             bodyId +
             `" aria-expanded="false" aria-controls="collapseDiagnosa` + bodyId + `">
-                    <b>DIAGNOSA ` + titleDoc + `</b>
+                    DIAGNOSA &nbsp<b> ` + titleDoc + `</b> <i>${pasienDiagnosa?.date_of_diagnosa?.slice(0, 16)}</i> <b>${'by: ' + pasienDiagnosa?.fullname}</b>
                 </button>
             </h2>
             <div id="collapseDiagnosaPerawat` + bodyId +
@@ -401,16 +401,16 @@
 
     const appendDiagnosaPerawat = (accordionId, bodyId, exam) => {
 
-        let title = 'Diagnosa Perawat Assessment Keperawatan Umum ' + exam.examination_date
+        let title = 'Diagnosa Perawat Assessment Keperawatan Umum ' + exam?.examination_date?.slice(0, 16)
 
-        if (exam.vs_status_id == '1') {
-            title = 'Diagnosa Perawat Assessment Keperawatan Dewasa ' + exam.examination_date
-        } else if (exam.vs_status_id == '4') {
-            title = 'Diagnosa Perawat Assessment Keperawatan Neonatus ' + exam.examination_date
-        } else if (exam.vs_status_id == '5') {
-            title = 'Diagnosa Perawat Assessment Keperawatan Anak ' + exam.examination_date
-        } else if (exam.vs_status_id == '2' || exam.vs_status_id == '7') {
-            title = 'Diagnosa Perawat CPPT ' + exam.examination_date
+        if (exam?.vs_status_id == '1') {
+            title = 'Diagnosa Perawat Assessment Keperawatan Dewasa ' + exam?.examination_date?.slice(0, 16) + 'by: ' + exam?.petugas
+        } else if (exam?.vs_status_id == '4') {
+            title = 'Diagnosa Perawat Assessment Keperawatan Neonatus ' + exam?.examination_date?.slice(0, 16) + 'by: ' + exam?.petugas
+        } else if (exam?.vs_status_id == '5') {
+            title = 'Diagnosa Perawat Assessment Keperawatan Anak ' + exam?.examination_date?.slice(0, 16) + 'by: ' + exam?.petugas
+        } else if (exam?.vs_status_id == '2' || exam?.vs_status_id == '7') {
+            title = 'Diagnosa Perawat CPPT ' + exam?.examination_date?.slice(0, 16) + 'by: ' + exam?.petugas
         }
         var accordionContent = `
         <div id="adiagpGroup` + bodyId + `" class="accordion-item">

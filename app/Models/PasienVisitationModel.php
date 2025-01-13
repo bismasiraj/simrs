@@ -356,6 +356,23 @@ class PasienVisitationModel extends Model
                     @NOKARTU = N'%$nokartu%'
 
             SELECT	'Return Value' = @return_value";
+
+        // $sql = "DECLARE	@return_value int
+
+        //     EXEC	@return_value = [dbo].[SP_SEARCHKUNJUNGANRIAKOM_FORM]
+        //             @X = N'100',
+        //             @NAMA = N'%%',
+        //             @KODE = N'%%',
+        //             @ALAMAT = N'%%',
+        //             @POLI = N'%P002%',
+        //             @MULAI = N'2024-12-01',
+        //             @AKHIR = N'2025-02-01',
+        //             @KELUAR = N'%',
+        //             @SUDAH = N'%%',
+        //             @DOKTER = N'%%',
+        //             @NOKARTU = N'%%'
+
+        //     SELECT	'Return Value' = @return_value";
         // $sql = "SP_SEARCHKUNJUNGANRIAKOM_FORM;1 @X = '100',
         // @NAMA = '%$nama%',
         // @KODE = '%$kode%',
@@ -367,6 +384,8 @@ class PasienVisitationModel extends Model
         // @SUDAH = '%$sudah%',
         // @DOKTER = '%$dokter%',
         // @NOKARTU = '%$nokartu%'";
+
+
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }

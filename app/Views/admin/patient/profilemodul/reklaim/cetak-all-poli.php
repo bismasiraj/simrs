@@ -838,7 +838,7 @@
                     <div class="col-auto" align="center">
                         <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
                     </div>
-                    <div class="col mt-2">
+                    <div class="col mt-2 text-center">
                         <h3><?= @$kop['name_of_org_unit'] ?></h3>
                         <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
                             <?= @$kop['fax'] ?? "-"?>,
@@ -1026,7 +1026,7 @@
         if (diagnosaList.length === 0) {
             result = "";
         } else if (diagnosaList.length === 1) {
-            result = "1";
+            result = diagnosaList
         } else {
             result = diagnosaList.join(" ,<br>");
         }
@@ -1247,10 +1247,12 @@
                     <div class="col-auto" align="center">
                         <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
                     </div>
-                    <div class="col mt-2">
+                    <div class="col mt-2 text-center">
                         <h3><?= @$kop['name_of_org_unit'] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
-                        <p><?= @$kop['contact_address'] ?></p>
+                        <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
+                            <?= @$kop['fax'] ?? "-"?>,
+                            <?= @$kop['kota'] ?? "-"?></p>
+                        <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
 
@@ -2176,7 +2178,7 @@
                     <div class="col-auto" align="center">
                         <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
                     </div>
-                    <div class="col mt-2">
+                    <div class="col mt-2 text-center">
                         <h3><?= @$kop['name_of_org_unit'] ?></h3>
                         <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
                             <?= @$kop['fax'] ?? "-"?>,
@@ -2546,10 +2548,12 @@
                     <div class="col-auto" align="center">
                         <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
                     </div>
-                    <div class="col mt-2">
+                    <div class="col mt-2 text-center">
                         <h3><?= @$kop['name_of_org_unit'] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
-                        <p><?= @$kop['contact_address'] ?></p>
+                        <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
+                            <?= @$kop['fax'] ?? "-"?>,
+                            <?= @$kop['kota'] ?? "-"?></p>
+                        <p><?= @$kop['sk'] ?? "-"?></p>
                     </div>
                     <div class="col-auto" align="center">
 

@@ -212,40 +212,26 @@
 
 
         const initializeFlatpickrOperasi = () => {
-            $(".datetimeflatpickr").each(function() {
-                // Get the value of the input
+            $(".datetimeflatpickr-oprs").each(function() {
                 const inputVal = $(this).val();
 
-                // Try to parse the input value in both formats
                 let initialDate = '';
 
                 if (inputVal) {
-                    // Check if the value is in ISO 8601 format (e.g., "2024-12-17T16:24")
                     if (moment(inputVal, moment.ISO_8601, true).isValid()) {
-                        // If the value is valid ISO 8601, format it to the desired format
                         initialDate = moment(inputVal).format("DD/MM/YYYY HH:mm");
-                    }
-                    // Check if the value is in the custom format (e.g., "17/12/2024 16:24")
-                    else if (moment(inputVal, "DD/MM/YYYY HH:mm", true).isValid()) {
-                        // If it's valid in the custom format, use it directly
+                    } else if (moment(inputVal, "DD/MM/YYYY HH:mm", true).isValid()) {
                         initialDate = moment(inputVal, "DD/MM/YYYY HH:mm").format("DD/MM/YYYY HH:mm");
-                    }
-                    // Check if the value is in the custom format (e.g., "17-12-2024 16:24")
-                    else if (moment(inputVal, "DD-MM-YYYY HH:mm", true).isValid()) {
-                        // If it's valid in the custom format, use it directly
+                    } else if (moment(inputVal, "DD-MM-YYYY HH:mm", true).isValid()) {
                         initialDate = moment(inputVal, "DD-MM-YYYY HH:mm").format("DD/MM/YYYY HH:mm");
-                    }
-                    // Handle invalid date formats if necessary
-                    else {
+                    } else {
                         initialDate = moment().format(
-                            "DD/MM/YYYY HH:mm"); // Fallback to current date if invalid
+                            "DD/MM/YYYY HH:mm");
                     }
                 } else {
-                    // If input is empty, default to the current date and time
                     initialDate = moment().format("DD/MM/YYYY HH:mm");
                 }
 
-                // Initialize flatpickr with the correct value
                 flatpickr(this, {
                     enableTime: true,
                     dateFormat: "d/m/Y H:i", // Display format
@@ -254,18 +240,15 @@
                 });
             });
 
-            // Allow user to edit the datetime input field
-            $(".datetimeflatpickr").prop("readonly", false);
+            $(".datetimeflatpickr-oprs").prop("readonly", false);
 
-            // Event listener for when the date changes
-            $(".datetimeflatpickr").on("change", function() {
+            $(".datetimeflatpickr-oprs").on("change", function() {
                 let theid = $(this).attr("id");
-                if (theid.includes("flat")) {
+                if (String(theid).includes("flat")) {
                     theid = theid.replace("flat", "");
                 }
                 let thevalue = $(this).val();
 
-                // Validate the date input
                 if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
                     let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm");
                     $("#" + theid).val(formattedDate);
@@ -273,13 +256,22 @@
                     let formattedDate = moment(thevalue, "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm");
                     $("#" + theid).val(formattedDate);
                 } else {
-                    // Handle invalid date (optional)
                     console.warn("Invalid date entered:", thevalue);
                 }
             });
 
-            // Trigger the change event programmatically (if needed)
-            $(".datetimeflatpickr").trigger("change");
+            $(".datetimeflatpickr-oprs").trigger("change");
+
+
+            flatpickr(".datetimeflatpickr-oprs-anes", {
+                enableTime: true,
+                dateFormat: "d/m/Y H:i",
+                time_24hr: true,
+                onChange: function(selectedDates, dateStr, instance) {}
+            });
+
+            $(".datetimeflatpickr-oprs-anes").prop("readonly", false)
+
         };
 
 
@@ -313,7 +305,7 @@
                     $(this).attr('disabled', 'disabled');
                 });
 
-                let isChecked = $('input[name="patient_category_id"]:checked').val();
+                let isChecked = parseInt($('input[name="patient_category_id_oprs"]:checked').val(), 10)
                 jsonObj['patient_category_id'] = isChecked;
                 let operationType = $("#operation_type-permintaan_operasi").val();
                 jsonObj['operation_type'] = operationType;
@@ -351,8 +343,8 @@
                     jsonObj[key] = value;
                 });
 
-                let isChecked = $('input[name="patient_category_id"]:checked').length ? $(
-                    'input[name="patient_category_id"]:checked').val() : null;
+                let isChecked = $('input[name="patient_category_id_oprs"]:checked').length ? parseInt($(
+                    'input[name="patient_category_id_oprs"]:checked').val(), 10) : null;
                 jsonObj['patient_category_id'] = isChecked;
 
                 let operationType = $("#operation_type-permintaan_operasi").val();
@@ -766,6 +758,7 @@
                 let item = pasienOperasiValue[index];
                 pasienOperasiSelected = item;
 
+
                 $('#bodydataRequestOperation > tr').removeClass('table-primary');
                 $(this).closest('tr').addClass('table-primary')
                 // assessmentPraOperasi(item)
@@ -810,7 +803,7 @@
                 cetakOperasi({
                     vactination_id: item?.vactination_id,
                     element_id: '#btn-print-laporan-pembedahan',
-                    method: 'cetak_laporan_pembedahan'
+                    method: 'cetak_laporan_pembedahan',
                 })
 
                 postData({
@@ -919,11 +912,14 @@
                 $("#nama-tindakan-operasi").text($(this).data('treatname') + ' (' + $(this).data(
                         'date') +
                     ')');
-                $('#operation_planning').val($(this).data('treatname'));
+                $('#operation_planning').html($(this).data('treatname'));
                 $("#document_id_checklist_keselamatan").val($(this).data('id')); //new
                 $("#document_id_checklist_anestesi").val($(this).data('id')); //new
                 $("#document_id_informasi-post-operasi").val($(this).data('id')); //new
                 $("#apobody_id").val($(this).data('id')); //new
+                // $("#apostart_operation").val(moment(item?.start_operation).format("DD/MM/YYYY HH:mm"))
+
+
 
                 assessmentPraOperasi({
                     vactination_id: $(this).data('id')
@@ -979,8 +975,8 @@
                 });
 
 
-                let isChecked = $('input[name="patient_category_id"]:checked').length ? $(
-                    'input[name="patient_category_id"]:checked').val() : null;
+                let isChecked = $('input[name="patient_category_id_oprs"]:checked').length ? parseInt($(
+                    'input[name="patient_category_id_oprs"]:checked').val(), 10) : null;
                 jsonObj['patient_category_id'] = isChecked;
                 let operationType = $("#operation_type-permintaan_operasi").val();
                 jsonObj['operation_type'] = operationType;
@@ -2559,7 +2555,7 @@
                     <div class="col-md-4" id="formDate-tindakan-oprasi-1">
                         <label for="start_operation-permintaan_operasi">Tanggal/Jam Operasi</label>
                         <input id="start_operation-permintaan_operasi" name="start_operation" type="hidden" class="form-control" placeholder="yyyy-mm-dd HH:mm ">
-                        <input class="form-control datetimeflatpickr" type="text" id="flatstart_operation-permintaan_operasi" >
+                        <input class="form-control datetimeflatpickr-oprs" type="text" id="flatstart_operation-permintaan_operasi" >
                     </div>
                     <div class="col-md-6" id="formDate-tindakan-oprasi-2">
                         <div class="row">
@@ -2567,7 +2563,7 @@
                                 <div class="form-group">
                                     <label for="start_operation-range">Tanggal/Jam Operasi</label>
                                       <input id="start_operation-permintaan_operasi" name="start_operation" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
-                                    <input class="form-control datetimeflatpickr" type="text" id="flatstart_operation-permintaan_operasi" >
+                                    <input class="form-control datetimeflatpickr-oprs" type="text" id="flatstart_operation-permintaan_operasi" >
                                     </div>
                             </div>
                             <div class="col-md-2 d-flex align-items-end justify-content-center">
@@ -2579,7 +2575,7 @@
                                 <div class="form-group">
                                     <label for="end_operation-permintaan_operasi">&nbsp;</label>
                                     <input id="end_operation-permintaan_operasi" name="end_operation" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
-                                    <input class="form-control  datetimeflatpickr" type="text" id="flatend_operation-permintaan_operasi" name="end_operation">
+                                    <input class="form-control  datetimeflatpickr-oprs" type="text" id="flatend_operation-permintaan_operasi" name="end_operation">
                                 </div>
                             </div>
                         </div>
@@ -2605,15 +2601,15 @@
                     <div class="col-md-4">
                         <label>Emergency / Elektif</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="patient_category_id-elektif" name="patient_category_id" value="0" checked>
+                            <input class="form-check-input" type="radio" id="patient_category_id-elektif" name="patient_category_id_oprs" value="0">
                             <label class="form-check-label" for="patient_category_id-elektif">Elektif</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="patient_category_id-cyto" name="patient_category_id" value="1">
+                            <input class="form-check-input" type="radio" id="patient_category_id-cyto" name="patient_category_id_oprs" value="1">
                             <label class="form-check-label" for="patient_category_id-cyto">Cyto</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="patient_category_id-emergency" name="patient_category_id" value="2">
+                            <input class="form-check-input" type="radio" id="patient_category_id-emergency" name="patient_category_id_oprs" value="2">
                             <label class="form-check-label" for="patient_category_id-emergency">Emergency</label>
                         </div>
                     </div>
@@ -2914,9 +2910,13 @@
             $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
-            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === 0);
-            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === 1);
-            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === 2);
+            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === "0" || result
+                .patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === "1" || result
+                .patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === "2" || result
+                .patient_category_id === 2);
+
 
             $('#operation_type-permintaan_operasi').val(result.operation_type);
 
@@ -3118,9 +3118,12 @@
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
 
-            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === 0);
-            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === 1);
-            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === 2);
+            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === "0" || result
+                .patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === "1" || result
+                .patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === "2" || result
+                .patient_category_id === 2);
 
             $('#operation_type-permintaan_operasi').val(result.operation_type);
 
@@ -3140,7 +3143,6 @@
                 element_id: 'clinic_id_from-permintaan_operasi_name'
             })
 
-
             if (!result?.rooms_id) {
                 let $inputElementRoom = $("#rooms_id-permintaan_operasi");
 
@@ -3156,19 +3158,20 @@
                     selected: true
                 }));
 
-
-                for (let i = 1; i <= 5; i++) {
+                let options = ["VK", "Op Mayor", "Op Minor"];
+                options.forEach(optionText => {
                     let option = $("<option>", {
-                        value: "OK-" + i,
-                        text: "OK-" + i
+                        value: optionText,
+                        text: optionText
                     });
                     $selectElementRoom.append(option);
-                }
+                });
 
                 $inputElementRoom.replaceWith($selectElementRoom);
             } else {
                 $("#rooms_id-permintaan_operasi").val(result?.rooms_id);
             }
+
 
 
 
@@ -3517,7 +3520,7 @@
                     ${props.index === 0 ? `
                     <td></td>
                         <td class="datetime">
-                            <input type="text" class="form-control datetime-input datetimeflatpickr" value="${observationDateFormatted}" hidden>
+                            <input type="text" class="form-control datetime-input datetimeflatpickr-oprs" value="${observationDateFormatted}" hidden>
                             <h4><span class="badge text-bg-secondary">${observationTimeOnly}</span></h4>
                         </td>
                     ` : `
@@ -3528,7 +3531,7 @@
                             </select>
                         </td>
                         <td class="datetime">
-                            <input type="text" class="form-control datetime-input datetimeflatpickr" value="${observationDateFormatted}" hidden name='observation_date[]'>
+                            <input type="text" class="form-control datetime-input datetimeflatpickr-oprs" value="${observationDateFormatted}" hidden name='observation_date[]'>
                             <h4><span class="badge text-bg-secondary datetime-display">${observationTimeOnly}</span></h4>
                         </td>
                     `}
@@ -3770,6 +3773,10 @@
                     `${item.value_desc} : ${item.histories || 'Tidak ada catatan'}<br>`;
             });
 
+            $("#riwayat_penyakit-catatan_operasi").html(contentPenyakit)
+            $("#alergi-catatan_operasi").html(contentAlergi)
+
+
         }
 
         const getDataKeperawatanOPRS001 = async (props) => {
@@ -3981,9 +3988,12 @@
                     1, "Catatan Keperawatan Pra Operasi");
             });
 
+
+
             // if (data?.body_id) {
             //     checkSignSignature1(formId, primaryKey, formSaveBtn, '7');
             // }
+            initializeFlatpickrOperasi();
         }
 
         //---------bbb
@@ -4038,20 +4048,20 @@
                 });
             }
 
-
-
-
             let oprs003 = `
                         <div class="container">
                             <div class="row">
                                 <div id="template-tindakan-operasi-1" class="row"></div>
                                 <div class="form-group col-sm-12 pt-5">
                                     <label for="riwayat_penyakit-catatan_operasi" class="fw-bold">Riwayat Penyakit</label>
-                                    <textarea class="form-control disabled" id="riwayat_penyakit-catatan_operasi" name="riwayat_penyakit-catatan-operasi"></textarea>
+                                    <span id="riwayat_penyakit-catatan_operasi"></span>
+                                 <!---   <textarea class="form-control disabled" id="riwayat_penyakit-catatan_operasi" name="riwayat_penyakit-catatan-operasi"></textarea> --->
                                 </div>
                                 <div class="form-group col-sm-12 mb-3">
                                     <label for="alergi-catatan_operasi" class="fw-bold">Alergi</label>
-                                    <textarea class="form-control disabled" id="alergi-catatan_operasi" name="alergi-catatan-operasi"></textarea>
+                                    <span id="alergi-catatan_operasi"></span>
+                                      <!---  <textarea class="form-control disabled" id="alergi-catatan_operasi" name="alergi-catatan-operasi"></textarea>--->
+                                      
                                     <input class="form-control disabled" id="trans_id-catatan_operasi" name="trans_id" value="${data?.trans_id ?? visit?.trans_id}" hidden></input>
                                     <input class="form-control disabled" id="body_id-catatan_operasi" name="body_id" value="${data?.body_id}" hidden></input>
                                     <input class="form-control disabled" id="visit_id-catatan_operasi" name="visit_id" value="${data?.visit_id ?? visit?.visit_id}" hidden></input>
@@ -4339,6 +4349,8 @@
                         break;
                 }
             })
+
+
             const formId = 'form-catatan-keperawatan';
             const primaryKey = data?.body_id;
             const formSaveBtn = 'btn-save-catatan-keperawatan';
@@ -4362,6 +4374,7 @@
                         "Catatan Keperawatan Peri Operasi");
                 }
             });
+
             // if (data?.body_id) {
             //     checkSignSignature1(formId, primaryKey, formSaveBtn, '8');
             // }
@@ -4859,7 +4872,8 @@
                 let currentValueoprs008_06 = $('#oprs008_06').val();
                 let nameAttributeoprs008_06 = $('#oprs008_06').attr('name');
 
-                let treatment = treatmentData.find(t => t.tarif_id === currentValueoprs008_06);
+                let treatment = treatmentData.find(t => t.bill_id === currentValueoprs008_06);
+
                 let treatmentName = treatment ? treatment.tarif_name : "-";
                 let labelHtml = `<label id="oprs008_06_label" class="form-control form-thems">
                                 ${data.tarif_id}
@@ -5378,21 +5392,21 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="anesthesiaStart" class="form-label"><strong>Anesthesia Start Time:</strong></label>
-                                                <input type="text" id="anesthesiaStart" name="start_anesthesia" class="form-control datetimeflatpickr">
+                                                <input type="text" id="anesthesiaStart" name="start_anesthesia" class="form-control datetimeflatpickr-oprs-anes">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="anesthesiaEnd" class="form-label"><strong>Anesthesia End Time:</strong></label>
-                                                <input type="text" id="anesthesiaEnd" name="end_anesthesia" class="form-control datetimeflatpickr">
+                                                <input type="text" id="anesthesiaEnd" name="end_anesthesia" class="form-control datetimeflatpickr-oprs-anes">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="surgeryStart" class="form-label"><strong>Surgery Start Time:</strong></label>
-                                                <input type="text" id="surgeryStart" name="surgeryStart" class="form-control datetimeflatpickr">
+                                                <input type="text" id="surgeryStart" name="surgeryStart" class="form-control datetimeflatpickr-oprs-anes">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="surgeryEnd" class="form-label"><strong>Surgery End Time:</strong></label>
-                                                <input type="text" id="surgeryEnd" name="surgeryEnd" class="form-control datetimeflatpickr">
+                                                <input type="text" id="surgeryEnd" name="surgeryEnd" class="form-control datetimeflatpickr-oprs-anes">
                                             </div>
                                         </div>
                                     </div>
@@ -5410,7 +5424,7 @@
                             <div class="row">
                                 <div id="informasiMedis-laporan-output-2" class="row">
                                             <div class="mb-3 col-6">
-                                                <label for="anesthesiaStart" class="form-label"><strong>Bleeding Amount:</strong></label>
+                                                <label for="bleeding_amount_val" class="form-label"><strong>Bleeding Amount:</strong></label>
                                                 <input type="Number" id="bleeding_amount_val" name="bleeding_amount" class="form-control">
                                             </div>
                                             <div class="mb-3 col-6">
@@ -5529,25 +5543,27 @@
 
             $("#bleeding_amount_val").val(data?.assessment_anesthesia?.bleeding_amount ?? 0)
             $("#urine_amount_val").val(data?.assessment_anesthesia?.urine_amount ?? 0)
+
             if (data?.assessment_anesthesia?.start_anesthesia) {
                 $("#anesthesiaStart").val(moment(data?.assessment_anesthesia.start_anesthesia).format(
-                    'DD/MM/YYYYTHH:mm'));
-                // 'YYYY-MM-DDTHH:mm'));
+                    'DD/MM/YYYY HH:mm'));
+
             }
             if (data?.assessment_anesthesia?.end_anesthesia) {
                 $("#anesthesiaEnd").val(moment(data?.assessment_anesthesia.end_anesthesia).format(
-                    'DD/MM/YYYYTHH:mm'));
+                    'DD/MM/YYYY HH:mm'));
             }
-
             let startOperation = pasienOperasiSelected?.start_operation;
             let endOperation = pasienOperasiSelected?.end_operation;
-            let formatDate = (date) => date ? moment(date).format('YYYY-MM-DDTHH:mm') : '';
+
+            let formatDate = (date, format = 'DD/MM/YYYY HH:mm') => date ? moment(date).format(format) : '';
+
             let validEndOperation = endOperation && moment(endOperation).isSameOrAfter(startOperation);
 
             $("#surgeryStart").val(formatDate(startOperation));
-            $("#surgeryEnd").val(validEndOperation ? formatDate(endOperation) : moment().format(
-                'YYYY-MM-DDTHH:mm'));
-
+            $("#surgeryEnd").val(validEndOperation ?
+                formatDate(endOperation) :
+                formatDate(moment()));
 
             $("#body_id-laporan_anestesiLengkap").val(data?.assessment_anesthesia?.body_id ?? get_bodyid());
             $("#document_id-laporan_anestesiLengkap").val(pasienOperasiSelected?.vactination_id);
@@ -5746,6 +5762,7 @@
             // if (data?.assessment_anesthesia?.body_id) {
             //     checkSignSignature1(formId, primaryKey, formSaveBtn, '10');
             // }
+            initializeFlatpickrOperasi()
             btnSaveLaporanAnestesiLengkap(pasienOperasiSelected)
         }
 
@@ -5830,28 +5847,32 @@
                             break;
 
                         case 4:
-
-
-                            initializeQuill = true; // Set flag to initialize Quill
+                            initializeQuill = true;
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
+
+                                console.log();
+
                                 htmlContent = `
                             <div class="form-group pb-5 pt-4">
                             <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                             <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" 
                             value="${props?.get_data?.['value_id_'+props?.parameter_id] 
-                                                        ? encodeURIComponent(props?.get_data?.['value_id_'+props?.parameter_id]) 
+                                                        ? (props?.get_data?.['value_id_'+props?.parameter_id]) 
                                                         : ''}">
                             <div id="quill_${props?.p_type?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.p_type?.toLowerCase()}_${props?.parameter_id}'>${(props?.get_data?.['value_id_'+props?.parameter_id]) ?? ''}</div>
                             </div>
                             `;
                             } else {
+                                initializeQuill = true;
+
                                 if (props.p_type != 'OPRS008') {
+
                                     htmlContent = `
                                 <div class="form-group pb-5 pt-4">
                                     <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                      <input type="hidden" name="${props?.column_name?.toLowerCase()}" 
                                                  value="${props?.get_data?.[props?.column_name?.toLowerCase()] 
-                                                        ? encodeURIComponent(props?.get_data?.[props?.column_name?.toLowerCase()]) 
+                                                        ? (props?.get_data?.[props?.column_name?.toLowerCase()]) 
                                                         : ''}">
                                      <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}_${props?.p_type}" 
                                             class="quill-editor" 
@@ -5860,39 +5881,38 @@
                                         </div>
                                 </div>
                             `;
+
                                 } else {
+                                    initializeQuill = true;
+
                                     if (props?.column_name != 'OPERATION_DESC') {
-
                                         htmlContent = `
-                                            <div class="form-group pb-5 pt-4">
-                                                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                                <input type="hidden" name="${props?.column_name?.toLowerCase()}" 
-                                                 value=${props?.get_data?.[props?.column_name?.toLowerCase()] 
-                                                        ? encodeURIComponent(props?.get_data?.[props?.column_name?.toLowerCase()]) 
-                                                        : ''}">
-                                                <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
-                                            </div>
-                                            
-                                        `;
-                                    } else {
-                                        htmlContent = `
-                                        <div class="form-group pb-5 pt-4">
-                                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}__oprs008">${props?.parameter_desc}</label>
-                                            <input 
-                                                    type="hidden" 
-                                                    name="${props?.column_name?.toLowerCase()}_oprs008" 
-
-                                                    value=${props?.get_data?.[props?.column_name?.toLowerCase()] 
-                                                        ? encodeURIComponent(props?.get_data?.[props?.column_name?.toLowerCase()]) 
-                                                        : ''}">
-                                                <div 
-                                                    id="quill_${props?.column_name?.toLowerCase()}_oprs008" 
-                                                    class="quill-editor" 
-                                                    name="${props?.column_name?.toLowerCase()}">
-                                                ${(props?.get_data?.[props?.column_name?.toLowerCase()]) ?? ''}
+                                                <div class="form-group pb-5 pt-4">
+                                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}" 
+                                                        value="${props?.get_data?.[props?.column_name?.toLowerCase()] 
+                                                            ? (props?.get_data?.[props?.column_name?.toLowerCase()]) 
+                                                            : ''}">
+                                                    <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name="${props?.column_name?.toLowerCase()}">
+                                                        ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}
+                                                    </div>
                                                 </div>
-                                        </div>
-                                    `;
+                                            `;
+                                    } else {
+
+                                        initializeQuill = true;
+                                        htmlContent = `
+                                                <div class="form-group pb-5 pt-4">
+                                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_oprs008">${props?.parameter_desc}</label>
+                                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}_oprs008" 
+                                                        value="${props?.get_data?.[props?.column_name?.toLowerCase()] 
+                                                            ? (props?.get_data?.[props?.column_name?.toLowerCase()]) 
+                                                            : ''}">
+                                                    <div id="quill_${props?.column_name?.toLowerCase()}_oprs008" class="quill-editor" name="${props?.column_name?.toLowerCase()}">
+                                                        ${(props?.get_data?.[props?.column_name?.toLowerCase()]) ?? ''}
+                                                    </div>
+                                                </div>
+                                            `;
                                     }
 
                                 }
@@ -5980,36 +6000,35 @@
                             let data_start_operation = '';
                             if (isAnastesi) {
                                 if (props?.column_name?.toLowerCase() == 'start_operation') {
-                                    data_start_operation = moment(props?.data_tindakan[props
-                                        ?.column_name
-                                        ?.toLowerCase()], "YYYY-MM-DDTHH:mm").format(
-                                        "YYYY-MM-DDTHH:mm");
+                                    data_start_operation = moment(props?.data_tindakan[props?.column_name
+                                        ?.toLowerCase()]).format(
+                                        "DD/MM/YYYY HH:mm")
                                 }
                             }
+                            // oprs004_05
+
 
                             htmlContent = `
-                            <div class="form-group mb-0 pt-4">
-                                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
-                                <input class="form-control datetime-input datetimeflatpickr" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
-                            </div>
-                                `;
-
-
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+                            <input class="form-control datetime-input datetimeflatpickr-oprs" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+                        </div>
+                            `;
                             break;
                         case 6:
                             let multiOptions = matchedData?.map((item, index) => `
-            <div class="form-check mb-0 pt-4">
-                <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" name="${item?.value_info?.toLowerCase()}" value="${item.value_score}" ${props?.get_data?.[item?.value_info?.toLowerCase()] !== null ? 'checked' : ''}>
-                <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-            </div>
-        `).join('');
+                            <div class="form-check mb-0 pt-4">
+                                <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" name="${item?.value_info?.toLowerCase()}" value="${item.value_score}" ${props?.get_data?.[item?.value_info?.toLowerCase()] !== null ? 'checked' : ''}>
+                                <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                            </div>
+                        `).join('');
                             htmlContent = `
-            <div class="form-group mb-0 pt-4">
-                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                 ${multiOptions}
-            </div>
-        `;
+                            <div class="form-group mb-0 pt-4">
+                                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                ${multiOptions}
+                            </div>
+                        `;
                             break;
                         case 1:
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
@@ -6079,11 +6098,11 @@
                     if (inputField) {
                         let initialContent = inputField.value || '';
 
-                        try {
-                            initialContent = decodeURIComponent(initialContent);
-                        } catch (e) {
-                            console.log("Konten tidak ter-encode atau sudah benar");
-                        }
+                        // try {
+                        //     initialContent = decodeURIComponent(initialContent);
+                        // } catch (e) {
+                        //     console.log("Konten tidak ter-encode atau sudah benar");
+                        // }
 
                         quill.root.innerHTML = initialContent;
 

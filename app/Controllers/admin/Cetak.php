@@ -275,7 +275,6 @@ class Cetak extends \App\Controllers\BaseController
             left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
             where ex.no_registration = '" . $visit['no_registration'] . "' 
             and ex.visit_id = '" . $visit['visit_id'] . "'
-            and ex.vs_status_id IN(1,4,5)
             order by examination_date desc
             ")->getResultArray());
 
@@ -290,11 +289,7 @@ class Cetak extends \App\Controllers\BaseController
                     "organization" => $selectorganization
                 ]);
             } else {
-                return view("admin/patient/cetak/cetakvitalsign.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
+                return json_encode("Data tidak ditemukan");
             }
         }
     }
@@ -2422,13 +2417,14 @@ class Cetak extends \App\Controllers\BaseController
             select assessment_operation_pra.*
             from assessment_operation_pra 
             where assessment_operation_pra.visit_id = '" . $visit['visit_id'] . "' and body_id = '" . $vactination_id . "'
-            ")->getResultArray() ?? []);
+            ")->getRowArray() ?? []);
 
             $operasi = $this->lowerKey($db->query("
-                SELECT vactination_date,treatment FROM pasien_operasi 
-                INNER JOIN TREATMENT_BILL ON pasien_operasi.tarif_id = TREATMENT_BILL.tarif_id
+                   SELECT start_operation,end_operation,tarif_name as treatment, bill_id, rooms_id FROM pasien_operasi 
+                --left JOIN OPERATION_TYPE ON pasien_operasi.tarif_id = OPERATION_TYPE.OPERATION
+                left join treat_tarif on treat_tarif.tarif_id = pasien_operasi.bill_id
                 WHERE vactination_id = '" . $vactination_id . "'
-            ")->getRowArray() ?? []);
+            ")->getRowArray() ?? []); //bisma
 
 
             $riwayat_alergi = $this->lowerKey($db->query("
@@ -2473,11 +2469,11 @@ class Cetak extends \App\Controllers\BaseController
 
                 $selectDiagnosa = $this->lowerKey($db->query(
                     "
-                    select DIAGNOSA_DESC from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select[0]['body_id'] . "' and DIAG_CAT IN ('1','13','15')
+                    select DIAGNOSA_DESC from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' and DIAG_CAT IN ('1','13','15')
                     "
                 )->getResultArray()) ?? [];
 
-                $informasiMedis = array_slice($select[0], 8, 22);
+                $informasiMedis = array_slice($select, 8, 22);
 
                 $newData = [];
 
@@ -2486,7 +2482,7 @@ class Cetak extends \App\Controllers\BaseController
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
 
-            if (isset($select[0])) {
+            if (isset($select)) {
                 return view("admin/patient/cetak/operasi/pra-operasi.php", [
                     "visit" => $visit,
                     'title' => $title,
@@ -2594,12 +2590,13 @@ class Cetak extends \App\Controllers\BaseController
             $db = db_connect();
 
             $select = $this->lowerKey($db->query("
-            select PASIEN_OPERASI.*, treat_tarif.tarif_name,ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as tipe_operasi
+            select PASIEN_OPERASI.*, OPERATION_TYPE.OPERATION,ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as tipe_operasi, ao.operation_desc as operation_desc2
             from PASIEN_OPERASI
-            INNER JOIN treat_tarif ON PASIEN_OPERASI.TARIF_ID = treat_tarif.TARIF_ID
-            inner join ASSESSMENT_PARAMETER_VALUE on PASIEN_OPERASI.SURGERY_TYPE = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+            left JOIN OPERATION_TYPE ON PASIEN_OPERASI.TARIF_ID = OPERATION_TYPE.OPERATION
+            LEFT join ASSESSMENT_PARAMETER_VALUE on PASIEN_OPERASI.SURGERY_TYPE = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+            left join assessment_operation ao on ao.document_id = pasien_operasi.VACTINATION_ID
             where PASIEN_OPERASI.visit_id = '" . $visit['visit_id'] . "' and PASIEN_OPERASI.VACTINATION_ID = '" . $vactination_id . "'
-            ")->getRowArray() ?? []);
+            ")->getRowArray() ?? []); //bisma
 
             $operation_team = $this->lowerKey($db->query("
             SELECT DOCTOR, TASK from OPERATION_TEAM 
@@ -2614,6 +2611,8 @@ class Cetak extends \App\Controllers\BaseController
             ")->getResultArray() ?? []);
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
+
+            // dd($select);
 
             if (isset($select)) {
                 return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
@@ -2650,7 +2649,7 @@ class Cetak extends \App\Controllers\BaseController
 
             if (!empty($select)) {
 
-                $informasiMedis = array_slice($select[0], 8, 11);
+                $informasiMedis = array_slice($select[0], 8, 14);
 
                 $newData = [];
 
@@ -2906,6 +2905,12 @@ class Cetak extends \App\Controllers\BaseController
                 "
             )->getRowArray() ?? []);
 
+            $operasi = $this->lowerKey($db->query("
+                 SELECT start_operation,end_operation,OPERATION as treatment, bill_id, rooms_id FROM pasien_operasi 
+                INNER JOIN OPERATION_TYPE ON pasien_operasi.tarif_id = OPERATION_TYPE.OPERATION
+                WHERE vactination_id = '" . $vactination_id . "'
+            ")->getRowArray() ?? []);
+
 
             $informasiTindakan = array_splice($query, 5, 26);
 
@@ -2942,7 +2947,8 @@ class Cetak extends \App\Controllers\BaseController
                 "val" => $query,
                 "organization" => $selectorganization,
                 "informasiTindakan" => $newData ?? [],
-                "treatment" => $treatmentData
+                "treatment" => $treatmentData,
+                "operasi" => $operasi
             ]);
         }
     }

@@ -439,9 +439,7 @@ foreach ($aValue as $key => $value) {
 
         $("#formaddarb").find('input[type="text"], input[type="hidden"], textarea').val(null)
         var initialexam = examForassessment[examForassessment.length - 1]
-        $.each(initialexam, function(key, value) {
-            $("#arb" + key).val(value)
-        })
+        fillExaminationDetail(initialexam, 'arb')
 
         var ageYear = <?= $visit['ageyear']; ?>;
         var ageMonth = <?= $visit['agemonth']; ?>;

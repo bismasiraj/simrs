@@ -125,6 +125,7 @@ class TreatmentBillModel extends Model
         'treatment_plafond',
         'diagnosa_desc',
         'indication_desc',
+        'body_id'
     ];
 
 

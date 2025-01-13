@@ -2,8 +2,6 @@
     (function() {
 
         let visit = <?= json_encode($visit) ?>;
-        let aValue = <?= json_encode($aValue) ?>;
-        let aParameter = <?= json_encode($aParameter) ?>;
         const allowedTypes = ['GIZ0604', 'GIZ0605', 'GIZ0606', 'GIZ0607', 'GIZ0608', 'GIZ0609'];
         const allowedNames = [
             'ANAK (0-1 TH)',
@@ -91,7 +89,7 @@
             let now = moment();
             let daysDiff = now.diff(birth, 'days');
 
-            const filteredItems = aParameter
+            const filteredItems = aparameter
                 ?.filter(item => allowedTypes.includes(item?.p_type))
                 .sort((a, b) => a.p_type.localeCompare(b.p_type) || a.parameter_id - b.parameter_id);
 
@@ -114,8 +112,8 @@
 
             $('#gizi_age_category').html(selectAge);
 
-            let factorActivity = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '01');
-            let factorStress = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '02');
+            let factorActivity = avalue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '01');
+            let factorStress = avalue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '02');
 
             function populateSelect(selectId, items) {
                 const selectElement = $('#' + selectId);
@@ -975,7 +973,7 @@
                     $('#edit_lemak_gizi').val(res.data.lemak)
                     $('#edit_examination_date_gizi').val(res.data.examination_date)
 
-                    const filteredItems = aParameter
+                    const filteredItems = aparameter
                         ?.filter(item => allowedTypes.includes(item?.p_type))
                         .sort((a, b) => a.p_type.localeCompare(b.p_type) || a.parameter_id - b.parameter_id);
 
@@ -998,8 +996,8 @@
                     if (currentGroup) selectAge += '</optgroup>';
                     $('#edit_gizi_age_category').html(selectAge);
 
-                    let factorActivity = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '01');
-                    let factorStress = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '02');
+                    let factorActivity = avalue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '01');
+                    let factorStress = avalue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '02');
 
                     function populateSelect(selectId, items, data = null) {
                         const selectElement = $('#' + selectId);
@@ -1944,14 +1942,14 @@
         const getFormScreening = (props) => {
 
             let selectedCategory = props?.selectedOption;
-            let filteredData = aParameter?.filter(item => item?.p_type === selectedCategory);
+            let filteredData = aparameter?.filter(item => item?.p_type === selectedCategory);
             let data = props?.data ?? null;
             let bodyContainer = $(props?.container);
             let htmlContent = '';
 
             filteredData.forEach((parameter, index) => {
                 let inputOrSelect = '';
-                let arr = aValue.filter(item => item?.parameter_id === parameter.parameter_id && item?.p_type === selectedCategory);
+                let arr = avalue.filter(item => item?.parameter_id === parameter.parameter_id && item?.p_type === selectedCategory);
                 if (data != null) {
                     inputOrSelect = parameter?.entry_type === 3 ?
                         `<select class="form-select" name="${parameter?.column_name}">

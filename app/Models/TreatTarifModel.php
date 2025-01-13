@@ -26,16 +26,16 @@ class TreatTarifModel extends Model
         $tarif_type = ['100', '200', '300', '400', '500', '501', '600', '700', '800', '900'];
         if ($klinik == 'P013') {
             $this->select("top(50) TREAT_TARIF.TARIF_NAME,   
-        AMOUNT_PAID as amount,
-        TREAT_TARIF.TARIF_ID,   
-        TREAT_TARIF.OTHER_ID,   
-        TREAT_TARIF.TREAT_ID,   
-        TREAT_TARIF.TARIF_TYPE,   
-        TREAT_TARIF.ORG_UNIT_CODE,
-        TREAT_TARIF.class_id,
-        TREAT_TARIF.ISCITO,
-        TREAT_TARIF.perda_id,
-        TREAT_TARIF.CASEMIX_ID")
+                                    AMOUNT_PAID as amount,
+                                    TREAT_TARIF.TARIF_ID,   
+                                    TREAT_TARIF.OTHER_ID,   
+                                    TREAT_TARIF.TREAT_ID,   
+                                    TREAT_TARIF.TARIF_TYPE,   
+                                    TREAT_TARIF.ORG_UNIT_CODE,
+                                    TREAT_TARIF.class_id,
+                                    TREAT_TARIF.ISCITO,
+                                    TREAT_TARIF.perda_id,
+                                    TREAT_TARIF.CASEMIX_ID")
                 ->join('treatment', 'treatment.treat_id=TREAT_TARIF.treat_id', 'inner')
                 // ->like('treat_tarif.implemented', '1')
                 // ->notLike('treat_tarif.treat_id', '010001')
@@ -50,16 +50,16 @@ class TreatTarifModel extends Model
             return $this->findAll();
         } else if ($klinik == 'P016') {
             $this->select("top(20) TREAT_TARIF.TARIF_NAME,   
-        AMOUNT_PAID as amount,
-        TREAT_TARIF.TARIF_ID,   
-        TREAT_TARIF.OTHER_ID,   
-        TREAT_TARIF.TREAT_ID,   
-        TREAT_TARIF.TARIF_TYPE,   
-        TREAT_TARIF.ORG_UNIT_CODE,
-        TREAT_TARIF.class_id,
-        TREAT_TARIF.ISCITO,
-        TREAT_TARIF.perda_id,
-        TREAT_TARIF.CASEMIX_ID")
+                                    AMOUNT_PAID as amount,
+                                    TREAT_TARIF.TARIF_ID,   
+                                    TREAT_TARIF.OTHER_ID,   
+                                    TREAT_TARIF.TREAT_ID,   
+                                    TREAT_TARIF.TARIF_TYPE,   
+                                    TREAT_TARIF.ORG_UNIT_CODE,
+                                    TREAT_TARIF.class_id,
+                                    TREAT_TARIF.ISCITO,
+                                    TREAT_TARIF.perda_id,
+                                    TREAT_TARIF.CASEMIX_ID")
                 ->join('treatment', 'treatment.treat_id=TREAT_TARIF.treat_id', 'inner')
                 // ->like('treat_tarif.implemented', '1')
                 // ->notLike('treat_tarif.treat_id', '010001')
@@ -74,16 +74,16 @@ class TreatTarifModel extends Model
             return $this->findAll();
         } else if ($klinik == 'P015') {
             $this->select("top(20) TREAT_TARIF.TARIF_NAME,   
-        AMOUNT_PAID as amount,
-        TREAT_TARIF.TARIF_ID,   
-        TREAT_TARIF.OTHER_ID,   
-        TREAT_TARIF.TREAT_ID,   
-        TREAT_TARIF.TARIF_TYPE,   
-        TREAT_TARIF.ORG_UNIT_CODE,
-        TREAT_TARIF.class_id,
-        TREAT_TARIF.ISCITO,
-        TREAT_TARIF.perda_id,
-        TREAT_TARIF.CASEMIX_ID")
+                                    AMOUNT_PAID as amount,
+                                    TREAT_TARIF.TARIF_ID,   
+                                    TREAT_TARIF.OTHER_ID,   
+                                    TREAT_TARIF.TREAT_ID,   
+                                    TREAT_TARIF.TARIF_TYPE,   
+                                    TREAT_TARIF.ORG_UNIT_CODE,
+                                    TREAT_TARIF.class_id,
+                                    TREAT_TARIF.ISCITO,
+                                    TREAT_TARIF.perda_id,
+                                    TREAT_TARIF.CASEMIX_ID")
                 ->join('treatment', 'treatment.treat_id=TREAT_TARIF.treat_id', 'inner')
                 // ->like('treat_tarif.implemented', '1')
                 // ->notLike('treat_tarif.treat_id', '010001')
@@ -99,16 +99,16 @@ class TreatTarifModel extends Model
             return $this->findAll();
         } else if ($klinik == 'P024' || $klinik == 'P015') {
             $this->select("top(20) TREAT_TARIF.TARIF_NAME,   
-                AMOUNT_PAID as amount,
-                TREAT_TARIF.TARIF_ID,   
-                TREAT_TARIF.OTHER_ID,   
-                TREAT_TARIF.TREAT_ID,   
-                TREAT_TARIF.TARIF_TYPE,   
-                TREAT_TARIF.ORG_UNIT_CODE,
-                TREAT_TARIF.class_id,
-                TREAT_TARIF.ISCITO,
-                TREAT_TARIF.perda_id,
-                TREAT_TARIF.CASEMIX_ID")
+                                    AMOUNT_PAID as amount,
+                                    TREAT_TARIF.TARIF_ID,   
+                                    TREAT_TARIF.OTHER_ID,   
+                                    TREAT_TARIF.TREAT_ID,   
+                                    TREAT_TARIF.TARIF_TYPE,   
+                                    TREAT_TARIF.ORG_UNIT_CODE,
+                                    TREAT_TARIF.class_id,
+                                    TREAT_TARIF.ISCITO,
+                                    TREAT_TARIF.perda_id,
+                                    TREAT_TARIF.CASEMIX_ID")
                 ->join('treatment', 'treatment.treat_id=TREAT_TARIF.treat_id', 'inner')
                 // ->like('treat_tarif.implemented', '1')
                 // ->notLike('treat_tarif.treat_id', '010001')

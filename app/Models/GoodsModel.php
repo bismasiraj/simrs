@@ -34,7 +34,7 @@ class GoodsModel extends Model
         //     $result = $this->db->query(new RawSql($sql));
         //     return $result->getResultArray();
 
-        $select = $this->join('setting s', '1 = 1', 'inner')
+        $select = $this->join('setting s', '1 = 1', 'left')
             ->like('name', $brand)
             // ->where('isalkes <> 1')
             // ->where('isalkes <> 100')
@@ -70,7 +70,7 @@ class GoodsModel extends Model
 
         $select = $this->join('setting s', '1 = 1', 'inner')
             ->like('name', $brand)
-            ->where('iscompounding in (1,2)')
+            // ->where('iscompounding in (1,2)')
             ->where('measure_dosis is not null')
             // ->where('isactive', '1')
             // ->where('code_5 <> \'%\'')
@@ -105,7 +105,7 @@ class GoodsModel extends Model
         $select = $this->join('setting s', '1 = 1', 'inner')
             ->like('name', $brand)
             ->where('isactive', '1')
-            ->where('isalkes', '1')
+            ->whereIn('isalkes', ['1', '19'])
             ->select('GOODS.NAME, goods.net_price AS SELL_PRICE,    
                     100 AS STOCKnya,GOODS.OTHER_CODE,size_kemasan,
                     GOODS.BRAND_ID,SIZE_GOODS, goods.measure_id, goods.measure_id2,goods.measure_id3,

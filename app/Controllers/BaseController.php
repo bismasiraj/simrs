@@ -717,11 +717,13 @@ abstract class BaseController extends Controller
             //     }
             // }
             foreach ($parameter as $key => $value) {
-                if ($value['entry_type'] == '1'  || $value['entry_type'] == '4' || $value['entry_type'] == '5') {
-                    $parameter[$key]['value_desc'] = $data[strtolower($value['column_name'])];
-                    $newparam[] = $parameter[$key];
+                if ($value['entry_type'] == '1'  || $value['entry_type'] == '3' || $value['entry_type'] == '4' || $value['entry_type'] == '5') {
+                    if ($value['value_score'] == $data[strtolower($value['column_name'])]) {
+                        // $parameter[$key]['value_desc'] = $data[strtolower($value['column_name'])];
+                        $newparam[] = $parameter[$key];
+                    }
                 }
-                if (($value['entry_type'] == '2' || $value['entry_type'] == '3' || $value['entry_type'] == '6') && $data[strtolower($value['column_name'])] == $value['value_score']) {
+                if (($value['entry_type'] == '2' || $value['entry_type'] == '6') && $data[strtolower($value['column_name'])] == $value['value_score']) {
                     $newparam[] = $parameter[$key];
                 }
             }

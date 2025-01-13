@@ -1,3 +1,7 @@
+<?php
+// dd($visit);
+?>
+
 <script type='text/javascript'>
     var mapAssessment = JSON.parse('<?= json_encode($mapAssessment); ?>')
     var canvasAssessment;
@@ -360,11 +364,13 @@
 
     const initialAddArm = async () => {
 
-        var accMedisName = "accordionAssessmentMedis"
+        var accMedisName = "accordionAssessmentMedis";
+        pasienDiagnosa = [];
 
         $("#formaddarm input").val(null)
         $("#formaddarm select").val(null)
         $("#formaddarm textarea").val(null)
+        $("#accordionAssessmentMedis").html("")
 
         if (assessmentMedisType == 1) {
             $("#armTitle").html("Resume Medis")
@@ -395,7 +401,6 @@
             } else {
                 titlerj = ' RAWAT JALAN'
             }
-            $("#accordionAssessmentMedis").html("")
 
             const req = await libAsyncAwaitPost({
                     specialist_type_id: "<?= @$visit['specialist_type_id']; ?>"
@@ -496,6 +501,7 @@
 
         $('#armorg_unit_code').val('<?= $visit['org_unit_code']; ?>')
         $('#armvisit_id').val('<?= $visit['visit_id']; ?>')
+
         $('#armtrans_id').val('<?= $visit['trans_id']; ?>')
         $('#armreport_date').val(get_date())
         $('#armtheid').val('<?= $visit['pasien_id']; ?>')
@@ -541,9 +547,7 @@
         } ?>
 
         var initialexam = examForassessmentDetail[examForassessmentDetail.length - 1]
-        $.each(initialexam, function(key, value) {
-            $("#arm" + key).val(value)
-        })
+        fillExaminationDetail(initialexam, 'arm')
         $("#armclinic_id").val(clinicSelect[0].clinic_id)
         $('#armbody_id').val(null)
         $('#armpasien_diagnosa_id').val(pasienDiagnosaId)
@@ -572,6 +576,7 @@
         //         $(this).val(savedValue);
         //     }
         // })
+
         $("#armModal").modal("show")
     }
 
@@ -660,11 +665,21 @@
             $("#armTitle").html("ASESMEN MEDIS INSTALASI GAWAT DARURAT")
         }
 
+        let examselect = [];
+        $.each(examForassessmentDetail, function(key, value) {
+            if (value.body_id == pasienDiagnosa.pasien_diagnosa_id) {
+                examselect = value
+                return false
+            }
+        })
 
 
         $.each(pasienDiagnosa, function(key, value) {
             $("#arm" + key).val(value)
             // $("#arm" + key).prop("disabled", true)
+        })
+        $.each(examselect, function(key, value) {
+            $("#arm" + key).val(value)
         })
         if (pasienDiagnosa.clinic_id == 'P012') {
             $("#armemergency").val(patientCategoryId)
@@ -673,6 +688,7 @@
             $("#armemergency_group").hide()
         }
         $("#armdiagnosa_desc_pulang").val(pasienDiagnosa.diagnosa_desc)
+
 
         let formattedValue = moment(pasienDiagnosa.date_of_diagnosa).format('DD/MM/YYYY HH:mm');
         $("#formaddarm").find("#armtotal_score").html("")
@@ -1247,9 +1263,33 @@
                                 isNewDocument = 1
                             }
                         })
+
+                        let dataExam = data.medis.data.exam
                         if (isNewDocument != 1)
                             pasienDiagnosaAll.push(formDataObject)
                         displayTableAssessmentMedis(pasienDiagnosaAll.length - 1)
+
+                        $.each(examForassessmentDetail, function(key, value) {
+                            if (value.body_id == formDataObject.body_id) {
+                                examForassessmentDetail[key] = formDataObject
+                                isNewDocument = 1
+                            }
+                        })
+                        if (isNewDocument != 1)
+                            examForassessmentDetail.push(formDataObject)
+
+                        // if (isNewDocument != 1) {
+                        //     let examNew = Array();
+                        //     examNew.push(formDataObject)
+                        //     $.each(examForassessment, function(key, value) {
+                        //         examNew.push(examForassessment[key])
+                        //     })
+                        //     examForassessment = examNew
+                        // }
+
+                        riwayatAll = data.medis.data.pasienHistory
+
+                        lokalisAll = data.medis.data.lokalis
 
                         pasienVisitation['patientCategoryId'] = patientCategoryId;
                         window.history.pushState({}, "", btoa(JSON.stringify(pasienVisitation)));
@@ -1274,7 +1314,7 @@
                     // if (isrefresh) {}
                 }
                 if (data.fallRisk) {
-                    let bodyId = data.fallRisk
+                    let bodyId = data.fallRisk.body_id
                     $('#formFallRisk' + bodyId + ' select').prop("disabled", true)
                     $('#formFallRisk' + bodyId + ' input').prop("disabled", true)
                     $("#formFallRiskSaveBtn" + bodyId).slideUp()
@@ -2089,6 +2129,15 @@
                                     value_info: value1.value_info,
                                     canvas: `canvas` + value1.p_type + value1.parameter_id + value1.value_id,
                                     lokalis: 'lokalis' + value1.value_id
+                                })
+                                console.log({
+                                    p_type: value1.p_type,
+                                    parameter_id: value1.parameter_id,
+                                    value_id: value1.value_id,
+                                    value_info: value1.value_info,
+                                    canvas: `canvas` + value1.p_type + value1.parameter_id + value1.value_id,
+                                    lokalis: 'lokalis' + value1.value_id,
+                                    specialist_type_id: specialistLokalis
                                 })
                             }
                         })

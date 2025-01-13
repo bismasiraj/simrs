@@ -294,7 +294,6 @@
                                     <label for="pola_makan_gizi" class="form-label fw-bold">Pola Makan</label>
                                     <select class="form-select" id="pola_makan_gizi" type="text" name="pola_makan" style="width: 100%;"></select>
                                 </div>
-
                             </div>
                         </div>
                         <div class="col-6">

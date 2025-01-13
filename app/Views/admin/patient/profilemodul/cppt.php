@@ -131,12 +131,12 @@ $permission = user()->getPermissions();
                     <?php if (user()->checkPermission("cppt", "c")) {
                     ?>
                         <div id="" class="row">
-                            <div class="<?php
-                                        if (isset($group[11])) {
-                                        ?>col-md-12<?php } else {
-                                                    ?>col-md-6
+                            <div id="addCpptSoapGroup" class="<?php
+                                                                if (isset($group[11])) {
+                                                                ?>col-md-12<?php } else {
+                                                                            ?>col-md-6
                                         <?php
-                                                } ?> ">
+                                                                        } ?> ">
                                 <div id="" class="box-tab-tools text-end">
                                     <a data-toggle="modal" onclick="initialAddacppt(true)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH SOAP</a>
                                 </div>
@@ -145,7 +145,7 @@ $permission = user()->getPermissions();
                             if (!isset($group[11])) {
                             ?>
                                 <div class="col-md-6">
-                                    <div id="" class="box-tab-tools text-start" style="">
+                                    <div id="addCpptSbarGroup" class="box-tab-tools text-start" style="">
                                         <a data-toggle="modal" onclick="initialAddacppt(false)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH SBAR</a>
                                     </div>
                                 </div>
