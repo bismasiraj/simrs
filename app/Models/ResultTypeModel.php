@@ -9,7 +9,7 @@ class ResultTypeModel extends Model
     protected $table      = 'result_type';
     protected $primaryKey = 'result_type';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

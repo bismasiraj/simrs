@@ -9,7 +9,7 @@ class FamilyModel extends Model
     protected $table      = 'family_status';
     protected $primaryKey = 'family_status_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

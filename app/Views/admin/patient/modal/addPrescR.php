@@ -102,7 +102,7 @@
                                 </div><!--./row-->
                             </div><!--./box-footer-->
                         </div>
-                        <div id=""></div>
+                        <div></div>
                         <div class="modal-footer">
                             <div class="pull-right">
                                 <button type="submit" id="addPrescRBtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
@@ -379,9 +379,9 @@
                     $.each(data.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    errorSwal(message);
                 } else {
-                    successMsg(data.message);
+                    successSwal(data.message);
 
                     $("#prescRItemBody").html("")
 
@@ -396,9 +396,23 @@
                 }
                 clicked_submit_btn.button('reset');
             },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
+            error: function(jqXHR, textStatus, errorThrown) {
+                let errorMessage = "An error occurred: ";
+
+                if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                    errorMessage = jqXHR.responseJSON.message;
+                } else if (textStatus === "timeout") {
+                    errorMessage = "The request timed out.";
+                } else if (textStatus === "error") {
+                    errorMessage = "Error: " + errorThrown;
+                } else if (textStatus === "abort") {
+                    errorMessage = "The request was aborted.";
+                } else {
+                    errorMessage = "Unknown error occurred.";
+                }
+
+                errorSwal(errorMessage);
+                $("#form1btn").html('<i class="fa fa-search"></i>')
             },
             complete: function() {
                 clicked_submit_btn.button('reset');

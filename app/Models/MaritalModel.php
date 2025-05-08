@@ -9,7 +9,7 @@ class MaritalModel extends Model
     protected $table      = 'marital_status';
     protected $primaryKey = 'maritalstatusid';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

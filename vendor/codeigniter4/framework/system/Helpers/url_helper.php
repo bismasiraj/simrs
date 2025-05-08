@@ -144,6 +144,28 @@ if (! function_exists('base_url')) {
      */
     function base_url($relativePath = '', ?string $scheme = null): string
     {
+        // /** @var App $config */
+        // $config = clone config('App');
+
+
+        // // Use the current baseURL for multiple domain support
+        // $request         = Services::request();
+        // $config->baseURL = $request instanceof CLIRequest
+        //     ? rtrim($config->baseURL, '/ ') . '/'
+        //     : $request->getUri()->getBaseURL();
+
+        // $config->indexPage = '';
+        // if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '192.168.110.241') {
+        //     // public $baseURL = 'http://hims.pkusampangan.com/'; // Default
+        //     return 'http://192.168.110.241/'; // Your domain
+        // } else {
+        //     return 'http://hims.pkusampangan.com/'; // Your domain
+        // }
+
+        // return '/';
+
+
+
         /** @var App $config */
         $config = clone config('App');
 
@@ -324,8 +346,8 @@ if (! function_exists('anchor_popup')) {
         $attributes = stringify_attributes($attributes);
 
         return '<a href="' . $siteUrl
-                . '" onclick="window.open(\'' . $siteUrl . "', '" . $windowName . "', '" . stringify_attributes($atts, true) . "'); return false;\""
-                . $attributes . '>' . $title . '</a>';
+            . '" onclick="window.open(\'' . $siteUrl . "', '" . $windowName . "', '" . stringify_attributes($atts, true) . "'); return false;\""
+            . $attributes . '>' . $title . '</a>';
     }
 }
 
@@ -426,17 +448,17 @@ if (! function_exists('safe_mailto')) {
         $cspNonce = csp_script_nonce();
         $cspNonce = $cspNonce ? ' ' . $cspNonce : $cspNonce;
         $output   = '<script' . $cspNonce . '>'
-                . 'var l=new Array();';
+            . 'var l=new Array();';
 
         foreach ($x as $i => $value) {
             $output .= 'l[' . $i . "] = '" . $value . "';";
         }
 
         return $output . ('for (var i = l.length-1; i >= 0; i=i-1) {'
-                . "if (l[i].substring(0, 1) === '|') document.write(\"&#\"+unescape(l[i].substring(1))+\";\");"
-                . 'else document.write(unescape(l[i]));'
-                . '}'
-                . '</script>');
+            . "if (l[i].substring(0, 1) === '|') document.write(\"&#\"+unescape(l[i].substring(1))+\";\");"
+            . 'else document.write(unescape(l[i]));'
+            . '}'
+            . '</script>');
     }
 }
 

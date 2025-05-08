@@ -9,7 +9,7 @@ class RegulationTypeModel extends Model
     protected $table      = 'regulation_type';
     protected $primaryKey = 'regulate_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

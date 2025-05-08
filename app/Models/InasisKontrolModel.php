@@ -29,7 +29,11 @@ extends Model
         'responpost',
         'responput',
         'respondel',
-        'isused'
+        'isused',
+        'no_registration',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     // Dates

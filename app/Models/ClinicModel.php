@@ -9,12 +9,12 @@ class ClinicModel extends Model
     protected $table      = 'clinic';
     protected $primaryKey = 'clinic_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    // protected $allowedFields = ['name', 'email'];
+    protected $allowedFields = ['ssclinic_id', 'sslocation_id'];
 
     // Dates
     protected $useTimestamps = false;

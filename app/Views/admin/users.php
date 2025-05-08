@@ -1,0 +1,20 @@
+<?php $this->extend('layout/dashlayout', [
+    // 'dokter' => $dokter,
+    // 'kunjJalan' => $kunjJalan,
+    // 'kunjInap' => $kunjInap,
+    // 'kunjUGD' => $kunjUGD,
+    // 'kunjRS' => $kunjRS,
+    // 'status' => $status,
+    // 'topXRanap' => $topXRanap,
+    // 'topXRajal' => $topXRajal,
+    // 'kunjungan' => $kunjungan,
+    // 'umur' => $umur,
+    // 'totalUmurRI' => $totalUmurRI,
+    // 'totalUmurRJ' => $totalUmurRJ,
+    // 'totalUmur' => $totalUmur,
+    // 'kamar' => $kamar,
+    // 'poli' => $poli,
+    // 'kunjPoli' => $kunjPoli,
+    'orgunit' => $orgunit,
+    'img_time' => $img_time
+]);

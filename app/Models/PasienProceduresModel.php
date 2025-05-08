@@ -9,7 +9,7 @@ class PasienProceduresModel extends Model
     protected $table      = 'pasien_procedures';
     protected $primaryKey = 'pasien_diagnosa_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

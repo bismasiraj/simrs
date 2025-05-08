@@ -17,73 +17,7 @@
 
 <body>
 
-    <!-- HEADER: MENU + HEROE SECTION -->
-
-    <table class="table table-dark table-striped">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
-            </tr>
-        </tbody>
-
-    </table>
-
-
-    <!-- FOOTER: DEBUG INFO + COPYRIGHTS -->
-
-    <footer>
-        <div class="environment">
-
-            <p>Page rendered in {elapsed_time} seconds</p>
-
-            <p>Environment: <?= ENVIRONMENT ?></p>
-
-        </div>
-
-        <div class="copyrights">
-
-            <p>&copy; <?= date('Y') ?> CodeIgniter Foundation. CodeIgniter is open source project released under the MIT
-                open source licence.</p>
-
-        </div>
-
-    </footer>
-
-    <!-- SCRIPTS -->
-
-    <script>
-        function toggleMenu() {
-            var menuItems = document.getElementsByClassName('menu-item');
-            for (var i = 0; i < menuItems.length; i++) {
-                var menuItem = menuItems[i];
-                menuItem.classList.toggle("hidden");
-            }
-        }
-    </script>
-
-    <!-- -->
+    <img src="data:image/*;<?= $imgsource; ?>" alt="">
 
 </body>
 

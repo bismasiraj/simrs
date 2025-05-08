@@ -17,10 +17,12 @@ class PasienDiagnosasModel extends Model
     protected $allowedFields = [
         'pasien_diagnosa_id',
         'diagnosa_id',
+        'diagnosa_desc',
         'diagnosa_name',
         'diag_cat',
         'suffer_type',
         'modified_by',
+        'sscondition_id'
     ];
 
     // Dates

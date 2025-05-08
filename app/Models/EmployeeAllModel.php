@@ -9,48 +9,15 @@ class EmployeeAllModel extends Model
     protected $table      = 'employee_all';
     protected $primaryKey = 'employee_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    // protected $allowedFields = [
-    //     'body_id',
-    //     'petugas',
-    //     'examination_date',
-    //     'weight',
-    //     'height',
-    //     'temperature',
-    //     'nadi',
-    //     'tension_upper',
-    //     'tension_below',
-    //     'saturasi',
-    //     'nafas',
-    //     'arm_diameter',
-    //     'anamnase',
-    //     'pemeriksaan',
-    //     'teraphy_desc',
-    //     'description',
-    //     'clinic_id',
-    //     'class_room_id',
-    //     'bed_id',
-    //     'keluar_id',
-    //     'employee_id',
-    //     'no_registration',
-    //     'visit_id',
-    //     'org_unit_code',
-    //     'doctor',
-    //     'kal_id',
-    //     'theid',
-    //     'thename',
-    //     'theaddress',
-    //     'status_pasien_id',
-    //     'isrj',
-    //     'gender',
-    //     'ageyear',
-    //     'agemonth',
-    //     'ageday',
-    // ];
+    protected $allowedFields = [
+        'sspractitioner_id',
+        'ttdpath'
+    ];
 
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
@@ -61,7 +28,10 @@ class EmployeeAllModel extends Model
     public function getEmployee()
     {
         $employeeModel = new EmployeeAllModel();
-        $employee = $employeeModel->select("replace(fullname,'''','') as FULLNAME, , EMPLOYEE_ID, dpjp, specialist_type_id")->where('SPECIALIST_TYPE_ID is not null')->findAll();
+        // $employee = $employeeModel->select("replace(fullname,'''','') as FULLNAME, , EMPLOYEE_ID, dpjp, specialist_type_id, sspractitioner_id")->where('SPECIALIST_TYPE_ID is not null')->findAll();
+        $employee = $employeeModel->select("replace(fullname,'''','') as FULLNAME, , EMPLOYEE_ID, dpjp, specialist_type_id, sspractitioner_id")
+            ->where("specialist_type_id is not null")
+            ->findAll();
         return $employee;
     }
 }

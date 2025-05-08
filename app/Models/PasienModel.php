@@ -47,6 +47,12 @@ class PasienModel extends Model
         'kk_no',
         'tmt',
         'tat',
+        'ttd',
+        'sspasien_id',
+        'father',
+        'mother',
+        'spouse',
+        'sign_file'
     ];
 
     // Dates
@@ -74,7 +80,7 @@ class PasienModel extends Model
 
     public function getPasienList($searchText = null)
     {
-        return $this->select("top(20) * ")
+        return $this->select("top(20) *, (SELECT visit_id FROM TREATMENT_AKOMODASI WHERE TREATMENT_AKOMODASI.NO_REGISTRATION = pasien.NO_REGISTRATION AND KELUAR_ID = 0) as visit_id ")
             ->like('no_registration', $searchText)
             ->orLike('name_of_pasien', $searchText)->findAll();
     }
@@ -84,9 +90,12 @@ class PasienModel extends Model
     }
     public function getNorm()
     {
-        $builder = $this->where('len(no_registration)', 6)
-            ->where("no_registration < '949962'",)
+        $builder = $this
+            ->where("len(no_registration) = 6
+            and TRY_CAST(NO_REGISTRATION as int) IS NOT NULL
+            and NO_REGISTRATION like '0%'",)
             ->select('isnull(max(convert(bigint,right(no_registration,6))),0) as themax')->findAll();
+
         $theMax = $builder[0]['themax'] + 1;
         $norm = $theMax + 1000000;
         $norm = strval($norm);

@@ -9,7 +9,7 @@ class AssessmentModel extends Model
     protected $table      = 'assessment_info';
     protected $primaryKey = 'body_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

@@ -74,7 +74,13 @@ class PasienVisitationModel extends Model
         'aktif',
         'visit_id',
         'trans_id',
-        'ticket_no'
+        'ticket_no',
+        'isrj',
+        'backcharge',
+        'ssencounter_id',
+        'statusantrean',
+        'employee_inap',
+        'patient_category_id'
     ];
 
     // Dates
@@ -113,7 +119,7 @@ class PasienVisitationModel extends Model
               else '1' end as ISRJ,
         STATUS_PASIEN_ID")
             ->join('clinic c', 'pasien_visitation.clinic_id = c.clinic_id', 'left')
-            ->where('visit_date > \'2023-01-01\'')
+            ->where('visit_date > \'2024-01-01\'')
             ->where('visit_date < getdate()')
             ->groupBy([
                 'YEAR(VISIT_DATE)',
@@ -202,7 +208,7 @@ class PasienVisitationModel extends Model
                     MONTH(VISIT_DATE),
                     DAY(visit_date),
                     c.NAME_OF_CLINIC')
-                ->select('count(visit_id) as JML,
+                ->select('top(200) count(visit_id) as JML,
                     YEAR(VISIT_DATE) as YEAR,
                     RIGHT(MONTH(VISIT_DATE)+100, 2) MONTH,
                     RIGHT(DAY(VISIT_DATE)+100, 2) DAY,
@@ -299,6 +305,20 @@ class PasienVisitationModel extends Model
             pv.RM_OUT_DATE,
             pv.RESEND_RM_DATE,
             pv.RM_IN_DATE,
+            pv.employee_inap,
+            pv.exit_date,
+            pv.statusantrean,
+            pv.kddpjp,
+            pv.bed_id,
+            pv.in_date,
+            pv.ssencounter_id,
+            pv.keluar_id,
+            pv.modified_by,
+            pv.modified_date,
+            pv.responpost_vklaim,
+            pv.asalrujukan,
+            pv.tgl_lahir,
+            pv.kdpoli_eks,
               pv.diagnosa")
                 ->where("(
                 ((isnull(PV.DIANTAR_OLEH,'') like '%$nama%' ) or pv.name_of_pasien like '%$nama%') or
@@ -318,6 +338,38 @@ class PasienVisitationModel extends Model
             return $builder->getResultArray();
         }
     }
+    public function getKunjunganOperasi($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null)
+    {
+        $sql = "DECLARE	@return_value int
+
+            EXEC	@return_value = [dbo].[SP_SEARCHKUNJUNGANRIAKOM_FORM]
+                    @X = N'100',
+                    @NAMA = N'%$nama%',
+                    @KODE = N'%$kode%',
+                    @ALAMAT = N'%$alamat%',
+                    @POLI = N'%$poli%',
+                    @MULAI = N'$mulai',
+                    @AKHIR = N'$akhir',
+                    @KELUAR = N'%',
+                    @SUDAH = N'%$sudah%',
+                    @DOKTER = N'%$dokter%',
+                    @NOKARTU = N'%$nokartu%'
+
+            SELECT	'Return Value' = @return_value";
+        // $sql = "SP_SEARCHKUNJUNGANRIAKOM_FORM;1 @X = '100',
+        // @NAMA = '%$nama%',
+        // @KODE = '%$kode%',
+        // @ALAMAT = '%$alamat%',
+        // @POLI = '%$poli%',
+        // @MULAI = '$mulai',
+        // @AKHIR = '$akhir',
+        // @KELUAR = '%',
+        // @SUDAH = '%$sudah%',
+        // @DOKTER = '%$dokter%',
+        // @NOKARTU = '%$nokartu%'";
+        $result = $this->db->query(new RawSql($sql));
+        return $result->getResultArray();
+    }
 
     public function getKunjunganPasien($id)
     {
@@ -335,10 +387,12 @@ class PasienVisitationModel extends Model
     }
     public function generateId($selectPoli, $no_registration)
     {
-        $builder = $this->select(" top (1) convert(varchar, getdate(), 112)+'$selectPoli'+'$no_registration' as visit_id,
+        $db = db_connect();
+        $builder = $db->query("select top (1) convert(varchar, getdate(), 112)+'$selectPoli'+'$no_registration' as visit_id,
         '$no_registration' + convert(varchar, getdate(), 112) +right(newid(),4) as trans_id,
-        ISNULL((SELECT MAX(TICKET_NO) FROM PASIEN_VISITATION WHERE CLINIC_ID = '$selectPoli' AND  convert(varchar, visit_date, 23) = convert(varchar, getdate(), 23)  ),0)+1 as ticket_no");
-        return $builder->findAll();
+        ISNULL((SELECT MAX(TICKET_NO) FROM PASIEN_VISITATION WHERE CLINIC_ID = '$selectPoli' AND  convert(varchar, visit_date, 23) = convert(varchar, getdate(), 23)  ),0)+1 as ticket_no,
+        newid() as ssencounter_id");
+        return $builder->getResultArray();
     }
 
     public function getregisterpoli($mulai, $akhir, $status, $rj, $poli, $kal)
@@ -386,6 +440,113 @@ class PasienVisitationModel extends Model
     public function getrmindexrajal($mulai, $akhir, $poli, $status, $rj)
     {
         $sql = "SP_EIS_SENSUS_PENYAKIT_RAJAL;1 @MULAI = '$mulai', @AKHIR = '$akhir', @POLI = '$poli', @STATUS = '$status', @RJ = '$rj'";
+        $result = $this->db->query(new RawSql($sql));
+        return $result->getResultArray();
+    }
+    public function selectSep($visit)
+    {
+        $sql = " select p.pasien_id as noKartu , 
+                cast(convert(varchar(10),visit_date,120)as datetime) as tglSep, 
+                p.org_unit_code as ppkPelayanan,  
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then '1' else '2' end  jnsPelayanan ,  
+
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then 
+                    cs.other_id
+                else
+                    '3' 
+                end    as klsRawat, 
+                cs.kdkelasv as klsRawatNaik,
+                
+                            
+                p.no_registration as noMr,  
+                case   when ( ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' ) and p.no_skp is not null then --saat RI, kalo ada SEP RJ, maka faskesnya  = unit iut sendiri
+                    2
+                else 
+                    asalrujukan 
+                end   as asalRujukan,
+                
+                cast(convert(varchar(10),tanggal_rujukan,120)as datetime) as tglRujukan,  
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then
+                    isnull(p.no_skp,noRujukan)
+                else 
+                    noRujukan 
+                end   as noRujukan,
+                
+
+                case   when ( ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' ) and p.no_skp is not null then --saat RI, kalo ada SEP RJ, maka dia jadi no rujukan, otherwise no rujukannya
+                        p.org_unit_code
+                else 
+                        ppkRujukan
+                end  as   ppkRujukan,
+                
+
+
+                case  when ( p.description is null )or (p.description = '') then '-' else p.description end  as catatan,  
+                diag_Awal as diagAwal,  
+                case when rujukan_id = 500  then
+                    p.kdpoli
+                when class_room_id is not null then ''
+                else
+                    ps.kdpoli  
+                end as tujuan,
+
+                isnull(kdpoli_eks,'0') as eksekutif,
+                isnull(cob,'0') as cob,
+                isnull(p.BACKCHARGE,'0') as katarak, 
+                case reason_id when 3 then '1' else '0' end as lakaLantas,
+                temptrans as noLP,
+                case penjamin when 0 then '' else isnull(penjamin,'') end as penjamin,  
+                cast(convert(varchar(10),valid_rm_date,120)as datetime) as tglKejadian,
+                isnull(delete_sep,'-') as keterangan,
+                
+                case when reason_id = 3 and (no_skp is not null or no_skpinap is null ) then
+                    isnull(ispertarif,'0')
+                else
+                    '0'
+                end as suplesi,  
+
+
+                case when no_skp is null and no_skpinap is null then
+                    ''
+                when no_skpinap is not null and isperTarif='1' and reason_id = 3  then
+                    no_skpinap
+                when no_skpinap is  null and no_skp is not null and isperTarif='1'  and reason_id = 3 then --hanya jika kecelakaan
+                    no_skp
+                else
+                    ''
+                end as noSepSuplesi, 
+                    
+                isnull( (select kdprov from inasis_get_kecamatan where kode = p.lokasiLaka),'')  as kdPropinsi,  
+                isnull( (select kdkab from inasis_get_kecamatan where kode = p.lokasiLaka),'')   as kdKabupaten, 
+                isnull(p.lokasiLaka,'') as kdKecamatan, 
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then
+                    case when  p.specimenno is null or ltrim(p.specimenno) = '' then edit_sep else ltrim(p.specimenno)  end
+                else 
+                    edit_sep
+                end as noSurat,
+                CASE  when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then 
+                        (select dpjp from employee_all where employee_id = p.employee_inap)
+                        
+                else
+                    
+                    isnull(kdDPJP, (select dpjp from employee_all where employee_id =  p.employee_id)	)	
+                end   as kdDPJP,
+
+                isnull(pa.mobile,pa.phone_number) as noTelp,  
+                p.modified_by as user1,
+                tujuankunj as tujuanKunj,
+                replace(isnull(flagprocedure,''),'99','') flagProcedure,
+                replace(isnull(kdpenunjang,''),'99','') kdPenunjang,
+                replace(isnull(assesmentpel,''),'99','') assesmentPel,
+                KDDPJP as kodeDPJP,
+                case when (case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then '1' else '2' end ) <> '1' then kddpjp else '' end as dpjpLayan,
+                no_skp,
+                no_skpinap
+                from  pasien_visitation p, pasien pa, clinic ps, class cs
+                where p.no_registration = pa.no_registration  and p.org_unit_code = pa.org_unit_code   
+                and ps.clinic_id  = p.clinic_id  and cs.class_id= p.class_id
+                and visit_id ='$visit'";
+
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }

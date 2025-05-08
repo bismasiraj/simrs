@@ -9,12 +9,23 @@ class BatchingBridgingModel extends Model
     protected $table      = 'batching_bridging';
     protected $primaryKey = 'trans_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    // protected $allowedFields = ['name', 'email'];
+    protected $allowedFields = [
+        'no_registration',
+        'trans_id',
+        'url',
+        'method',
+        'parameter',
+        'result',
+        'status',
+        'created_date',
+        'modified_date',
+        'tipe'
+    ];
 
     // Dates
     protected $useTimestamps = false;

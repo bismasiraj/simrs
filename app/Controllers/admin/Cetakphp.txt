@@ -1,0 +1,43 @@
+public function asuhan_gizi($visit, $body_id)
+    {
+        $title = "Asuhan Gizi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $query = $this->lowerKey($db->query(
+                "
+                select ASSESSMENT_NUTRITION.*, examination_info.weight, examination_info.height, age_range.display,ASSESSMENT_NUTRITION_HABIT.dietary_habit  from ASSESSMENT_NUTRITION 
+                LEFT join examination_info on ASSESSMENT_NUTRITION.examination_date = examination_info.examination_date
+                LEFT join age_range on ASSESSMENT_NUTRITION.age_category = age_range.age_range
+                LEFT join ASSESSMENT_NUTRITION_HABIT on ASSESSMENT_NUTRITION.pola_makan = ASSESSMENT_NUTRITION_HABIT.habit_id
+                where ASSESSMENT_NUTRITION.body_id = '$body_id'
+                "
+            )->getRowArray());
+
+
+            $selectDiagnosa = $this->lowerKey($db->query(
+                "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $query['body_id'] . "' "
+            )->getResultArray());
+
+            $selectIntervensi = $this->lowerKey($db->query(
+                "select * from ASSESSMENT_NUTRITION_INTERVENTION where document_id = '" . $query['body_id'] . "' "
+            )->getResultArray());
+
+            $selectFoodRecall = $this->lowerKey($db->query(
+                "select * from ASSESSMENT_NUTRITION_RECALL where document_id = '" . $query['body_id'] . "' "
+            )->getResultArray());
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            return view("admin/patient/cetak/laporan-gizi.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $query,
+                "organization" => $selectorganization,
+                "diagnosa" => $selectDiagnosa,
+                "intervensi" => $selectIntervensi,
+                "foodRecall" => $selectFoodRecall
+            ]);
+        }
+    }

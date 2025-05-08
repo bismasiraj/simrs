@@ -1,16 +1,23 @@
 <?php
-
+// dd($dokter);
 $this->extend('layout/basiclayout', [
-    'orgunit' => $orgunit,
-    'img_time' => $img_time
+    'title' => $title
 ]) ?>
 <?php
-$rajalTipe = [1, 2, 0, 73, 50, 5];
-$ranapTipe = [1, 3, 2, 0, 73, 50, 5];
+$rajalTipe = [1, 2, 0, 22, 73, 50, 5];
+$ranapTipe = [3, 2, 0, 22, 73, 50, 5];
 $permissions = user()->getPermissions();
-
+$session = session();
+$gsPoli = $session->gsPoli;
+// dd($giTipe);
 ?>
-
+<?php $this->section('topbar') ?>
+<?php echo view('layout/partials/topbar.php', [
+    'title' => $title,
+    'pagetitle' => 'dashboard',
+    'subtitle' => 'dashboard',
+]); ?>
+<?php $this->endSection() ?>
 <?php $this->section('content') ?>
 <?php
 $currency_symbol = 'Rp. ';
@@ -42,66 +49,107 @@ $currency_symbol = 'Rp. ';
     <section class="">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card rounded-4">
                     <div class="card-body">
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs" role="tablist">
-                                <?php if ($giTipe == 0) { ?>
+                                <?php if ($giTipe == 0 || $giTipe == '5') { ?>
+                                    <?php if (!user()->checkRoles(['dokter'])) {
+                                    ?>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#biodata" type="button" role="tab" aria-controls="biodata" aria-selected="true"><i class="fa fa-th text-primary"></i> Biodata Pasien</button>
+                                        </li>
+                                    <?php
+                                    } ?>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#biodata" type="button" role="tab" aria-controls="biodata" aria-selected="true"><i class="fa fa-th"></i>Biodata Pasien</button>
+                                        <button class="nav-link <?php if (user()->checkRoles(['dokter'])) {
+                                                                ?>
+                                                                active
+                                    <?php
+                                                                } ?>" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-stethoscope text-primary"></i> Rawat Jalan</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-stethoscope"></i>Rawat Jalan</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures"></i>Rawat Inap</button>
+                                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>
                                 <?php } ?>
-                                <?php if (in_array($giTipe, $rajalTipe)  && $giTipe != 0) { ?>
-                                    <li class="nav-item active" role="presentation"><a href=" #rawat_jalan" data-toggle="tab" aria-expanded="true"><i class="fa fa-stethoscope"></i> Rawat Jalan</a></li>
+                                <?php if (in_array($giTipe, $rajalTipe)  && $giTipe != 0 && $giTipe != 5) { ?>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-stethoscope text-primary"></i> Rawat Jalan</button>
+                                    </li>
                                     <!-- <li><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li> -->
                                 <?php } ?>
                                 <?php if ($giTipe == 3) { ?>
-                                    <li class="nav-item active" role="presentation"><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
+                                    </li>
                                 <?php } ?>
-                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 3  && $giTipe != 0) { ?>
-                                    <li class="nav-item" role="presentation"><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li>
+                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 0 && $giTipe != 5 && $giTipe != 3) { ?>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
+                                    </li>
+                                <?php } ?>
+                                <?php if ($gsPoli == 'P002') { ?>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#operasi" type="button" role="tab" aria-controls="operasi" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Jadwal Operasi</button>
+                                    </li>
                                 <?php } ?>
 
                             </ul>
                             <div class="tab-content">
-                                <div class="tab-pane tab-content-height 
-                            <?php if ($giTipe == 0) echo "active"; ?>
-                            " id="biodata">
-                                    <?php
-                                    if ($giTipe == 0) {
-                                        echo view('admin/patient/modul/search_pasien', [
-                                            'giTipe' => $giTipe,
-                                            // 'search_text' => $search_text,
-                                            'orgunit' => $orgunit,
-                                            'img_time' => $img_time,
-                                            'coverage' => $coverage,
-                                            'status' => $status,
-                                            'jenis' => $jenis,
-                                            'kelas' => $kelas,
-                                            'kalurahan' => $kalurahan,
-                                            'kecamatan' => $kecamatan,
-                                            'kota' => $kota,
-                                            'prov' => $prov,
-                                            'statusPasien' => $statusPasien,
-                                            'payor' => $payor,
-                                            'education' => $education,
-                                            'marital' => $marital,
-                                            'agama' => $agama,
-                                            'job' => $job,
-                                            'blood' => $blood,
-                                            'family' => $family,
-                                            'gender' => $gender
-                                        ]);
-                                    }
-                                    ?>
-                                </div>
-
+                                <?php
+                                if ($giTipe == 0 || $giTipe == '5') {
+                                    echo view('admin/patient/modul/search_pasien', [
+                                        'giTipe' => $giTipe,
+                                        // 'search_text' => $search_text,
+                                        'orgunit' => $orgunit,
+                                        'img_time' => $img_time,
+                                        'coverage' => $coverage,
+                                        'status' => $status,
+                                        'jenis' => $jenis,
+                                        'kelas' => $kelas,
+                                        'kalurahan' => $kalurahan,
+                                        'kecamatan' => $kecamatan,
+                                        'kota' => $kota,
+                                        'prov' => $prov,
+                                        'statusPasien' => $statusPasien,
+                                        'payor' => $payor,
+                                        'education' => $education,
+                                        'marital' => $marital,
+                                        'agama' => $agama,
+                                        'job' => $job,
+                                        'blood' => $blood,
+                                        'family' => $family,
+                                        'gender' => $gender
+                                    ]);
+                                }
+                                ?>
+                                <?php
+                                if ($gsPoli == 'P002') {
+                                    echo view('admin/patient/modul/search_operasi', [
+                                        'giTipe' => $giTipe,
+                                        // 'search_text' => $search_text,
+                                        'orgunit' => $orgunit,
+                                        'img_time' => $img_time,
+                                        'coverage' => $coverage,
+                                        'status' => $status,
+                                        'jenis' => $jenis,
+                                        'kelas' => $kelas,
+                                        'kalurahan' => $kalurahan,
+                                        'kecamatan' => $kecamatan,
+                                        'kota' => $kota,
+                                        'prov' => $prov,
+                                        'statusPasien' => $statusPasien,
+                                        'payor' => $payor,
+                                        'education' => $education,
+                                        'marital' => $marital,
+                                        'agama' => $agama,
+                                        'job' => $job,
+                                        'blood' => $blood,
+                                        'family' => $family,
+                                        'gender' => $gender
+                                    ]);
+                                }
+                                ?>
                                 <?php if (in_array($giTipe, $rajalTipe)) {
                                     echo view('admin/patient/modul/search_rajal', [
                                         'giTipe' => $giTipe,
@@ -176,26 +224,44 @@ $currency_symbol = 'Rp. ';
                                         // 'diagnosa' => $diagnosa,
                                         'dpjp' => $dpjp,
                                         'caraKeluar' => $caraKeluar,
+                                        'clinicInap' => $clinicInap
                                     ]);
                                 } ?>
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
     </section>
 </div>
-
+<?php
+// if ($giTipe == 3 || $giTipe == 2 || $giTipe == 0 || $giTipe == 73 || $giTipe == 50 || $giTipe == 5) {
+if (in_array($giTipe, $ranapTipe)) {
+    // if (in_array($giTipe, $ranapTipe)) {
+    echo view('admin/patient/profilemodul/tandatangan', []);
+} ?>
 <?php $this->endSection() ?>
 <?php $this->section('jsContent') ?>
+<script src="<?php echo base_url(); ?>assets/js/jquery.validate.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/jszip/jszip.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
 <script type="text/javascript">
     var coverage = status = jenis = kelas = kalurahan = kecamatan = kota = prov = statusPasien = payor = education = marital = agama = job = blood = gender = family = new Array();
     var skunj = new Array();
     var dpjp = new Array();
+    var ssdpjp = new Array();
 
     gender = [
         <?php foreach ($gender as $key => $value) { ?>[
@@ -294,19 +360,14 @@ $currency_symbol = 'Rp. ';
                 <?php } ?>],
         <?php } ?>
     ];
-    <?php foreach ($dpjp as $key => $value) { ?>
-        dpjp['<?= $key; ?>'] = '<?= $value; ?>';
-    <?php } ?>
+    <?php foreach ($dpjp as $key => $value) {
+        foreach ($value as $key1 => $value1) { ?>
+            dpjp['<?= $key; ?>'] = '<?= $key1; ?>';
+            ssdpjp['<?= $key; ?>'] = '<?= $value1; ?>'
+    <?php }
+    } ?>
 </script>
 <script type="text/javascript">
-    function holdModal(modalId) {
-        $('#' + modalId).modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true
-        });
-    }
-
     function getAge(dateString) {
         var now = new Date();
         var today = new Date(now.getYear(), now.getMonth(), now.getDate());
@@ -378,6 +439,7 @@ $currency_symbol = 'Rp. ';
 <script type="text/javascript">
     var dokterdpjp = new Array();
     var skunj = new Array();
+    var klinikBpjs = new Array();
 
     <?php
     foreach ($dokter as $key => $value) {
@@ -386,6 +448,13 @@ $currency_symbol = 'Rp. ';
             dokterdpjp.push(['<?= $key; ?>', '<?= $key1; ?>', '<?= $value1; ?>']);
     <?php
         }
+    }
+    ?>
+    <?php
+    foreach ($clinic as $key => $value) {
+    ?>
+        klinikBpjs.push(['<?= @$value['kdpoli']; ?>', '<?= $value['clinic_id']; ?>', '<?= $value['name_of_clinic']; ?>', '<?= @$value['sslocation_id']; ?>']);
+    <?php
     }
     ?>
 
@@ -404,7 +473,7 @@ $currency_symbol = 'Rp. ';
 
 
     function resetModal() {
-        // $("#patientDetails").hide();
+        // $("#patientDetails").slideUp();
         $('#patientDetails').find('td').each(function() {
             var patientDataId = $(this).attr('id');
             if (!(typeof patientDataId == "undefined")) {
@@ -445,7 +514,7 @@ $currency_symbol = 'Rp. ';
         $("#ajax_load").html("<center><img src='" + base_url + "'/>");
         if (id == '') {
             $("#ajax_load").html("");
-            $("#patientDetails").hide();
+            $("#patientDetails").slideUp();
         } else {
             $.ajax({
                 url: baseurl + 'admin/patient/getpatientDetails',
@@ -457,7 +526,7 @@ $currency_symbol = 'Rp. ';
                 success: function(data) {
                     if (data) {
                         $("#ajax_load").html("");
-                        $("#patientDetails").show();
+                        $("#patientDetails").slideDown();
                         resetModal();
                         skunj = data
                         if (data.ismeninggal == 0) {
@@ -605,7 +674,7 @@ $currency_symbol = 'Rp. ';
                         $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fa fa-pencil'></i></a>" + link + "");
                     } else {
                         $("#ajax_load").html("");
-                        $("#patientDetails").hide();
+                        $("#patientDetails").slideUp();
                     }
 
                     // holdModal('myModal');
@@ -618,7 +687,7 @@ $currency_symbol = 'Rp. ';
 </script>
 
 <?php
-if ($giTipe == 0) {
+if ($giTipe == 0 || $giTipe == '5') {
     echo view('admin/patient/modul/search_pasien_js', [
         'giTipe' => $giTipe,
         // 'search_text' => $search_text,
@@ -646,6 +715,42 @@ if ($giTipe == 0) {
 ?>
 <?php if (in_array($giTipe, $rajalTipe)) {
     echo view('admin/patient/modul/search_rajal_js', [
+        'giTipe' => $giTipe,
+        'rajalTipe' => $rajalTipe,
+        'title' => '',
+        'orgunit' => $orgunit,
+        'img_time' => $img_time,
+        'clinic' => $clinic,
+        'dokter' => $dokter,
+        'coverage' => $coverage,
+        'status' => $status,
+        'jenis' => $jenis,
+        'kelas' => $kelas,
+        'kalurahan' => $kalurahan,
+        'kecamatan' => $kecamatan,
+        'kota' => $kota,
+        'prov' => $prov,
+        'statusPasien' => $statusPasien,
+        'payor' => $payor,
+        'education' => $education,
+        'marital' => $marital,
+        'agama' => $agama,
+        'job' => $job,
+        'blood' => $blood,
+        'family' => $family,
+        'gender' => $gender,
+        'way' => $way,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        // 'diagnosa' => $diagnosa,
+        'dpjp' => $dpjp
+    ]);
+}
+?>
+<?php if ($gsPoli == 'P002') {
+    echo view('admin/patient/modul/search_operasi_js', [
         'giTipe' => $giTipe,
         'rajalTipe' => $rajalTipe,
         'title' => '',

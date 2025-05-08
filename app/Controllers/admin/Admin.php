@@ -10,6 +10,7 @@ use App\Models\ClassModel;
 use App\Models\ClassRoomModel;
 use App\Models\ClinicDoctorModel;
 use App\Models\ClinicModel;
+use App\Models\ClinicTypeModel;
 use App\Models\CoverageModel;
 use App\Models\PasienVisitationModel;
 use App\Models\DoctorScheduleModel;
@@ -47,10 +48,16 @@ class Admin extends \App\Controllers\BaseController
     }
     public function index()
     {
-        // return $this->rajal();
+        // return 'asdf';
 
         // dd(!is_null(user()->employee_id) && user()->employee_id != '');
-        if (!is_null(user()->employee_id) && user()->employee_id != '') {
+        if (user()->checkRoles(['adminlab', 'dokterlab'])) {
+            $patient = new Patient();
+            return $patient->laboratorium();
+        } else if (user()->checkRoles(['adminrad', 'dokterrad'])) {
+            $patient = new Patient();
+            return $patient->radiologi();
+        } else if (!is_null(user()->employee_id) && user()->employee_id != '') {
             return $this->rajal();
         } else {
             return $this->dashboard();
@@ -82,7 +89,7 @@ class Admin extends \App\Controllers\BaseController
         $year_end_month              = date("Y-m-t", strtotime($Next_year . '-' . $ar[1] . '-01'));
         //======================Current Month Collection ==============================
         $first_day_this_month = date('Y-m-01');
-        // dd(in_groups('superadmin'));
+        // dd(in_groups('superuser'));
         // $tot_roles            = $this->role_model->get();
         // foreach ($tot_roles as $key => $value) {
         //     if ($value["id"] != 1) {
@@ -257,16 +264,44 @@ class Admin extends \App\Controllers\BaseController
         // $data["roles"]       = $count_roles;
         // $expense             = $this->expense_model->getTotalExpenseBwdate(date('Y-m-01'), date('Y-m-t'));
         // $data["expense"]     = $expense;
-        $start_month         = strtotime($year_str_month);
+        // $start_month         = strtotime($year_str_month);
         $start               = strtotime($year_str_month);
         $end                 = strtotime($year_end_month);
-        $coll_month          = array();
-        $s                   = array();
-        $ex                  = array();
-        $total_month         = array();
-        $start_session_month = strtotime($year_str_month);
+
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $db = db_connect('default');
+        // $builder = $db->query('web_D01_1_PoliHarian');
+        // $rKHarian = $builder->getResultArray();
+
+        // $builder = $db->query('web_D01_2_PoliBulanan');
+        // $rKBulanan = $builder->getResultArray();
+
+        $builder = $db->query('web_D12_Pasien_Perdaerah');
+        $rPasienDaerah = $builder->getResultArray();
+
+        $builder = $db->query('web_D13_Pasien_Perumur');
+        $rPasienUmur = $builder->getResultArray();
+
+        $builder = $db->query('web_D18_Rajal_Perstatus');
+        $rRajalBayar = $builder->getResultArray();
+
+        // $builder = $db->query('web_D16_Grafik_Dokter');
+        // $rGrafikDokter = $builder->getResultArray();
+
+        // $builder = $db->query('web_D02_PelayananPoli');
+        // $rTerlayani = $builder->getResultArray();
 
         return view('admin/dashboard', [
+            // 'rKHarian' => $rKHarian,
+            // 'rKBulanan' => $rKBulanan,
+            'rPasienDaerah' => $rPasienDaerah,
+            'rPasienUmur' => $rPasienUmur,
+            'rRajalBayar' => $rRajalBayar,
+            // 'rGrafikDokter' => $rGrafikDokter,
+            // 'rTerlayani' => $rTerlayani,
             'dokter' => $dokterNew,
             'kunjJalan' => $kunjJalan,
             'kunjInap' => $kunjInap,
@@ -390,7 +425,14 @@ class Admin extends \App\Controllers\BaseController
         $kelas = $this->lowerKey($kelasModel->findAll());
 
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = [];
+        // $kalurahan = $this->lowerKey($kalurahanModel->where("KEC_ID in
+        //                 (
+        //                 24750,
+        //                 24751,
+        //                 24752,
+        //                 24753
+        //                 )")->findAll());
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());
@@ -465,7 +507,7 @@ class Admin extends \App\Controllers\BaseController
 
         $search_text = $this->request->getPost('search_text');
         $pasienmodel = new PasienModel();
-        $dt_response = $pasienmodel->getPasienList($search_text);
+        $dt_response = $this->lowerKey($pasienmodel->getPasienList($search_text));
         $dt_data     = array();
         $info        = array();
         $data        = array();
@@ -475,7 +517,7 @@ class Admin extends \App\Controllers\BaseController
         if (!empty($dt_response)) {
             foreach ($dt_response as $key => $value) {
                 $row = array();
-                $id = $dt_response[$key]['NO_REGISTRATION'];
+                $id = $dt_response[$key]['no_registration'];
                 if (false) { //if ($value->is_active == 'yes') {
 
 
@@ -493,7 +535,7 @@ class Admin extends \App\Controllers\BaseController
                     $result[$key]['url']  = $url;
                 }
 
-                $date1 = date_create(substr($dt_response[$key]['DATE_OF_BIRTH'], 0, 10));
+                $date1 = date_create(substr($dt_response[$key]['date_of_birth'], 0, 10));
                 $date2 = date_create(date('Y-m-d'));
 
                 $diff = date_diff($date1, $date2);
@@ -504,38 +546,45 @@ class Admin extends \App\Controllers\BaseController
 
                 $action = '<button type="button" class="btn btn-primary waves-effect waves-light" onclick="addVisitPatient(\'' . $id . '\')">Tambah</button>';
 
-                // $action .= "<div class='btn-group' style='margin-left:2px;'>";
-                // if (!empty($result[$key]['info'])) {
-                //     $action .= "<a href='#' style='width: 20px;border-radius: 2px;' class='btn btn-default btn-xs'  data-toggle='dropdown' title='" . lang('show') . "'><i class='fa fa-ellipsis-v'></i></a>";
-                //     $action .= "<ul class='dropdown-menu dropdown-menu2' role='menu'>";
+                $action = '<div class="btn-group" role="group">';
+                $action .= '<button id="btnGroupVerticalDrop' . $id . '" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Pilih <i class="mdi mdi-chevron-down"></i>
+                                                </button>';
 
-                //     foreach ($result[$key]['info'] as $pkey => $pvalue) {
-                //         $action .= "<li>" . "<a href='" . $result[$key]['url'][$pkey] . "' class='btn btn-default btn-xs'  data-toggle='' title=''>" . $pvalue . "</a>" . "</li>";
-                //     }
-                //     $action .= "</ul>";
-                // }
-                // $action .= "</div>";
+                $action .= '<div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" style="">';
+                if ($dt_response[$key]['visit_id'] != null) {
+                    $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
+                    $action .= '<a onclick="getAkomodasi(\'' . $dt_response[$key]['visit_id'] . '\')" class="dropdown-item" href="#"><i style="color: red">PASIEN SEDANG RAWAT INAP</i></a>';
+                } else {
+                    $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
+                    $action .= '<a onclick="addRanap(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Inap</a>';
+                }
+                $action .= '<a onclick=\'getpatientData("' . $id . '")\' class="dropdown-item" href="#">Histori Pasien</a>';
+                $action .= '<a onclick=\'editBiodataPasien("' . $key . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
+                $action .= "</div>";
                 $first_action = "<a href='#' onclick='getpatientData(\"" . $id . "\")'  class='btn btn-default btn-xs'  data-toggle='modal' title=''>";
-                $checkbox     = "<input  class='chk2 enable_delete' type='checkbox' name='patient[]' value='" . $id . "'>";
+                // $checkbox     = "<input  class='chk2 enable_delete' type='checkbox' name='patient[]' value='" . $id . "'>";
+                $checkbox = $id;
 
                 //==============================
                 $row[] = $checkbox;
-                $row[] = $first_action . $this->composePatientName($dt_response[$key]['NAME_OF_PASIEN'], $id) . "</a>";
+                // $row[] = $first_action . $this->composePatientName($dt_response[$key]['NAME_OF_PASIEN'], $id) . "</a>";
+                $row[] = $first_action . $dt_response[$key]['name_of_pasien'] . "</a>";
                 $row[] = $this->getPatientAge($age, $month, $day);
-                if ($dt_response[$key]['GENDER'] == '1') {
-                    $row[] = 'Laki-laki';
+                if ($dt_response[$key]['gender'] == '1') {
+                    $row[] = 'laki-laki';
                 } else {
-                    $row[] = 'Perempuan';
+                    $row[] = 'perempuan';
                 }
-                if (empty($dt_response[$key]['PHONE_NUMBER'])) {
-                    $dt_response[$key]['PHONE_NUMBER'] = ' - ';
+                if (empty($dt_response[$key]['phone_number'])) {
+                    $dt_response[$key]['phone_number'] = ' - ';
                 }
-                if (empty($dt_response[$key]['MOBILE'])) {
-                    $dt_response[$key]['MOBILE'] = ' - ';
+                if (empty($dt_response[$key]['mobile'])) {
+                    $dt_response[$key]['mobile'] = ' - ';
                 }
-                $row[] = $dt_response[$key]['PHONE_NUMBER'] . " / " . $dt_response[$key]['MOBILE'];
-                $row[] = '';
-                $row[] = $dt_response[$key]['CONTACT_ADDRESS'];
+                $row[] = $dt_response[$key]['phone_number'] . " / " . $dt_response[$key]['mobile'];
+                $row[] = $dt_response[$key]['pasien_id'] . " / " . $dt_response[$key]['sspasien_id'];
+                $row[] = $dt_response[$key]['contact_address'];
                 // if (false) { //if ($value->is_dead == 'yes') {
                 //     $row[] = lang('yes');
                 // } else {
@@ -557,8 +606,8 @@ class Admin extends \App\Controllers\BaseController
             }
         }
         $json_data = array(
-
             "data"            => $dt_data,
+            "biodata" => $dt_response
         );
         echo json_encode($json_data);
     }
@@ -573,6 +622,7 @@ class Admin extends \App\Controllers\BaseController
         $img_timestamp = $img_time->getTimestamp();
 
         //parameter
+
         $coverageModel = new CoverageModel();
         $coverage = $this->lowerKey($coverageModel->findAll());
 
@@ -586,7 +636,9 @@ class Admin extends \App\Controllers\BaseController
         $kelas = $this->lowerKey($kelasModel->findAll());
 
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        // $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = [];
+
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());
@@ -636,6 +688,9 @@ class Admin extends \App\Controllers\BaseController
         $reasonModel = new VisitReasonModel();
         $reason = $this->lowerKey($reasonModel->findAll());
 
+        $ckModel = new CaraKeluarModel();
+        $caraKeluar = $this->lowerKey($ckModel->findAll());
+
         // dd($reasonModel);
 
         $isattendedModel = new IsattendedsModel();
@@ -657,14 +712,16 @@ class Admin extends \App\Controllers\BaseController
         $clinicPermission = array();
 
         $userEmployee = user()->employee_id;
+        // dd($userEmployee);
 
         $cdModel = new ClinicDoctorModel();
         $clinicDoctor = $this->lowerKey($cdModel->where('employee_id', $userEmployee)->findAll());
+        $clinicInap = array();
 
 
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
-        $ckModel = new CaraKeluarModel();
-        $caraKeluar = $this->lowerKey($ckModel->findAll());
 
 
         foreach ($clinic as $key => $value) {
@@ -677,6 +734,9 @@ class Admin extends \App\Controllers\BaseController
             }
             $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
             unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
         }
 
         if (!is_null($userEmployee)) {
@@ -697,7 +757,9 @@ class Admin extends \App\Controllers\BaseController
                 }
             }
 
-            unset($clinic);
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
@@ -741,9 +803,11 @@ class Admin extends \App\Controllers\BaseController
             'isattended' => $isattended,
             'inasisPoli' => $inasisPoli,
             'inasisFaskes' => $inasisFaskes,
+            'caraKeluar' => $caraKeluar,
             // 'diagnosa' => $diagnosa,
             'dpjp' => $dpjp,
-            'caraKeluar' => $caraKeluar
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     public function rajal()

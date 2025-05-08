@@ -12,7 +12,13 @@ $this->extend('layout/basiclayout', [
 <!-- Responsive datatable examples -->
 <link href="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <?php $this->endSection() ?>
-
+<?php $this->section('topbar') ?>
+<?php echo view('layout/partials/topbar.php', [
+    'title' => $title,
+    'pagetitle' => 'dashboard',
+    'subtitle' => 'dashboard',
+]); ?>
+<?php $this->endSection() ?>
 <?php $this->section('content') ?>
 
 <style type="text/css">
@@ -37,15 +43,15 @@ $currency_symbol = "Rp. ";
         <div class="row">
             <!-- left column -->
             <div class="col-md-12">
-                <div class="card">
+                <div class="card rounded-4">
                     <div class="card-body">
                         <!-- general form elements -->
                         <div class="box box-primary">
-                            <div class="box-header with-border">
+                            <!-- <div class="box-header with-border">
                                 <h3 class="box-title"><?php echo $title ?></h3>
                                 <div class="box-tools pull-right">
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="box-body pb0">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -60,7 +66,8 @@ $currency_symbol = "Rp. ";
                                                                 <label>Mulai Tanggal</label>
                                                                 <div>
                                                                     <div class="input-group" id="mulai">
-                                                                        <input name="mulai" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#mulai' value="<?= date('Y-m-d'); ?>">
+                                                                        <input id="flatreportmulai" type="text" class="form-control dateflatpickr" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#mulai'>
+                                                                        <input id="reportmulai" name="mulai" type="hidden" class="" placeholder="yyyy-mm-dd">
                                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                                                     </div>
                                                                     <!-- input-group -->
@@ -74,7 +81,8 @@ $currency_symbol = "Rp. ";
                                                                 <label>Hingga Tanggal</label>
                                                                 <div>
                                                                     <div class="input-group" id="akhir">
-                                                                        <input name="akhir" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#akhir' value="<?= date('Y-m-d'); ?>">
+                                                                        <input id="flatreportakhir" type="text" class="form-control dateflatpickr" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#akhir'>
+                                                                        <input id="reportakhir" name="akhir" type="hidden">
                                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                                                     </div>
                                                                     <!-- input-group -->
@@ -401,7 +409,7 @@ $currency_symbol = "Rp. ";
                                                                 <select id="kasir" class="form-control" name="kasir">
                                                                     <option value="%">Semua</option>
                                                                     <?php
-                                                                    usort($kasir, fn ($a, $b) => $a['fullname'] <=> $b['fullname']);
+                                                                    usort($kasir, fn($a, $b) => $a['fullname'] <=> $b['fullname']);
                                                                     ?>
                                                                     <?php foreach ($kasir as $key => $value) { ?>
                                                                         <option value="<?= $value['username']; ?>"><?= $value['fullname']; ?></option>
@@ -476,15 +484,18 @@ $currency_symbol = "Rp. ";
 <!-- sample modal content -->
 <div id="reportModal" class="modal fade" tabindex="-1" aria-labelledby="#reportModalLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content">
+        <div class="modal-content rounded-4">
             <div class="modal-header">
                 <h5 class="modal-title mt-0" id="reportModalLabel">
                     <?php echo $title ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead id="headdata" class="thead-dark">
+            <div id="tableDiv" class="modal-body">
+                <table id="reportDataTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead id="headdata" class="table-primary">
+                        <?php if (isset($header)) { ?>
+                            <?= $header; ?>
+                        <?php } ?>
                     </thead>
                     <tbody id="bodydata">
                     </tbody>
@@ -517,6 +528,22 @@ $currency_symbol = "Rp. ";
 
 <!-- <script src="<?php echo base_url(); ?>assets/js/pages/datatables.init.js"></script> -->
 <script type="text/javascript">
+    var dttable = $('#reportDataTable').DataTable({
+        dom: '<"mb-3"B>rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
+        lengthChange: true,
+        buttons: ['copy', {
+            extend: 'excel',
+            title: '<?= $title; ?>'
+        }, {
+            extend: 'pdf',
+            title: '<?= $title; ?>'
+        }, {
+            extend: 'print',
+            title: '<?= $title; ?>'
+        }],
+        title: '<?= $title; ?>',
+        aaSorting: []
+    });
     var date_format_new = '';
     var dokterdpjp = new Array();
     var skunj = new Array();
@@ -587,8 +614,7 @@ $currency_symbol = "Rp. ";
     $("#register").on('submit', (function(e) {
 
         e.preventDefault();
-        $("#registersubmit").button('loading');
-        // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
+        $("#registersubmit").html('<i class="spinner-border spinner-border-sm"></i>')
         $.ajax({
 
             url: '<?php echo base_url(); ?>admin/report/<?= basename($actual_link); ?>post',
@@ -599,17 +625,44 @@ $currency_symbol = "Rp. ";
             cache: false,
             processData: false,
             success: function(data) {
-                $("#bodydata").html("");
                 var stringcolumn = '';
                 var footercolumn = '';
+                var newDataTableVar;
                 // alert(data.body)
-                data.body.forEach((element, key) => {
-                    stringcolumn += '<tr class="table-light">';
-                    element.forEach((element1, key1) => {
-                        stringcolumn += "<td style='padding: 20px'>" + element1 + "</td>";
-                    });
-                    stringcolumn += '</tr>'
+                dttable.clear()
 
+                if (typeof data.header !== 'undefined') {
+                    console.log(data.header)
+                    $("#tableDiv").html("")
+                    $("#tableDiv").append('<table id="reportDataTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;"> <thead id = "headdata"class = "table-primary" ></thead> <tbody id = "bodydata" ></tbody> <tfoot id = "footdata" ></tfoot> </table>')
+                    $("#headdata").append(data.header)
+                    var fileTitle = $("#custom").text()
+                    var newDataTableVar = $('#reportDataTable').DataTable({
+                        dom: '<"mb-3"B>rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
+                        lengthChange: true,
+                        buttons: ['copy', {
+                            extend: 'excel',
+                            title: fileTitle + ' - <?= $title; ?>'
+                        }, {
+                            extend: 'pdf',
+                            title: fileTitle + ' - <?= $title; ?>',
+                            orientation: 'landscape',
+                        }, {
+                            extend: 'print',
+                            title: fileTitle + ' - <?= $title; ?>'
+                        }],
+                        aaSorting: []
+                    });
+
+                } else {
+                    newDataTableVar = dttable;
+                }
+                data.body.forEach((element, key) => {
+                    console.log(element)
+                    //  ['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00', 'Pcs', `<button type="button" onclick="rinciObatAlkes('247…ff"><i class="fa fa-search"></i> Rincian</button>`]
+                    // ['UMUM', 126, 576, 169, 283, 124, 293, 114, 576, 0]
+                    var arhasil = ['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00', 'Pcs', `<button type="button" onclick="rinciObatAlkes('247…ff"><i class="fa fa-search"></i> Rincian</button>`, '2023-08-05', '2023-08-05', '2023-08-05', '2023-08-05'];
+                    newDataTableVar.row.add(element).draw()
                 });
                 if (typeof data.footer !== 'undefined') {
                     data.footer.forEach((element, key) => {
@@ -622,26 +675,17 @@ $currency_symbol = "Rp. ";
                     });
                 }
 
-                $("#bodydata").html(stringcolumn);
-                $("#headdata").html(data.header);
                 $("#footdata").html(footercolumn);
-                $("#registersubmit").button('reset');
-                $('#datatable').DataTable();
+                $("#registersubmit").html('<button type="submit" id="registersubmit" name="search" value="search_filter" class="btn btn-primary btn-sm pull-right"><i class="fa fa-search"></i> search</button>')
 
-                //Buttons examples
-                var table = $('#datatable-buttons').DataTable({
-                    lengthChange: false,
-                    buttons: ['copy', 'excel', 'pdf', 'colvis']
-                });
 
-                table.buttons().container()
-                    .appendTo('#datatable-buttons_wrapper .col-md-6:eq(0)');
 
-                $(".dataTables_length select").addClass('form-select form-select-sm');
+
                 $('#showReportBtn').click()
             },
             error: function() {
-                $("#registersubmit").button('reset');
+                $("#registersubmit").html('<button type="submit" id="registersubmit" name="search" value="search_filter" class="btn btn-primary btn-sm pull-right"><i class="fa fa-search"></i> search</button>')
+
             }
         });
 

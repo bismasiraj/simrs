@@ -19,10 +19,11 @@
         }
 
         .loginbg {
-            background: #8ea9ca;
+            background: rgb(14 131 136);
             max-height: 480px;
             box-shadow: 0 10px 18px 0 rgba(62, 57, 107, 0.2);
             border-radius: 4px;
+            color: #fff;
         }
 
         a.forgot {
@@ -106,12 +107,13 @@
                                     <div class="p-3">
                                         <!-- <h4 class="text-muted font-size-18 mb-1 text-center">Selamat Datang</h4>
                                         <p class="text-muted text-center">Silahkan login untuk melanjutkan ke aplikasi SIMRS</p> -->
-                                        <form class="form-horizontal mt-4" action="index.html">
+                                        <form class="form-horizontal mt-4" action="<?= url_to('login') ?>" method="post">
+                                            <?= csrf_field() ?>
                                             <div class="mb-3">
                                                 <label for="username">
                                                     <h4>Username</h4>
                                                 </label>
-                                                <input type="text" name="login" placeholder="<?php echo lang('Auth.username'); ?>" value="" class="form-username form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" id="email">
+                                                <input type="text" name="login" placeholder="<?php echo lang('Auth.username'); ?>" value="<?= old('login') ?>" class="form-username form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" id="email">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="userpassword">
@@ -119,6 +121,11 @@
                                                 </label>
                                                 <input type="password" value="" name="password" placeholder="<?php echo lang('Auth.password'); ?>" class="form-password form-control <?php if (session('errors.password')) : ?>is-invalid<?php endif ?>" id="password" autocomplete="off">
                                             </div>
+                                            <?php if (session()->getFlashdata('error')) : ?>
+                                                <div class="bg-warning text-danger mb-3">
+                                                    <?= session()->getFlashdata('error') ?>
+                                                </div>
+                                            <?php endif; ?>
                                             <div class="mb-3 row mt-4">
                                                 <?php if ($config->allowRemembering) : ?>
                                                     <div class="col-6">
@@ -156,7 +163,7 @@
     $(document).ready(function() {
         var base_url = '<?php echo base_url(); ?>';
         $.backstretch([
-            base_url + "/assets/img/backgrounds/RSUDWATES.png"
+            "<?php echo base_url(); ?>/assets/img/backgrounds/RSMY-COVER-web.png"
         ], {
             duration: 3000,
             fade: 750

@@ -96,7 +96,7 @@
 
                         addRowDiag(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat, data[key].suffer_type);
 
-                        <?php if (!is_null($visit['class_room_id'])) { ?>
+                        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
                             addUnuDiag(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                             addInaDiag(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                         <?php } else { ?>
@@ -130,7 +130,7 @@
 
                         addRowProc(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat, data[key].suffer_type);
 
-                        <?php if (!is_null($visit['class_room_id'])) { ?>
+                        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
                             addUnuProc(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                             addInaProc(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                         <?php } else { ?>
@@ -158,8 +158,9 @@
             .append($('<tr id="diag' + diagIndex + '">')
                 // .append($('<td>').html(diagIndex + "."))
                 .append($('<td>')
-                    .append('<div class="p-2 select2-full-width"><select id="diag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiag(' + diagIndex + ')"></select></div>')
+                    .append('<select id="diag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiag(' + diagIndex + ')" style="width: 100%"></select>')
                     .append('<input id="diag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
+                    .append('<input id="sscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
                     // .append($('<input>').attr('name', 'diag_id[]').attr('id', 'diag_id' + diagIndex).attr('value', diag_id).attr('type', 'text').attr('readonly', 'readonly'))
                 )
                 // .append($('<td>')
@@ -183,17 +184,19 @@
                         .val(diag_cat)
                     )
                 )
-                .append("<td><a href='#' onclick='$(\"#diag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-remove'></i></a></td>")
+                .append("<td><a href='#' onclick='$(\"#diag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>")
             );
 
         initializeDiagSelect2("diag_id" + diagIndex, diag_id, diag_name)
+        $("#suffer_type" + diagIndex).val(0)
+        $("#diag_cat" + diagIndex).val(diagIndex)
     }
 
 
     function selectedDiag(index) {
-        var diagname = $("#diag_id" + index).find(":selected").data()
+        var diagname = $("#diag_id" + index).text()
         if (typeof diagname !== 'undefined') {
-            $("#diag_name" + index).val(diagname.data.text)
+            $("#diag_name" + index).val(diagname)
         }
     }
 
@@ -215,10 +218,10 @@
     }
 
     function selectedProc(index) {
-        var diagname = $("#proc_id" + index).find(":selected").data()
+        var diagname = $("#proc_id" + index).text()
         console.log(diagname)
         if (typeof diagname !== 'undefined') {
-            $("#proc_name" + index).val(diagname.data.text)
+            $("#proc_name" + index).val(diagname)
         }
     }
 

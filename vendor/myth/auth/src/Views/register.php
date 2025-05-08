@@ -4,11 +4,9 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6 offset-sm-3">
-
             <div class="card">
                 <h2 class="card-header"><?= lang('Auth.register') ?></h2>
                 <div class="card-body">
-
                     <?= view('Myth\Auth\Views\_message_block') ?>
 
                     <form action="<?= url_to('register') ?>" method="post">
@@ -16,7 +14,7 @@
 
                         <div class="form-group">
                             <label for="email"><?= lang('Auth.email') ?></label>
-
+                            <input type="text" class="form-control <?php if (session('errors.username')) : ?>is-invalid<?php endif ?>" name="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>">
                             <small id="emailHelp" class="form-text text-muted"><?= lang('Auth.weNeverShare') ?></small>
                         </div>
 
