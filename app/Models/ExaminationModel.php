@@ -29,7 +29,6 @@ class ExaminationModel extends Model
         "exit_date",
         "keluar_id",
         "examination_date",
-
         "gcs_e",
         "gcs_v",
         "gcs_m",
@@ -40,6 +39,7 @@ class ExaminationModel extends Model
         "pemeriksaan",
         "teraphy_desc",
         "instruction",
+        "standing_order",
         "medical_treatment",
         "employee_id",
         "description",
@@ -65,7 +65,9 @@ class ExaminationModel extends Model
         'vs_status_id',
         "valid_user",
         "valid_pasien",
-        "valid_date"
+        "valid_date",
+        "pengantarlabcppt",
+        "pengantarlabcpptotherstext"
     ];
 
     protected $useTimestamps = true;
@@ -73,4 +75,29 @@ class ExaminationModel extends Model
     protected $createdField  = 'modified_date';
     protected $updatedField  = 'modified_date';
     protected $deletedField  = 'deleted_at';
+
+    function deletePasienDiagnosa($pasien_diagnosa_id)
+    {
+        return $this->db->query("update examination_info
+            set no_registration = 'x-'+no_registration,
+            pasien_diagnosa_id = 'x-'+pasien_diagnosa_id,
+            body_id = 'x-'+body_id,
+            visit_id = 'x-'+visit_id,
+            clinic_id = 'x-'+clinic_id,
+            employee_id = 'x-'+employee_id
+            where pasien_diagnosa_id = '$pasien_diagnosa_id'
+        ");
+    }
+    function deleteExaminatiionInfo($body_id)
+    {
+        return $this->db->query("update examination_info
+            set no_registration = 'x-'+no_registration,
+            pasien_diagnosa_id = 'x-'+pasien_diagnosa_id,
+            body_id = 'x-'+body_id,
+            visit_id = 'x-'+visit_id,
+            clinic_id = 'x-'+clinic_id,
+            employee_id = 'x-'+employee_id
+            where body_id = '$body_id'
+        ");
+    }
 }

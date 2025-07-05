@@ -1,0 +1,23 @@
+<script>
+    let val = <?= json_encode($val); ?>;
+    let sign = <?= json_encode($sign); ?>;
+
+    sign = JSON.parse(sign)
+    $.each(sign, function(key, value) {
+        if (value.user_type == 1 && value.isvalid == 1) {
+            $("#qrcode_name").html(`(<?= @$visit['fullname']; ?>)`)
+            $("#qrcode").html('<img class="mt-3" src="data:image/png;base64,' + value.sign_file + '" width="400px">')
+
+        } else if (value.user_type == 2 && value.isvalid == 1) {
+
+            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+            $("#qrcode1").html('<img class="mt-3" src="data:image/gif;base64,' + value.sign_file + '" width="400px">')
+
+        } else if (value.user_type == 3 && value.isvalid == 1) {
+
+            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+            $("#qrcode1").html('<img class="mt-3" src="data:image/gif;base64,' + value.sign_file + '" width="400px">')
+
+        }
+    })
+</script>

@@ -30,6 +30,7 @@ class PasienDiagnosaModel extends Model
         'report_date',
         'diagnosa_id',
         'diagnosa_desc',
+        'diagnosa_desc_discharge',
         'employee_id',
         'diag_cat',
         'anamnase',
@@ -75,7 +76,12 @@ class PasienDiagnosaModel extends Model
         'valid_date',
         'valid_user',
         'valid_pasien',
-        'specialist_type_id'
+        'specialist_type_id',
+        'procedure_desc',
+        'procedure_desc_discharge',
+        'discharge_way',
+        'discharge_condition',
+        'emergency'
     ];
 
     // Dates
@@ -84,4 +90,16 @@ class PasienDiagnosaModel extends Model
     protected $createdField  = 'modified_date';
     protected $updatedField  = 'modified_date';
     protected $deletedField  = 'deleted_at';
+
+    function deletePasienDiagnosa($pasien_diagnosa_id)
+    {
+        return $this->db->query("update pasien_diagnosa
+            set no_registration = 'x-'+no_registration,
+            pasien_diagnosa_id = 'x-'+pasien_diagnosa_id,
+            visit_id = 'x-'+visit_id,
+            clinic_id = 'x-'+clinic_id,
+            employee_id = 'x-'+employee_id
+            where pasien_diagnosa_id = '$pasien_diagnosa_id'
+        ");
+    }
 }

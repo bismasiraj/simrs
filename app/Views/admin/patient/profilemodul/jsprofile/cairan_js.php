@@ -3,17 +3,8 @@
     let categoryVal = []
     let beratBadanInfo = []
     $(document).ready(function() {
-        let visit = <?= json_encode($visit) ?>;
-        const StartToday = moment(visit?.visit_date).format("DD/MM/YYYY");
-        const today = moment(new Date()).format("DD/MM/YYYY");
-        const startDate = $('#startDateCairan').val(StartToday);
-        const endDate = $('#endDateCairan').val(today);
         getCairanGen0023()
-        $("#close-cairan-modal").off().on("click", (e) => {
 
-            e.preventDefault();
-            $("#create-modal-cairan-gen0023").modal("hide");
-        });
     });
 
     const convertCairanDate1 = (dateString) => {
@@ -26,14 +17,36 @@
         }
     };
 
+    const convertCairanDateTime = (dateString) => {
+        const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm"];
+        const parsedDate = moment(dateString, formats, true);
+        if (parsedDate.isValid()) {
+            return parsedDate.format("YYYY-MM-DD HH:mm");
+        } else {
+            return null;
+        }
+    };
+
     const getCairanGen0023 = () => {
         $("#cairanTab").off().on("click", function(e) {
             getRequestData0023()
             getCategoryCairan()
+            const StartToday = moment(visit?.visit_date).format("DD/MM/YYYY");
+            const today = moment(new Date()).format("DD/MM/YYYY HH:mm");
+            const startDate = $('#startDateCairan').val(StartToday);
+            const endDate = $('#endDateCairan').val(today);
+            initializeFlatpickrCairan()
+            $("#close-cairan-modal").off().on("click", (e) => {
+
+                e.preventDefault();
+                $("#create-modal-cairan-gen0023").modal("hide");
+            });
         });
 
+        let visit_cairan = visit
+
         $("#btn-print-cairangen0023").off().on("click", function(e) {
-            let visit = <?= json_encode($visit) ?>;
+            let visit = visit_cairan
 
             const formattedStartDate = convertCairanDate1($('#startDateCairan').val());
             const formattedEndDate = convertCairanDate1($('#endDateCairan').val());
@@ -44,9 +57,29 @@
             cetakCairan({
                 visit_id: visit?.visit_id,
                 start: start,
-                end: end
+                end: end,
+                action: "cetak"
             });
         });
+
+        //new
+        $("#btn-print-priview-cairangen0023").off().on("click", function(e) {
+            let visit = visit_cairan
+
+            const formattedStartDate = convertCairanDateTime($('#startDateCairan').val());
+            const formattedEndDate = convertCairanDateTime($('#endDateCairan').val());
+
+
+            cetakCairan({
+                visit_id: visit?.visit_id,
+                start: formattedStartDate ?? null,
+                end: formattedEndDate ?? null,
+                action: "iwl"
+            });
+        });
+
+
+
 
         $("#add-cairan-gen0023").off().on("click", (e) => {
             e.preventDefault();
@@ -59,11 +92,12 @@
             const startDate = $('#startDateCairan').val();
             const endDate = $('#endDateCairan').val();
 
-            const formattedStartDate = convertCairanDate1(startDate);
-            const formattedEndDate = convertCairanDate1(endDate);
+            const formattedStartDate = convertCairanDateTime(startDate);
+            const formattedEndDate = convertCairanDateTime(endDate);
 
-            const start = formattedStartDate ? `${formattedStartDate} 00:00:01` : null;
-            const end = formattedEndDate ? `${formattedEndDate} 23:59:59` : null;
+
+            const start = formattedStartDate ? `${formattedStartDate}` : null;
+            const end = formattedEndDate ? `${formattedEndDate}` : null;
 
             getRequestData0023({
                 start: start,
@@ -75,6 +109,7 @@
     };
 
     const getRequestData0023 = (props) => {
+
         let visit = <?= json_encode($visit) ?>;
         postData({
             id: visit?.visit_id,
@@ -91,18 +126,67 @@
         }, (beforesend) => {
             getLoadingGlobalServices('bodydatagen0023');
         });
+
+        $('#btn-print-priview-cairangen0023').attr('hidden', true);
     };
 
     const getCategoryCairan = (props) => {
         let visit = <?= json_encode($visit) ?>;
 
         getDataList('admin/cairan/getCategory', (res) => {
-            categoryVal = res?.value.data
+            // categoryVal = res?.value.data
+            categoryVal = [{
+                    "balance_category_id": "Hijau",
+                    "value_id": "G0230304",
+                    "balance_category": "Hijau"
+                },
+                {
+                    "balance_category_id": "Infus",
+                    "value_id": "G0230302",
+                    "balance_category": "Infus"
+                },
+                {
+                    "balance_category_id": "Kuning",
+                    "value_id": "G0230304",
+                    "balance_category": "Kuning"
+                },
+                {
+                    "balance_category_id": "Makanan",
+                    "value_id": "G0230309",
+                    "balance_category": "Makanan"
+                },
+                {
+                    "balance_category_id": "Merah",
+                    "value_id": "G0230304",
+                    "balance_category": "Merah"
+                },
+                {
+                    "balance_category_id": "Minuman",
+                    "value_id": "G0230309",
+                    "balance_category": "Minuman"
+                },
+                {
+                    "balance_category_id": "Sonde",
+                    "value_id": "G0230309",
+                    "balance_category": "Sonde"
+                },
+                {
+                    "balance_category_id": "Transfusi",
+                    "value_id": "G0230302",
+                    "balance_category": "Transfusi"
+                },
+                {
+                    "balance_category_id": "Obat",
+                    "value_id": "G0230302",
+                    "balance_category": "Obat"
+                }
+            ]
+
+
         })
     };
 
     const cetakCairan = (props) => {
-
         let visit = <?= json_encode($visit) ?>;
         let start_date = props?.start
         let end_date = props?.end
@@ -118,18 +202,148 @@
         let baseUrl = '<?= base_url() ?>';
         let jsonStr = JSON.stringify(RequestCentak);
         let base64Data = btoa(jsonStr);
-        let url = baseUrl + 'admin/cetak/cairan_cetak/' + base64Data
+        let url = baseUrl + 'admin/cetak/cairan_cetak/' + base64Data + `/${props?.action}`
         window.open(url, "_blank");
 
     }
 
     const renderTableCairan = (data) => {
+        let age_konstaIwl = Math.floor(
+            (new Date().getFullYear() - new Date(visit?.tgl_lahir).getFullYear()) * 12 +
+            (new Date().getMonth() - new Date(visit?.tgl_lahir).getMonth())
+        );
 
-        let aValue = <?= json_encode($aValue) ?>;
+        let konsta_iwl;
+        if (age_konstaIwl <= 1) {
+            konsta_iwl = 50;
+        } else if (age_konstaIwl <= 12) {
+            konsta_iwl = 40;
+        } else if (age_konstaIwl <= 60) {
+            konsta_iwl = 30;
+        } else if (age_konstaIwl <= 120) {
+            konsta_iwl = 20;
+        } else {
+            konsta_iwl = 10;
+        }
+        let weight_iwl;
+        if (data) {
+            weight_iwl = parseInt(data[0]?.awareness, 10);
+        }
+
+
+        const validFluidTypesIn = ["G0230301", "G0230302", "G0230309"];
+        const totalfluidIn = data.reduce((total, item) => {
+            if (validFluidTypesIn.includes(item.fluid_type)) {
+                return total + item.fluid_amount;
+            }
+            return total;
+        }, 0);
+
+        const validFluidTypesOut = ["G0230303", "G0230304", "G0230305", "G0230306", "G0230307"];
+        const totalfluidOut = data.reduce((total, item) => {
+            if (validFluidTypesOut.includes(item.fluid_type)) {
+                return total + item.fluid_amount;
+            }
+            return total;
+        }, 0);
+
+        const validFluidUrineOut = ["G0230303"];
+        const urineTotalOut = data.reduce((total, item) => {
+            if (validFluidUrineOut.includes(item.fluid_type)) {
+                return total + item.fluid_amount;
+            }
+            return total;
+        }, 0);
+
+        let dataiwl24 = (weight_iwl * konsta_iwl) / 24 || 0;
+
+        let startIwl = $("#startDateCairan").val()
+        let endIwl = $("#endDateCairan").val()
+        const startDate = new Date(convertCairanDateTime(startIwl));
+        const endDate = new Date(convertCairanDateTime(endIwl));
+        const timeDifference = endDate - startDate;
+
+
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+        let resultiwlShiftDate = (dataiwl24 * hoursDifference).toFixed(2);
+
+        let resultbc = (totalfluidIn - (totalfluidOut + hoursDifference)).toFixed(2);
+        console.log(urineTotalOut, weight_iwl, hoursDifference);
+
+        let resultDiuresis = (urineTotalOut / weight_iwl / hoursDifference || 0).toFixed(2);
+
+        let iwl;
+        if (hoursDifference < 24) {
+            $('#btn-print-priview-cairangen0023').attr('hidden', false);
+            const resultIwlData = data.filter(item =>
+                item.fluid_type === "G0230308" &&
+                moment(item.examination_date).format("DD/MM/YYYY HH") === moment(startIwl,
+                    "DD/MM/YYYY HH:mm").format("DD/MM/YYYY HH") &&
+                moment(item.iwl_time).format("DD/MM/YYYY HH") === moment(endIwl,
+                    "DD/MM/YYYY HH:mm").format("DD/MM/YYYY HH")
+            );
+
+            let iwlResult = resultIwlData[0]
+            let body_idNewIwl = get_bodyid();
+
+            let dataUpdateResultChange = {
+                org_unit_code: iwlResult?.org_unit_code ?? visit?.org_unit_code,
+                visit_id: iwlResult?.visit_id ?? visit?.visit_id,
+                trans_id: iwlResult?.trans_id ?? visit?.trans_id,
+                body_id: iwlResult?.body_id ?? body_idNewIwl,
+                p_type: iwlResult?.p_type ?? "GEN0023",
+                no_registration: iwlResult?.no_registration ?? visit?.no_registration,
+                examination_date: iwlResult?.examination_date ?? moment(startIwl, [
+                    "DD/MM/YYYY HH:mm", "YYYY-MM-DD HH:mm"
+                ]).format("YYYY-MM-DD HH:mm"),
+                iwl_time: iwlResult?.iwl_time ?? moment(endIwl, [
+                    "DD/MM/YYYY HH:mm", "YYYY-MM-DD HH:mm"
+                ]).format("YYYY-MM-DD HH:mm"),
+                awareness: iwlResult?.awareness ?? weight_iwl,
+                balance_type: "",
+                fluid_type: iwlResult?.fluid_type ?? "G0230308",
+                fluid_category: "",
+                fluid_amount: iwlResult?.fluid_amount ?? resultiwlShiftDate,
+                drip_rate: "0",
+                botle_amount: 0,
+            }
+
+
+
+            iwl = `<tr role="row" class="even">
+                        <td style="text-align: center; vertical-align: middle;">
+                            <label class="fw-bold">BC</label><br>
+                            <span>${resultbc}</span>
+                        </td>
+                       <td style="text-align: center; vertical-align: middle;">
+                            <label class="fw-bold">Diuresis</label><br>
+                            <span>${resultDiuresis}</span>
+                        </td>
+                         <td style="text-align: center; vertical-align: middle;">
+                            <label class="fw-bold">IWL SHIFT</label><br>
+                            <span>${iwlResult?.fluid_amount ?? resultiwlShiftDate}</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary edit-btn-iwl" data-item='${JSON.stringify(dataUpdateResultChange)}' data-id="${iwlResult?.body_id ?? body_idNewIwl}">Edit IWL</button>
+                        </td>
+                    </tr>`
+
+            if (iwlResult === undefined || iwlResult === null) {
+
+                postData(dataUpdateResultChange, 'admin/cairan/insertData', (res) => {});
+            }
+
+
+
+        }
+
+
+        let aValue = avalue
         let filteredDataValue = aValue?.filter(item => item?.p_type === "GEN0023");
         let dataRender = '';
-
-        data.map((item, index) => {
+        const resultNotIwl = data.filter(item => item.fluid_type !== "G0230308");
+        resultNotIwl.map((item, index) => {
             let resultType = filteredDataValue.find(e => e?.value_id === item?.fluid_type);
             let valueDesc = resultType?.value_desc || '';
 
@@ -145,7 +359,28 @@
 
             dataRender += `<tr>
                         <td>${moment(item.examination_date).format("DD/MM/YYYY HH:mm")}</td>
-                        <td>${valueDesc}</td>
+                        <td>${valueDesc} - ${
+                                    (() => {
+                                        switch (item?.fluid_type) {
+                                            case 'G0230301':
+                                            case 'G0230302':
+                                            case 'G0230309':
+                                                return 'Cairan Masuk';
+                                                break
+                                            case 'G0230303':
+                                            case 'G0230304':
+                                            case 'G0230305':
+                                            case 'G0230306':
+                                            case 'G0230307':
+                                            // case 'G0230308':
+                                                return 'Cairan Keluar';
+                                            default:
+                                                return 'iiiiii';
+                                        }
+                                    })()
+                                }
+                        </td>
+                        <td>${item?.fluid_amount}</td>
                         <td>
                             ${editButton}
                             ${deleteButton}
@@ -153,54 +388,9 @@
                     </tr>`;
         })
 
-        if ($.fn.DataTable.isDataTable('#tableDat-cairan0023')) {
-            $('#tableDat-cairan0023').DataTable().destroy();
-        }
-        $("#bodydatagen0023").html(dataRender);
+
+        $("#bodydatagen0023").html(dataRender + iwl);
         let groupColumn = 0;
-        let table = $('#tableDat-cairan0023').DataTable({
-            dom: '<"mb-3">rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
-            lengthChange: true,
-            ordering: false,
-            order: [
-                [groupColumn, 'asc']
-            ],
-            lengthMenu: [
-                [10],
-                [10]
-            ],
-            displayLength: 10,
-            buttons: [], // Tidak ada tombol di sini
-            drawCallback: function(settings) {
-                let api = this.api();
-                let rows = api.rows({
-                    page: 'current'
-                }).nodes();
-                let last = null;
-
-                api.column(groupColumn, {
-                        page: 'current'
-                    })
-                    .data()
-                    .each(function(dateString, i) {
-                        let [datePart, timePart] = dateString?.split(' ');
-                        let [day, month, year] = datePart?.split('/');
-                        let date = new Date(year, month - 1, day, ...timePart.split(':'));
-                        let formattedDate = moment(date).format("DD-MM-YYYY HH");
-
-                        if (last !== formattedDate) {
-                            $(rows)
-                                .eq(i)
-                                .before(
-                                    '<tr class="group"><th colspan="4">' +
-                                    formattedDate.replace('T', ' ') +
-                                    '</th></tr>'
-                                );
-                            last = formattedDate;
-                        }
-                    });
-            }
-        });
 
 
         $('#tableDat-cairan0023 tbody').on('click', 'tr.group', function() {
@@ -219,6 +409,41 @@
             getParameterGen0023(item);
             $("#create-modal-cairan-gen0023").modal("show");
         });
+
+
+        $("#bodydatagen0023").off("click", ".edit-btn-iwl").on("click", ".edit-btn-iwl", function() {
+            const row = $(this).closest("tr");
+            const spanElement = row.find("td:nth-child(3) span");
+            const resultiwlShiftDate = spanElement.text();
+            const item = $(this).data("item")
+
+
+            spanElement.replaceWith(
+                `<input type="number" class="form-control" value="${resultiwlShiftDate}" />`);
+
+            row.find("td:last-child").html(`
+                <button class="btn btn-secondary save-btn-iwl">Save IWL</button>
+            `);
+
+            row.off("click", ".save-btn-iwl").on("click", ".save-btn-iwl", function() {
+                const updatedValue = row.find("input").val();
+                row.find("input").replaceWith(`<span>${updatedValue}</span>`);
+                row.find("td:last-child").html(`
+                    <button class="btn btn-secondary edit-btn-iwl">Edit IWL</button>
+                `);
+
+                item.fluid_amount = updatedValue;
+                postData(item, 'admin/cairan/insertData', (res) => {
+                    if (res.respon === true) {
+                        successSwal('Data berhasil disimpan.');
+                    }
+
+                });
+
+                // update data 
+            });
+        });
+
 
         $("#bodydatagen0023").off("click", ".delete-btn").on("click", ".delete-btn", function() {
             const id = $(this).data("id");
@@ -272,6 +497,7 @@
     }
 
     const getParameterGen0023 = (item) => {
+
         let aParameter = <?= json_encode($aParameter ?? []) ?>;
         let aValue = <?= json_encode($aValue ?? []) ?>;
         let visit = <?= json_encode($visit ?? []) ?>;
@@ -292,7 +518,7 @@
         filteredDataValue.forEach(value => {
             let balanceType;
             switch (value.value_id) {
-                case 'G0230301':
+                // case 'G0230301':
                 case 'G0230302':
                 case 'G0230309':
                     balanceType = 0; // Cairan Masuk
@@ -302,7 +528,7 @@
                 case 'G0230305':
                 case 'G0230306':
                 case 'G0230307':
-                case 'G0230308':
+                    // case 'G0230308': // IWL
                     balanceType = 1; // Cairan Keluar
                     break;
                 case 'G0230310':
@@ -318,9 +544,6 @@
         });
 
         let content = '';
-        console.log(item?.examination_date ?
-            moment(item.examination_date).format("DD/MM/YYYY HH:mm") :
-            moment(new Date()).format("DD/MM/YYYY HH:mm"));
 
         let formattedExaminationDate = item?.examination_date ?
             moment(item.examination_date).format("DD/MM/YYYY HH:mm") :
@@ -335,7 +558,7 @@
                             <input class="form-control" type="hidden" id="0023p_type" name="p_type" value="GEN0023">
                             <input class="form-control" type="hidden" id="0023no_registration" name="no_registration" value="${visit?.no_registration || ''}">
                             <input class="form-control datetime-input" type="hidden" id="Inputexamination_date" name="examination_date" value="${formattedExaminationDate}">
-                            <input class="form-control datetimeflatpickr" type="text" id="flatInputexamination_date" value="${formattedExaminationDate}">
+                            <input class="form-control datetimeflatpickr-cairan" type="text" id="flatInputexamination_date" value="${formattedExaminationDate}">
                         </div>`;
 
         filteredDataParameter.forEach(param => {
@@ -373,6 +596,10 @@
                         setTimeout(() => {
                             $("#param_03_GEN0023").trigger("change")
                             $("#param_03A_GEN0023").val(item?.fluid_category)
+
+                            if (item?.fluid_category === 'Obat') {
+                                $("#param_03A_GEN0023").trigger("change")
+                            }
 
                         }, 200);
 
@@ -455,6 +682,22 @@
         });
 
 
+        content += `<div class="mb-3" id="iv_line_parenteral-content" style="display: none;">
+                        <label for="line" class="form-label">Line</label>
+                        <select id="iv_line_parenteral" class="form-select" name="iv_line">
+                            <option value="" ${item?.iv_line === "" ? 'selected' : ''}>Pilih</option>
+                            <option value="1" ${item?.iv_line === 1 ||item?.iv_line === "1" ? 'selected' : ''}>Line 1</option>
+                            <option value="2" ${item?.iv_line === 2 ||item?.iv_line === "2" ? 'selected' : ''}>Line 2</option>
+                            <option value="3" ${item?.iv_line === 3 ||item?.iv_line === "3" ? 'selected' : ''}>Line 3</option>
+                            <option value="4" ${item?.iv_line === 4 ||item?.iv_line === "4" ? 'selected' : ''}>Line 4</option>
+                            <option value="5" ${item?.iv_line === 5 ||item?.iv_line === "5" ? 'selected' : ''}>Line 5</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="iv_description_parenteral-content" style="display: none;">
+                        <label for="jenis" class="form-label">Jenis Line</label>
+                        <input class="form-control" type="text" id="iv_description_parenteral" name="iv_description" value="${item?.iv_description ?? ""}">
+                    </div>
+                    `;
 
         document.getElementById('dokument-gen0023').innerHTML = content;
 
@@ -462,13 +705,35 @@
             const selectedValueIdParam03 = $(this).val();
 
             if (selectedValueIdParam03 === 'G0230302') {
-                $('#param_05_GEN0023-content').show();
                 $('#param_06_GEN0023-content').show();
+                $('#iv_line_parenteral-content').show();
+                $('#iv_description_parenteral-content').show();
+
+                $('#param_03A_GEN0023').on('change', function() {
+                    const obatChange = $(this).val();
+
+                    if (obatChange === 'Obat') {
+                        $('#param_06_GEN0023-content').hide();
+                        $('#iv_line_parenteral-content').hide();
+                        $('#iv_description_parenteral-content').hide();
+                    } else {
+                        $('#param_06_GEN0023-content').show();
+                        $('#iv_line_parenteral-content').show();
+                        $('#iv_description_parenteral-content').show();
+                    }
+                });
             } else {
-                $('#param_05_GEN0023-content').hide();
+                $('#param_03A_GEN0023').on('change', function() {
+                    $('#param_06_GEN0023-content').hide();
+                    $('#iv_line_parenteral-content').hide();
+                    $('#iv_description_parenteral-content').hide();
+                })
                 $('#param_06_GEN0023-content').hide();
                 $('#param_03A_GEN0023-content').hide();
+                $('#iv_line_parenteral-content').hide();
+                $('#iv_description_parenteral-content').hide();
             }
+
 
             if (['G0230301', 'G0230302', 'G0230309', 'G0230304'].includes(selectedValueIdParam03)) {
                 $('#param_03A_GEN0023-content').show();
@@ -477,6 +742,7 @@
             }
 
             $('#param_03A_GEN0023').empty();
+
 
             const filteredOptionsForParam07 = categoryVal
                 .filter(value => value.value_id === selectedValueIdParam03)
@@ -491,37 +757,61 @@
         });
 
 
+        $('#param_03A_GEN0023').on('change', function() {
+            const obatChange = $(this).val();
+            if (obatChange === 'Obat') {
+                $('#param_06_GEN0023-content').hide();
+                $('#iv_line_parenteral-content').hide();
+                $('#iv_description_parenteral-content').hide();
+            }
+
+        })
+
         initializeFlatpickrCairan();
         btnSaveActionGen0023();
     };
 
     const initializeFlatpickrCairan = () => {
-        flatpickr(".datetimeflatpickr", {
+        const options = {
             enableTime: true,
             dateFormat: "d/m/Y H:i",
             time_24hr: true,
-        });
+            allowInput: true
+        };
 
-        $(".datetimeflatpickr").prop("readonly", false);
 
-        $(".datetimeflatpickr").each(function() {
+        flatpickr(".datetimeflatpickr-cairan", options);
+        flatpickr(".datetimeflatpickr-cairan-show", options);
+
+        $(".datetimeflatpickr-cairan, .datetimeflatpickr-cairan-show").prop("readonly", false);
+
+        $(".datetimeflatpickr-cairan").each(function() {
             if (!$(this).val()) {
                 const defaultDate = moment().format("DD/MM/YYYY HH:mm");
                 $(this).val(defaultDate).trigger("change");
             }
         });
 
-        $(".datetimeflatpickr").on("change", function() {
+
+        $(".datetimeflatpickr-cairan").on("change", function() {
             let theid = $(this).attr("id");
-            theid = theid?.replace("flat", "");
+            let theida = $(this).val();
+
+            if (!theid) return;
+
+            theid = theid.replace("flat", "");
             let thevalue = $(this).val();
 
             if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
-                let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm");
-                $("#" + theid).val(formattedDate);
+                const formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm");
+                const hiddenInput = $("#" + theid);
+                if (hiddenInput.length) {
+                    hiddenInput.val(formattedDate);
+                }
             }
         });
     };
+
 
 
     const btnSaveActionGen0023 = () => {
@@ -559,7 +849,6 @@
             });
         });
     };
-
 
 
 })()

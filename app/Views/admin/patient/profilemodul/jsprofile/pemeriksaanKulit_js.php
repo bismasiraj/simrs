@@ -1,24 +1,25 @@
 <script type="text/javascript">
-(function() {
     $(document).ready(function() {
+        console.log("dermatologi masuk")
         // Event click untuk modal
         $("#pemeriksaanKulitTab").off("click").on("click", function(e) {
             e.preventDefault();
             getLoadingscreen("contentToHide-pemeriksaanKulit", "load-content-pemeriksaanKulit")
-            groupeActiondermInTab()
+            groupeActionInTabKulit()
         });
     });
 
-    const groupeActiondermInTab = async () => {
-        let visit = <?= json_encode($visit) ?>;
+    const groupeActionInTabKulit = async (pasien_diagnosa_id) => {
+        let newvisit = visit
+        newvisit.session_id = pasien_diagnosa_id
         await getDataAssessmenDermatovenerologi({
-            visit: visit
+            visit: newvisit
         })
         $("#btn-doc-pemeriksaanKulit").off("click").on("click", function(e) {
             e.preventDefault();
             $("#pemeriksaanKulit-modal").modal("show");
             templateDermatovenerologi({
-                visit: visit
+                visit: newvisit
             })
         });
     }
@@ -182,7 +183,7 @@
                 const uniqueId = group.id || `input-${group.name}`;
                 if (group.type === "hidden") {
                     contentHtmlHide += `
-                        <div class="col-6" hidden>
+                    <div class="col-6" hidden>
                             <div class="mb-3 row">
                                 <div class="col-sm-8">
                                     <input type="${group.type}" class="form-control ${group?.class ?? ""}" id="${uniqueId}" name="${group.name}" value="${group.value}">
@@ -213,12 +214,12 @@
         $("#contentAssessmen_Dermatovenerologi_Hide").html(`<div class="row">${contentHtmlHide}</div>`);
 
 
-        initializeDermFlatpickr();
+        // initializeDermFlatpickr();
         saveAssessmenDermatovenerologi();
-        setDefaultDermValues()
+        setDefaultValuesKulit()
     };
 
-    const setDefaultDermValues = () => {
+    const setDefaultValuesKulit = () => {
         $("#default-value-groupe-dermatovenerologi").on("click", function() {
             $("#contentAssessmen_Dermatovenerologi_Show .groupe-val").each(function() {
                 $(this).val("Dalam batas normal");
@@ -226,39 +227,42 @@
         });
     };
 
-    const initializeDermFlatpickr = () => {
-        flatpickr(".datetimeflatpickr", {
-            enableTime: true,
-            dateFormat: "d/m/Y H:i", // Display format
-            time_24hr: true, // 24-hour time format
-        });
+    // const initializeDiagFlatpickr = () => {
+    //     flatpickr(".datetimeflatpickr", {
+    //         enableTime: true,
+    //         dateFormat: "d/m/Y H:i", // Display format
+    //         time_24hr: true, // 24-hour time format
+    //     });
 
-        $(".datetimeflatpickr").prop("readonly", false);
+    //     $(".datetimeflatpickr").prop("readonly", false);
 
-        $(".datetimeflatpickr").on("change", function() {
-            let theid = $(this).attr("id");
-            theid = theid.replace("flat", "");
-            let thevalue = $(this).val();
+    //     $(".datetimeflatpickr").on("change", function() {
+    //         let theid = $(this).attr("id");
+    //         theid = theid.replace("flat", "");
+    //         let thevalue = $(this).val();
 
-            if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
-                let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
-                    "YYYY-MM-DD HH:mm"
-                );
-                $("#" + theid).val(formattedDate);
-            } else {}
-        });
-    }
+    //         if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
+    //             let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+    //                 "YYYY-MM-DD HH:mm"
+    //             );
+    //             $("#" + theid).val(formattedDate);
+    //         } else {}
+    //     });
+    // }
 
-    const getDataAssessmenDermatovenerologi = (props) => {
+    const getDataAssessmenDermatovenerologi = (props, document_id) => {
         return new Promise((resolve) => {
             postData({
                 no_registration: props?.visit?.no_registration,
                 org_unit_code: props?.visit?.org_unit_code,
                 session_id: props?.visit?.session_id,
             }, 'admin/AssDermatovenerologi/getData', (res) => {
-                renderDataTabelsAssessmenDermatovenerologi({
+                templateDermatovenerologi({
                     data: res?.value?.data?.dataAll
                 })
+                // renderDataTabelsAssessmenDermatovenerologi({
+                //     data: res?.value?.data?.dataAll
+                // })
             }, (beforesend) => {
                 getLoadingGlobalServices('bodydatapemeriksaanKulit')
             })
@@ -409,7 +413,4 @@
             }
         });
     }
-
-
-})();
 </script>

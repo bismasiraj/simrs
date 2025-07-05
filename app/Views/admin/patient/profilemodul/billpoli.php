@@ -60,23 +60,7 @@ $permissions = user()->getPermissions();
                                     </select>
                                 </div>
                             </div>
-                            <?php if (user()->checkPermission("tindakanmedis", "c")) {
-                            ?>
-                                <div class="col-md-10">
-                                    <div class="form-group">
-                                        <label for="">Pencarian Tarif</label>
-                                        <div class="input-group">
-                                            <select id="searchTarifbillpoli" class="form-control" style="width: 80%; height: 100%;"></select>
-                                            <button type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillBillPoli("searchTarifbillpoli")'>
-                                                <i class="fa fa-plus"></i> Tambah
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php
-                            } ?>
                         </div>
-
                     </div>
                 </div>
             </form>
@@ -117,7 +101,22 @@ $permissions = user()->getPermissions();
                         </table>
                         <?php if (user()->checkPermission("tindakanmedis", "c")) {
                         ?>
-                            <div class="panel-footer text-end mb-4">
+                            <div class="col-md-10 m-4">
+                                <div class="form-group spppoli-to-hide">
+                                    <label for="">Pencarian Tarif</label>
+                                    <div class="input-group">
+                                        <select id="searchTarifbillpoli" class="form-control" style="width: 80%; height: 100%;"></select>
+                                        <button id="searchTarifbillpoliBtn" type="button" class="btn btn-primary btn-sm addcharges align-items-end d-none" onclick='addBillBillPoli("searchTarifbillpoli")'>
+                                            <i class="fa fa-plus"></i> Tambah
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php
+                        } ?>
+                        <?php if (user()->checkPermission("tindakanmedis", "c")) {
+                        ?>
+                            <div class="panel-footer text-end mb-4 spppoli-to-hide">
                                 <button type="button" id="formSaveBillPoliBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                 <!-- <button type="button" id="formEditBillPoliBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button> -->
                                 <!-- <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button> -->

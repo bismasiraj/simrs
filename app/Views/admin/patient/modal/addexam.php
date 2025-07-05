@@ -62,7 +62,7 @@
 
                                     <tr>
                                         <td class="bolds">Dokter</td>
-                                        <td id="dokter"><?php echo $visit['fullname']; ?></td>
+                                        <td id="dokter"><?php echo @$visit['fullname']; ?></td>
                                     </tr>
                                     <tr>
                                         <td class="bolds">Tanggal Masuk / Kunjung</td>

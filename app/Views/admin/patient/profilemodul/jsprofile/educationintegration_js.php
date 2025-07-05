@@ -153,7 +153,7 @@
             url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationIntegrationAll',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': ''
             }),
@@ -202,7 +202,7 @@
             url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationFormIntegration',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': $("#" + bodyIdContainer).val(),
                 'value_id': value_id

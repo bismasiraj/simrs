@@ -1,11 +1,28 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+    $(document).ready(() => {
+
+        $("#form2btn").trigger('click')
+        $(document).ajaxStop(function() {
+            $('#loading-indicator').hide();
+            $('#rawat_inap_show').fadeIn(200);
+        });
+        setTimeout(function() {
+            $('#loading-indicator').hide();
+            $('#rawat_inap_show').fadeIn(200);
+        }, 3000);
+
+    })
+</script>
 <script type="text/javascript">
     var tableRanap = $("#tableSearchRanap").DataTable({
-        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
+        responsive: true
     })
     var tableKetersediaanTT = $("#ketersediaanTT").DataTable({
         dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
-        "pageLength": 50
+        "pageLength": 50,
+        responsive: true
     })
     var classRoomArray = [];
     var bedArray = [];
@@ -13,6 +30,7 @@
     var sAkom;
     var caraKeluar;
     var is_keluar_id;
+    var userRoles = <?= json_encode(user()->getRoles()); ?>;
 
     const quillEditor = document.querySelectorAll('.quill-editor-raber');
 
@@ -37,62 +55,167 @@
             $('#btnRaberModal').show();
         }
     });
-    $('#btnRaberModal').off().on('click', function(e) {
 
+    $('#btnRaberModal').off().on('click', function(e) {
+        $("#inputRaberRanapForm").attr("hidden", true)
+        $("#show-slideRaberRanap").attr("hidden", true)
+        $("#show-slideRaberRanap1").attr("hidden", false)
+
+        $("#btn-save-raber").attr("hidden", true)
         let visit_id = $(this).attr('visit_id');
         let employee_id = <?= json_encode(user()->employee_id); ?>;
         postData({
             employee_id: employee_id,
             visit_id: visit_id
-        }, 'admin/PasienKonsulan/getPasienKonsulan', (res) => {
-
+        }, 'admin/PasienKonsulan/getData', (res) => {
             if (res.respon) {
-                removeAttrDisabledAndReset();
-                if (res.data.body_id) {
-                    $('#right_col_raber').removeAttr('hidden');
+                if (res?.data.length > 0) {
+                    let resultData = ""
+                    res?.data.map((e, index) => {
 
-                    $('#select_doctor_to').val(res.data.employee_id_to)
-                    $('#select_consul_type').val(res.data.consul_type)
-                    $('#consultation_date_raber').val(res.data.document_date)
-                    $('#consultation_desc_raber').val(res.data.description)
+                        const status = e?.isfinish === 1 || e?.isfinish === "1";
+                        const btnClass = status ? 'btn-outline-danger' : 'btn-outline-success';
+                        const btnIcon = status ? 'fa-clock' : 'fa-check';
+                        const btnText = status ? 'Batal' : 'Selesai';
+                        const statusText = status ? 'Selesai' : 'On Going';
 
-                    $('#response_date_raber').val(res.data.respon_date)
-                    $('#response_desc_raber').val(res.data.description_to)
+                        resultData += `<tr data-index="${index}">
+                                        <td>${index+1}</td>
+                                        <td>${e?.document_date ?moment(e?.document_date).format("DD/MM/YYYY HH:mm") : ""}</td>
+                                        <td>${e?.consul_type === 1 ? "Konsulan" : 
+                                            e?.consul_type === 2 ? "Rawat Bersama" : 
+                                            e?.consul_type === 3 ? "Rawat Alih" : ""}
+                                        </td>
+                                        <td>${e?.doctor}</td>
+                                        <td>${e?.doctor_to}</td>
+                                         <td class="status-text">${statusText}</td>
+                                        <td>
+                                                 <button type="button" class="btn btn-warning btn-show-render-raber" autocomplete="off"
+                                                     data-body_id="${e.body_id}" data-index="${index}"><i
+                                                        class="fa fa-edit">Check</i></button>
+                                                  <button type="button"
+                                                        class="btn ${btnClass} btn-action-status-raber"
+                                                        data-body_id="${e.body_id}"
+                                                        data-visit_id="${e.visit_id}"
+                                                        data-index="${index}"
+                                                        data-status="${status}">
+                                                        <i class="fa ${btnIcon} me-1"></i> ${btnText}
+                                                    </button>
 
-                    initializeSpecialistType('select_department_ranap', 'raberModal', res?.data.specialist_type_id_to)
-                    if (res.data.employee_id == '41') {
-                        $('#response_date_raber').attr('disabled', true)
-                        $('#response_desc_raber').attr('disabled', true)
-                        $('#btn-save-raber').attr('hidden', res.data.respon_date);
-                        $('#btn-cancel-raber').attr('hidden', res.data.respon_date);
-                    }
-                    if (res.data.employee_id_to == '41') {
-                        $('#select_doctor_to').attr('disabled', true)
-                        $('#select_department_ranap').attr('disabled', true)
-                        $('#select_consul_type').attr('disabled', true)
-                        $('#consultation_date_raber').attr('disabled', true)
-                        $('#consultation_desc_raber').attr('disabled', true)
-                    }
-                    deleteRaber({
-                        body_id: res?.data.body_id
+
+                                                <button type="button" class="btn btn-danger btn-delete-raber" data-body_id="${e.body_id}"
+                                                    autocomplete="off"><i class="fa fa-trash"></i></button>
+                                        </td>
+                                    </tr>`
                     })
 
-                } else {
-                    $('#btn-cancel-raber').attr('hidden', true);
-                    $('#right_col_raber').attr('hidden', true);
-                    $('#raber_doctor').val(res?.data.doctor);
-                    $('#raber_employee_id').val(res?.data.employee_id);
-                    $('#raber_specialist_type_id').val(res?.data.specialist_type_id);
-                    initializeSpecialistType('select_department_ranap', 'raberModal')
-                }
+                    $("#history-inraberRanap").html(resultData)
+                    deleteRaber()
 
+                    $(document).off().on('click', '.btn-action-status-raber',
+                        function() {
+                            const $btn = $(this);
+                            const body_id = $btn.data('body_id');
+                            const visit_id = $btn.data('visit_id');
+                            const index = $btn.data('index');
+
+                            let currentStatus = $btn.attr('data-status') === 'true';
+                            currentStatus = !currentStatus;
+
+                            const isfinish = currentStatus ? 1 : 0;
+                            const btnClass = currentStatus ? 'btn-outline-danger' :
+                                'btn-outline-success';
+                            const btnIcon = currentStatus ? 'fa-clock' : 'fa-check';
+                            const btnText = currentStatus ? 'Batal' : 'Selesai';
+                            const statusText = currentStatus ? 'Selesai' : 'On Going';
+
+                            $btn.attr('data-status', currentStatus);
+                            $btn.removeClass('btn-outline-success btn-outline-danger').addClass(
+                                btnClass);
+                            $btn.html(`<i class="fa ${btnIcon} me-1"></i> ${btnText}`);
+
+                            $(`tr[data-index="${index}"] .status-text`).text(statusText);
+
+                            postData({
+                                visit_id: visit_id,
+                                body_id: body_id,
+                                isfinish: isfinish
+                            }, 'admin/PasienKonsulan/editStatus', (res) => {
+                                if (!res.respon) {
+                                    alert("Gagal update status");
+                                }
+                            });
+                        });
+
+
+
+
+
+                    $('.btn-show-render-raber').on('click', function(e) {
+                        $("#show-slideRaberRanap").attr("hidden", false)
+                        $("#inputRaberRanapForm").attr("hidden", false)
+                        $("#show-slideRaberRanap1").attr("hidden", true)
+                        $("#btn-save-raber").attr("hidden", false)
+                        let index = $(this).data('index');
+                        let item = res?.data[index];
+
+                        console.log(res
+                            ?.data);
+                        console.log(item);
+
+
+                        removeAttrDisabledAndReset();
+                        $('#right_col_raber').removeAttr('hidden');
+
+                        $('#select_doctor_to').val(item.employee_id_to)
+                        $('#select_consul_type').val(item.consul_type)
+                        $('#consultation_date_raber').val(item.document_date)
+                        $('#consultation_desc_raber').val(item.description)
+
+                        $('#response_date_raber').val(item.respon_date)
+                        $('#response_desc_raber').val(item.description_to)
+
+                        $('#raber_doctor').val(item?.doctor);
+                        $('#raber_employee_id').val(item?.employee_id);
+                        $('#raber_specialist_type_id').val(item.specialist_type_id);
+                        $('#raber_body_id').val(item?.body_id);
+                        addSignUser("formRaberRanap", "", "raber_body_id", "btn-save-raber", 22, 1,
+                            1,
+                            "Raber", "valid_user")
+                        addSignUser("formRaberRanap", "", "raber_body_id", "btn-save-raber", 22, 1,
+                            2,
+                            "Raber", "valid_user_to")
+                        initializeSpecialistType('select_department_ranap', 'raberModal', res
+                            ?.data
+                            .specialist_type_id_to)
+                        if (item.employee_id == '41') {
+                            $('#response_date_raber').attr('disabled', true)
+                            $('#response_desc_raber').attr('disabled', true)
+                            $('#btn-save-raber').attr('hidden', item.respon_date);
+                            $('#btn-cancel-raber').attr('hidden', item.respon_date);
+                        }
+                        if (res.data.employee_id_to == '41') {
+                            $('#select_doctor_to').attr('disabled', true)
+                            $('#select_department_ranap').attr('disabled', true)
+                            $('#select_consul_type').attr('disabled', true)
+                            $('#consultation_date_raber').attr('disabled', true)
+                            $('#consultation_desc_raber').attr('disabled', true)
+                        }
+
+
+                    })
+                }
             }
         });
     })
 
-    const deleteRaber = (props) => {
-        $('#btn-cancel-raber').off().on('click', function(e) {
-            const id = props?.body_id;
+    const deleteRaber = () => {
+        $('.btn-delete-raber').off().on('click', function(e) {
+            let body_id = $(this).data("body_id"); // Ambil body_id dari tombol
+            console.log("Body ID:", body_id);
+
+
+            const id = body_id;
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
@@ -136,9 +259,41 @@
         })
     }
 
-    function signarm() {
-        // $('#digitalSignModal').css('display', 'block');
-    }
+
+    $("#show-slideRaberRanap1").off().on("click", function() {
+
+        $("#show-slideRaberRanap").attr("hidden", false)
+        $("#inputRaberRanapForm").attr("hidden", false)
+        $("#show-slideRaberRanap1").attr("hidden", true)
+        $("#btn-save-raber").attr("hidden", false)
+
+        removeAttrDisabledAndReset()
+        $('#btn-cancel-raber').attr('hidden', true);
+        $('#right_col_raber').attr('hidden', true);
+        $('#raber_doctor').val('<?= user()->fullname ?>');
+        $('#raber_employee_id').val('<?= user()->employee_id ?>');
+        $('#raber_specialist_type_id').val("");
+        $('#raber_body_id').val(get_bodyid());
+
+
+
+        initializeSpecialistType('select_department_ranap', 'raberModal')
+
+        addSignUser("formRaberRanap", "", "raber_body_id", "btn-save-raber", 22, 1,
+            1,
+            "Raber", "valid_user")
+    })
+
+    $("#show-slideRaberRanap").off().on("click", function() {
+        $("#show-slideRaberRanap1").attr("hidden", false)
+        $("#inputRaberRanapForm").attr("hidden", true)
+        $("#show-slideRaberRanap").attr("hidden", true)
+        $("#btn-save-raber").attr("hidden", true)
+    })
+
+    $("#formsignarmraber").off().on("click", function() {
+
+    })
 
     function removeAttrDisabledAndReset() {
         $('#select_doctor_to').removeAttr('disabled')
@@ -162,7 +317,7 @@
                 // tags: true,
                 dropdownParent: '#' + modalParent,
                 placeholder: "Pilih Departement",
-                allowClear: true,
+                allowClear: false,
                 data: result?.data
             });
 
@@ -190,7 +345,7 @@
 
             if (res.respon) {
                 successSwal(res.message)
-                $("#formRaberRanap")[0].reset()
+                // $("#formRaberRanap")[0].reset()
                 $("#raberModal").modal("hide")
             }
         });
@@ -215,19 +370,22 @@
 
                 tableRanap.clear().draw()
                 data.data.forEach((element, key) => {
-                    let consul_type = element[8];
+                    let consul_type = element[10];
                     let color = '';
                     if (consul_type === 1) {
-                        element[8] = '<i class="fas fa-user-md" style="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">KONSULAN</p>';
+                        element[10] =
+                            '<i class="fas fa-user-md" style="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">KONSULAN</p>';
                         color = '#fff3cd';
                     } else if (consul_type === 2) {
-                        element[8] = '<i class="fas fa-people-carry" styl="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">RAWAT BERSAMA</p>';
+                        element[10] =
+                            '<i class="fas fa-people-carry" styl="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">RAWAT BERSAMA</p>';
                         color = '#d1e6dd';
                     } else if (consul_type === 3) {
-                        element[8] = '<i class="fas fa-people-arrows" sty="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">RAWAT ALIH</p>';
+                        element[10] =
+                            '<i class="fas fa-people-arrows" sty="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">RAWAT ALIH</p>';
                         color = '#cfe2ff';
                     } else {
-                        element[8] = '-';
+                        element[10] = '-';
                     }
                     // stringcolumn += '<tr class="table tablecustom-light">';
                     // element.forEach((element1, key1) => {
@@ -240,6 +398,7 @@
                         rowNode.style.backgroundColor = color;
                     }
                 });
+                tableRanap.columns.adjust().responsive.recalc();
                 $("#form2btn").html('<i class="fa fa-search"></i> Cari')
             },
             error: function() {
@@ -319,14 +478,14 @@
                 if (data) {
                     skunj = data
 
-                    //BIODATA
                     $("#taidentity").html(skunj.diantar_oleh + '(' + skunj.no_registration + ')')
                     $("#tabiodatatapasien_id").html(skunj.pasien_id)
                     $("#tabiodatatacoverages").html(skunj.coverage_id)
                     $("#tabiodatataaddress").html(skunj.visitor_address)
                     $("#tabiodatatagender").html(skunj.gender)
                     $("#tabiodatataclass_id_plafond").html(skunj.class_id_plafond)
-                    $("#tabiodatataage").html(skunj.ageyear + "th " + skunj.agemonth + "bl " + skunj.ageday + "hr")
+                    $("#tabiodatataage").html(skunj.ageyear + "th " + skunj.agemonth + "bl " + skunj.ageday +
+                        "hr")
                     $("#tabiodatatastatus").html(skunj.status_pasien_id)
                     $("#tabiodatatapayor").html(skunj.payor_id)
 
@@ -356,7 +515,8 @@
                             }
                             if (typeof data.data[0] !== 'undefined') {
 
-                                $("#iidentity").html(skunj.diantar_oleh + " (" + skunj.no_registration + ")")
+                                $("#iidentity").html(skunj.diantar_oleh + " (" + skunj
+                                    .no_registration + ")")
                                 $("#biodatatapasien_id").html(skunj.pasien_id)
                                 coverage.forEach((element, index) => {
                                     if (index == skunj.coverage_id) {
@@ -370,7 +530,8 @@
                                         $("#biodatataclass_id_plafond").html(value[1]);
                                     }
                                 });
-                                $("#biodatataage").val(skunj.ageyear + "th " + skunj.agemonth + "bl " + skunj.ageday + "hr")
+                                $("#biodatataage").val(skunj.ageyear + "th " + skunj.agemonth +
+                                    "bl " + skunj.ageday + "hr")
                                 statusPasien.forEach(value => {
                                     if (value[0] == skunj.status_pasien_id) {
                                         $("#biodatatastatus").html(value[1]);
@@ -395,36 +556,81 @@
 
 
                                 $("#akomodasiView").modal('show')
-                                console.log(data)
                                 sAkom = data.data
                                 $("#akomodasiViewTableBody").html("")
                                 sAkom.forEach((element, key) => {
-                                    $("#akomodasiViewTableBody").append($("<tr id='" + element.bill_id + "'>")
-                                        .append('<input name="bill_id[]" type="hidden" value="' + element.bill_id + '">')
-                                        .append('<input id="tatagihan' + key + '" name="tagihan[]" type="hidden" value="' + element.tagihan + '">')
+                                    $("#akomodasiViewTableBody").append($("<tr id='" +
+                                            element.bill_id + "'>")
+                                        .append(
+                                            '<input name="bill_id[]" type="hidden" value="' +
+                                            element.bill_id + '">')
+                                        .append('<input id="tatagihan' + key +
+                                            '" name="tagihan[]" type="hidden" value="' +
+                                            element.tagihan + '">')
                                         .append($("<td>").append(key + 1))
-                                        .append($("<td>").append(element.name_of_class + "<br>" + element.fullname + "<br>" + element.bed_id))
+                                        .append($("<td>").append(element.name_of_class +
+                                            "<br>" + element.fullname + "<br>" +
+                                            element.bed_id))
                                         .append($('<td>')
                                             .append($("<div>")
-                                                .append('<input name="treat_date[]" class="form-control" type="datetime-local" value="' + element.treat_date + '" id="tatreat_date' + key + '" onchange="changeTreatDateTA(' + key + ')" readonly>')
+                                                .append(
+                                                    '<input name="treat_date[]" class="form-control" type="datetime-local" value="' +
+                                                    element.treat_date +
+                                                    '" id="tatreat_date' + key +
+                                                    '" onchange="changeTreatDateTA(' +
+                                                    key + ')" readonly>')
                                             )
                                         )
                                         .append($('<td>')
                                             .append($("<div>")
-                                                .append('<input name="exit_date[]" class="form-control" type="datetime-local" value="' + element.exit_date + '" id="taexit_date' + key + '" onchange="changeExitDateTA(' + key + ')" readonly>')
+                                                .append(
+                                                    '<input name="exit_date[]" class="form-control" type="datetime-local" value="' +
+                                                    element.exit_date +
+                                                    '" id="taexit_date' + key +
+                                                    '" onchange="changeExitDateTA(' +
+                                                    key + ')" readonly>')
                                             )
                                         )
-                                        .append($("<td>").append('<input id="taquantity' + key + '" name="quantity[]" class="form-control" type="text" value="' + parseFloat(element.quantity) + '" onchange="changeQuantityTA(' + key + ')" readonly/>'))
-                                        .append($("<td>").append('<select name="keluar_id[]" id="takeluar_id' + key + '" class="form-control" onchange="changeCaraKeluarTA(' + key + ')"></select>'))
+                                        .append($("<td>").append(
+                                            '<input id="taquantity' + key +
+                                            '" name="quantity[]" class="form-control" type="text" value="' +
+                                            parseFloat(element.quantity) +
+                                            '" onchange="changeQuantityTA(' + key +
+                                            ')" readonly/>'))
+                                        .append($("<td>").append(
+                                            '<select name="keluar_id[]" id="takeluar_id' +
+                                            key +
+                                            '" class="form-control" onchange="changeCaraKeluarTA(' +
+                                            key + ')"></select>'))
                                         .append($("<td>").append(element.tarif_name))
-                                        .append($("<td>").append('<input id="tasell_price' + key + '" name="sell_price[]" class="form-control" type="text" value="' + parseFloat(element.sell_price) + '" readonly/>'))
-                                        .append($("<td>").append('<input id="taamount_paid' + key + '" name="amount_paid[]" class="form-control" type="text" value="' + parseFloat(element.amount_paid) + '" readonly/>'))
+                                        .append($("<td>").append(
+                                            '<input id="tasell_price' + key +
+                                            '" name="sell_price[]" class="form-control" type="text" value="' +
+                                            parseFloat(element.sell_price) +
+                                            '" readonly/>'))
+                                        .append($("<td>").append(
+                                            '<input id="taamount_paid' + key +
+                                            '" name="amount_paid[]" class="form-control" type="text" value="' +
+                                            parseFloat(element.amount_paid) +
+                                            '" readonly/>'))
                                     )
                                     if (key + 1 == sAkom.length) {
-                                        $("#" + element.bill_id).append($('<td id="btnTdAkom"' + key + '>')
-                                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                                                .append($('<button type="button" class="btn btn-primary" onclick="enableElementTA(' + key + ')">').append('<i class="fa fa-edit"></i>'))
-                                                .append($('<button id="delBtnAkomodasi' + key + '" type="button" class="btn btn-danger" onclick="deleteAkomodasi(\'' + element.bill_id + '\',' + key + ')">').append('<i class="fa fa-trash"></i>'))
+                                        $("#" + element.bill_id).append($(
+                                                '<td id="btnTdAkom"' + key + '>')
+                                            .append($(
+                                                    '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'
+                                                )
+                                                .append($(
+                                                    '<button type="button" class="btn btn-primary" onclick="enableElementTA(' +
+                                                    key + ')">').append(
+                                                    '<i class="fa fa-edit"></i>'))
+                                                .append($(
+                                                    '<button id="delBtnAkomodasi' +
+                                                    key +
+                                                    '" type="button" class="btn btn-danger" onclick="deleteAkomodasi(\'' +
+                                                    element.bill_id + '\',' + key +
+                                                    ')">').append(
+                                                    '<i class="fa fa-trash"></i>'))
                                             )
                                         )
 
@@ -432,24 +638,37 @@
                                         $("#" + element.bill_id).append($("<td>"))
                                     }
                                     caraKeluar.forEach((elementKel, keyKel) => {
-                                        $("#takeluar_id" + key).append('<option value="' + elementKel.keluar_id + '">' + elementKel.cara_keluar + '</option>')
+                                        $("#takeluar_id" + key).append(
+                                            '<option value="' + elementKel
+                                            .keluar_id + '">' + elementKel
+                                            .cara_keluar + '</option>')
                                     })
                                     $("#takeluar_id" + key).val(element.keluar_id)
                                     $("#takeluar_id" + key).on('mousedown', function() {
                                         return false;
                                     })
                                     $("#taquantity" + key).keydown(function(e) {
-                                        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+                                        !0 == e.shiftKey && e.preventDefault(), e
+                                            .keyCode >= 48 && e.keyCode <= 57 || e
+                                            .keyCode >= 96 && e.keyCode <= 105 ||
+                                            8 == e.keyCode || 9 == e.keyCode ||
+                                            37 == e.keyCode || 39 == e.keyCode ||
+                                            46 == e.keyCode || 190 == e.keyCode || e
+                                            .preventDefault(), -1 !== $(this).val()
+                                            .indexOf(".") && 190 == e.keyCode && e
+                                            .preventDefault()
                                     });
                                 });
                             } else {
                                 nextFormRanap()
                             }
-                            $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                            $("#saveAddAkomodasi").html(
+                                    'Simpan <i class=" fas fa-check-circle"></i>')
                                 .prop("disabled", false)
                         },
                         error: function() {
-                            $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                            $("#saveAddAkomodasi").html(
+                                    'Simpan <i class=" fas fa-check-circle"></i>')
                                 .prop("disabled", false)
                         }
                     });
@@ -535,7 +754,8 @@
         $("#aritarif_id").val("")
         classRoomArray.forEach((element, key) => {
             if (element.class_room_id == jsonBed.class_room_id) {
-                $("#ariclass_room_id").append('<option value="' + element.class_room_id + '">' + element.classroomname + '</option>')
+                $("#ariclass_room_id").append('<option value="' + element.class_room_id + '">' + element
+                    .classroomname + '</option>')
                 $("#ariamount_paid").val(element.amount_paid)
                 $("#aritarif_name").val(element.tarif_name)
                 $("#aritarif_id").val(element.tarif_id)
@@ -563,7 +783,8 @@
         console.log(id)
         classRoomArray.forEach((element, key) => {
             if (element.clinic_id == id) {
-                $("#ariclass_room_id").append('<option value="' + element.class_room_id + '">' + element.classroomname + '</option>')
+                $("#ariclass_room_id").append('<option value="' + element.class_room_id + '">' + element
+                    .classroomname + '</option>')
             }
         });
         bedArray.forEach((element, key) => {
@@ -913,7 +1134,8 @@
     }
 
     function deleteAkomodasi(billId, key) {
-        if ((sAkom[key].sppbill == '' || sAkom[key].sppbill == null) && (sAkom[key].sppbill == '' || sAkom[key].sppbill == null)) {
+        if ((sAkom[key].sppbill == '' || sAkom[key].sppbill == null) && (sAkom[key].sppbill == '' || sAkom[key].sppbill ==
+                null)) {
             var daysadded = new Date($("#tatreat_date" + key).val())
             var daysadded = daysadded.setDate(daysadded.getDate() + 10)
             var resultDate = new Date(daysadded)
@@ -924,7 +1146,9 @@
                     alert('No SEP telah diterbitkan. Hapus nomor SEP terlebih dahulu.')
                 } else {
                     if (confirm('Apakah anda betul-betul akan menghapus data ini?')) {
-                        if (confirm('Menghapus data ini berarti akan menghapus semua transaksi yang pernah dilakukan di bangsal ini, Apakah anda betul-betul akan menghapus Data ini?')) {
+                        if (confirm(
+                                'Menghapus data ini berarti akan menghapus semua transaksi yang pernah dilakukan di bangsal ini, Apakah anda betul-betul akan menghapus Data ini?'
+                            )) {
                             $("#delBtnAkomodasi" + key).html('<i class="spinner-border spinner-border-sm"></i>')
                             $.ajax({
                                 url: '<?php echo base_url(); ?>admin/rawatinap/deleteAkomodasi',
@@ -946,9 +1170,17 @@
                                             sAkom[key - 1].keluar_id = 0
                                             var keypast = key - 1
                                             $("#takeluar_id" + keypast).val(0)
-                                            $("#btnTdAkom" + keypast).append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                                                .append($('<button type="button" class="btn btn-primary" onclick="enableElementTA(' + keypast + ')">').append('<i class="fa fa-edit"></i>'))
-                                                .append($('<button id="delBtnAkomodasi' + keypast + '" type="button" class="btn btn-danger" onclick="deleteAkomodasi(\'' + sAkom[keypast].bill_id + '\',' + keypast + ')">').append('<i class="fa fa-trash"></i>'))
+                                            $("#btnTdAkom" + keypast).append($(
+                                                    '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'
+                                                )
+                                                .append($(
+                                                    '<button type="button" class="btn btn-primary" onclick="enableElementTA(' +
+                                                    keypast + ')">').append(
+                                                    '<i class="fa fa-edit"></i>'))
+                                                .append($('<button id="delBtnAkomodasi' + keypast +
+                                                        '" type="button" class="btn btn-danger" onclick="deleteAkomodasi(\'' +
+                                                        sAkom[keypast].bill_id + '\',' + keypast + ')">')
+                                                    .append('<i class="fa fa-trash"></i>'))
                                             )
                                         }
                                     } else {
@@ -964,10 +1196,14 @@
                     }
                 }
             } else {
-                alert("Anda tidak berhak menghapus transaksi ini karena durasi waktu telah terlampaui. Silahkan hubungi pihak administrator!")
+                alert(
+                    "Anda tidak berhak menghapus transaksi ini karena durasi waktu telah terlampaui. Silahkan hubungi pihak administrator!"
+                )
             }
         } else {
-            alert('Kunjungan pasien ini telah dilakukan close billing. Silahkan menghubungi petugas kasir untuk membua transaksinya kembali.')
+            alert(
+                'Kunjungan pasien ini telah dilakukan close billing. Silahkan menghubungi petugas kasir untuk membua transaksinya kembali.'
+            )
         }
     }
 
@@ -1429,7 +1665,8 @@
                         $("#tatanggal_rujukan").val(data.response.rujukan.tglKunjungan)
                         $("#tappkrujukan").val(data.response.rujukan.provPerujuk.kode)
                         $("#tadiag_awal").html("")
-                        $("#tadiag_awal").append(new Option(data.response.rujukan.diagnosa.nama, data.response.rujukan.diagnosa.kode))
+                        $("#tadiag_awal").append(new Option(data.response.rujukan.diagnosa.nama, data.response
+                            .rujukan.diagnosa.kode))
                         $("#taconclusion").val(data.response.rujukan.diagnosa.nama)
                     } else {
                         alert(data.metaData.message)
@@ -1865,9 +2102,83 @@
         addRowAfterHandover(filteredAfter)
         $("#toHandoverCheckAll").prop("checked", false)
     }
+    $("#signuser_type").on("change", function() {
+        $("#displayuser_id").hide()
+        $("#displaypassword").hide()
+        $("#displaysignname").hide()
+        $("#displaysignno_registration").hide()
+        $("#displaysigndatepasien").hide()
+        $("#displaysignnik").hide()
+        $("#displayttd").hide()
+        if ($(this).val() == 1) {
+            $("#displayuser_id").show()
+            $("#displaypassword").show()
+        } else if ($(this).val() == 2) {
+            $("#displaysignno_registration").show()
+            $("#displaysigndatepasien").show()
+            $("#displayttd").show()
 
+            let formData = new FormData(document.getElementById("digitalSignForm"))
+            let formDataObject = {};
+            formData.forEach(function(value, key) {
+                formDataObject[key] = value
+            });
+
+            // let data = [];
+            var data = {
+                signData: formDataObject,
+            };
+            $.ajax({
+                url: '<?php echo base_url(); ?>signature/getSignPict',
+                type: "POST",
+                // data: [docData, formData],
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    // clicked_submit_btn.button('loading');
+                },
+                success: function(data) {
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctxttd.clearRect(0, 0, canvasttd.width, canvasttd.height);
+
+                    if (data) {
+                        img.src = "data:image/gif;base64," + data.sign_file;
+                        imgttd.src = "data:image/gif;base64," + data.sign_file;
+
+                        $("#signname").val(data.fullname)
+
+                        $("#tandatangansign").val("data:image/gif;base64," + data.sign_file);
+                    }
+
+
+                },
+                error: function(xhr) { // if error occured
+                    // alert("Error occured.please try again");
+                    // clicked_submit_btn.button('reset');
+                    // errorSwal(xhr);
+                },
+                complete: function() {
+                    // clicked_submit_btn.button('reset');
+                }
+            });
+
+        } else if ($(this).val() == 3) {
+            $("#displaysignname").show()
+            $("#displaysignno_registration").show()
+            $("#displaysigndatepasien").show()
+            $("#displaysignnik").show()
+            $("#displayttd").show()
+        }
+    })
     const signHandover = () => {
         enableHandover()
+        $("#signuser_type").val(1)
+        $("#signuser_type").trigger("change")
+
         $("#digitalSignForm").on("submit", function(e) {
             e.preventDefault()
             let data = new FormData(this)
@@ -1950,6 +2261,9 @@
     }
 
     const signReceive = () => {
+
+        $("#signuser_type").val(1)
+        $("#signuser_type").trigger("change")
         enableHandover()
         $("#digitalSignForm").on("submit", function(e) {
             e.preventDefault()
@@ -1975,7 +2289,8 @@
 </script>
 
 <script>
-    const listSesi = (visit, norm, base64json) => {
+    const listSesi = (trans_id, visit, norm, base64json) => {
+
         $('#raber_visit_id').val(visit)
         $('#btnRaberModal').attr('visit_id', visit);
         $.ajax({
@@ -1983,7 +2298,7 @@
             type: "POST",
             data: JSON.stringify({
                 'visit_id': visit,
-                'trans_id': '',
+                'trans_id': trans_id,
                 'nomor': norm,
                 'isrj': 0,
                 'norujukan': '',
@@ -1995,34 +2310,43 @@
             cache: false,
             beforeSend: function() {
                 $("#historyCpptList").modal("show")
-                $("#addSessionRanap").html(`<a data-toggle="modal" onclick="redirectToProfileBySession('${visit}','${base64json}')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
-                $("#historyCpptBody").html(loadingScreen())
+                $("#addSessionRanap").html(
+                    `<a data-toggle="modal" onclick="redirectToProfileBySession('${visit}','${base64json}')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`
+                )
+                $("#spectatorSessionRanap").html(
+                    `<a data-toggle="modal" onclick="redirectToProfileBySession('${visit}','${base64json}','${get_bodyid()}')" class="btn btn-secondary btn-lg" style="width: 300px"><i class=" fa fa-eye"></i> Masuk Tanpa Sesi</a>`
+                )
+                $("#historyHistoryCpptBody").html(loadingScreen())
 
                 $("#cpptDivForm").hide()
                 getLoadingscreen("contentCppt", "loadContentCppt")
                 getLoadingscreen("contentAssessmentPerawat", "loadContentAssessmentPerawat")
-                $("#cpptBody").html(loadingScreen())
+                $("#historyCpptBody").html(loadingScreen())
                 $("#vitalSignBody").html(loadingScreen())
             },
             processData: false,
             success: function(data) {
                 $("#historyCpptBody").html("")
                 let examForassessment = data.examInfo
+                let examForassessmentDetail = data.examDetail
 
                 if (examForassessment.length > 0) {
                     $.each(examForassessment, function(key, value) {
-                        if (value.account_id == 3) { //} || value.account_id == 4) {
-                            let pd = examForassessment[key]
-                            addRowCPPT(value, key, base64json)
-                        }
+                        // if (value.account_id == 3) { //} || value.account_id == 4) {
+                        // }
+                        let pd = examForassessment[key]
+                        let examselectdetail = [];
+                        $.each(examForassessmentDetail, function(key, value) {
+                            if (value.body_id == pd.body_id)
+                                examselectdetail = value
+                        })
+                        addRowCPPT(value, key, base64json, examselectdetail)
                     })
                 }
 
-
-                fillRiwayatArp()
             },
             error: function() {
-                $("#cpptBody").html(tempTablesNull())
+                $("#historyCpptBody").html(tempTablesNull())
                 $("#vitalSignBody").html(tempTablesNull())
             }
         });
@@ -2031,76 +2355,183 @@
     const redirectToProfileBySession = (visit, base64json, body_id = null) => {
         if (body_id == null) {
             body_id = get_bodyid()
-            window.open('<?= base_url(); ?>admin/patient/redirectProfileRanap/' + visit + '/' + base64json + '/' + body_id + '/true', '_blank');
+            window.open('<?= base_url(); ?>admin/patient/redirectProfileRanap/' + visit + '/' + base64json + '/' +
+                body_id + '/true', '_blank');
         } else {
-            window.open('<?= base_url(); ?>admin/patient/profileranap/' + visit + '/' + base64json + '/' + body_id, '_blank');
+            window.open('<?= base_url(); ?>admin/patient/profileranap/' + visit + '/' + base64json + '/' + body_id,
+                '_blank');
         }
 
         $("#historyCpptList").modal("hide")
     }
 
-    const addRowCPPT = (examselect, key, base64json) => {
+    const addRowCPPT = (examselect, key, base64json, examselectdetail) => {
         if (examselect.account_id == "3") {
             $("#historyCpptBody").append($("<tr>")
                 .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td colspan='7'>").html('<b>CPPT</b>'))
+                .append($("<td rowspan='7'>")
+                    .append(examselect.modified_by == '<?= user()->username; ?>' || userRoles?.hasOwnProperty(
+                            examselect.petugas_type) || userRoles?.hasOwnProperty(0) ? $(
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect
+                            .visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id +
+                            '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Edit Sesi</i></button>'
+                        ) : ''
+                    )
+                )
+                // .append($("<td class='d-none' rowspan='7'>"))
+            )
+            $("#historyCpptBody").append($("<tr>")
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td colspan='6'>").html(''))
-                // .append($("<td>").html('<b>Tekanan Darah</b>'))
-                // .append($("<td>").html('<b>Nadi</b>'))
-                // .append($("<td>").html('<b>Nafas/RR</b>'))
-                // .append($("<td>").html('<b>Temp</b>'))
-                // .append($("<td>").html('<b>SpO2</b>'))
-
-                .append($("<td rowspan='7' colspan='2'>")
-                    .append(examselect.modified_by == '<?= user()->username; ?>' ? $('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect.visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id + '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Pilih Sesi</i></button>') : ''
-                    ))
-                // .append($("<td rowspan='8'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
-            // .append($("<tr>")
-            //     .append($("<td>").html(''))
-            //     .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
-            //     .append($("<td>").html(examselect.nadi + '/menit'))
-            //     .append($("<td>").html(examselect.nafas + '/menit'))
-            //     .append($("<td>").html(examselect.temperature + '/°C'))
-            //     .append($("<td>").html(examselect.saturasi + '/SpO2%'))
-            // )
+        } else if (examselect.account_id == "4") {
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td rowspan='6'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td colspan='7'>").html('<b>CPPT</b>'))
+                .append($("<td rowspan='6'>"))
+                // .append($("<td rowspan='6'>"))
+            )
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td class='d-none' colspan='6'>").html(''))
+            )
+        } else if (examselect.account_id == '1') {
+            let titlerj = '';
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td colspan='7'>").html('<b>Asesmen Medis</b>'))
+                .append($("<td rowspan='7'>")
+                    .append(examselect.modified_by == '<?= user()->username; ?>' || userRoles?.hasOwnProperty(
+                            examselect.petugas_type) || userRoles?.hasOwnProperty(0) ? $(
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect
+                            .visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id +
+                            '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Edit Sesi</i></button>'
+                        ) : ''
+                    )
+                )
+                // .append($("<td rowspan='7'>"))
+            )
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td class='d-none' colspan='6'>").html('')))
+
+        } else if (examselect.account_id == '7') {
+            let titlerj = '';
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td colspan='7'>").html('<b>Resume Medis</b>'))
+                .append($("<td rowspan='7'>")
+                    .append(examselect.modified_by == '<?= user()->username; ?>' || userRoles?.hasOwnProperty(
+                            examselect.petugas_type) || userRoles?.hasOwnProperty(0) ? $(
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect
+                            .visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id +
+                            '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Edit Sesi</i></button>'
+                        ) : ''
+                    )
+                )
+                .append($("<td rowspan='7'>"))
+            )
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td class='d-none' colspan='6'>").html('')))
+
+        } else if (examselect.account_id == '2') {
+            var titlekeperawatan = '';
+            if (examselect.vs_status_id == 1) {
+                titlekeperawatan = 'Dewasa'
+            }
+            if (examselect.vs_status_id == 4) {
+                titlekeperawatan = 'Neonatus'
+            }
+            if (examselect.vs_status_id == 5) {
+                titlekeperawatan = 'Anak'
+            }
+            if (examselect.vs_status_id == 10) {
+                titlekeperawatan = 'Obsetric'
+            }
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td colspan='7'>").html('<b>Asesmen Keperawatan ' + titlekeperawatan + '</b>'))
+                .append($("<td rowspan='7'>")
+                    .append(examselect.modified_by == '<?= user()->username; ?>' || userRoles?.hasOwnProperty(
+                            examselect.petugas_type) || userRoles?.hasOwnProperty(0) ? $(
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect
+                            .visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id +
+                            '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Edit Sesi</i></button>'
+                        ) : ''
+                    )
+                )
+                // .append($("<td class='d-none' rowspan='7'>"))
+            )
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td colspan='6'>").html('')))
+
+        } else if (examselect.account_id == '6') {
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td rowspan='6'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td colspan='7'>").html('<b>Asuhan Gizi</b>'))
+                .append($("<td rowspan='6'>")
+                    .append(examselect.modified_by == '<?= user()->username; ?>' ? $(
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect
+                            .visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id +
+                            '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Edit Sesi</i></button>'
+                        ) : ''
+                    )
+                )
+                // .append($("<td class='d-none' rowspan='6'>"))
+            )
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td colspan='6'>").html('')))
         } else {
             $("#historyCpptBody").append($("<tr>")
                 .append($("<td rowspan='5'>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
-                .append($("<td colspan='5'>").html(''))
-                // .append($("<td>").html('<b>Tekanan Darah</b>'))
-                // .append($("<td>").html('<b>Nadi</b>'))
-                // .append($("<td>").html('<b>Nafas/RR</b>'))
-                // .append($("<td>").html('<b>Temp</b>'))
-                // .append($("<td>").html('<b>SpO2</b>'))
-
+                .append($("<td colspan='6'>").html(''))
                 .append($("<td rowspan='5'>")
-                    .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                        .append('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-primary" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
-                            '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'
-                            <?php if (user()->checkRoles(['dokter', 'superuser', 'admin'])) {
-                            ?> + '<button type="button" onclick="verifyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-signature">Verify</i></button>'
-                            <?php
-                            } ?>
-                        )
-                    ))
-                .append($("<td rowspan='5'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                    .append(examselect.modified_by == '<?= user()->username; ?>' ? $(
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect
+                            .visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id +
+                            '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Edit Sesi</i></button>'
+                        ) : ''
+                    )
+                )
+                .append($("<td class='d-none' rowspan='5'>").html('<button type="button" onclick="removeCppt(\'' +
+                    examselect.body_id +
+                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'
+                ))
             )
-
         }
 
-        if (examselect.account_id == "3") {
+
+
+
+
+
+
+        if (examselect.account_id == "1" || examselect.account_id == "7" || examselect.account_id == "2" || examselect.account_id == "3") {
+            // var examselectdetail;
+            // $.each(examForassessmentDetail, function(key, value) {
+            //     if (value.body_id == examselect.body_id)
+            //         examselectdetail = value
+            // })
             $("#historyCpptBody")
                 .append($("<tr>")
-                    .append($("<td rowspan='7'>").html(examselect.kode_ppa))
+                    .append($("<td rowspan='5'>").html(examselect.kode_ppa))
                     .append($("<td>").html("<b>S</b>"))
-                    .append($("<td colspan='5'>").html(examselect.anamnase))
+                    .append($("<td colspan='5'>").html(examselect?.anamnase?.replace(/\r\n/g, '<br>')))
                 )
 
                 .append($("<tr>")
-                    .append($("<td rowspan=\"3\">").html("<b>O</b>"))
+                    .append($("<td rowspan=\"2\">").html("<b>O</b>"))
                     .append($("<td>").html('<b>Tekanan Darah</b>'))
                     .append($("<td>").html('<b>Nadi</b>'))
                     .append($("<td>").html('<b>Nafas/RR</b>'))
@@ -2108,46 +2539,81 @@
                     .append($("<td>").html('<b>SpO2</b>'))
                 )
                 .append($("<tr>")
-                    .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
-                    .append($("<td>").html(examselect.nadi + '/menit'))
-                    .append($("<td>").html(examselect.nafas + '/menit'))
-                    .append($("<td>").html(examselect.temperature + '/°C'))
-                    .append($("<td>").html(examselect.saturasi + '/SpO2%'))
-                )
-                .append($("<tr>")
-                    // .append($("<td>").html("<b>O</b>"))
-                    .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+                    .append($("<td>").html(examselectdetail?.tension_upper + '/' + examselectdetail?.tension_below +
+                        'mmHg'))
+                    .append($("<td>").html(examselectdetail?.nadi + '/menit'))
+                    .append($("<td>").html(examselectdetail?.nafas + '/menit'))
+                    .append($("<td>").html(examselectdetail?.temperature + '/°C'))
+                    .append($("<td>").html(examselectdetail?.saturasi + '/SpO2%'))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>A</b>"))
-                    .append($("<td colspan='5'>").html(examselect.teraphy_desc))
+                    .append($("<td colspan='5'>").html(examselect?.teraphy_desc?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>P</b>"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
+                    .append($("<td colspan='5'>").html(examselect?.instruction?.replace(/\r\n/g, '<br>')))
+                )
+        } else if (examselect.account_id == '4') {
+            $("#historyCpptBody")
+                .append($("<tr>")
+                    .append($("<td rowspan='4'>").html(examselect.kode_ppa))
+                    .append($("<td>").html("<b>S</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.anamnase?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>B</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.alo_anamnase?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>A</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.teraphy_desc?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>R</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.instruction?.replace(/\r\n/g, '<br>')))
                 )
             // .append($("<tr>")
             //     .append($("<td>").html("Instruksi"))
             //     .append($("<td colspan='5'>").html(examselect.instruction))
             // )
+        } else if (examselect.account_id == '6') {
+            $("#historyCpptBody")
+                .append($("<tr>")
+                    .append($("<td rowspan='4'>").html(examselect?.kode_ppa))
+                    .append($("<td>").html("<b>A</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.anamnase?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>D</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.alo_anamnase?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>I</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.teraphy_desc?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>ME</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.instruction?.replace(/\r\n/g, '<br>')))
+                )
         } else {
             $("#historyCpptBody")
                 .append($("<tr>")
-                    .append($("<td rowspan='5'>").html(examselect.kode_ppa))
-                    .append($("<td>").html("<b>S</b>"))
-                    .append($("<td colspan='5'>").html(examselect.anamnase))
-                )
-                .append($("<tr>")
-                    .append($("<td>").html("<b>B</b>"))
-                    .append($("<td colspan='5'>").html(examselect.pemeriksaan))
-                )
-                .append($("<tr>")
+                    .append($("<td rowspan='4'>").html(examselect?.kode_ppa))
                     .append($("<td>").html("<b>A</b>"))
-                    .append($("<td colspan='5'>").html(examselect.teraphy_desc))
+                    .append($("<td colspan='5'>").html(examselect?.anamnase?.replace(/\r\n/g, '<br>')))
                 )
                 .append($("<tr>")
-                    .append($("<td>").html("<b>R</b>"))
-                    .append($("<td colspan='5'>").html(examselect.instruction))
+                    .append($("<td>").html("<b>D</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.alo_anamnase?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>I</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.teraphy_desc?.replace(/\r\n/g, '<br>')))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>ME</b>"))
+                    .append($("<td colspan='5'>").html(examselect?.instruction?.replace(/\r\n/g, '<br>')))
                 )
             // .append($("<tr>")
             //     .append($("<td>").html("Instruksi"))

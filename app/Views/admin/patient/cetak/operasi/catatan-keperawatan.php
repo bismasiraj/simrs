@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+        rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -23,47 +25,47 @@
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <style>
-        .form-control:disabled,
-        .form-control[readonly] {
-            background-color: #FFF;
-            opacity: 1;
-        }
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #FFF;
+        opacity: 1;
+    }
 
-        .form-control,
-        .input-group-text {
-            background-color: #fff;
-            border: 1px solid #fff;
-            font-size: 12px;
-        }
+    .form-control,
+    .input-group-text {
+        background-color: #fff;
+        border: 1px solid #fff;
+        font-size: 12px;
+    }
 
-        @page {
-            size: A4;
-        }
+    @page {
+        size: A4;
+    }
 
-        body {
-            width: 21cm;
-            height: 29.7cm;
-            margin: 0;
-            font-size: 12px;
-        }
+    body {
+        width: 21cm;
+        height: 29.7cm;
+        margin: 0;
+        font-size: 12px;
+    }
 
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-            margin-bottom: .3rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+        margin-bottom: .3rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
     </style>
 </head>
 
@@ -107,7 +109,7 @@
                     <td class="p-1" style="width:33.3%">
                         <b>Tanggal Lahir (Usia)</b>
                         <p class="m-0 mt-1 p-0">
-                            <?= date("d M Y", strtotime($visit['date_of_birth'])) . ' (' . (!empty($visit['age']) ? $visit['age'] : 'N/A') . ')'; ?>
+                            <?= date("d M Y", strtotime($visit['tgl_lahir'])) . ' (' . (!empty($visit['age']) ? $visit['age'] : 'N/A') . ')'; ?>
                         </p>
 
 
@@ -120,11 +122,22 @@
                 <tr>
                     <td class="p-1">
                         <b>DPJP</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['fullname_inap']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['fullname']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Department</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic_from']; ?></p>
+                        <?php 
+                            if (!empty($visit['specialist_type_id'])) {
+                                $db = db_connect();
+                                $query = $db->table('specialist_type')
+                                            ->select('SPECIALIST_TYPE')
+                                            ->where('specialist_type_id', $visit['specialist_type_id'])
+                                            ->get()
+                                            ->getRow();
+
+                                echo $query ? esc($query->SPECIALIST_TYPE) : '-';
+                            }
+                            ?>
                     </td>
                     <td class="p-1">
                         <b>Tanggal Masuk</b>
@@ -136,14 +149,11 @@
                         <b>Kelas</b>
                         <p class="m-0 mt-1 p-0"><?= @$visit['class_room']; ?></p>
                     </td>
-                    <td class="p-1">
+                    <td class="p-1" colspan="2">
                         <b>Bangsal/Kamar</b>
                         <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
                     </td>
-                    <td class="p-1">
-                        <b>Bed</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['bed']; ?></p>
-                    </td>
+
                 </tr>
             </tbody>
         </table>
@@ -153,19 +163,22 @@
                 <tr>
                     <td width="25%">
                         <b>Tekanan Darah</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_atas'] ?? 0 . '/' . @$val['tensi_bawah'] ?? 0; ?> mmHg</p>
+                        <p class="m-0 mt-1 p-0">
+                            <?= (int) ($val['tensi_atas'] ?? 0)  ?>/<?= (int) ($val['tensi_bawah'] ?? 0); ?>
+                            mmHg</p>
+                        </p>
                     </td>
                     <td width="25%">
                         <b>Denyut Nadi</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['nadi'] ?? 0; ?> x/m</p>
+                        <p class="m-0 mt-1 p-0"><?= (int) ($val['nadi'] ?? 0) ?> x/m</p>
                     </td>
                     <td width="25%">
                         <b>Suhu Tubuh</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['suhu'] ?? 0; ?> &degC</p>
+                        <p class="m-0 mt-1 p-0"><?= (int) ($val['suhu'] ?? 0)  ?> °C</p>
                     </td>
                     <td width="25%">
                         <b>Respiration Rate</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['respirasi'] ?? 0; ?> x/m</p>
+                        <p class="m-0 mt-1 p-0"><?= (int) ($val['respiration'] ?? 0)  ?> x/m</p>
                     </td>
                 </tr>
                 <tr>
@@ -192,23 +205,36 @@
         <div class="d-flex flex-wrap mb-3">
             <b>Diagnosa Keperawatan Pre OP</b>
             <?php if (isset($diagnosas)) : ?>
-                <?php foreach ($diagnosas as $key => $diagnosa) : ?>
-                    <div class="col-12 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <p class="m-0 mt-1 p-0"><?= @$diagnosa['diag_notes']; ?></p>
-                    </div>
-                <?php endforeach ?>
+            <?php foreach ($diagnosas as $key => $diagnosa) : ?>
+            <div class="col-12 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <p class="m-0 mt-1 p-0"><?= @$diagnosa['diag_notes']; ?></p>
+            </div>
+            <?php endforeach ?>
+            <?php endif; ?>
+        </div>
+
+        <div class="d-flex flex-wrap mb-3">
+            <?php if (isset($informasiMedis)) : ?>
+
+            <?php foreach ($informasiMedis as $key => $praOprs) : ?>
+            <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <b><?= $key ?></b>
+                <p class="m-0 mt-1 p-0"><?= @$praOprs; ?></p>
+            </div>
+            <?php endforeach ?>
             <?php endif; ?>
         </div>
 
         <h4>B. Catatan Keperawatan Intra Operatif</h4>
         <div class="d-flex flex-wrap mb-3">
             <?php if (isset($informasiIntra)) : ?>
-                <?php foreach ($informasiIntra as $key => $intra) : ?>
-                    <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $key ?></b>
-                        <p class="m-0 mt-1 p-0"><?= @$intra; ?></p>
-                    </div>
-                <?php endforeach ?>
+
+            <?php foreach ($informasiIntra as $key => $intra) : ?>
+            <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <b><?= $key ?></b>
+                <p class="m-0 mt-1 p-0"><?= @$intra; ?></p>
+            </div>
+            <?php endforeach ?>
             <?php endif; ?>
         </div>
 
@@ -224,14 +250,14 @@
             </thead>
             <tbody>
                 <?php if (isset($drains)) : ?>
-                    <?php foreach ($drains as $key => $drain) : ?>
-                        <tr>
-                            <td width="25%"><?= $drain['drain_type']; ?></td>
-                            <td width="25%"><?= $drain['drain_kinds']; ?></td>
-                            <td width="25%"><?= $drain['size']; ?></td>
-                            <td width="25%"><?= $drain['description']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
+                <?php foreach ($drains as $key => $drain) : ?>
+                <tr>
+                    <td width="25%"><?= $drain['drain_type']; ?></td>
+                    <td width="25%"><?= $drain['drain_kinds']; ?></td>
+                    <td width="25%"><?= $drain['size']; ?></td>
+                    <td width="25%"><?= $drain['description']; ?></td>
+                </tr>
+                <?php endforeach; ?>
                 <?php endif; ?>
             </tbody>
         </table>
@@ -249,13 +275,13 @@
             <tbody>
                 <?php if (isset($instrument)) : ?>
 
-                    <?php foreach ($instrument as $instrumen) : ?>
-                        <tr>
-                            <?php foreach ($instrumen as $cell) : ?>
-                                <td><?= @$cell; ?></td>
-                            <?php endforeach; ?>
-                        </tr>
+                <?php foreach ($instrument as $instrumen) : ?>
+                <tr>
+                    <?php foreach ($instrumen as $cell) : ?>
+                    <td><?= @$cell; ?></td>
                     <?php endforeach; ?>
+                </tr>
+                <?php endforeach; ?>
 
                 <?php endif; ?>
             </tbody>
@@ -266,75 +292,80 @@
         </div>
         <div class="d-flex flex-wrap mb-3">
             <?php if (isset($informasiIntra2)) : ?>
-                <?php foreach ($informasiIntra2 as $key => $intra2) : ?>
-                    <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $key ?></b>
-                        <p class="m-0 mt-1 p-0"><?= @$intra2; ?></p>
-                    </div>
-                <?php endforeach ?>
+            <?php foreach ($informasiIntra2 as $key => $intra2) : ?>
+            <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <b><?= $key ?></b>
+                <p class="m-0 mt-1 p-0"><?= @$intra2; ?></p>
+            </div>
+            <?php endforeach ?>
             <?php endif; ?>
         </div>
 
         <h4>C. Catatan Keperawatan Pasca Operasi</h4>
         <div class="d-flex flex-wrap mb-3">
             <?php if (isset($informasiPasca)) : ?>
-                <?php foreach ($informasiPasca as $key => $pasca) : ?>
-                    <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $key ?></b>
-                        <p class="m-0 mt-1 p-0"><?= @$pasca ?? '-'; ?></p>
-                    </div>
-                <?php endforeach ?>
+            <?php foreach ($informasiPasca as $key => $pasca) : ?>
+            <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <b><?= $key ?></b>
+                <p class="m-0 mt-1 p-0"><?= @$pasca ?? '-'; ?></p>
+            </div>
+            <?php endforeach ?>
             <?php endif; ?>
         </div>
         <?php if (isset($aldrete)) : ?>
-            <?php foreach ($aldrete as $dataAldrete) : ?>
-                <div class="d-flex flex-wrap mb-3" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <div class="col-12 p-1 border-collide">
-                        <b>Tanggal Observasi : <?= tanggal_indo(date_format(date_create($dataAldrete['observation_date']), 'Y-m-d')) . ' ' . date_format(date_create($dataAldrete['observation_date']), 'H:i') . ' WIB'; ?></b><br>
-                        <b>Skor Aldrete</b>
-                        <ul>
-                            <li>Aktivitas : <?= @$dataAldrete['value_desc_01']; ?></li>
-                            <li>Pernapasan : <?= @$dataAldrete['value_desc_02']; ?></li>
-                            <li>Circulation : <?= @$dataAldrete['value_desc_03']; ?></li>
-                            <li>Kesadaran : <?= @$dataAldrete['value_desc_04']; ?></li>
-                            <li>Saturasi O2 : <?= @$dataAldrete['value_desc_05']; ?></li>
-                        </ul>
-                        <b>Skor : <?= @$dataAldrete['value_score_01'] + @$dataAldrete['value_score_02'] + @$dataAldrete['value_score_03'] + @$dataAldrete['value_score_04'] + @$dataAldrete['value_score_05']; ?></b>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+        <?php foreach ($aldrete as $dataAldrete) : ?>
+        <div class="d-flex flex-wrap mb-3" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <div class="col-12 p-1 border-collide">
+                <b>Tanggal Observasi :
+                    <?= tanggal_indo(date_format(date_create($dataAldrete['observation_date']), 'Y-m-d')) . ' ' . date_format(date_create($dataAldrete['observation_date']), 'H:i') . ' WIB'; ?></b><br>
+                <b>Skor Aldrete</b>
+                <ul>
+                    <li>Aktivitas : <?= @$dataAldrete['value_desc_01']; ?></li>
+                    <li>Pernapasan : <?= @$dataAldrete['value_desc_02']; ?></li>
+                    <li>Circulation : <?= @$dataAldrete['value_desc_03']; ?></li>
+                    <li>Kesadaran : <?= @$dataAldrete['value_desc_04']; ?></li>
+                    <li>Saturasi O2 : <?= @$dataAldrete['value_desc_05']; ?></li>
+                </ul>
+                <b>Skor :
+                    <?= @$dataAldrete['value_score_01'] + @$dataAldrete['value_score_02'] + @$dataAldrete['value_score_03'] + @$dataAldrete['value_score_04'] + @$dataAldrete['value_score_05']; ?></b>
+            </div>
+        </div>
+        <?php endforeach; ?>
         <?php endif; ?>
         <?php if (isset($aldrete)) : ?>
-            <?php foreach ($bromage as $dataBromage) : ?>
-                <div class="d-flex flex-wrap mb-3" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <div class="col-12 border-collide">
-                        <div class="p-1 border-collide">
-                            <b>Tanggal Observasi : <?= tanggal_indo(date_format(date_create(@$dataBromage['observation_date']), 'Y-m-d')) . ' ' . date_format(date_create(@$dataBromage['observation_date']), 'H:i') . ' WIB'; ?></b><br>
-                            <b>Skor Bromage</b>
-                            <p><?= @$dataBromage['value_desc']; ?></p>
-                            <b>Skor : <?= @$dataBromage['value_score']; ?></b>
-                        </div>
-                    </div>
+        <?php foreach ($bromage as $dataBromage) : ?>
+        <div class="d-flex flex-wrap mb-3" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <div class="col-12 border-collide">
+                <div class="p-1 border-collide">
+                    <b>Tanggal Observasi :
+                        <?= tanggal_indo(date_format(date_create(@$dataBromage['observation_date']), 'Y-m-d')) . ' ' . date_format(date_create(@$dataBromage['observation_date']), 'H:i') . ' WIB'; ?></b><br>
+                    <b>Skor Bromage</b>
+                    <p><?= @$dataBromage['value_desc']; ?></p>
+                    <b>Skor : <?= @$dataBromage['value_score']; ?></b>
                 </div>
-            <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
         <?php endif; ?>
         <?php if (isset($steward)) : ?>
-            <?php foreach ($steward as $dataSteward) : ?>
-                <div class="d-flex flex-wrap mb-3" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <div class="col-12 border-collide">
-                        <div class="p-1 border-collide">
-                            <b>Tanggal Observasi : <?= tanggal_indo(date_format(date_create(@$dataSteward['observation_date']), 'Y-m-d')) . ' ' . date_format(date_create(@$dataSteward['observation_date']), 'H:i') . ' WIB'; ?></b><br>
-                            <b>Skor Steward</b>
-                            <ul>
-                                <li>Kesadaran : <?= @$dataSteward['value_desc_01']; ?></li>
-                                <li>Jalan Nafas : <?= @$dataSteward['value_desc_02']; ?></li>
-                                <li>Gerakan : <?= @$dataSteward['value_desc_03']; ?></li>
-                            </ul>
-                            <b>Skor : <?= @$dataSteward['value_score_01'] + @$dataSteward['value_score_02'] + @$dataSteward['value_score_03']; ?></b>
-                        </div>
-                    </div>
+        <?php foreach ($steward as $dataSteward) : ?>
+        <div class="d-flex flex-wrap mb-3" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <div class="col-12 border-collide">
+                <div class="p-1 border-collide">
+                    <b>Tanggal Observasi :
+                        <?= tanggal_indo(date_format(date_create(@$dataSteward['observation_date']), 'Y-m-d')) . ' ' . date_format(date_create(@$dataSteward['observation_date']), 'H:i') . ' WIB'; ?></b><br>
+                    <b>Skor Steward</b>
+                    <ul>
+                        <li>Kesadaran : <?= @$dataSteward['value_desc_01']; ?></li>
+                        <li>Jalan Nafas : <?= @$dataSteward['value_desc_02']; ?></li>
+                        <li>Gerakan : <?= @$dataSteward['value_desc_03']; ?></li>
+                    </ul>
+                    <b>Skor :
+                        <?= @$dataSteward['value_score_01'] + @$dataSteward['value_score_02'] + @$dataSteward['value_score_03']; ?></b>
                 </div>
-            <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
         <?php endif; ?>
         <div class="row">
             <div class="col-auto" align="center">
@@ -342,6 +373,7 @@
                 <div class="mb-1">
                     <div id="qrcode"></div>
                 </div>
+                <div id="qrcode-name"></div>
             </div>
             <div class="col"></div>
             <div class="col-auto" align="center">
@@ -349,6 +381,7 @@
                 <div class="mb-1">
                     <div id="qrcode1"></div>
                 </div>
+                <div id="qrcode1_name"></div>
             </div>
         </div>
 
@@ -358,44 +391,114 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
 
 </body>
 
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `<?= $visit['fullname']; ?>`,
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
+const cropTransparentPNG = (base64, callback) => {
+
+    console.log("sasasasa");
+
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        let top = null,
+            bottom = null,
+            left = null,
+            right = null;
+
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                const index = (y * canvas.width + x) * 4;
+                const alpha = data[index + 3];
+                if (alpha > 0) {
+                    if (top === null || y < top) top = y;
+                    if (bottom === null || y > bottom) bottom = y;
+                    if (left === null || x < left) left = x;
+                    if (right === null || x > right) right = x;
+                }
+            }
+        }
+
+        if (top === null) return callback(null); // tidak ada gambar
+
+        const width = right - left + 1;
+        const height = bottom - top + 1;
+
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width;
+        croppedCanvas.height = height;
+
+        const croppedCtx = croppedCanvas.getContext('2d');
+        croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+        const croppedBase64 = croppedCanvas.toDataURL('image/png');
+        callback(croppedBase64);
+    };
+    img.src = base64;
+};
+
+const base64_ttd_dok = <?= json_encode($val['ttd_dok'] ?? '') ?>;
+if (base64_ttd_dok) {
+    $('#qrcode').html(
+        `<img src="${base64_ttd_dok}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+} else {
+    $('#qrcode').html('');
+}
+
+$('#qrcode-name').html(`<?=$val['dokter']?>`)
+
+
+
+const base64_ttd_ps = <?= json_encode($val['ttd_pasien']?? '') ?>;
+// if (base64_ttd_ps) {
+//     $('#qrcode1').html(
+//         `<img src="${base64_ttd_ps}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+// } else {
+//     $('#qrcode1').html('');
+// }
+
+if (base64_ttd_ps) {
+    cropTransparentPNG(base64_ttd_ps, (croppedImage) => {
+        if (croppedImage) {
+            $('#qrcode1').html(
+                `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+            );
+            $('#qrcode1_name').html('<?=$visit['diantar_oleh']?>')
+        } else {
+            $('#qrcode1').html('');
+        }
     });
-</script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: `<?= $visit['diantar_oleh']; ?>`,
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+} else {
+    $('#qrcode1').html('');
+}
 </script>
 
 <style>
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-        }
-
-        .container {
-            width: 210mm;
-            /* Sesuaikan dengan lebar kertas A4 */
-        }
+@media print {
+    @page {
+        margin: none;
+        scale: 85;
     }
+
+    .container {
+        width: 210mm;
+        /* Sesuaikan dengan lebar kertas A4 */
+    }
+}
 </style>
 <script type="text/javascript">
 

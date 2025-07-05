@@ -2,7 +2,7 @@
     (function() {
         $(document).ready(function(e) {
             var nomor = '<?= $visit['no_registration']; ?>';
-            var visit = '<?= $visit['visit_id']; ?>'
+            // var visit = '<?= $visit['visit_id']; ?>'
             $('#btn-save-skl').attr('hidden', true)
             $('#btn-tutup-skl').attr('hidden', true)
             $('#thename').attr('disabled', true)
@@ -108,7 +108,7 @@
         const getModalDeleteSKL = () => {
             $('.btn-show-delete-skl').on('click', function(e) {
                 let id = $(this).data('id');
-                let visit = $(this).data('visit_id');
+                let visit_id = $(this).data('visit_id');
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-success ms-2",
@@ -129,7 +129,7 @@
                     if (result.isConfirmed) {
                         deleteActionSKL({
                             id: id,
-                            visit: visit
+                            visit: visit_id
                         });
                     } else if (result.dismiss === Swal.DismissReason.cancel) {
                         swalWithBootstrapButtons.fire({
@@ -235,7 +235,7 @@
                 let jsonStr = JSON.stringify(RequestCentakSKL);
                 let base64DataSKL = btoa(jsonStr);
                 let url = baseUrl + 'admin/SuratKeteranganLahir/cetakData/' + base64DataSKL
-                window.open(url, "_blank");
+                openPopUpTab(url)
 
 
             });

@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class FamilyPasienModel extends Model
 {
     protected $table = 'family';
-    protected $primaryKey = 'nik';
+    protected $primaryKey = 'family_id';
     protected $useAutoIncrement = false;
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

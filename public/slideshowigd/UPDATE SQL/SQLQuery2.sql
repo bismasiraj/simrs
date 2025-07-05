@@ -1,0 +1,35 @@
+USE [RSUD_bengkulu]
+GO
+
+/****** Object:  Table [dbo].[WEBSITE_MENU]    Script Date: 13/03/2018 17:22:12 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[WEBSITE_MENU](
+	[MENU_ID] [smallint] NOT NULL,
+	[javascript_id] [varchar](50) NULL,
+	[file_name] [varchar](200) NULL,
+	[menu_name] [varchar](200) NULL,
+	[isactive] [char](1) NULL,
+	[menu_type] [smallint] NULL,
+	[header_name] [varchar](200) NULL,
+	[isslide] [char](1) NULL,
+	[timeslide] [int] NULL,
+ CONSTRAINT [PK_WEBSITE_MENU] PRIMARY KEY CLUSTERED 
+(
+	[MENU_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[WEBSITE_MENU]  WITH CHECK ADD  CONSTRAINT [FK_WEBSITE_MENU_WEBSITE_MENU_TYPE] FOREIGN KEY([menu_type])
+REFERENCES [dbo].[WEBSITE_MENU_TYPE] ([menu_type])
+GO
+
+ALTER TABLE [dbo].[WEBSITE_MENU] CHECK CONSTRAINT [FK_WEBSITE_MENU_WEBSITE_MENU_TYPE]
+GO
+
+

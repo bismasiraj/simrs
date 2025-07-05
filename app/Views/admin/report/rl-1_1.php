@@ -13,85 +13,85 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
-
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
-
-
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
-
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
-
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-            size: A4 landscape;
-            width: auto;
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
         }
 
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
+
+
         body {
-            width: auto;
-            /* Memastikan konten mencakup seluruh lebar kertas A4 */
-            height: auto;
-            /* Mengatur tinggi halaman otomatis sesuai dengan konten */
+            width: 21cm;
+            height: 29.7cm;
             margin: 0;
             font-size: 12px;
         }
 
-        .logo-ci4 {
-            display: none;
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
         }
 
-        .container {
-            width: 100%;
-            margin: 0 auto;
+        @media print {
+            @page {
+                margin: none;
+                scale: 85;
+                size: A4 landscape;
+                width: auto;
+            }
+
+            body {
+                width: auto;
+                /* Memastikan konten mencakup seluruh lebar kertas A4 */
+                height: auto;
+                /* Mengatur tinggi halaman otomatis sesuai dengan konten */
+                margin: 0;
+                font-size: 12px;
+            }
+
+            .logo-ci4 {
+                display: none;
+            }
+
+            .container {
+                width: 100%;
+                margin: 0 auto;
+            }
         }
-    }
     </style>
 </head>
 
@@ -258,27 +258,27 @@
                     <div class="col-4"><span>Status</span></div>
                     <div class="col-1">:</div>
                     <div class="col"><span> <?php
-                                                switch (@$data['accredit_status']) {
-                                                    case 0:
-                                                        echo 'Belum diidentifikasi';
-                                                        break;
-                                                    case 1:
-                                                        echo 'Penuh';
-                                                        break;
-                                                    case 2:
-                                                        echo 'Bersyarat';
-                                                        break;
-                                                    case 3:
-                                                        echo 'Gagal';
-                                                        break;
-                                                    case 4:
-                                                        echo 'Belum';
-                                                        break;
-                                                    default:
-                                                        echo '';
-                                                        break;
-                                                }
-                                                ?></span></div>
+                                            switch (@$data['accredit_status']) {
+                                                case 0:
+                                                    echo 'Belum diidentifikasi';
+                                                    break;
+                                                case 1:
+                                                    echo 'Penuh';
+                                                    break;
+                                                case 2:
+                                                    echo 'Bersyarat';
+                                                    break;
+                                                case 3:
+                                                    echo 'Gagal';
+                                                    break;
+                                                case 4:
+                                                    echo 'Belum';
+                                                    break;
+                                                default:
+                                                    echo '';
+                                                    break;
+                                            }
+                                            ?></span></div>
                 </li>
                 <li class="list-group-item d-flex">
                     <div class="col-4"><span>Tanggal</span></div>
@@ -434,15 +434,15 @@
 </body>
 
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+    $(document).ready(function() {
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
 
 
-})
+    })
 </script>
 
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

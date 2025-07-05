@@ -29,4 +29,8 @@ class PasienProceduresModel extends Model
     protected $createdField  = 'modified_date';
     protected $updatedField  = 'modified_date';
     protected $deletedField  = 'deleted_at';
+    function getData($pasien_diagnosa_id)
+    {
+        return $this->db->query("select * from pasien_procedures where pasien_diagnosa_id like '$pasien_diagnosa_id%'")->getResultArray();
+    }
 }

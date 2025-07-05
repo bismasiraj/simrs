@@ -27,53 +27,53 @@
 
 
     <style>
-        .table-container-split {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
+    .table-container-split {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+    }
 
-        .table-container-split table {
-            width: 45%;
-        }
+    .table-container-split table {
+        width: 45%;
+    }
 
-        @page {
-            size: A4;
-        }
+    @page {
+        size: A4;
+    }
 
-        body {
-            width: 21cm;
-            /* height: 29.7cm; */
-            margin: 0;
-            font-size: 12px;
-        }
+    body {
+        width: 21cm;
+        /* height: 29.7cm; */
+        margin: 0;
+        font-size: 12px;
+    }
 
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-            margin-bottom: .3rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+        margin-bottom: .3rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
 
-        thead.border {
-            border-bottom: 1px solid black !important;
-            border-top: 1px solid black !important;
-        }
+    thead.border {
+        border-bottom: 1px solid black !important;
+        border-top: 1px solid black !important;
+    }
 
-        tbody.border {
-            border-bottom: 1px solid black !important;
-        }
+    tbody.border {
+        border-bottom: 1px solid black !important;
+    }
     </style>
 </head>
 
@@ -199,6 +199,13 @@
                             <div id="diagnosa_klinis"></div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>Indikasi Medis</td>
+                        <td>:</td>
+                        <td>
+                            <div id="indikasi_medis"></div>
+                        </td>
+                    </tr>
                 </table>
             </div>
 
@@ -232,14 +239,14 @@
             <div class="row mb-2">
                 <div class="col-3" align="center">
                     <br>
-                    <div>Approve & Cetak</div>
-                    <div id="qrcode-container">
+                    <!-- <div>Approve & Cetak</div> -->
+                    <!-- <div id="qrcode-container">
                         <div id="qrcode"></div>
-                    </div>
-                    <div id="datetime-now-valid"></div>
+                    </div> -->
+                    <!-- <div id="datetime-now-valid"></div> -->
                 </div>
                 <div class="col"></div>
-                <div class="col-3" align="center">
+                <div class="col-4" align="center">
                     <div>Diotorasi oleh:<br> Quality Validator</div>
                     <div>
                         <div class="pt-2 pb-2" id="qrcode1"></div>
@@ -247,15 +254,15 @@
                     <div id="validator-ttd"></div>
                 </div>
             </div>
-            <?php if (user()->checkPermission("lab", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab', 'eklaim'])) { ?>
-                <div class="d-flex justify-content-end mb-3">
-                    <button type="button" id="Print-labbbbb" onclick="window.print()"
-                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
-                        <i class="fas fa-print"></i> Cetak
-                    </button>
+            <?php if (user()->checkPermission("lab", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab','eklaim', 'perawat'])) { ?>
+            <div class="d-flex justify-content-end mb-3">
+                <button type="button" id="Print-labbbbb" onclick="window.print()"
+                    data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
+                    <i class="fas fa-print"></i> Cetak
+                </button>
 
 
-                </div>
+            </div>
             <?php } ?>
         </form>
     </div>
@@ -272,45 +279,109 @@
 </body>
 
 <script>
-    $(document).ready(function() {
+$(document).ready(function() {
 
-        dataRenderTables();
-        renderDataPatient();
+    dataRenderTables();
+    renderDataPatient();
 
-    })
+})
 
-    const dataRenderTables = () => {
-        <?php $dataJsonTables = json_encode($dataTables); ?>
+function calculateAge(tgl_lahir) {
+    const birthDate = moment(tgl_lahir);
+    const now = moment();
 
-        let dataTable = <?php echo $dataJsonTables; ?>;
+    const years = now.diff(birthDate, 'years');
+    birthDate.add(years, 'years');
+
+    const months = now.diff(birthDate, 'months');
+    birthDate.add(months, 'months');
+
+    const days = now.diff(birthDate, 'days');
+
+    return {
+        years,
+        months,
+        days
+    };
+}
+
+const dataRenderTables = () => {
+
+    <?php $dataJsonTables = json_encode($dataTables); ?>
+
+    let dataTable = <?php echo $dataJsonTables; ?>;
+
+    <?php $dataJson = json_encode($visit); ?>
+    let data = <?php echo $dataJson; ?>;
 
 
-        const diagnosaList = [];
-        dataTable.forEach((item) => {
-            if (item.diagnosa_desc !== null && !diagnosaList.includes(item.diagnosa_desc)) {
-                diagnosaList.push(item.diagnosa_desc);
-            }
-        });
+
+    // render patient 
+
+    $("#gender_patient").html(data?.gender === 1 || data?.gender === "1" ? "Laki - Laki" : "Perempuan")
+    $("#doctor-responsible").html(data?.doctor_responsible)
+    const age = calculateAge(data?.tgl_lahir);
 
 
 
-        let result;
-        if (diagnosaList.length === 0) {
-            result = "";
-        } else if (diagnosaList.length === 1) {
-            result = diagnosaList
-        } else {
-            result = diagnosaList.join(" ,<br>");
+    $("#date_age").html(moment(data?.tgl_lahir).format("DD/MM/YYYY") + ' - ' + age?.years + ' th')
+    $("#no_tlp").html(data?.mobile)
+    //$("#validator-ttd").html(data?.valid_user ?? "")
+
+    //var qrcode = new QRCode(document.getElementById("qrcode1"), {
+    //  text: `${data?.valid_user ?? ""}`, // Your text here
+    // width: 70,
+    // height: 70,
+    // colorDark: "#000000",
+    // colorLight: "#ffffff",
+    // correctLevel: QRCode.CorrectLevel.H // High error correction
+    // });
+
+
+    const diagnosaList = [];
+    dataTable.forEach((item) => {
+        if (item.diagnosa_desc !== null && !diagnosaList.includes(item.diagnosa_desc)) {
+            diagnosaList.push(item.diagnosa_desc);
         }
+    });
 
-        $("#diagnosa_klinis").html(result);
+    const indikasiList = [];
+    dataTable.forEach((item) => {
+        if (item.indication_desc !== null && !indikasiList.includes(item.indication_desc)) {
+            indikasiList.push(item.indication_desc);
+        }
+    });
 
 
-        let groupedData = {};
 
-        dataTable.forEach(e => {
-            if (e.tarif_name?.toLowerCase().includes("antigen")) {
-                $("#tindakan_medis").html(`<h6>Expertise :</h6>
+    let result;
+    if (diagnosaList.length === 0) {
+        result = "";
+    } else if (diagnosaList.length === 1) {
+        result = diagnosaList
+    } else {
+        result = diagnosaList.join(" ,<br>");
+    }
+
+    let resultindikasi;
+    if (indikasiList.length === 0) {
+        resultindikasi = "";
+    } else if (indikasiList.length === 1) {
+        resultindikasi = indikasiList
+    } else {
+        resultindikasi = indikasiList.join(" ,<br>");
+    }
+
+    $("#diagnosa_klinis").html(result);
+
+    $("#indikasi_medis").html(resultindikasi);
+
+
+    let groupedData = {};
+
+    dataTable.forEach(e => {
+        if (e.tarif_name?.toLowerCase().includes("antigen")) {
+            $("#tindakan_medis").html(`<h6>Expertise :</h6>
             <p>Note: Rapid Antigen SARS-CoV-2
                 * Spesimen : Swab Nasofaring/ Orofaring
                 * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
@@ -320,37 +391,56 @@
                 probabilitas pretes relatif tinggi,
                 terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
             </p>`);
-            }
-            if (!groupedData[e.kel_pemeriksaan]) {
-                groupedData[e.kel_pemeriksaan] = {};
-            }
+        }
+        if (!groupedData[e.kel_pemeriksaan]) {
+            groupedData[e.kel_pemeriksaan] = {};
+        }
 
-            if (!groupedData[e.kel_pemeriksaan][e.tarif_name]) {
-                groupedData[e.kel_pemeriksaan][e.tarif_name] = [];
-            }
+        if (!groupedData[e.kel_pemeriksaan][e.tarif_name]) {
+            groupedData[e.kel_pemeriksaan][e.tarif_name] = [];
+        }
 
-            groupedData[e.kel_pemeriksaan][e.tarif_name].push(e);
-        });
+        groupedData[e.kel_pemeriksaan][e.tarif_name].push(e);
+    });
 
 
-        let dataResultTable = '';
+    let dataResultTable = '';
 
-        for (let kelPemeriksaan in groupedData) {
-            if (groupedData.hasOwnProperty(kelPemeriksaan)) {
-                dataResultTable += `<tr>
+
+    for (let kelPemeriksaan in groupedData) {
+        if (groupedData.hasOwnProperty(kelPemeriksaan)) {
+            dataResultTable += `<tr>
                                         <td colspan="6"><strong>${kelPemeriksaan}</strong></td>
                                     </tr>`;
-                for (let tarifName in groupedData[kelPemeriksaan]) {
-                    if (groupedData[kelPemeriksaan].hasOwnProperty(tarifName)) {
-                        dataResultTable += `<tr>
+            for (let tarifName in groupedData[kelPemeriksaan]) {
+                if (groupedData[kelPemeriksaan].hasOwnProperty(tarifName)) {
+                    const isGambaranDarahTepi = tarifName.toLowerCase().includes("gambaran darah tepi");
+
+                    dataResultTable += `<tr>
                                                 <td colspan="6" style="padding-left: 20px;"><strong>${tarifName}</strong></td>
                                             </tr>`;
+                    if (isGambaranDarahTepi) {
+                        groupedData[kelPemeriksaan][tarifName].forEach(e => {
+                            dataResultTable += `<tr>
+                                                    <td style="padding-left: 40px;">${e.parameter_name}</td>
+                                                    <td colspan="4">
+                                                        ${(e.flag_hl?.trim() || '') === '' ? e.hasil : 
+                                                            ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
+                                                            (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
+                                                            e.hasil)}
+                                                    </td>
 
+                                                   
+                                                    <td>${!e.catatan? "-": e.catatan === "-" ? !e.rekomendasi ? "-" : e.rekomendasi : e.catatan }</td>
+
+                                                </tr>`;
+                        });
+                    } else {
                         groupedData[kelPemeriksaan][tarifName].forEach(e => {
                             dataResultTable += `<tr>
                                                     <td style="padding-left: 40px;">${e.parameter_name}</td>
                                                     <td>
-                                                        ${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                        ${(e.flag_hl?.trim() || '') === '' ? e.hasil : 
                                                             ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
                                                             (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
                                                             e.hasil)}
@@ -362,7 +452,11 @@
                                                             e.flag_hl.trim())}
                                                     </td>
                                                     <td>${!e.satuan? "-":e.satuan}</td>
-                                                    <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
+                                                   <td>
+                                                        ${!e.nilai_rujukan || e.nilai_rujukan === '&nbsp;' 
+                                                            ? "-" 
+                                                            : e.nilai_rujukan.replace(/\n/g, "<br>")}
+                                                        </td>
                                                     <td>${!e.catatan? "-": e.catatan === "-" ? !e.rekomendasi ? "-" : e.rekomendasi : e.catatan }</td>
 
                                                 </tr>`;
@@ -371,117 +465,132 @@
                 }
             }
         }
-        $("#render-tables").html(dataResultTable)
+    }
+    $("#render-tables").html(dataResultTable)
 
-        // render patient -
-        $("#noLab_rm").html(dataTable[0]?.nolab_lis + '/ ' + dataTable[0]?.norm)
-        $("#name_patient").html(dataTable[0]?.nama)
-        $("#adresss_patient").html(dataTable[0]?.alamat)
-        $("#date_check").html(moment(dataTable[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
-        $("#payment_method").html(dataTable[0]?.cara_bayar_name)
-        $("#doctor_send").html(dataTable[0]?.pengirim_name)
-        $("#room_poli").html(dataTable[0]?.ruang_name)
-        $("#class_pay").html(`${dataTable[0]?.kelas_name} - ${dataTable[0]?.cara_bayar_name}`)
-        $("#datetime-now-valid").html(`${moment(dataTable[0]?.tgl_hasil_selesai).format("DD/MM/YYYY HH:mm:ss")}`)
+    // render patient -
 
 
+    $("#noLab_rm").html(dataTable[0]?.nolab_lis + '/ ' + dataTable[0]?.norm)
+    $("#name_patient").html(dataTable[0]?.nama)
+    $("#adresss_patient").html(dataTable[0]?.alamat)
 
 
+    let tanggalOutput;
 
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: `https://www.pkusampangan.com/`, // Your text here
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
-
-        function addImageToQRCode() {
-            var qrElement = document.getElementById("qrcode");
-            var qrCanvas = qrElement.querySelector('canvas');
-
-            var img = new Image();
-            img.src = '<?= base_url('assets/img/logo.png') ?>';
-
-            img.onload = function() {
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
-
-                canvas.width = qrCanvas.width;
-                canvas.height = qrCanvas.height;
-
-                ctx.drawImage(qrCanvas, 0, 0, canvas.width, canvas.height);
-
-                var imgSize = Math.min(canvas.width, canvas.height) * 0.3;
-                var imgX = (canvas.width - imgSize) / 2;
-                var imgY = (canvas.height - imgSize) / 2;
-
-                ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-
-                qrElement.innerHTML = '';
-                qrElement.appendChild(canvas);
-            };
-        }
-
-        addImageToQRCode();
-
+    if (data?.isrj == 1 && data?.tgl_follow_up) {
+        tanggalOutput = moment(data?.tgl_follow_up).format("DD/MM/YYYY HH:mm:ss");
+    } else {
+        tanggalOutput = moment(dataTable[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss");
     }
 
+    $("#date_check").html(tanggalOutput);
+
+    // $("#date_check").html(moment(dataTable[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
+    $("#payment_method").html(dataTable[0]?.cara_bayar_name)
+    $("#doctor_send").html(dataTable[0]?.pengirim_name)
+    $("#room_poli").html(dataTable[0]?.ruang_name)
+    $("#class_pay").html(`${dataTable[0]?.kelas_name} - ${dataTable[0]?.cara_bayar_name}`)
+    $("#datetime-now-valid").html(`${moment(dataTable[0]?.tgl_hasil_selesai).format("DD/MM/YYYY HH:mm:ss")}`)
 
 
-    const renderDataPatient = () => {
-        <?php $dataJson = json_encode($visit); ?>
-        let data = <?php echo $dataJson; ?>;
-        // console.log("sasa", data);
+    $("#validator-ttd").html(dataTable[0]?.valid_user ?? "")
 
-        // render patient 
-        $("#gender_patient").html(data?.name_of_gender)
-        $("#doctor-responsible").html(data?.doctor_responsible)
 
-        $("#date_age").html(moment(data?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.age)
-        $("#no_tlp").html(data?.phone_number)
-        $("#validator-ttd").html(data?.valid_users_p)
-
-        var qrcode = new QRCode(document.getElementById("qrcode1"), {
-            text: `${data?.valid_users_p}`, // Your text here
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
+    const base64_ttd_lab = dataTable[0]?.ttd_dokter_validasi
+    if (base64_ttd_lab) {
+        $('#qrcode1').html(
+            `<img src="${base64_ttd_lab}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+    } else {
+        $('#qrcode1').html('');
     }
+
+    // var qrcode = new QRCode(document.getElementById("qrcode1"), {
+    //     text: `${dataTable[0]?.valid_user ?? ""}`, // Your text here
+    //     width: 70,
+    //     height: 70,
+    //     colorDark: "#000000",
+    //     colorLight: "#ffffff",
+    //     correctLevel: QRCode.CorrectLevel.H // High error correction
+    // });
+
+
+    // var qrcode = new QRCode(document.getElementById("qrcode"), {
+    //     text: `https://www.pkusampangan.com/`, // Your text here
+    //     width: 70,
+    //     height: 70,
+    //     colorDark: "#000000",
+    //     colorLight: "#ffffff",
+    //     correctLevel: QRCode.CorrectLevel.H // High error correction
+    // });
+
+    // function addImageToQRCode() {
+    //     var qrElement = document.getElementById("qrcode");
+    //     var qrCanvas = qrElement.querySelector('canvas');
+
+    //     var img = new Image();
+    //     img.src = '<?= base_url('assets/img/logo.png') ?>';
+
+    //     img.onload = function() {
+    //         var canvas = document.createElement('canvas');
+    //         var ctx = canvas.getContext('2d');
+
+    //         canvas.width = qrCanvas.width;
+    //         canvas.height = qrCanvas.height;
+
+    //         ctx.drawImage(qrCanvas, 0, 0, canvas.width, canvas.height);
+
+    //         var imgSize = Math.min(canvas.width, canvas.height) * 0.3;
+    //         var imgX = (canvas.width - imgSize) / 2;
+    //         var imgY = (canvas.height - imgSize) / 2;
+
+    //         ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+
+    //         qrElement.innerHTML = '';
+    //         qrElement.appendChild(canvas);
+    //     };
+    // }
+
+    // addImageToQRCode();
+
+}
+
+
+
+const renderDataPatient = () => {
+
+}
 </script>
 <style>
-    @media print {
-        @page {
-            margin: none;
-            /* scale: 85; */
-        }
-
-        .container {
-            width: 100%;
-            /* Sesuaikan dengan lebar kertas A4 */
-        }
-
-        td {
-            background-color: inherit;
-            color: inherit;
-            border: inherit;
-            padding: inherit;
-            text-align: inherit;
-        }
-
-        .d-flex button {
-            display: none;
-        }
-
+@media print {
+    @page {
+        margin: none;
+        size: 210mm 330mm;
+        /* scale: 85; */
     }
+
+    .container {
+        width: 100%;
+        /* Sesuaikan dengan lebar kertas A4 */
+    }
+
+    td {
+        background-color: inherit;
+        color: inherit;
+        border: inherit;
+        padding: inherit;
+        text-align: inherit;
+    }
+
+    .d-flex button {
+        display: none;
+    }
+
+}
 </style>
 
 <script type="text/javascript">
-    // window.print();
+// window.print();
 </script>
 
 </html>

@@ -53,8 +53,8 @@ class Auth extends BaseConfig
         'resend-activate-account' => 'resend-activate-account',
         'forgot'                  => 'forgot',
         'reset-password'          => 'reset-password',
-        'antrian'                => 'antrian',
-        'pendaftaran'                => 'pendaftaran',
+        'antrian'                 => 'antrian',
+        'pendaftaran'             => 'pendaftaran',
     ];
 
     /**

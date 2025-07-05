@@ -35,7 +35,7 @@ class Finance extends \App\Controllers\BaseController
     private function getOrgCode()
     {
         $org = new OrganizationunitModel();
-        return $org->find('1771014');
+        return $org->find('3372238');
     }
     private function getImgTime()
     {

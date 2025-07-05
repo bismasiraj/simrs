@@ -13,34 +13,34 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
         crossorigin="anonymous">
 
 
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    /* .form-control,
+        /* .form-control,
     .input-group-text {
         background-color: #fff;
         border: 1px solid #fff;
@@ -48,61 +48,61 @@
     } */
 
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
-
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
-
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-            size: A4 landscape;
-            width: auto;
-        }
-
         body {
-            width: auto;
-            /* Memastikan konten mencakup seluruh lebar kertas A4 */
-            height: auto;
-            /* Mengatur tinggi halaman otomatis sesuai dengan konten */
+            width: 21cm;
+            height: 29.7cm;
             margin: 0;
             font-size: 12px;
         }
 
-        .logo-ci4 {
-            display: none;
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
         }
 
-        .container {
-            width: 100%;
-            margin: 0 auto;
-        }
+        @media print {
+            @page {
+                margin: none;
+                scale: 85;
+                size: A4 landscape;
+                width: auto;
+            }
 
-        .date-request {
-            display: none;
+            body {
+                width: auto;
+                /* Memastikan konten mencakup seluruh lebar kertas A4 */
+                height: auto;
+                /* Mengatur tinggi halaman otomatis sesuai dengan konten */
+                margin: 0;
+                font-size: 12px;
+            }
+
+            .logo-ci4 {
+                display: none;
+            }
+
+            .container {
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .date-request {
+                display: none;
+            }
         }
-    }
     </style>
 </head>
 
@@ -158,100 +158,99 @@
                 </tr>
             </thead>
             <tbody id="data-all">
-                <?php 
-                    $totalJumlahisactive = 0; 
-                    $totalJumlahisgeneric = 0; 
-                    $totalJumlahisformularium = 0; 
+                <?php
+                $totalJumlahisactive = 0;
+                $totalJumlahisgeneric = 0;
+                $totalJumlahisformularium = 0;
 
-                    $groupedData = [];
+                $groupedData = [];
 
-                    foreach ($data as $current) {
-                        $key = $current['clinic_type'];
+                foreach ($data as $current) {
+                    $key = $current['clinic_type'];
 
-                        if (!isset($groupedData[$key])) {
-                            $groupedData[$key] = [
-                                "clinic_type" => $key,
-                                "clinictype" => $current['clinictype'],
-                                "totalJml" => 0,
-                                "sub" => []
-                            ];
-                        }
-
-                        $groupedData[$key]['sub'][] = [
-                            "follow_up" => $current['follow_up'],
-                            "jml" => $current['jml'],
-                            "rujukan_id" => $current['rujukan_id']
+                    if (!isset($groupedData[$key])) {
+                        $groupedData[$key] = [
+                            "clinic_type" => $key,
+                            "clinictype" => $current['clinictype'],
+                            "totalJml" => 0,
+                            "sub" => []
                         ];
-
-                        $groupedData[$key]['totalJml'] += $current['jml'];
                     }
 
-                    $result = array_values($groupedData);
+                    $groupedData[$key]['sub'][] = [
+                        "follow_up" => $current['follow_up'],
+                        "jml" => $current['jml'],
+                        "rujukan_id" => $current['rujukan_id']
+                    ];
 
-                    foreach ($result as $index => $row) {
-                        $treatDateFormatted = (new DateTime())->format('Y');
-                        echo "<tr>";
-                        echo "<td class='p-1'>" . htmlspecialchars($treatDateFormatted) . "</td>";
-                        echo "<td class='p-1'>" . ($index + 1) . "</td>";
-                        echo "<td class='p-1'>" . htmlspecialchars($row['clinictype']) . "</td>";
+                    $groupedData[$key]['totalJml'] += $current['jml'];
+                }
 
-                        $jumlahKolom4 = 0;
-                        $jumlahKolom5 = 0;
-                        $jumlahKolom6 = 0;
-                        $jumlahKolom7 = 0;
-                        $jumlahKolom8 = 0;
-                        $jumlahKolom9 = 0;
-                        $jumlahKolom10 = 0;
-                        $jumlahKolom11 = 0;
+                $result = array_values($groupedData);
 
-                        foreach ($row['sub'] as $subRow) {
-                            if ($subRow['rujukan_id'] === "3" && $subRow['follow_up'] === "0") {
-                                $jumlahKolom4 += $subRow['jml'] ?? 0;
-                            }
+                foreach ($result as $index => $row) {
+                    $treatDateFormatted = (new DateTime())->format('Y');
+                    echo "<tr>";
+                    echo "<td class='p-1'>" . htmlspecialchars($treatDateFormatted) . "</td>";
+                    echo "<td class='p-1'>" . ($index + 1) . "</td>";
+                    echo "<td class='p-1'>" . htmlspecialchars($row['clinictype']) . "</td>";
 
-                            if (!in_array($subRow['rujukan_id'], ["1", "3", "4", "5"])) {
-                                $jumlahKolom5 += $subRow['jml'] ?? 0;
-                            }
+                    $jumlahKolom4 = 0;
+                    $jumlahKolom5 = 0;
+                    $jumlahKolom6 = 0;
+                    $jumlahKolom7 = 0;
+                    $jumlahKolom8 = 0;
+                    $jumlahKolom9 = 0;
+                    $jumlahKolom10 = 0;
+                    $jumlahKolom11 = 0;
 
-                            if (in_array($subRow['rujukan_id'], ["4", "5"])) {
-                                $jumlahKolom6 += $subRow['jml'] ?? 0;
-                            }
-
-                            if ($subRow['follow_up'] == "9") {
-                                $jumlahKolom7 += $subRow['jml'] ?? 0;
-                            }
-
-                            if (in_array($subRow['follow_up'], ["3", "8"])) {
-                                $jumlahKolom8 += $subRow['jml'] ?? 0;
-                            }
-
-                            if ($subRow['follow_up'] == "7") {
-                                $jumlahKolom9 += $subRow['jml'] ?? 0;
-                            }
-
-                            if ($subRow['follow_up'] == "2") {
-                                $jumlahKolom10 += $subRow['jml'] ?? 0;
-                            }
-
-                            if ($subRow['rujukan_id'] == "1" && $subRow['follow_up'] != "0") {
-                                $jumlahKolom11 += $subRow['jml'] ?? 0;
-                            }
+                    foreach ($row['sub'] as $subRow) {
+                        if ($subRow['rujukan_id'] === "3" && $subRow['follow_up'] === "0") {
+                            $jumlahKolom4 += $subRow['jml'] ?? 0;
                         }
 
-                        echo "<td class='p-1'>" . $jumlahKolom4 . "</td>";
-                        echo "<td class='p-1'>" . $jumlahKolom5 . "</td>";
-                        echo "<td class='p-1'>" . $jumlahKolom6 . "</td>";
-                        echo "<td class='p-1'>" . $jumlahKolom7 . "</td>";
-                        echo "<td class='p-1'>" . $jumlahKolom8 . "</td>";
-                        echo "<td class='p-1'>" . $jumlahKolom9 . "</td>";
-                        echo "<td class='p-1'>" . $jumlahKolom10 . "</td>";
-                        echo "<td class='p-1'>" . $jumlahKolom11 . "</td>";
-                        echo "<td class='p-1'>" . 0 . "</td>";
+                        if (!in_array($subRow['rujukan_id'], ["1", "3", "4", "5"])) {
+                            $jumlahKolom5 += $subRow['jml'] ?? 0;
+                        }
 
-                        echo "</tr>";
+                        if (in_array($subRow['rujukan_id'], ["4", "5"])) {
+                            $jumlahKolom6 += $subRow['jml'] ?? 0;
+                        }
 
+                        if ($subRow['follow_up'] == "9") {
+                            $jumlahKolom7 += $subRow['jml'] ?? 0;
+                        }
+
+                        if (in_array($subRow['follow_up'], ["3", "8"])) {
+                            $jumlahKolom8 += $subRow['jml'] ?? 0;
+                        }
+
+                        if ($subRow['follow_up'] == "7") {
+                            $jumlahKolom9 += $subRow['jml'] ?? 0;
+                        }
+
+                        if ($subRow['follow_up'] == "2") {
+                            $jumlahKolom10 += $subRow['jml'] ?? 0;
+                        }
+
+                        if ($subRow['rujukan_id'] == "1" && $subRow['follow_up'] != "0") {
+                            $jumlahKolom11 += $subRow['jml'] ?? 0;
+                        }
                     }
-                    ?>
+
+                    echo "<td class='p-1'>" . $jumlahKolom4 . "</td>";
+                    echo "<td class='p-1'>" . $jumlahKolom5 . "</td>";
+                    echo "<td class='p-1'>" . $jumlahKolom6 . "</td>";
+                    echo "<td class='p-1'>" . $jumlahKolom7 . "</td>";
+                    echo "<td class='p-1'>" . $jumlahKolom8 . "</td>";
+                    echo "<td class='p-1'>" . $jumlahKolom9 . "</td>";
+                    echo "<td class='p-1'>" . $jumlahKolom10 . "</td>";
+                    echo "<td class='p-1'>" . $jumlahKolom11 . "</td>";
+                    echo "<td class='p-1'>" . 0 . "</td>";
+
+                    echo "</tr>";
+                }
+                ?>
 
 
 
@@ -270,167 +269,167 @@
 </body>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    $('.dateflatpickr').flatpickr({
-        enableTime: true,
-        dateFormat: "Y-m-d H:i",
-        time_24hr: true
-    });
+    document.addEventListener("DOMContentLoaded", function() {
+        $('.dateflatpickr').flatpickr({
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true
+        });
 
-    $('#cetak-submit').on('click', function(e) {
-        window.print();
+        $('#cetak-submit').on('click', function(e) {
+            window.print();
 
-    })
-    let tgl = new Date();
+        })
+        let tgl = new Date();
 
-    $('#startDate').val(moment(tgl).format("YYYY-MM-01"))
-    $('#endDate').val(moment(tgl).format("YYYY-MM-DD"))
+        $('#startDate').val(moment(tgl).format("YYYY-MM-01"))
+        $('#endDate').val(moment(tgl).format("YYYY-MM-DD"))
 
-    $('#submitDate').on('click', function(e) {
-        e.preventDefault();
-        let startDate = $('#startDate').val();
-        let endDate = $('#endDate').val();
+        $('#submitDate').on('click', function(e) {
+            e.preventDefault();
+            let startDate = $('#startDate').val();
+            let endDate = $('#endDate').val();
 
 
-        $.ajax({
-            url: '/admin/cetak/rl_3_14',
-            method: 'GET',
-            data: {
-                start_date: startDate,
-                end_date: endDate
-            },
-            success: function(response) {
-                $('#data-all').empty();
-                if (Array.isArray(response.data)) {
-                    let totalJumlah = 0;
+            $.ajax({
+                url: '/admin/cetak/rl_3_14',
+                method: 'GET',
+                data: {
+                    start_date: startDate,
+                    end_date: endDate
+                },
+                success: function(response) {
+                    $('#data-all').empty();
+                    if (Array.isArray(response.data)) {
+                        let totalJumlah = 0;
 
-                    const groupedData = response.data.reduce((acc, current) => {
-                        const key = current.clinic_type;
+                        const groupedData = response.data.reduce((acc, current) => {
+                            const key = current.clinic_type;
 
-                        if (!acc[key]) {
-                            acc[key] = {
-                                clinic_type: key,
-                                clinictype: current.clinictype,
-                                totalJml: 0,
-                                sub: []
-                            };
-                        }
+                            if (!acc[key]) {
+                                acc[key] = {
+                                    clinic_type: key,
+                                    clinictype: current.clinictype,
+                                    totalJml: 0,
+                                    sub: []
+                                };
+                            }
 
-                        acc[key].sub.push({
-                            follow_up: current.follow_up,
-                            jml: current.jml,
-                            rujukan_id: current.rujukan_id
+                            acc[key].sub.push({
+                                follow_up: current.follow_up,
+                                jml: current.jml,
+                                rujukan_id: current.rujukan_id
+                            });
+
+                            acc[key].totalJml += current.jml;
+
+                            return acc;
+                        }, {});
+
+                        const result = Object.values(groupedData);
+
+                        result.forEach(function(row, index) {
+                            let formattedDate = moment($("#startDate")
+                                    .val())
+                                .format('YYYY') ?? '';
+
+                            let newRow = "<tr>";
+                            newRow += "<td class='p-1'>" + formattedDate + "</td>";
+                            newRow += "<td class='p-1'>" + (index + 1) + "</td>";
+                            newRow += "<td class='p-1'>" + row.clinictype + "</td>";
+
+
+                            let jumlahKolom4 = 0;
+                            let jumlahKolom5 = 0;
+                            let jumlahKolom6 = 0;
+                            let jumlahKolom7 = 0;
+                            let jumlahKolom8 = 0;
+                            let jumlahKolom9 = 0;
+                            let jumlahKolom10 = 0;
+                            let jumlahKolom11 = 0;
+                            let jumlahKolom12 = 0;
+
+
+                            row.sub.forEach(function(subRow) {
+
+                                if (parseInt(subRow.rujukan_id) === 3 &&
+                                    parseInt(subRow.follow_up) ===
+                                    0) {
+                                    jumlahKolom4 += subRow.jml ?? 0;
+                                }
+
+                                if (![1, 3, 4, 5].includes(parseInt(
+                                        subRow.rujukan_id))) {
+                                    jumlahKolom5 += subRow.jml ?? 0;
+                                }
+                                if ([4, 5].includes(parseInt(subRow
+                                        .rujukan_id))) {
+                                    jumlahKolom6 += subRow.jml ?? 0;
+                                }
+                                if (parseInt(subRow.follow_up) === 9) {
+                                    jumlahKolom7 += subRow.jml ?? 0;
+                                }
+
+                                if ([3, 8].includes(parseInt(subRow
+                                        .follow_up))) {
+                                    jumlahKolom8 += subRow.jml ?? 0;
+                                }
+                                if (parseInt(subRow.follow_up) === 7) {
+                                    jumlahKolom9 += subRow.jml ?? 0;
+                                }
+                                if (parseInt(subRow.follow_up) === 2) {
+                                    jumlahKolom10 += subRow.jml ?? 0;
+                                }
+
+                                if (parseInt(subRow.rujukan_id) === 1 &&
+                                    parseInt(subRow.follow_up) !==
+                                    0) {
+                                    jumlahKolom11 += subRow.jml ?? 0;
+                                }
+
+                            });
+
+                            newRow += "<td class='p-1'>" + jumlahKolom4 +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + jumlahKolom5 +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + jumlahKolom6 +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + jumlahKolom7 +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + jumlahKolom8 +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + jumlahKolom9 +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + jumlahKolom10 +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + jumlahKolom11 +
+                                "</td>";
+
+                            newRow += "<td class='p-1'>" + 0 +
+                                "</td>";
+
+                            newRow += "</tr>";
+                            $('#data-all').append(newRow);
+                            totalJumlah +=
+                                row.totalJml;
                         });
+                    } else {
+                        console.error("Data tidak tersedia atau bukan array");
+                    }
 
-                        acc[key].totalJml += current.jml;
-
-                        return acc;
-                    }, {});
-
-                    const result = Object.values(groupedData);
-
-                    result.forEach(function(row, index) {
-                        let formattedDate = moment($("#startDate")
-                                .val())
-                            .format('YYYY') ?? '';
-
-                        let newRow = "<tr>";
-                        newRow += "<td class='p-1'>" + formattedDate + "</td>";
-                        newRow += "<td class='p-1'>" + (index + 1) + "</td>";
-                        newRow += "<td class='p-1'>" + row.clinictype + "</td>";
+                },
 
 
-                        let jumlahKolom4 = 0;
-                        let jumlahKolom5 = 0;
-                        let jumlahKolom6 = 0;
-                        let jumlahKolom7 = 0;
-                        let jumlahKolom8 = 0;
-                        let jumlahKolom9 = 0;
-                        let jumlahKolom10 = 0;
-                        let jumlahKolom11 = 0;
-                        let jumlahKolom12 = 0;
+                error: function(xhr, status, error) {
 
-
-                        row.sub.forEach(function(subRow) {
-
-                            if (parseInt(subRow.rujukan_id) === 3 &&
-                                parseInt(subRow.follow_up) ===
-                                0) {
-                                jumlahKolom4 += subRow.jml ?? 0;
-                            }
-
-                            if (![1, 3, 4, 5].includes(parseInt(
-                                    subRow.rujukan_id))) {
-                                jumlahKolom5 += subRow.jml ?? 0;
-                            }
-                            if ([4, 5].includes(parseInt(subRow
-                                    .rujukan_id))) {
-                                jumlahKolom6 += subRow.jml ?? 0;
-                            }
-                            if (parseInt(subRow.follow_up) === 9) {
-                                jumlahKolom7 += subRow.jml ?? 0;
-                            }
-
-                            if ([3, 8].includes(parseInt(subRow
-                                    .follow_up))) {
-                                jumlahKolom8 += subRow.jml ?? 0;
-                            }
-                            if (parseInt(subRow.follow_up) === 7) {
-                                jumlahKolom9 += subRow.jml ?? 0;
-                            }
-                            if (parseInt(subRow.follow_up) === 2) {
-                                jumlahKolom10 += subRow.jml ?? 0;
-                            }
-
-                            if (parseInt(subRow.rujukan_id) === 1 &&
-                                parseInt(subRow.follow_up) !==
-                                0) {
-                                jumlahKolom11 += subRow.jml ?? 0;
-                            }
-
-                        });
-
-                        newRow += "<td class='p-1'>" + jumlahKolom4 +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + jumlahKolom5 +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + jumlahKolom6 +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + jumlahKolom7 +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + jumlahKolom8 +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + jumlahKolom9 +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + jumlahKolom10 +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + jumlahKolom11 +
-                            "</td>";
-
-                        newRow += "<td class='p-1'>" + 0 +
-                            "</td>";
-
-                        newRow += "</tr>";
-                        $('#data-all').append(newRow);
-                        totalJumlah +=
-                            row.totalJml;
-                    });
-                } else {
-                    console.error("Data tidak tersedia atau bukan array");
+                    console.log('Error:', error);
                 }
-
-            },
-
-
-            error: function(xhr, status, error) {
-
-                console.log('Error:', error);
-            }
+            });
         });
     });
-});
 
-// window.print();
+    // window.print();
 </script>
 
 

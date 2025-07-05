@@ -13,34 +13,34 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
         crossorigin="anonymous">
 
 
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    /* .form-control,
+        /* .form-control,
     .input-group-text {
         background-color: #fff;
         border: 1px solid #fff;
@@ -48,61 +48,61 @@
     } */
 
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
-
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
-
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-            size: A4 landscape;
-            width: auto;
-        }
-
         body {
-            width: auto;
-            /* Memastikan konten mencakup seluruh lebar kertas A4 */
-            height: auto;
-            /* Mengatur tinggi halaman otomatis sesuai dengan konten */
+            width: 21cm;
+            height: 29.7cm;
             margin: 0;
             font-size: 12px;
         }
 
-        .logo-ci4 {
-            display: none;
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
         }
 
-        .container {
-            width: 100%;
-            margin: 0 auto;
-        }
+        @media print {
+            @page {
+                margin: none;
+                scale: 85;
+                size: A4 landscape;
+                width: auto;
+            }
 
-        .date-request {
-            display: none;
+            body {
+                width: auto;
+                /* Memastikan konten mencakup seluruh lebar kertas A4 */
+                height: auto;
+                /* Mengatur tinggi halaman otomatis sesuai dengan konten */
+                margin: 0;
+                font-size: 12px;
+            }
+
+            .logo-ci4 {
+                display: none;
+            }
+
+            .container {
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .date-request {
+                display: none;
+            }
         }
-    }
     </style>
 </head>
 
@@ -154,68 +154,68 @@
                 </tr>
             </thead>
             <tbody id="data-all">
-                <?php 
-                        $groupedData = [];
-                        $grandTotal = $grandKhusus = $grandBesar = $grandSedang = $grandKecil = 0; 
+                <?php
+                $groupedData = [];
+                $grandTotal = $grandKhusus = $grandBesar = $grandSedang = $grandKecil = 0;
 
-                        foreach ($data as $row) {
-                            $year = !empty($row['start_operation']) ? date('Y', strtotime($row['start_operation'])) : ''; 
-                            $groupedData[$year][$row['display']][] = $row; 
-                        }
+                foreach ($data as $row) {
+                    $year = !empty($row['start_operation']) ? date('Y', strtotime($row['start_operation'])) : '';
+                    $groupedData[$year][$row['display']][] = $row;
+                }
 
-                        $index = 0;
+                $index = 0;
 
-                        foreach ($groupedData as $year => $displays) {
-                            foreach ($displays as $display => $group) {
-                                $index++;
-                                $total = $khusus = $besar = $sedang = $kecil = 0;
+                foreach ($groupedData as $year => $displays) {
+                    foreach ($displays as $display => $group) {
+                        $index++;
+                        $total = $khusus = $besar = $sedang = $kecil = 0;
 
-                                foreach ($group as $row) {
-                                    $total += $row['jml']; 
-                                    switch ($row['level_id']) {
-                                        case '5':
-                                            $khusus += $row['jml'];
-                                            break;
-                                        case '4':
-                                            $besar += $row['jml'];
-                                            break;
-                                        case '3':
-                                            $sedang += $row['jml'];
-                                            break;
-                                        case '2':
-                                            $kecil += $row['jml'];
-                                            break;
-                                    }
-                                }
-
-                                $grandTotal += $total;
-                                $grandKhusus += $khusus;
-                                $grandBesar += $besar;
-                                $grandSedang += $sedang;
-                                $grandKecil += $kecil;
-
-                                echo "<tr>";
-                                echo "<td class='p-1'>" . htmlspecialchars($year) . "</td>"; 
-                                echo "<td class='p-1'>" . $index . "</td>";
-                                echo "<td class='p-1'>" . htmlspecialchars($display) . "</td>";
-                                echo "<td class='p-1'>" . htmlspecialchars($total) . "</td>";
-                                echo "<td class='p-1'>" . htmlspecialchars($khusus) . "</td>";
-                                echo "<td class='p-1'>" . htmlspecialchars($besar) . "</td>";
-                                echo "<td class='p-1'>" . htmlspecialchars($sedang) . "</td>";
-                                echo "<td class='p-1'>" . htmlspecialchars($kecil) . "</td>";
-                                echo "</tr>";
+                        foreach ($group as $row) {
+                            $total += $row['jml'];
+                            switch ($row['level_id']) {
+                                case '5':
+                                    $khusus += $row['jml'];
+                                    break;
+                                case '4':
+                                    $besar += $row['jml'];
+                                    break;
+                                case '3':
+                                    $sedang += $row['jml'];
+                                    break;
+                                case '2':
+                                    $kecil += $row['jml'];
+                                    break;
                             }
                         }
 
+                        $grandTotal += $total;
+                        $grandKhusus += $khusus;
+                        $grandBesar += $besar;
+                        $grandSedang += $sedang;
+                        $grandKecil += $kecil;
+
                         echo "<tr>";
-                        echo "<td colspan='3' class='p-1 text-end'><strong>Total:</strong></td>";
-                        echo "<td class='p-1'><strong>" . htmlspecialchars($grandTotal) . "</strong></td>";
-                        echo "<td class='p-1'><strong>" . htmlspecialchars($grandKhusus) . "</strong></td>";
-                        echo "<td class='p-1'><strong>" . htmlspecialchars($grandBesar) . "</strong></td>";
-                        echo "<td class='p-1'><strong>" . htmlspecialchars($grandSedang) . "</strong></td>";
-                        echo "<td class='p-1'><strong>" . htmlspecialchars($grandKecil) . "</strong></td>";
+                        echo "<td class='p-1'>" . htmlspecialchars($year) . "</td>";
+                        echo "<td class='p-1'>" . $index . "</td>";
+                        echo "<td class='p-1'>" . htmlspecialchars($display) . "</td>";
+                        echo "<td class='p-1'>" . htmlspecialchars($total) . "</td>";
+                        echo "<td class='p-1'>" . htmlspecialchars($khusus) . "</td>";
+                        echo "<td class='p-1'>" . htmlspecialchars($besar) . "</td>";
+                        echo "<td class='p-1'>" . htmlspecialchars($sedang) . "</td>";
+                        echo "<td class='p-1'>" . htmlspecialchars($kecil) . "</td>";
                         echo "</tr>";
-                        ?>
+                    }
+                }
+
+                echo "<tr>";
+                echo "<td colspan='3' class='p-1 text-end'><strong>Total:</strong></td>";
+                echo "<td class='p-1'><strong>" . htmlspecialchars($grandTotal) . "</strong></td>";
+                echo "<td class='p-1'><strong>" . htmlspecialchars($grandKhusus) . "</strong></td>";
+                echo "<td class='p-1'><strong>" . htmlspecialchars($grandBesar) . "</strong></td>";
+                echo "<td class='p-1'><strong>" . htmlspecialchars($grandSedang) . "</strong></td>";
+                echo "<td class='p-1'><strong>" . htmlspecialchars($grandKecil) . "</strong></td>";
+                echo "</tr>";
+                ?>
             </tbody>
         </table>
 
@@ -232,137 +232,137 @@
 </body>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    $('.dateflatpickr').flatpickr({
-        enableTime: true,
-        dateFormat: "Y-m-d H:i",
-        time_24hr: true
-    });
+    document.addEventListener("DOMContentLoaded", function() {
+        $('.dateflatpickr').flatpickr({
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true
+        });
 
-    $('#cetak-submit').on('click', function(e) {
-        window.print();
+        $('#cetak-submit').on('click', function(e) {
+            window.print();
 
-    })
+        })
 
-    let tgl = new Date();
+        let tgl = new Date();
 
-    $('#startDate').val(moment(tgl).format("YYYY-MM-01"))
-    $('#endDate').val(moment(tgl).format("YYYY-MM-DD"))
-    $('#submitDate').on('click', function(e) {
-        e.preventDefault();
-        let startDate = $('#startDate').val();
-        let endDate = $('#endDate').val();
+        $('#startDate').val(moment(tgl).format("YYYY-MM-01"))
+        $('#endDate').val(moment(tgl).format("YYYY-MM-DD"))
+        $('#submitDate').on('click', function(e) {
+            e.preventDefault();
+            let startDate = $('#startDate').val();
+            let endDate = $('#endDate').val();
 
 
-        $.ajax({
-            url: '/admin/cetak/rl_3_6',
-            method: 'GET',
-            data: {
-                start_date: startDate,
-                end_date: endDate
-            },
-            success: function(response) {
+            $.ajax({
+                url: '/admin/cetak/rl_3_6',
+                method: 'GET',
+                data: {
+                    start_date: startDate,
+                    end_date: endDate
+                },
+                success: function(response) {
 
-                $('#data-all').empty();
+                    $('#data-all').empty();
 
-                if (Array.isArray(response.data)) {
-                    let groupedData = {};
+                    if (Array.isArray(response.data)) {
+                        let groupedData = {};
 
-                    response.data.forEach(function(row) {
-                        if (!groupedData[row.display]) {
-                            groupedData[row.display] = [];
-                        }
-                        groupedData[row.display].push(row);
-                    });
-
-                    let index = 0;
-                    let grandTotal = 0;
-                    let grandKhusus = 0;
-                    let grandBesar = 0;
-                    let grandSedang = 0;
-                    let grandKecil = 0;
-
-                    Object.keys(groupedData).forEach(function(display) {
-                        let group = groupedData[display];
-                        index++;
-
-                        let total = 0;
-                        let khusus = 0;
-                        let besar = 0;
-                        let sedang = 0;
-                        let kecil = 0;
-
-                        group.forEach(function(row) {
-                            total += row.jml;
-
-                            switch (row.level_id) {
-                                case '5':
-                                    khusus += row.jml;
-                                    break;
-                                case '4':
-                                    besar += row.jml;
-                                    break;
-                                case '3':
-                                    sedang += row.jml;
-                                    break;
-                                case '2':
-                                    kecil += row.jml;
-                                    break;
+                        response.data.forEach(function(row) {
+                            if (!groupedData[row.display]) {
+                                groupedData[row.display] = [];
                             }
+                            groupedData[row.display].push(row);
                         });
 
-                        let year = group[0].start_operation ? moment(group[0]
-                                .start_operation)
-                            .format('YYYY') : '';
-                        year = ""
+                        let index = 0;
+                        let grandTotal = 0;
+                        let grandKhusus = 0;
+                        let grandBesar = 0;
+                        let grandSedang = 0;
+                        let grandKecil = 0;
 
-                        grandTotal += total;
-                        grandKhusus += khusus;
-                        grandBesar += besar;
-                        grandSedang += sedang;
-                        grandKecil += kecil;
+                        Object.keys(groupedData).forEach(function(display) {
+                            let group = groupedData[display];
+                            index++;
 
-                        let newRow = "<tr>";
-                        newRow += "<td class='p-1'>" + year +
-                            "</td>";
-                        newRow += "<td class='p-1'>" + index + "</td>";
-                        newRow += "<td class='p-1'>" + display + "</td>";
-                        newRow += "<td class='p-1'>" + total + "</td>";
-                        newRow += "<td class='p-1'>" + khusus + "</td>";
-                        newRow += "<td class='p-1'>" + besar + "</td>";
-                        newRow += "<td class='p-1'>" + sedang + "</td>";
-                        newRow += "<td class='p-1'>" + kecil + "</td>";
-                        newRow += "</tr>";
+                            let total = 0;
+                            let khusus = 0;
+                            let besar = 0;
+                            let sedang = 0;
+                            let kecil = 0;
 
-                        $('#data-all').append(newRow);
-                    });
+                            group.forEach(function(row) {
+                                total += row.jml;
 
-                    let totalRow = "<tr>";
-                    totalRow +=
-                        "<td colspan='3' class='p-1 text-end'><strong>Total:</strong></td>";
-                    totalRow += "<td class='p-1'><strong>" + grandTotal + "</strong></td>";
-                    totalRow += "<td class='p-1'><strong>" + grandKhusus + "</strong></td>";
-                    totalRow += "<td class='p-1'><strong>" + grandBesar + "</strong></td>";
-                    totalRow += "<td class='p-1'><strong>" + grandSedang + "</strong></td>";
-                    totalRow += "<td class='p-1'><strong>" + grandKecil + "</strong></td>";
-                    totalRow += "</tr>";
+                                switch (row.level_id) {
+                                    case '5':
+                                        khusus += row.jml;
+                                        break;
+                                    case '4':
+                                        besar += row.jml;
+                                        break;
+                                    case '3':
+                                        sedang += row.jml;
+                                        break;
+                                    case '2':
+                                        kecil += row.jml;
+                                        break;
+                                }
+                            });
 
-                    $('#data-all').append(totalRow);
-                } else {
-                    console.error("Data tidak tersedia atau bukan array");
+                            let year = group[0].start_operation ? moment(group[0]
+                                    .start_operation)
+                                .format('YYYY') : '';
+                            year = ""
+
+                            grandTotal += total;
+                            grandKhusus += khusus;
+                            grandBesar += besar;
+                            grandSedang += sedang;
+                            grandKecil += kecil;
+
+                            let newRow = "<tr>";
+                            newRow += "<td class='p-1'>" + year +
+                                "</td>";
+                            newRow += "<td class='p-1'>" + index + "</td>";
+                            newRow += "<td class='p-1'>" + display + "</td>";
+                            newRow += "<td class='p-1'>" + total + "</td>";
+                            newRow += "<td class='p-1'>" + khusus + "</td>";
+                            newRow += "<td class='p-1'>" + besar + "</td>";
+                            newRow += "<td class='p-1'>" + sedang + "</td>";
+                            newRow += "<td class='p-1'>" + kecil + "</td>";
+                            newRow += "</tr>";
+
+                            $('#data-all').append(newRow);
+                        });
+
+                        let totalRow = "<tr>";
+                        totalRow +=
+                            "<td colspan='3' class='p-1 text-end'><strong>Total:</strong></td>";
+                        totalRow += "<td class='p-1'><strong>" + grandTotal + "</strong></td>";
+                        totalRow += "<td class='p-1'><strong>" + grandKhusus + "</strong></td>";
+                        totalRow += "<td class='p-1'><strong>" + grandBesar + "</strong></td>";
+                        totalRow += "<td class='p-1'><strong>" + grandSedang + "</strong></td>";
+                        totalRow += "<td class='p-1'><strong>" + grandKecil + "</strong></td>";
+                        totalRow += "</tr>";
+
+                        $('#data-all').append(totalRow);
+                    } else {
+                        console.error("Data tidak tersedia atau bukan array");
+                    }
+
+
+
+                },
+
+                error: function(xhr, status, error) {
+
+                    console.log('Error:', error);
                 }
-
-
-
-            },
-
-            error: function(xhr, status, error) {
-
-                console.log('Error:', error);
-            }
+            });
         });
     });
-});
 </script>
 
 

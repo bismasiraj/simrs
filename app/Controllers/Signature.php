@@ -8,11 +8,13 @@ use App\Models\Assessment\GcsModel;
 use App\Models\Assessment\PainDetilModel;
 use App\Models\Assessment\PasienTransferModel;
 use App\Models\DocsSignedModel;
+use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
 use App\Models\FamilyPasienModel;
 use App\Models\PasienDiagnosaModel;
 use App\Models\PasienModel;
+use App\Models\PersalinanModel;
 use App\Models\RsaKeyModel;
 use Myth\Auth\Models\UserModel;
 
@@ -249,117 +251,121 @@ class Signature extends BaseController
                 }
             }
         }
-        // return json_encode($docs_type);
-        if ($docs_type == '2') {
-            $model = new PasienDiagnosaModel();
-        } else if ($docs_type == '3' || $docs_type == '1') {
-            $model = new ExaminationModel();
-        } else if ($docs_type == '4') {
-            $model = new PainDetilModel();
-        } else if ($docs_type == '5') {
-            $model = new FallRiskDetailModel();
-        } else if ($docs_type == '6') {
-            $model = new GcsModel();
-        } else if ($docs_type == '7') {
-            $model = new PasienTransferModel();
-        }
-        // return json_encode($sign_id);
-        $select = $model->find($sign_id);
+
+        if ($docs_type != '0') {
+            // return json_encode($dataForm);
+            $model = $this->getSignModel($docs_type);
+            // return json_encode($sign_id);
+            $select = $model->find($sign_id);
 
 
-        // return json_encode($sign_id);
-        if (!isset($select) || !is_array($select)) {
-            return json_encode(['error' => 'Data Tidak Ditemukan']);
-        } else {
-            $dataDoc = $this->lowerKey($select);
-        }
+            // return json_encode($sign_id);
+            if (!isset($select) || !is_array($select)) {
+                return json_encode(['error' => 'Data Tidak Ditemukan']);
+            } else {
+                $dataDoc = $this->lowerKey($select);
+            }
 
 
-        if (array_key_exists('valid_user', $dataDoc)) {
-            unset($dataDoc['valid_user']);
+            if (array_key_exists('valid_user', $dataDoc)) {
+                unset($dataDoc['valid_user']);
+            }
+            if (array_key_exists('valid_pasien', $dataDoc)) {
+                unset($dataDoc['valid_pasien']);
+            }
+            if (array_key_exists('valid_date', $dataDoc)) {
+                unset($dataDoc['valid_date']);
+            }
+            ksort($dataDoc);
         }
-        if (array_key_exists('valid_pasien', $dataDoc)) {
-            unset($dataDoc['valid_pasien']);
-        }
-        if (array_key_exists('valid_date', $dataDoc)) {
-            unset($dataDoc['valid_date']);
-        }
-        ksort($dataDoc);
 
         // return json_encode($user_type);
         // Validate login and password
+
+        //bisma
+        $checkpass = false;
         if ($user_type == 1) {
             $checkpass = $this->checkpass($dataForm['user_id'] ?? null, $dataForm['password'] ?? null);
         } else if ($user_type == 2) {
 
 
             $pModel = new PasienModel();
-            $select = $pModel->select("no_registration")
-                ->where("left(replace(replace(REPLACE(convert(varchar,date_of_birth,121),'-',''),':',''),' ',''),8) = " . $dataForm['datebirth'] . "")
+            $select = $pModel->select("no_registration, name_of_pasien")
+                ->where("left(replace(replace(REPLACE(convert(varchar,date_of_birth,121),'-',''),':',''),' ',''),8) = replace(replace(replace(REPLACE('" . $dataForm['datebirth'] . "','-',''),':',''),' ',''),'/','')")
                 ->where("no_registration", $dataForm['no_registration'])
                 ->findAll();
+            $pasienName = "";
             if (count($select) > 0) {
+                $pasienName = $select[0]['name_of_pasien'];
                 $checkpass = true;
+                if (!isset($tandatangansign)) {
+                    return $this->response->setJSON(['success' => false, 'error' => 'Belum ada coretan tanda tangan']);
+                }
+                $data = explode(',', (string)$tandatangansign);
+
+                $encodedLokalis = $data[1];
+                $decodedLokalis = base64_decode($encodedLokalis);
+                $lokalisPath = $this->imageloc . 'uploads/signatures/';
+                if (!is_dir($lokalisPath)) {
+                    mkdir($lokalisPath, 0777, true);
+                }
+
+                $filenameLokalis = $no_registration . '.gif';
+                $fullPathLokalis = $lokalisPath . $filenameLokalis;
+                if (file_put_contents($fullPathLokalis, $decodedLokalis)) {
+                    $pasienModel = new PasienModel();
+                    $db = [
+                        'no_registration' => $no_registration,
+                        'sign_file' => $filenameLokalis
+                    ];
+                    if ($pasienModel->save($db)) {
+                        $checkpass = true;
+                    } else {
+                        $checkpass = false;
+                    }
+                    // return json_encode($db);
+                } else {
+                    return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
+                }
             } else {
                 $checkpass = false;
             }
+            // return json_encode($checkpass);
 
-            $data = explode(',', (string)$tandatangansign);
-
-            $encodedLokalis = $data[1];
-            $decodedLokalis = base64_decode($encodedLokalis);
-            $lokalisPath = WRITEPATH . 'uploads/signatures/';
-            if (!is_dir($lokalisPath)) {
-                mkdir($lokalisPath, 0777, true);
-            }
-
-            $filenameLokalis = $no_registration . '.gif';
-            $fullPathLokalis = $lokalisPath . $filenameLokalis;
-            if (file_put_contents($fullPathLokalis, $decodedLokalis)) {
-                $pasienModel = new PasienModel();
-                $db = [
-                    'no_registration' => $no_registration,
-                    'sign_file' => $filenameLokalis
-                ];
-                if ($pasienModel->save($db)) {
-                    $checkpass = true;
-                } else {
-                    $checkpass = false;
-                }
-                // return json_encode($db);
-            } else {
-                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
-            }
         } else {
-
+            if (!isset($tandatangansign)) {
+                return $this->response->setJSON(['success' => false, 'error' => 'Belum ada coretan tanda tangan']);
+            }
             $data = explode(',', (string)$tandatangansign);
 
             $encodedLokalis = $data[1];
             $decodedLokalis = base64_decode($encodedLokalis);
-            $lokalisPath = WRITEPATH . 'uploads/signatures/';
+            $lokalisPath = $this->imageloc . 'uploads/signatures/';
+            // $lokalisPath = 'C:\\Users\\ASUS\\Pictures\\simrs\\' . 'uploads/signatures/';
+            // return $lokalisPath;
             if (!is_dir($lokalisPath)) {
                 mkdir($lokalisPath, 0777, true);
             }
 
-            $filenameLokalis = $nik . '.gif';
+            $filenameLokalis = $no_registration . '-' . $name . '.gif';
             $fullPathLokalis = $lokalisPath . $filenameLokalis;
             if (file_put_contents($fullPathLokalis, $decodedLokalis)) {
-                $model = new FamilyPasienModel();
-                $db = [
-                    'org_unit_code' => '3372096',
-                    'no_registration' => $no_registration,
-                    'family_id' => 1,
-                    'family_status_id' => '99',
-                    'fullname' => $name,
-                    'sign_file' => $filenameLokalis,
-                    'nik' => $nik,
-                    'modified_by' => user()->username
-                ];
-                if ($model->save($db)) {
-                    $checkpass = true;
-                } else {
-                    $checkpass = false;
-                }
+                $modelFamily = new FamilyPasienModel();
+                // $db = [
+                //     'org_unit_code' => '3372096',
+                //     'no_registration' => $no_registration,
+                //     'family_id' => 1,
+                //     'family_status_id' => '99',
+                //     'fullname' => $name,
+                //     'sign_file' => $filenameLokalis,
+                //     // 'nik' => $nik,
+                //     'modified_by' => user()->username
+                // ];
+                // if ($modelFamily->save($db)) {
+                $checkpass = true;
+                // } else {
+                //     $checkpass = false;
+                // }
                 // return json_encode($db);
             } else {
                 return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
@@ -369,38 +375,98 @@ class Signature extends BaseController
         // return json_encode($checkpass);
 
         if ($checkpass) {
+            if ($user_type == 1) {
+                $thebody = $this->getFullnameByUsername($dataForm['user_id']);
+            } else if ($user_type == 2) {
+                $thebody = $pasienName;
+            } else {
+                $thebody = $name;
+            }
+            if ($docs_type == '0') {
+                $response['metadata']['code'] = 200;
+                $response['metadata']['message'] = "Tanda tangan berhasil";
+                $response['data'] = $thebody;
+                return json_encode($response);
+            }
             // Create signature for docData
             $signedData = $this->createSignature(json_encode($dataDoc));
 
             // Insert signed data into database
             $docModel = new DocsSignedModel();
+
+            // return json_encode($pasienName);
+            $thebody = $thebody . ": " . date("Y-m-d H:i");
+
             $docModel
                 ->where("docs_type", $docs_type)
                 ->where("sign_id", $sign_id)
                 ->where("user_type", $user_type)
                 ->where("sign_ke", $sign_ke)->delete();
             $dataForm["sign"] = $signedData;
+            $dataForm["sign_path"] = $thebody;
             $return = $docModel->insert($dataForm);
-
-            if ($user_type == 1) {
+            // $thebody = $this->get_bodyid();
+            // if ($user_type == 1) {
+            // } else if ($user_type == 2) {
+            //     $model->update($sign_id, [
+            //         $dataForm['valid_pasien'] => $thebody
+            //     ]);
+            // } else {
+            //     $model->update($sign_id, [
+            //         $dataForm['valid_pasien'] => $thebody
+            //     ]);
+            // }
+            if ($docs_type == 11) {
+                if ($dataForm['valid_user'] == 'sign_from') {
+                    $theid = "from_petugas_id";
+                    $thename = "from_petugas";
+                } else if ($dataForm['valid_user'] == 'sign_from_1') {
+                    $theid = "from_petugas_id_1";
+                    $thename = "from_petugas_1";
+                } else if ($dataForm['valid_user'] == 'sign_between') {
+                    $theid = "from_petugas_id_1";
+                    $thename = "from_petugas_1";
+                } else if ($dataForm['valid_user'] == 'sign_between_1') {
+                    $theid = "from_petugas_id_1";
+                    $thename = "from_petugas_1";
+                } else if ($dataForm['valid_user'] == 'sign_to') {
+                    $theid = "to_petugas_id";
+                    $thename = "to_petugas";
+                } else if ($dataForm['valid_user'] == 'sign_to_1') {
+                    $theid = "to_petugas_id_1";
+                    $thename = "to_petugas_1";
+                } else {
+                    $theid = "valid_user";
+                    $thename = "modified_by";
+                }
+                // return json_encode($this->getFullnameByUsername($dataForm['user_id']));
                 $model->update($sign_id, [
-                    "valid_user" => $this->get_bodyid()
+                    $dataForm['valid_user'] => $thebody,
+                    $theid => $dataForm['user_id'],
+                    $thename => $this->getFullnameByUsername($dataForm['user_id'])
+                    // $thename => $this->getFullnameByUsername($dataForm['user_id'])
                 ]);
-            } else if ($user_type == 2) {
-                $model->update($sign_id, [
-                    "valid_pasien" => $this->get_bodyid()
-                ]);
+            } else if ($docs_type == 13) {
+                $model->where("body_id", $sign_id)->where("value_id", $value_id)->set($dataForm['valid_user'], $thebody)->update();
             } else {
-                // $model->update($sign_id, [
-                //     "valid_user" => $signedData
-                // ]);
+                // return json_encode($dataForm);
+                $model->update($sign_id, [
+                    $dataForm['valid_user'] => $thebody
+                ]);
             }
 
-            return json_encode($dataForm);
+            $response['metadata']['code'] = 200;
+            $response['metadata']['message'] = "Tanda tangan berhasil";
+            $response['data'] = $thebody;
+
+            return json_encode($response);
         }
 
         // Return error or checkpass result
-        return json_encode(['error' => 'Login failed or invalid credentials']);
+
+        $response['metadata']['code'] = 401;
+        $response['metadata']['message'] = "Input data tanda tangan tidak valid, silahkan ulangi";
+        return json_encode($response);
     }
 
     public function checkSignedDocs()
@@ -479,7 +545,11 @@ class Signature extends BaseController
             }
 
             // Find the document by signId
-            $select = $this->lowerKey($docModel->where("sign_id", $signId)->findAll());
+            $select = $this->lowerKey($docModel
+                ->select("docs_signed.*, LEFT(sign_path, CHARINDEX(':', sign_path) - 1) fullname")
+                ->join("users u", "u.username = docs_signed.user_id", "left")
+                ->join("employee_all ea", "ea.employee_id = u.employee_id", "left")
+                ->where("sign_id", $signId)->findAll());
 
             $result = [];
             foreach ($select as $key => $value) {
@@ -491,6 +561,7 @@ class Signature extends BaseController
                 $isValid = $rsaHelper->verifySignature(json_encode($dataDoc), $signedData, $publicKey);
                 $result[$key]['isvalid'] = $isValid;
                 $result[$key]['user_type'] = $value['user_type'];
+                $result[$key]['fullname'] = $value['fullname'];
                 $result[$key]['doc_date'] = $value['doc_date'];
                 $result[$key]['user_id'] = $value['user_id'];
                 $result[$key]['sign_path'] = $value['sign_path'];
@@ -548,17 +619,8 @@ class Signature extends BaseController
         //     }
         // }
 
-        if ($docs_type == '2') {
-            $model = new PasienDiagnosaModel();
-        } else if ($docs_type == '3' || $docs_type == '1') {
-            $model = new ExaminationModel();
-        } else if ($docs_type == '4') {
-            $model = new PainDetilModel();
-        } else if ($docs_type == '5') {
-            $model = new FallRiskDetailModel();
-        } else if ($docs_type == '6') {
-            $model = new GcsModel();
-        }
+        $model = $this->getSignModel($docs_type);
+
         // return json_
         // return json_encode($sign_id);
         $select = $model->find($signId);
@@ -600,7 +662,7 @@ class Signature extends BaseController
 
             // Find the document by signId
             $select = $this->lowerKey($docModel
-                ->select("docs_signed.*, ea.fullname")
+                ->select("docs_signed.*, LEFT(sign_path, CHARINDEX(':', sign_path) - 1) fullname")
                 ->join("users u", "u.username = docs_signed.user_id", "left")
                 ->join("employee_all ea", "ea.employee_id = u.employee_id", "left")
                 ->where("sign_id", $signId)->findAll());
@@ -608,7 +670,16 @@ class Signature extends BaseController
             $result = [];
             foreach ($select as $key => $value) {
                 // Check if the necessary data is present
-
+                if ($value['user_type'] == '1') {
+                    $empModel = new EmployeeAllModel;
+                    $userModel = new UserModel;
+                    $filename = $userModel->where("username", $value['user_id'])->first()->employee_id;
+                } else if ($value['user_type'] == '2') {
+                    $filename = $dataDoc['no_registration'];
+                } else {
+                    $pos = strpos($value['sign_path'], ':'); // cari posisi pertama dari ":"
+                    $filename = $dataDoc['no_registration'] . "-" . substr($value['sign_path'], 0, $pos); // ambil substring dari awal sampai sebelum ":"
+                }
                 $signedData = $value['sign'];
 
                 // Verify the signature
@@ -620,6 +691,7 @@ class Signature extends BaseController
                 $result[$key]['user_id'] = $value['user_id'];
                 $result[$key]['sign_path'] = $value['sign_path'];
                 $result[$key]['fullname'] = $value['fullname'];
+                $result[$key]['sign_file'] = $this->getSignPict2($value['user_type'], $filename);
             }
 
 
@@ -665,7 +737,7 @@ class Signature extends BaseController
             if (!is_null($data)) {
                 $data = $this->lowerKeyOne($data);
 
-                $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
+                $filepath = $this->imageloc . 'uploads/signatures/' . $data['sign_file'];
                 if (file_exists($filepath)) {
                     $filedata = file_get_contents($filepath);
                     $filedata64 = base64_encode($filedata);
@@ -677,7 +749,7 @@ class Signature extends BaseController
             if (!is_null($data)) {
                 $data = $this->lowerKeyOne($data);
 
-                $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
+                $filepath = $this->imageloc . 'uploads/signatures/' . $data['sign_file'];
                 if (file_exists($filepath)) {
                     $filedata = file_get_contents($filepath);
                     $filedata64 = base64_encode($filedata);

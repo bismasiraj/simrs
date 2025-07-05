@@ -1,28 +1,32 @@
 <script type='text/javascript'>
     $(document).ready(function(e) {
-        // getListRequestRad(nomor, visit)
-        initializeSearchTarif("searchTarifbillpoli", '<?= $visit['clinic_id']; ?>');
+        declareSearchTindakanMedis()
     })
     $("#tindakanTab").on("click", function() {
         $('#notaNoLab').html(`<option value="%">Semua</option>`)
         getBillPoli(nomor, ke, mulai, akhir, lunas, '<?= $visit['clinic_id']; ?>', rj, status, nota, trans)
     })
     $("#formSaveBillPoliBtn").on("click", function() {
-        $("#billPoliChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
+        $("#billPoliChargesBody").find("button.simpanbill:visible").trigger("click")
+        // $("#billPoliChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
     })
     $("#notaNoPoli").on("change", function() {
         filterBillPoli()
     })
 </script>
 <script type='text/javascript'>
-    // function formatCurrency(total) {
-    //     //Seperates the components of the number
-    //     var components = total.toFixed(2).toString().split(".");
-    //     //Comma-fies the first part
-    //     components[0] = components[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    //     //Combines the two sections
-    //     return components.join(",");
-    // }
+    const declareSearchTindakanMedis = () => {
+        initializeSearchTarif("searchTarifbillpoli", '<?= $visit['clinic_id']; ?>');
+        $("#searchTarifbillpoli").on('select2:select', function(e) {
+            $("#searchTarifbillpoliBtn").click();
+            $('html,body').animate({
+                    scrollTop: $("#searchTarifbillpoli").offset().top - 50
+                },
+                'slow', 'swing');
+            $("#searchTarifbillpoli").click()
+            $("#searchTarifbillpoli").select2('open')
+        });
+    }
 
 
     function isnullcheck(parameter) {
@@ -30,12 +34,21 @@
     }
 
     function addBillBillPoli(container) {
-        let nota_no = $("#notaNoPoli").val();
         let sesi = '<?= $visit['session_id']; ?>';
 
+        // let nota_no = $("#notaNoPoli").val();
+        // if (nota_no == '%') {
+        //     $("#notaNoPoli").find(`option[value='${sesi}']`).remove()
+        //     nota_no = sesi
+        //     $("#notaNoPoli").append($("<option>").val(nota_no).text(nota_no))
+        //     $("#notaNoPoli").val(nota_no)
+        //     $("#billPoliChargesBody").html("")
+        // }
+
+        var nota_no = $("#notaNoPoli").val();
+
         if (nota_no == '%') {
-            $("#notaNoPoli").find(`option[value='${sesi}']`).remove()
-            nota_no = sesi
+            nota_no = get_bodyid()
             $("#notaNoPoli").append($("<option>").val(nota_no).text(nota_no))
             $("#notaNoPoli").val(nota_no)
             $("#billPoliChargesBody").html("")
@@ -50,14 +63,14 @@
         var i = $('#billPoliChargesBody tr').length + 1;
         var key = 'billpoli' + i
         $("#billPoliChargesBody").append(`
-            <tr id="${key}">
+            <tr id="abillpoli${key}">
                 <td>${String(i)}.</td>
                 <td id="abillpolidisplaytreatment${key}"><b><i>${tarifData.tarif_name}</i></b><p><?= $visit['name_of_clinic']; ?></p></td>
                 <td>
                     <select id="abillpoliemployee_id${key}" class="form-select" name="employee_id[]" style="display: none" onchange="changeFullnameDoctor('abillpoli','${key}')" readonly>
                         ${chargesDropdownDoctor()}
                     </select>
-                    <input id="abillpolidoctor${key}" class="form-control" type="text" value="<?= $visit['fullname']; ?>" readonly>
+                    <input id="abillpolidoctor${key}" class="form-control" type="text" value="<?= @$visit['fullname']; ?>" readonly>
                 </td>
                 <td id="abillpolidisplaytreat_date${key}">${moment().format("DD/MM/YYYY HH:mm")}</td>
                 <td id="abillpolidisplaysell_price${key}">${formatCurrency(parseFloat(tarifData.amount))}<p></p></td>
@@ -121,6 +134,7 @@
             .append('<input name="islunas[]" id="abillpoliislunas' + key + '" type="hidden" value="0" class="form-control" />')
             .append('<input name="measure_id[]" id="abillpolimeasure_id' + key + '" type="hidden" value="" class="form-control" />')
             .append('<input name="tarif_id[]" id="abillpolitarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+            .append('<input name="body_id[]" id="abillpolibody_id' + key + '" type="hidden" value="' + sesi + '" class="form-control" />')
 
         if ('<?= $visit['isrj']; ?>' == '0') {
             $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
@@ -155,16 +169,19 @@
             ?>
                 $("#billPoliChargesBody")
                     .append('<input name="employee_id_from[]" id="abillpoliemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="abillpolidoctor_from' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-
+                    .append('<input name="doctor_from[]" id="abillpolidoctor_from' + key + '" type="hidden" value="<?= @$visit['fullname']; ?>" class="form-control" />')
             <?php
             }
             ?>
         }
+        $("#abillpoliemployee_id_from" + key).val('<?= user()->employee_id; ?>')
+        $("#abillpolidoctor_from" + key).val('<?= user()->getFullname(); ?>')
+        $("#abillpoliemployee_id" + key).val('<?= user()->employee_id; ?>')
+        $("#abillpolidoctor" + key).val('<?= user()->getFullname(); ?>')
         $("#billPoliChargesBody")
             .append(
                 '<input name="employee_id[]" id="abillpoliemployee_id' + key + '" type="hidden" value="" class="form-control" />' +
-                // '<input name="doctor[]" id="abillpolidoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />' +
+                // '<input name="doctor[]" id="abillpolidoctor' + key + '" type="hidden" value="<?= @$visit['fullname']; ?>" class="form-control" />' +
                 '<input name="amount[]" id="abillpoliamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />' +
                 '<input name="nota_no[]" id="abillpolinota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />' +
                 '<input name="profesi[]" id="abillpoliprofesi' + key + '" type="hidden" value="" class="form-control" />' +

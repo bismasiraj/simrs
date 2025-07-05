@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class OrganizationunitModel extends Model
 {
-    protected $orgUnitCode = '1771014';
+    protected $orgUnitCode = '3372238';
     protected $table      = 'organizationunit';
     protected $primaryKey = 'org_unit_code';
 

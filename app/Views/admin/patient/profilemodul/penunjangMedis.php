@@ -20,48 +20,49 @@ $result = array_change_key_case($result);
 ?>
 
 <style>
-    .quill-textarea-penunjang>.ql-toolbar:first-child {
-        display: none !important;
-    }
+.quill-textarea-penunjang>.ql-toolbar:first-child {
+    display: none !important;
+}
 
-    /* #ModalBodyPenunjangMedis::-webkit-scrollbar {
+/* #ModalBodyPenunjangMedis::-webkit-scrollbar {
         width: 8px;
     } */
 
-    /* Width */
-    #ModalBodyPenunjangMedis::-webkit-scrollbar {
-        width: 8px;
-    }
+/* Width */
+#ModalBodyPenunjangMedis::-webkit-scrollbar {
+    width: 8px;
+}
 
-    #ModalBodyPenunjangMedis::-webkit-scrollbar {
-        border-radius: 6px;
-    }
+#ModalBodyPenunjangMedis::-webkit-scrollbar {
+    border-radius: 6px;
+}
 
-    /* Track */
-    #ModalBodyPenunjangMedis::-webkit-scrollbar-track {
-        background: #efefef;
-    }
+/* Track */
+#ModalBodyPenunjangMedis::-webkit-scrollbar-track {
+    background: #efefef;
+}
 
-    /* Handle */
-    #ModalBodyPenunjangMedis::-webkit-scrollbar-thumb {
-        background: #7a6fbe;
-    }
+/* Handle */
+#ModalBodyPenunjangMedis::-webkit-scrollbar-thumb {
+    background: #7a6fbe;
+}
 
-    /* Handle on hover */
-    #ModalBodyPenunjangMedis::-webkit-scrollbar-thumb:hover {
-        background: #685ea2;
-    }
+/* Handle on hover */
+#ModalBodyPenunjangMedis::-webkit-scrollbar-thumb:hover {
+    background: #685ea2;
+}
 </style>
 <div class="tab-pane" id="penunjangMedis" role="tabpanel">
     <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-12 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
                 'pasienDiagnosa' => $pasienDiagnosa
             ]); ?>
-        </div><!--./col-lg-6-->
-        <div class="col-lg-10 col-md-10 col-sm-12">
+        </div>
+        <!--./col-lg-6-->
+        <div class="col-lg-10 col-md-12 col-sm-12">
 
             <div class="accordion mt-4">
                 <div class="panel-group" id="penunjangBody">
@@ -72,7 +73,8 @@ $result = array_change_key_case($result);
                     <div class="operasi-tab">
                         <ul class="nav nav-underline mb-3" style="border-bottom: 2px solid var(--bs-border-color);">
                             <li class="nav-item text-center flex-fill">
-                                <a class="nav-link active" href="#transaksi-penunjangMedis-tab" data-bs-toggle="tab">Transaksi</a>
+                                <a class="nav-link active" href="#transaksi-penunjangMedis-tab"
+                                    data-bs-toggle="tab">Transaksi</a>
                             </li>
                         </ul>
 
@@ -80,14 +82,25 @@ $result = array_change_key_case($result);
 
                             <div class="tab-pane fade show active" id="transaksi-penunjangMedis-tab">
                                 <div class="table-rep-plugin">
-                                    <div class="table-responsive mt-4 mb-4">
+                                    <div class="text-end">
+                                        <button style="margin-right: 10px;" type="button" id="data-allpenunjangmedis"
+                                            data-loading-text="processing" class="btn btn-outline-secondary">
+                                            <i class="fa fa-history"></i> <span>Data Lengkap Hasil Penunjang
+                                                Medis</span>
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive mt-2 mb-4">
                                         <table class="table table-striped table-hover">
                                             <thead class="table-primary" style="text-align: center;">
                                                 <tr>
-                                                    <th class="text-center" style="width: 10%;">Tanggal</th class="text-center">
-                                                    <th class="text-center" style="width: 10%;">Kode</th class="text-center">
-                                                    <th class="text-center" style="width: auto;">Nama Tindakan</th class="text-center">
-                                                    <th class="text-center" style="width: 1%;">Hasil</th class="text-center">
+                                                    <th class="text-center" style="width: 20%;">Tanggal</th
+                                                        class="text-center">
+                                                    <th class="text-center" style="width: 10%;">Kode</th
+                                                        class="text-center">
+                                                    <th class="text-center" style="width: auto;">Nama Tindakan</th
+                                                        class="text-center">
+                                                    <th class="text-center" style="width: 1%;">Hasil</th
+                                                        class="text-center">
                                                 </tr>
                                             </thead>
                                             <tbody id="penunjangMedisBody">
@@ -103,22 +116,16 @@ $result = array_change_key_case($result);
                                         <div class="col-sm-12 col-md-12 mb-4">
 
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Nomor Sesi</label>
-                                                        <select id="notaNoPenunjangMedis" class="form-select" style="width: 100%">
-                                                            <option value="%">Semua</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-10">
-                                                    <div class="form-group">
-                                                        <label for="">Pencarian Tarif</label>
+                                                        <label for="">Nomor Pemeriksaan</label>
                                                         <div class="input-group">
-                                                            <select id="searchTarifPenunjangMedis" class="form-control fit" style="width: 70%; height: 100%;"></select>
-                                                            <button type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillPenunjangMedis("searchTarifPenunjangMedis")'>
-                                                                <i class="fa fa-plus"></i> Tambah
-                                                            </button>
+                                                            <select id="notaNoPenunjangMedis" class="form-select">
+                                                                <option value="%">Semua</option>
+                                                            </select>
+                                                            <button id="addNotaPenunjangMedisBtn" type="button"
+                                                                onclick="addNotaPenunjangMedis()"
+                                                                class="btn btn-success">+</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -131,21 +138,46 @@ $result = array_change_key_case($result);
                                         <table class="table table-sm table-hover">
                                             <thead class="table-primary" style="text-align: center;">
                                                 <tr>
-                                                    <th class="text-center" rowspan="2" style="width: 5%;">No.</th class="text-center">
-                                                    <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                                    <th class="text-center" rowspan="2" style="width: 20%;">Dokter</th class="text-center">
-                                                    <th class="text-center" rowspan="2" style="width: 20%;">Tgl Tindakan</th class="text-center">
-                                                    <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                                    <th class="text-center" rowspan="2" style="width: 10%;">Jml</th class="text-center">
-                                                    <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                                    <th class="text-center" rowspan="2" style="width: 5%"></th class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 5%;">No.</th
+                                                        class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 20%;">Jenis
+                                                        Tindakan</th class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 20%;">Dokter</th
+                                                        class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 20%;">Tgl Tindakan
+                                                    </th class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th
+                                                        class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 10%;">Jml</th
+                                                        class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 10%;">Total
+                                                        Tagihan</th class="text-center">
+                                                    <th class="text-center" rowspan="2" style="width: 5%"></th
+                                                        class="text-center">
                                                 </tr>
                                             </thead>
                                             <tbody id="penunjangChargesBody" class="table-group-divider">
                                             </tbody>
                                         </table>
-                                        <div class="panel-footer text-end mb-4">
-                                            <button type="button" id="formSaveBillPenunjangBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                        <div class="col-md-10 m-4">
+                                            <div class="form-group spppoli-to-hide">
+                                                <label for="">Pemeriksaan</label>
+                                                <div class="input-group">
+                                                    <select id="searchTarifPenunjangMedis" class="form-control fit"
+                                                        style="width: 70%; height: 100%;"></select>
+                                                    <button id="searchTarifPenunjangMedisBtn" type="button"
+                                                        class="btn btn-primary btn-sm addcharges align-items-end d-none"
+                                                        onclick='addBillPenunjangMedis("searchTarifPenunjangMedis")'>
+                                                        <i class="fa fa-plus"></i> Tambah
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-footer text-end mb-4 spppoli-to-hide">
+                                            <button type="button" id="formSaveBillPenunjangBtn" name="save"
+                                                data-loading-text="<?php echo lang('processing') ?>"
+                                                class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i>
+                                                <span>Simpan</span></button>
                                             <!-- <button type="button" id="formEditBillRadBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button> -->
                                             <!-- <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button> -->
                                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
@@ -160,14 +192,16 @@ $result = array_change_key_case($result);
 
 
         </div>
-    </div><!--./row-->
+    </div>
+    <!--./row-->
 
 
 
 </div>
 <!-- Modal -->
-<div class="modal fade modal-xl" id="modalPenunjangMedis" aria-labelledby="modalPenunjangMedisLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+<div class="modal fade modal-xl" id="modalPenunjangMedis" aria-labelledby="modalPenunjangMedisLabel" aria-hidden="true"
+    data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="modalPenunjangMedisLabel">Hasil Penunjang Medis</h3>
@@ -178,23 +212,24 @@ $result = array_change_key_case($result);
                     <input type="hidden" name="name_of_pasien" value="<?= $visit['diantar_oleh']; ?>">
                     <input type="hidden" name="age" value="<?= $visit['age']; ?>">
                     <input type="hidden" name="contact_address" value="<?= $visit['visitor_address']; ?>">
-                    <input type="hidden" name="gendername" value="<?= $visit['gender'] == '1' ? 'Laki-laki' : 'Perempuan'; ?>">
+                    <input type="hidden" name="gendername"
+                        value="<?= $visit['gender'] == '1' ? 'Laki-laki' : 'Perempuan'; ?>">
                     <input type="hidden" name="no_registration" value="<?= $visit['no_registration']; ?>">
                     <input type="hidden" name="tarif_id" id="penunjang_medis_tarif_id">
                     <input type="hidden" name="bill_id" id="penunjang_medis_bill_id">
                     <input type="hidden" name="visit_id" id="penunjang_medis_visit_id">
                     <div class="row">
                         <div class="col-auto" align="center">
-                            <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="70px">
+                            <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
                         </div>
                         <div class="col mt-2">
-                            <h3 class="kop-name" id="kop-name">
+                            <h3 class="kop-name-penunjangMedis" id="kop-name-penunjangMedis">
                             </h3>
-                            <p class="kop-address" id="kop-address">
+                            <p class="kop-address-penunjangMedis" id="kop-address-penunjangMedis">
                         </div>
                         <div class="col-auto" align="center">
-                            <img class="mt-2" src="<?= base_url('assets/img/kemenkes.png') ?>" width="70px">
-                            <img class="mt-2" src="<?= base_url('assets/img/kars-bintang.png') ?>" width="70px">
+                            <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="100px">
+
                         </div>
                     </div>
                     <br>
@@ -228,7 +263,8 @@ $result = array_change_key_case($result);
                             <td id="doctor_penunjang"></td>
                         </tr>
                     </table>
-                    <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;" class="mb-2"></div>
+                    <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"
+                        class="mb-2"></div>
                     <div id="ContainerbodyBound" class="row">
 
                     </div>
@@ -236,20 +272,25 @@ $result = array_change_key_case($result);
                         <input type="hidden" name="isvalid" value="0" id="modalIsValid_penunjang">
                         <input type="hidden" name="iskritis" value="0" id="modalIsKritis_penunjang">
                         <?php if (user()->checkRoles(['dokterradiologi', 'adminrad', 'adminlab', 'dokterlab', 'superuser'])) : ?>
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-outline-primary" id="isValidPenunjang">Validasi</button>
-                                <button type="button" class="btn btn-outline-primary" id="isKritisPenunjang">Nilai Kritis</button>
-                            </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary"
+                                id="isValidPenunjang">Validasi</button>
+                            <button type="button" class="btn btn-outline-primary" id="isKritisPenunjang">Nilai
+                                Kritis</button>
+                        </div>
                         <?php endif; ?>
                     </div>
                     <div class="form-group">
                         <div class="mb-3">
                             <label for="formFile" class="form-label">Upload File Pendukung (optional)</label>
-                            <input class="form-control" type="file" id="formFile" name="file" accept=".pdf, .jpg, .jpeg, .png, .webp">
+                            <input class="form-control" type="file" id="formFile" name="file"
+                                accept=".pdf, .jpg, .jpeg, .png, .webp">
                         </div>
                         <div class="mb-2">
-                            <img id="imagePreviewPenunjangMedis" src="#" alt="Image Preview" style="display: none; width: 100%; height: auto;" />
-                            <embed id="pdfPreviewPenunjangMedis" type="application/pdf" style="display: none; width: 100%; height: 500px;" />
+                            <img id="imagePreviewPenunjangMedis" src="#" alt="Image Preview"
+                                style="display: none; width: 100%; height: auto;" />
+                            <embed id="pdfPreviewPenunjangMedis" type="application/pdf"
+                                style="display: none; width: 100%; height: 500px;" />
                             <p id="fileName" style="display: none;"></p>
                         </div>
                     </div>
@@ -257,10 +298,47 @@ $result = array_change_key_case($result);
             </div>
             <div class="modal-footer">
                 <?php if (user()->checkPermission("penunjangmedis", "c")) : ?>
-                    <button id="printPenunjangMedis" type="button" class="btn btn-success"><i class="fas fa-print"></i> Print</button>
-                    <button id="savePenunjangMedis" type="button" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                <button id="printPenunjangMedis" type="button" class="btn btn-success"><i class="fas fa-print"></i>
+                    Print</button>
+                <button id="savePenunjangMedis" type="button" class="btn btn-primary"><i class="fas fa-save"></i>
+                    Simpan</button>
                 <?php endif; ?>
-                <button id="batalExpertise_penunjang" type="button" class="btn btn-danger" <?php user()->checkPermission("penunjangmedis", "c") ? '' : 'style="display:none;"'; ?>>Batalkan Tagihan</button>
+                <button id="batalExpertise_penunjang" type="button" class="btn btn-danger spppoli-to-hide"
+                    <?php user()->checkPermission("penunjangmedis", "c") ? '' : 'style="display:none;"'; ?>>Batalkan
+                    Tagihan</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- modal History -->
+<div class="modal fade modal-xl" id="modalDataAllPenunjangMedis" tabindex="-1" aria-labelledby="ModalLabelDataAll"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+
+    <div class="modal-dialog modal-md modal-fullscreen-lg-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabelBridge">Data Lengkap Hasil Penunjang Medis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto">
+                <table class="table table-hover">
+                    <thead class="table-primary" style="text-align: center;">
+                        <tr>
+                            <th class="text-center" style="width: 1%;">No</th>
+                            <th class="text-center" style="width: 20%;">Tanggal</th>
+                            <th class="text-center" style="width: 20%;">Kode</th>
+                            <th class="text-center" style="width: 60%;">Nama Tindakan</th>
+                            <th class="text-center" style="width: auto;">Hasil</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultmodalDataAllPenunjangMedis" class="table-group-divider"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>

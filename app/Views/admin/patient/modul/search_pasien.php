@@ -100,7 +100,7 @@ $permissions = user()->getPermissions();
 <!-- ini modal yang dipake buat REVIEW HISTORY PASIEN termasuk BIODATA,RAJAL,RANAP -->
 <?php if (isset($permissions['biodatapasien']['r'])) {
     if ($permissions['biodatapasien']['r'] == '1') {  ?>
-        <div class="modal fade bs-example-modal-xl" id="rincianPasienModel" role="dialog" aria-labelledby="rincianPasienModelLabel">
+        <div class="modal fade bs-example-modal-xl" id="rincianPasienModel" role="dialog" aria-labelledby="rincianPasienModelLabel" data-bs-backdrop="static">
             <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
                 <div class="modal-content rounded-4">
                     <div class="modal-header">
@@ -255,7 +255,7 @@ $permissions = user()->getPermissions();
 <!-- if (isset($permissions['biodatapasien']['u'])) -->
 <?php if (isset($permissions['biodatapasien']['c'])) {
     if ($permissions['biodatapasien']['c'] == '1') {  ?>
-        <div class="modal fade" id="pasienModal" role="dialog" aria-labelledby="rincianPasienModelLabel">
+        <div class="modal fade" id="pasienModal" role="dialog" aria-labelledby="rincianPasienModelLabel" data-bs-backdrop="static">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content rounded-4">
                     <div class="modal-header">
@@ -620,7 +620,7 @@ $permissions = user()->getPermissions();
 <!-- INI MODAL YANG DIPAKE BUAT CRUD BIODATA PASIEN -->
 <!--END-->
 
-<div id="addDiagnosaModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addDiagnosaModal" aria-hidden="true">
+<div id="addDiagnosaModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addDiagnosaModal" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content rounded-4">
             <div class="modal-header">

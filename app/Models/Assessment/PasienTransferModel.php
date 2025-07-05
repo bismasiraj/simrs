@@ -34,7 +34,10 @@ class PasienTransferModel extends Model
         'clinc_id_to',
         'to_petugas_id',
         'to_petugas',
+        'between_petugas_id',
+        'between_petugas',
         'sign_from',
+        "sign_between",
         'sign_to',
         'org_id',
         'org_name',
@@ -44,7 +47,14 @@ class PasienTransferModel extends Model
         'valid_date',
         'valid_user',
         'valid_pasien',
-        'service_needs'
+        'service_needs',
+        'other_notes',
+        'sign_from_1',
+        'from_petugas_id_1',
+        'from_petugas_1',
+        'sign_to_1',
+        'to_petugas_id_1',
+        'to_petugas_1'
     ];
 
     protected $useTimestamps = true;

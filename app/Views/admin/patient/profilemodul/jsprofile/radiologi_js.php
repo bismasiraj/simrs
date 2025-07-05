@@ -1,7 +1,7 @@
 <script type='text/javascript'>
 $(document).ready(function(e) {
     // getListRequestRad(nomor, visit)
-    initializeSearchTarif("searchTarifRad", 'P016');
+    declareSearchTarifRad()
     initializeSearchDokterRad("template_nama_dokter");
     initializeSearchTemplateExpertise("template_expertise", "modalExpertise");
     $("#template_jenis_pemeriksaan").select2({
@@ -26,14 +26,36 @@ $(document).ready(function(e) {
         const currentValue = $('#modalIsValid').val();
 
         $('#modalIsValid').val(currentValue == 0 ? 1 : 0);
+        if ($(this).hasClass('btn-outline-primary')) {
+            $(this).html('Tervalidasi')
+                .removeClass('btn-outline-primary')
+                .addClass('btn-primary');
+        } else {
+            $(this).html('Validasi')
+                .removeClass('btn-primary')
+                .addClass('btn-outline-primary');
+        }
     })
 
 })
+const declareSearchTarifRad = () => {
+    initializeSearchTarif("searchTarifRad", 'P016');
+    $("#searchTarifRad").on('select2:select', function(e) {
+        $("#btnAddChargesRad").click();
+        $("#searchTarifRad").click();
+        $('html,body').animate({
+                scrollTop: $("#searchTarifRad").offset().top - 50
+            },
+            'slow', 'swing');
+        $("#searchTarifRad").click()
+        $("#searchTarifRad").select2('open')
+    });
+}
 $("#radTab").on("click", function() {
     $('#notaNoRad').html(`<option value="%">Semua</option>`)
 
-    getTreatResultList(nomor, visit)
-    getListRequestRad(nomor, visit)
+    getTreatResultList(nomor, visit.visit_id)
+    getListRequestRad(nomor, visit.visit_id)
     getBillPoli(nomor, ke, mulai, akhir, lunas, 'P016', rj, status, nota, trans)
     // var seen = {};
     // $('#notaNoRad option').each(function() {
@@ -43,12 +65,50 @@ $("#radTab").on("click", function() {
     //         seen[$(this).val()] = true;
     //     }
     // });
+    getDataAllRadiologiApi({
+        visit: visit
+    })
+
+    getDataLatterSendRad({
+        visit_id: visit?.visit_id,
+        visit: visit
+    })
+
+    $('#coverkopSuratPengantarRad').hide();
+    $("#searchTarifRad").show();
+    $("#btnAddChargesRad").attr("onclick", 'addBillRad("searchTarifRad")');
+    if ($('#searchTarifRadDinamis').data('select2')) {
+        $("#searchTarifRadDinamis").select2('destroy').hide();
+    }
+    $("#select-show-rad-tarif").hide();
+
 })
 $("#formSaveBillRadBtn").on("click", function() {
     $("#radChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
 })
 $("#notaNoRad").on("change", function() {
     filterBillRad()
+
+    const selectedValue = $("#notaNoRad").val();
+    if (dataTarifSelect.includes(selectedValue)) {
+        if ($('#searchTarifRad').data('select2')) {
+            $("#searchTarifRad").select2('destroy').hide();
+        }
+
+        initializeSearchTarifDinamisRad();
+        $("#select-show-rad-tarif, #searchTarifRadDinamis").show();
+        $("#btnAddChargesRad").attr("onclick", 'addBillRad("searchTarifRadDinamis")');
+    } else {
+        initializeSearchTarif("searchTarifRad", 'P016');
+        $("#searchTarifRad").show();
+        $("#btnAddChargesRad").attr("onclick", 'addBillRad("searchTarifRad")');
+        if ($('#searchTarifRadDinamis').data('select2')) {
+            $("#searchTarifRadDinamis").select2('destroy').hide();
+        }
+        $("#select-show-rad-tarif").hide();
+    }
+
+
 })
 
 $("#btn_cari_template_rad").off().on("click", function(e) {
@@ -56,20 +116,407 @@ $("#btn_cari_template_rad").off().on("click", function(e) {
     getDataTemplate();
 
 });
+
+
+const getDataAllRadiologiApi = (props) => {
+    postData({
+        noreq: props?.visit?.no_registration
+    }, 'admin/radrequest/getDataAll', (res) => {
+        window.diagDescRad = res?.value?.diag?.diagnosadesc ?? ""
+        if (res && res.value) {
+            renderKopRad({
+                kop: res?.value?.kop || {}
+            })
+            dataRenderTarifSelectOptionRad({
+                data: res?.value?.select
+            })
+
+        }
+    })
+}
+
+const getDataLatterSendRad = (props) => {
+    postData({
+        visit_id: props?.visit_id
+    }, 'admin/radRequest/getDataCoverLatter', (res) => {
+        if (res?.respon === true) {
+
+            dataTarifSelect = res?.dataTables?.map(e => e.nota_no)
+            renderDataTablesLetterSendRad({
+                data: res,
+                visit: visit
+            })
+        } else {
+            $("#hasilbodylistLatterRad").html(`<tr style="height: 200px;">
+                                    <td colspan="100" class="align-middle text-center">
+                                        <h3 class="text-center">Data Kosong</h3>
+                                    </td>
+                                </tr>`);
+        }
+    })
+
+    // renderLatterSendCheckRad()
+}
+
+const renderDataTablesLetterSendRad = (props) => {
+    let result = '';
+    props?.data?.dataTables.map((e, index) => {
+        if (!$("#notaNoRad option").filter(function() {
+                return $(this).val() === e?.nota_no;
+            }).length) {
+            $("#notaNoRad").append($("<option>").val(e?.nota_no).text(e?.nota_no));
+        }
+        result += `<tr>
+                    <td>${index + 1}</td>            
+                    <td class="text-center">${e?.nota_no}</td>            
+                    <td>
+                        <button type="button" class="btn btn-warning btn-show-render-latter-rad" autocomplete="off" data-index="${index}">
+                            <i class="fa fa-edit">Check</i>
+                        </button><button type="button" data-index="${index}" class="btn btn-secondary btn-print-render-latter-rad" name="cari">
+                                <i class="far fa-file"></i> Cetak
+                        </button>`;
+
+        if (e.terlayani === 0) {
+            if (e.modified_by === "<?= user()->username; ?>") {
+                result += `
+                            <button type="button" class="btn btn-danger btn-delete-latter-rad" data-nota_no="${e.nota_no}" autocomplete="off">
+                                <i class="fa fa-trash"></i>
+                            </button>`;
+            }
+        }
+        result += `</td></tr>`;
+    });
+
+    $("#hasilbodylistLatterRad").html(result);
+    renderShowtemplateLetterRad({
+        data: props?.data?.dataTables,
+        visit: props?.visit
+    });
+    deleteDataTableLatterSendRad({
+        visit: visit
+    });
+};
+
+
+const renderShowtemplateLetterRad = (props) => {
+    $('.btn-show-render-latter-rad').on('click', function(e) {
+
+        let index = $(this).data('index');
+        // let item = getDataLatterLabAll[index];
+        let item = props?.data[index]
+
+        $("#coverkopSuratPengantarRad").slideUp()
+        $("#coverkopSuratPengantarRad").slideDown()
+        renderLatterSendCheckRad({
+            data: item,
+            visit: visit
+        })
+
+        $('a[href="#coverSendFisioterapi"]').addClass('active');
+        $('.datetime-now').html(moment(new Date()).format('DD-MM-YYYY HH:mm'))
+
+        // $('#JfisioDocument').show();
+
+    })
+    $('.btn-print-render-latter-rad').off().on('click', function(e) {
+        let index = $(this).data('index');
+        // let item = getDataLatterLabAll[index];
+        let item = props?.data[index]
+
+        let notaNo = item?.nota_no
+
+        openPopUpTab(
+            '<?= base_url() . 'admin/rm/medis/surat_pengantar_cetak/' . base64_encode(json_encode($visit)); ?>' +
+            '/' + notaNo + '/' + 'P016')
+
+    })
+}
+
+const deleteDataTableLatterSendRad = (props) => {
+    $('.btn-delete-latter-rad').off().on('click', function(e) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success ms-2",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Apa anda yakin?",
+            text: "Anda tidak akan dapat mengembalikannya!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, Hapus!",
+            cancelButtonText: "Batal!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteRequestRadLatter({
+                    nota_no: $(this).data('nota_no'),
+                    visit: visit
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                swalWithBootstrapButtons.fire({
+                    title: "Dibatalkan",
+                    text: "File Anda aman :)",
+                    icon: "error"
+                });
+            }
+        });
+    });
+};
+
+const deleteRequestRadLatter = (props) => {
+    postData({
+        nota_no: props?.nota_no
+    }, 'admin/radRequest/deleteCoverLatter', (res) => {
+        successSwal('Sukses');
+        $("#notaNoRad option").filter(function() {
+            return $(this).val() === props?.nota_no;
+        }).remove();
+        getDataLatterSendRad({
+            visit_id: visit?.visit_id,
+            visit: visit
+        })
+        $("#coverkopSuratPengantarRad").slideUp()
+        // $("#JfisioDocument").slideUp()
+
+    })
+}
+
+
+const renderLatterSendCheckRad = (props) => {
+    if (props?.data) {
+        if (props?.data?.modified_by === '<?= user()->username; ?>') {
+            $("#save-form-rad-cover-latter").show();
+        } else {
+            $("#save-form-rad-cover-latter").hide();
+        }
+    } else {
+        $("#save-form-rad-cover-latter").show();
+
+
+    }
+
+    let result = props?.data
+    let resultTemplate = props?.visit
+    let nameValueVisit2 = [
+        'diantar_oleh', 'age', 'no_registration',
+        'visitor_address', 'gendername'
+    ];
+
+    nameValueVisit2?.forEach(name => {
+        let id = `${name}-val2-rad-latter`;
+        let value = resultTemplate?. [name];
+        if (value !== undefined) {
+            $(`#${id}`).text(value);
+        }
+    });
+
+
+    $("#date_of_birth-val2-rad-latter").text(moment(resultTemplate?.date_of_birth).format("DD/MM/YYYY"))
+
+    let nameValueHidden = [
+        'visit_id', 'trans_id', "no_registration", "employee_id",
+        "patient_category_id", "isrj", "ageyear", "agemonth", "ageday", "status_pasien_id", "gender",
+        "class_room_id", "bed_id", "keluar_id",
+    ];
+
+    nameValueHidden?.forEach(name => {
+        let id = `${name}-rad-val-rad-latter`;
+        let value = result?. [name] ?? resultTemplate?. [name];
+        if (value !== undefined) {
+            $(`#${id}`).val(value);
+        }
+    });
+
+
+    let nota_noGenerate = get_bodyid()
+    $("#org_unit_code-rad-val-rad-latter").val("-")
+    $("#clinic_id-rad-val-rad-latter").val("P016")
+    $("#clinic_id_from-rad-val-rad-latter").val(result?.clinic_id_from ?? visit.clinic_id)
+    $("#employee_id_from-rad-val-rad-latter").val(result?.employee_id_from ?? '<?= user()->employee_id; ?>')
+    $("#nota_no-rad-val-rad-latter").val(result?.nota_no ?? nota_noGenerate)
+    $("#document_id-rad-val-rad-latter").val(result?.document_id ?? resultTemplate?.session_id)
+    $("#validation-rad-val-rad-latter").val(result?.validation ?? 0)
+    $("#terlayani-rad-val-rad-latter").val(result?.terlayani ?? 0)
+    $("#iscito-rad-val-rad-latter").val(result?.iscito ?? 0)
+    $("#thename-rad-val-rad-latter").val(result?.thename ?? resultTemplate?.diantar_oleh)
+    $("#theaddress-rad-val-rad-latter").val(result?.theaddress ?? resultTemplate?.contact_address)
+    $("#theid-rad-val-rad-latter").val(result?.theid ?? resultTemplate?.pasien_id)
+    $("#doctor-rad-val-rad-latter").val(result?.doctor ?? resultTemplate?.fullname)
+    $("#perujuk-rad-val-rad-latter").val(result?.perujuk ?? resultTemplate?.employee_id_from)
+    $("#diagnosa_desc-rad-val-rad-latter").val(result?.diagnosa_desc ?? null)
+    $("#descriptions-rad-val-rad-latter").val(result?.descriptions ?? null)
+    $("#treat_date-rad-val-rad-latter").val(result?.treat_date ? moment(result?.treat_date).format(
+        "DD/MM/YYYY HH:mm") : moment(new Date()).format("DD/MM/YYYY HH:mm"))
+
+
+    flatpickr('#treat_date-rad-val-rad-latter', {
+        dateFormat: 'd/m/Y H:i',
+        enableTime: true,
+        time_24hr: true,
+        onChange: function(selectedDates, dateStr, instance) {
+            // console.log(selectedDates);
+        }
+    });
+
+    $("#treat_date-rad-val-rad-latter").prop("readonly", false)
+
+}
+
+const renderKopRad = (props) => {
+    let {
+        kop
+    } = props
+    $('.kop-name-rad').text(kop?.name_of_org_unit || '');
+    $('.kop-address-rad').html(kop?.contact_address + ',' + kop?.phone + ', Fax:' + kop?.fax + ',' + kop?.kota +
+        '<br>' + kop?.sk
+    );
+}
+
+$('#add-new-doc-coverkopLetterSendRad').on('click', function() {
+    renderLatterSendCheckRad({
+        visit: visit
+    })
+    $("#coverkopSuratPengantarRad").slideUp()
+    $("#coverkopSuratPengantarRad").slideDown();
+    $('#coverkopSuratPengantarRad').show();
+});
+
+$("#save-form-rad-cover-latter").off().on('click', function() {
+    saveFormRadCoverLatter((res) => {
+        if (res.respon) {
+            successSwal(res.message)
+            getDataLatterSendRad({
+                visit_id: visit?.visit_id,
+                visit: visit
+            })
+            $("#coverkopSuratPengantarRad").slideUp()
+            $('#coverkopSuratPengantarRad').show();
+
+        } else {
+            errorSwal(res.message)
+            getDataLatterSendRad({
+                visit_id: visit?.visit_id,
+                visit: visit
+            })
+
+        }
+    })
+})
+const saveFormRadCoverLatter = (res) => {
+    const diagnosaDesc = $("#diagnosa_desc-rad-val-rad-latter").val();
+    const descriptionsRad = $("#descriptions-rad-val-rad-latter").val();
+
+    if (!diagnosaDesc || diagnosaDesc.trim() === "") {
+        errorSwal("diagnosa harus diisi.");
+        $("#diagnosa_desc-rad-val-rad-latter").focus();
+        return;
+    }
+
+    if (!descriptionsRad || descriptionsRad.trim() === "") {
+        errorSwal("Deskripsi tambahan harus diisi.");
+        $("#descriptions-Rad-val-Rad-latter").focus();
+        return;
+    }
+
+    let formData = document.querySelector('#form-rad-cover-latter');
+    let dataSend = new FormData(formData);
+    let jsonObj = {};
+    dataSend.forEach((value, key) => {
+        if (key === "treat_date") {
+            let formattedDate = moment(value, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm")
+            jsonObj[key] = formattedDate;
+        } else {
+            jsonObj[key] = value;
+        }
+    });
+
+
+    postData(jsonObj, 'admin/radRequest/actionCoverLatter', res);
+}
+
+$("#sign-form-rad-cover-latter").off().on('click', function() {
+    signLatterRad()
+    // $("#save-form-rad-cover-latter").trigger("click")
+})
+const signLatterRad = () => {
+    saveFormRadCoverLatter((res) => {
+        if (res.respon) {
+            addSignUser("form-rad-cover-latter", "", "nota_no-rad-val-rad-latter",
+                "save-form-rad-cover-latter", 14, 1, 1, "Permohonan Radiologi", "valid_user")
+        } else {
+            errorSwal(res.message)
+            getDataLatterSendRad({
+                visit_id: visit?.visit_id,
+                visit: visit
+            })
+        }
+    })
+}
+
+$('.radiologi-tab a[data-bs-toggle="tab"]').on('click', function() {
+    $('#coverkopSuratPengantarRad').hide();
+});
+
+
+function initializeSearchTarifDinamisRad() {
+    const orgUnitCode = $("#select-show-rad-tarif").val();
+
+    $("#searchTarifRadDinamis").select2({
+        placeholder: "Input Tarif",
+        width: 'resolve',
+        ajax: {
+            url: '<?= base_url(); ?>admin/radRequest/getDatatariftreatData',
+            type: "get",
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    search: params.term,
+                    org_unit_code: $("#select-show-rad-tarif").val()
+                };
+            },
+            processResults: function(response) {
+                if (response.success) {
+                    return {
+                        results: response.results
+                    };
+                }
+                return {
+                    results: []
+                };
+            },
+            cache: true
+        }
+    });
+}
+
+const dataRenderTarifSelectOptionRad = (props) => {
+    let result = ''
+    props?.data?.map(e => {
+        result += `<option value="${e.org_unit_code}">${e.perda_no}</option>`
+    })
+
+    $("#select-show-rad-tarif").html(`<option value="%" seleted>Pilih Tempat</option>` + result)
+}
 </script>
 <script type='text/javascript'>
 function isnullcheck(parameter) {
     return parameter == null ? 0 : (parameter)
 }
 
-function getTreatResultList(nomor, visit) {
+function getTreatResultList(nomor, visit_id) {
     $.ajax({
-        url: '<?php echo base_url(); ?>admin/patient/getTreatResultList',
+        url: '<?php echo base_url(); ?>admin/radrequest/getTreatResultList',
         type: "POST",
         data: JSON.stringify({
             'nomor': nomor,
-            'visit': visit,
-            'clinic_id': 'P016'
+            'visit': visit.visit_id,
+            'clinic_id': 'P016',
+            'trans_id': visit?.trans_id
         }),
         dataType: 'json',
         contentType: false,
@@ -79,13 +526,17 @@ function getTreatResultList(nomor, visit) {
         },
         processData: false,
         success: function(data) {
+
             $("#radBody").html("")
             mrJson = data
             mrJson.forEach((element, key) => {
 
+
                 $("#radBody").append($("<tr>")
-                    .append($("<td >").append($("<p>").html(mrJson[key].pickup_date)))
-                    .append($("<td class='text-center'>")
+                    .append($("<td class='text-center align-middle'>").append($("<p>").html(
+                        mrJson[key]
+                        .pickup_date)))
+                    .append($("<td class='text-center align-middle'>")
                         .append($("<p>").html(mrJson[key].tarif_name))
                         .append($("<p class='badge " + (mrJson[key].isvalid == 1 ?
                             "bg-primary" : "bg-danger") + " py-1 px-2'>").html(mrJson[key]
@@ -96,7 +547,7 @@ function getTreatResultList(nomor, visit) {
                     )
 
                     // .append($("<td>").html('<?= $visit['name_of_clinic']; ?>'))
-                    .append($("<td>").append(
+                    .append($("<td class='text-center align-middle'>").append(
                         '<div role="group" aria-label="Vertical button group">' +
                         '<button id="' + 'arad' + 'expertise' + '" ' + 'data-bill="' +
                         mrJson[key].bill_id + '" ' + 'onclick="actionModalExpertise(\'' +
@@ -153,19 +604,32 @@ function requestRad() {
 
     window.open(url, "_blank")
 }
+const addNotaRad = () => {
+    nota_no = get_bodyid()
+    $("#notaNoRad").append($("<option>").val(nota_no).text(nota_no))
+    $("#notaNoRad").val(nota_no)
+    $("#radChargesBody").html("")
+
+    return nota_no;
+}
 
 function addBillRad(container) {
     var nota_no = $("#notaNoRad").val();
     let sesi = '<?= $visit['session_id']; ?>';
 
+    // if (nota_no == '%') {
+    //     $("#notaNoRad").find(`option[value='${sesi}']`).remove()
+    //     nota_no = sesi
+    //     $("#notaNoRad").append($("<option>").val(nota_no).text(nota_no))
+    //     $("#notaNoRad").val(nota_no)
+    //     $("#radChargesBody").html("")
+    //     // getBillPoli(nomor, ke, mulai, akhir, lunas, 'P013', rj, status, nota_no, trans)
+    // }
+
     if (nota_no == '%') {
-        $("#notaNoRad").find(`option[value='${sesi}']`).remove()
-        nota_no = sesi
-        $("#notaNoRad").append($("<option>").val(nota_no).text(nota_no))
-        $("#notaNoRad").val(nota_no)
-        $("#radChargesBody").html("")
-        // getBillPoli(nomor, ke, mulai, akhir, lunas, 'P013', rj, status, nota_no, trans)
+        nota_no = addNotaRad()
     }
+
     setTimeout(() => {
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
@@ -189,8 +653,9 @@ function addBillRad(container) {
         if (!(tarifIds.includes(tarifData.tarif_id) || tarifIdsInResult.includes(tarifData.tarif_id))) {
             let codeData = get_bodyid();
             var i = $('#radChargesBody tr.number').length + 1;
+
             var key = 'rad' + i
-            $("#radChargesBody").append($("<tr id=\"" + key + "\" class='number " + (billJson?.bill_id ??
+            $("#radChargesBody").append($("<tr id=\"arad" + key + "\" class='number " + (billJson?.bill_id ??
                     codeData) + "'>")
                 .append($("<td>").html(String(i) + "."))
                 .append($("<td>").attr("id", "araddisplaytreatment" + key).html(tarifData.tarif_name)
@@ -201,7 +666,16 @@ function addBillRad(container) {
                     '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'arad\',\'' +
                     key +
                     '\')">' +
-                    chargesDropdownDoctor() +
+                    chargesDropdownDoctor("arad") +
+                    `</select>` +
+                    '<input id="araddoctor' + key +
+                    '" class="form-control" style="display: none" type="text" readonly>'
+                ))
+                .append($("<td class=\"d-none\">").html('<select id="arademployee_id_from' + key +
+                    '" class="form-select" name="employee_id_from[]" onchange="changeFullnameDoctor(\'arad\',\'' +
+                    '_from' + key +
+                    '\')">' +
+                    chargesDropdownDoctor("arad") +
                     `</select>` +
                     '<input id="araddoctor' + key +
                     '" class="form-control" style="display: none" type="text" readonly>'
@@ -260,7 +734,7 @@ function addBillRad(container) {
                                     style="width: 70%;" 
                                     placeholder="Diagnosis Klinis" 
                                     name="diagnosa_desc[]" 
-                                    value="">
+                                    value="${i === 1 ? window.diagDescRad : $(`#araddiagnosa_descrad${i - 1}`).val()}">
                             </div>
                         </div>
                     `))
@@ -273,7 +747,7 @@ function addBillRad(container) {
                                     style="width: 70%;" 
                                     placeholder="Indikasi Medis" 
                                     name="indication_desc[]" 
-                                    value="">
+                                    value="${i === 1 ? "" : $(`#aradindication_descrad${i - 1}`).val()}">
                             </div>
                         </div>
                     `)).append($("<td>", {
@@ -319,62 +793,41 @@ function addBillRad(container) {
                 <input type="hidden" name="measure_id[]" id="aradmeasure_id${key}" value="" class="form-control">
                 <input type="hidden" name="tarif_id[]" id="aradtarif_id${key}" value="${tarifData.tarif_id}" class="form-control">
                 <input type="hidden" name="body_id[]" id="aradbody_id${key}" value="${tarifData.body_id ?? '<?= @$visit['session_id'] ?>'}" class="form-control">
+                <input type="hidden" name="doctor_from[]" id="araddoctor_from${key}" class="form-control">
                  `))
             );
+
 
 
             if ('<?= $visit['isrj']; ?>' == '0') {
                 $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
                 $("#abed_id" + key).val('<?= $visit['bed_id']; ?>');
-                <?php
-            if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key +
-                        '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key +
-                        '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
 
-                <?php
+                if (visit?.employee_id_from == null && visit?.employee_id_from != '') {
+                    $("#arademployee_id_from" + key).val(visit.employee_id_from)
+                    $("#araddoctor_from" + key).val(visit.fullname_from)
+                } else {
+                    $("#arademployee_id_from" + key).val(visit.employee_inap)
+                    $("#araddoctor_from" + key).val(visit.fullname_inap)
+                }
+
             } else {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key +
-                        '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key +
-                        '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
-
-                <?php
+                if (visit?.employee_id_from == null && visit?.employee_id_from != '') {
+                    $("#arademployee_id_from" + key).val(visit.employee_id_from)
+                    $("#araddoctor_from" + key).val(visit.fullname_from)
+                } else {
+                    $("#arademployee_id_from" + key).val(visit.employee_inap)
+                    $("#araddoctor_from" + key).val(visit.fullname_inap)
+                }
             }
-            ?>
-            } else {
-                <?php
-            if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key +
-                        '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key +
-                        '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
+            $("#arademployee_id_from" + key).val('<?= user()->employee_id; ?>')
+            $("#araddoctor_from" + key).val('<?= user()->getFullname(); ?>')
+            $("#arademployee_id" + key).val('<?= user()->employee_id; ?>')
+            $("#araddoctor" + key).val('<?= user()->getFullname(); ?>')
 
-                <?php
-            } else {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key +
-                        '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key +
-                        '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-
-                <?php
-            }
-            ?>
-            }
             $("#radChargesBody")
-                .append('<input name="employee_id[]" id="arademployee_id' + key +
-                    '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                .append('<input name="doctor[]" id="araddoctor' + key +
-                    '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
+                // .append('<input name="doctor[]" id="araddoctor' + key +
+                //     '" type="hidden" value="' + visit.fullame + '" class="form-control" />')
                 .append('<input name="amount[]" id="aradamount' + key + '" type="hidden" value="' + tarifData
                     .amount +
                     '" class="form-control" />')
@@ -553,13 +1006,25 @@ const getDataBillEXP = (props) => {
 
 
 const actionModalExpertise = (bill, identifier) => {
+
     let data = JSON.parse(decodeURIComponent(bill));
     jsonObj = {};
-
+    initializeSearchTemplateExpertise1({
+        theid: "template_expertise",
+        employee_id: data?.employee_id
+    });
     jsonObj.bill_id = data?.bill_id
     jsonObj.visit_id = data?.visit_id
     $('#template_jenis_pemeriksaan').val([]).trigger('change');
     postData(jsonObj, 'admin/radRequest/getDataByID', (res) => {
+
+        imagesRad = []
+        $('#formFileExpertise').css('border', '');
+        $('#formFileExpertise1').css('border', '');
+        $('#formFileExpertise2').css('border', '');
+        $('#formFileExpertise3').css('border', '');
+        $('#formFileExpertise4').css('border', '');
+
         if (res.respon) {
             $('#modalJenisTindakan').text(res?.data.tarif_name + ' (' + res?.data.doctor +
                 ')') // perubahan bagian ini dari data.doctor ke res.doctor
@@ -571,7 +1036,6 @@ const actionModalExpertise = (bill, identifier) => {
             let diagnosa_desc = res?.data?.diagnosa_desc;
             let indication_desc = res?.data?.indication_desc;
 
-            // Check if the value is empty or undefined and fallback to data if needed
             if (diagnosa_desc == null || diagnosa_desc === '') {
                 diagnosa_desc = data?.diagnosa_desc ?? res?.data?.diagnosa_desc;
             }
@@ -579,7 +1043,6 @@ const actionModalExpertise = (bill, identifier) => {
                 indication_desc = data?.indication_desc ?? res?.data?.indication_desc;
             }
 
-            // Set the values in the inputs
             $('#diagnosisExpertise').val(diagnosa_desc);
             $('#indikasiExpertise').val(indication_desc);
 
@@ -592,7 +1055,7 @@ const actionModalExpertise = (bill, identifier) => {
                 $('#isValidExpertise').html('Tervalidasi');
                 $('#isValidExpertise').removeClass('btn-outline-primary');
                 $('#isValidExpertise').addClass('btn-primary');
-                $('#batalExpertise').attr('disabled', true)
+                $('#batalExpertise').attr('disabled', false)
             } else {
                 $('#isValidExpertise').html('Validasi');
                 $('#isValidExpertise').removeClass('btn-primary');
@@ -609,27 +1072,73 @@ const actionModalExpertise = (bill, identifier) => {
                 $('#isKritisExpertise').removeClass('btn-primary');
                 $('#isKritisExpertise').addClass('btn-outline-primary');
             }
-            if (res.data.treat_image != null) {
-                const fileName = res.data.treat_image.split(/[/\\]/).pop();
-                // $('#formFileExpertise').val(fileName)
-                let base_url = <?= json_encode(base_url()); ?>;
 
-                $('#imagePreviewExpertise').attr('src', base_url + res.data.treat_image).show();
 
-                $('#imagePreviewExpertise').off().on('click', function(e) {
-                    e.preventDefault();
-                    let url = '<?= base_url() . '/admin/Cetak/imagePreview'; ?>' + '/' + data
-                        ?.bill_id
-                    window.open(url, '_blank');
+            function pushFile(base64Data, indexLabel) {
+                const type = detectFileType(base64Data);
+                if (!type || type === 'unknown') return;
 
-                })
-            } else {
-                $('#imagePreviewExpertise').attr('src', '').hide();
+                const labelPrefix = type === 'pdf' ? 'PDF' : 'Gambar';
+                imagesRad.push({
+                    data: base64Data,
+                    page: `${labelPrefix} ${indexLabel}`,
+                    type: type
+                });
             }
+
+            pushFile(res.data?.treat_image, 1);
+            pushFile(res.data?.file_a, 2);
+            pushFile(res.data?.file_b, 3);
+            pushFile(res.data?.file_c, 4);
+            pushFile(res.data?.file_d, 5);
+
+
+            if (res.data?.treat_image) {
+                $('#formFileExpertise').css('border', '2px solid red');
+            } else {
+                $('#formFileExpertise').css('border', '');
+            };
+
+            if (res.data?.file_a) {
+                $('#formFileExpertise1').css('border', '2px solid red');
+
+            } else {
+                $('#formFileExpertise1').css('border', '');
+            };
+
+            if (res.data?.file_b) {
+                $('#formFileExpertise2').css('border', '2px solid red');
+
+            } else {
+                $('#formFileExpertise2').css('border', '');
+            };
+
+            if (res.data?.file_c) {
+                $('#formFileExpertise3').css('border', '2px solid red');
+
+            } else {
+                $('#formFileExpertise3').css('border', '');
+            };
+
+            if (res.data?.file_d) {
+                $('#formFileExpertise4').css('border', '2px solid red');
+
+            } else {
+                $('#formFileExpertise4').css('border', '');
+            };;
+
+
+
+
+
+            // $("#formFileExpertise3").val(base_url + res.data.treat_image)
+            // }
 
             printExpertise({
                 result_id: res?.data?.result_id
             });
+
+
         } else {
             $('#modalJenisTindakan').text(data?.treatment + ' (' + data?.doctor + ')')
             $('#modalTanggalTindakan').text(moment(data.treat_date).format('DD-MM-YYYY'))
@@ -647,6 +1156,112 @@ const actionModalExpertise = (bill, identifier) => {
             resetForm();
         }
 
+        renderCarousel()
+
+
+    });
+
+    function detectFileType(base64) {
+        if (!base64) return null;
+        if (base64.startsWith('data:application/pdf')) return 'pdf';
+        if (base64.startsWith('data:image')) return 'image';
+        return 'unknown';
+    }
+    const renderCarousel = () => {
+        let dataResult = "";
+
+
+
+        imagesRad.forEach((e, index) => {
+            let content = "";
+
+            if (e.type === "image") {
+                content =
+                    `<img src="${e.data}" class="d-block w-100" alt="Slide ${index + 1}" style="max-width: 70%; max-height: 300px; object-fit: contain; margin: auto;">`;
+            } else if (e.type === "pdf") {
+                content =
+                    `<iframe src="${e.data}" type="application/pdf" width="100%" height="400px" style="border: none;"></iframe>`;
+            }
+
+            dataResult += `
+            <div class="carousel-item ${index === imagesRad.length - 1 ? 'active' : ''}">
+                <h5 class="text-center">${e.page}</h5>
+                ${content}
+            </div>
+        `;
+        });
+
+        $("#data-render-all-Expertise").html(dataResult);
+        $("#carouselExample").carousel(imagesRad.length - 1);
+    };
+
+
+    $(".formFileExpertise").off().on("change", function(event) {
+        const files = event.target.files;
+        let indexFileGam = $(this).data('index');
+
+        if (files.length > 0) {
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+                if (file.type.startsWith("image/")) {
+                    reader.onload = function(e) {
+                        imagesRad.push({
+                            type: "image",
+                            data: e.target.result,
+                            page: `Gambar ${indexFileGam}`
+                        });
+                        renderCarousel();
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === "application/pdf") {
+
+
+                    reader.onload = function(e) {
+                        imagesRad.push({
+                            type: "pdf",
+                            data: e.target.result,
+                            page: `PDF ${indexFileGam}`
+                        });
+                        renderCarousel();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    errorSwal("Mohon mengirimkan berkas dengan format gambar atau PDF.");
+                    event.target.value = "";
+                }
+            });
+        }
+    });
+
+
+
+    function handleFileChange(inputId, labelId, hiddenInputId) {
+        $(inputId).on("change", function() {
+            let fileLabel = $(labelId);
+            let hiddenInput = $(hiddenInputId);
+
+            if (this.files.length > 0) {
+                fileLabel.text(this.files[0].name);
+                hiddenInput.val("");
+            } else {
+                fileLabel.text(hiddenInput.val() ? hiddenInput.val().split('/').pop() : "Pilih file");
+            }
+        });
+    }
+
+    $('.isValidExpertise').off().on('click', function() {
+        const currentValue = $("#modalIsValid").val();
+
+        $("#modalIsValid").val(currentValue == 0 ? 1 : 0)
+        if ($(this).hasClass('btn-outline-primary')) {
+            $(this).html('Tervalidasi')
+                .removeClass('btn-outline-primary')
+                .addClass('btn-primary');
+        } else {
+            $(this).html('Validasi')
+                .removeClass('btn-primary')
+                .addClass('btn-outline-primary');
+        }
     });
 
 
@@ -669,7 +1284,8 @@ const actionModalExpertise = (bill, identifier) => {
             let visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
 
             // Construct the URL
-            let url = '<?= base_url() . '/admin/rm/LAINNYA/radiologi_cetak/'; ?>' + visitEncoded + '/' +
+            let url = '<?= base_url() . '/admin/rm/LAINNYA/radiologi_cetak/'; ?>' + visit.visit_id +
+                '/' +
                 props?.result_id;
 
             // Redirect to the URL
@@ -698,6 +1314,9 @@ const actionModalExpertise = (bill, identifier) => {
                     .quantity)
                 $(`[data-id="${identifier}displayamount_paid${data.bill_id}"]`).html(data
                     .treat_bill.amount_paid)
+                $('#formExpertise')[0].reset(); // reset semua input
+                $('#formExpertise input[type="file"]').val('');
+                getTreatResultList(nomor, visit.visit_id)
                 // $(`#${identifier}quantity${data.treat_bill.bill_id}`).val(data.treat_bill.quantity)
                 // $(`#${identifier}displayamount_paid${data.treat_bill.bill_id}`).val(data.treat_bill.amount_paid)
             },
@@ -732,23 +1351,56 @@ const actionModalExpertise = (bill, identifier) => {
     });
 };
 
-document.getElementById('formFileExpertise').addEventListener('change', function(event) {
+// document.getElementById('formFileExpertise').addEventListener('change', function(event) {
+//     const file = event.target.files[0];
+//     if (file) {
+//         if (file.type.startsWith('image/')) {
+//             const reader = new FileReader();
+//             reader.onload = function(e) {
+//                 const img = document.getElementById('imagePreviewExpertise');
+//                 img.src = e.target.result;
+//                 img.style.display = 'block';
+//             };
+//             reader.readAsDataURL(file);
+//         } else {
+//             errorSwal('mohon mengirimkan berkas dengan format gambar.');
+//             event.target.value = '';
+//         }
+//     }
+// });
+$("#formFileExpertise").on("change", function(event) {
     const file = event.target.files[0];
+    const imagePreview = document.getElementById('imagePreviewExpertise');
+    const pdfPreview = document.getElementById('pdfPreviewExpertise');
+
     if (file) {
+        const reader = new FileReader();
+
         if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
             reader.onload = function(e) {
-                const img = document.getElementById('imagePreviewExpertise');
-                img.src = e.target.result;
-                img.style.display = 'block';
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                if (pdfPreview) pdfPreview.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        } else if (file.type === 'application/pdf') {
+            reader.onload = function(e) {
+                if (pdfPreview) {
+                    pdfPreview.src = e.target.result;
+                    pdfPreview.style.display = 'block';
+                }
+                imagePreview.style.display = 'none';
             };
             reader.readAsDataURL(file);
         } else {
-            errorSwal('mohon mengirimkan berkas dengan format gambar.');
+            errorSwal('Mohon mengirimkan berkas dengan format gambar atau PDF.');
             event.target.value = '';
+            imagePreview.style.display = 'none';
+            if (pdfPreview) pdfPreview.style.display = 'none';
         }
     }
 });
+
 
 const getDataTemplate = () => {
     let formElement = document.getElementById('form-template-rad');
@@ -825,6 +1477,34 @@ $('#imagePreviewExpertise').on('click', function() {
 
 })
 
+function initializeSearchTemplateExpertise1(props) {
+
+    $("#" + props?.theid).select2({
+        theme: "bootstrap-5",
+        dropdownParent: "#modalExpertise",
+        placeholder: "Masukkan Template",
+        ajax: {
+            url: '<?= base_url(); ?>admin/radRequest/getTemplateExpertise',
+            type: "post",
+            dataType: 'json',
+            delay: 50,
+            data: function(params) {
+                return {
+                    searchTerm: params.term,
+                    employee_id: props?.employee_id
+                };
+            },
+            processResults: function(response) {
+                $("#" + props?.theid).val(null).trigger('change');
+                return {
+                    results: response
+                };
+            },
+            cache: true
+        }
+    });
+}
+
 const printExpertise = (props) => {
     $('#printExpertise').off().on('click', function(e) {
         e.preventDefault();
@@ -838,6 +1518,82 @@ const printExpertise = (props) => {
         // Redirect to the URL
         window.open(url, '_blank'); // Open in a new tab
     })
+}
+
+$('#data-allradiologi').off().on('click', function(e) {
+    $("#modalDataAllRadiologi").modal("show");
+    postData({
+        nomor: nomor,
+        visit: visit.visit_id,
+        clinic_id: 'P016',
+        trans_id: visit?.trans_id
+    }, 'admin/radrequest/getTreatResultListAll', (res) => {
+        if (res) {
+            renderDataHasilRadiologi({
+                data: res
+            })
+        } else {
+            $("#resultmodalDataAllRadiologi").html(tempTablesNull());
+        }
+    }, () => {
+        getLoadingGlobalServices('resultmodalDataAllRadiologi');
+    });
+
+})
+
+
+const renderDataHasilRadiologi = (props) => {
+    let result = ""
+
+    props?.data?.map((item, index) => {
+        result += `<tr>
+                            <td class="text-center align-middle">${index + 1}</td>
+                            <td class="text-center align-middle">${item?.pickup_date ? moment(item?.pickup_date).format("DD/MM/YYYY HH:mm") : item?.pickup_date ?? "-"}
+                            </td>
+                            <td class="text-center align-middle">
+                                <p>
+                                    ${item?.tarif_name ? item.tarif_name.replace(/&nbsp;/g, ' ') : ''}
+                                </p>
+                                <p class="badge ${item?.isvalid == 1 ? 'bg-primary' : 'bg-danger'} py-1 px-2">
+                                    ${item?.isvalid == 1 ? 'TERVALIDASI' : 'BELUM VALIDASI'}
+                                </p>
+                                <p class="${item?.iskritis == 1 ? 'badge py-1 px-2 mx-2 bg-danger' : 'd-none'}">
+                                    KRITIS
+                                </p>
+                            </td>
+
+                            <td class="text-center align-middle">
+                                <div role="group" aria-label="Vertical button group">
+                                    <button 
+                                        id="aradexpertise" 
+                                        data-bill="${item?.bill_id}" 
+                                        onclick="actionModalExpertise('${encodeURIComponent(JSON.stringify(item))}', 'arad')" 
+                                        type="button" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalExpertise" 
+                                        class="btn btn-outline-primary waves-effect waves-light" 
+                                        data-row-id="1" 
+                                        autocomplete="off"
+                                    >
+                                        Hasil
+                                    </button>
+                                </div>
+                            </td>
+
+                            
+                        </tr>`
+    });
+
+    $("#resultmodalDataAllRadiologi").html(result);
+
+
+    if (props?.data.length === 0) {
+        $("#resultmodalDataAllRadiologi").html(`<tr style="height: 200px;">
+                                        <td colspan="100" class="align-middle text-center">
+                                            <h3 class="text-center">Data Kosong</h3>
+                                        </td>
+                                    </tr>`);
+    }
 }
 </script>
 <script>

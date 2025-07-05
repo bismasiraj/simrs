@@ -21,10 +21,6 @@ class EklaimModel extends Model
         'nosep',
         'nosep_inap',
         'nosep_klaim',
-        'nokartu',
-        'namapasien',
-        'tgllahir',
-        'gender',
         'tgl_masuk',
         'tgl_keluar',
         'jnsrawat',
@@ -34,32 +30,10 @@ class EklaimModel extends Model
         'icu_indikator',
         'icu_los',
         'ventilator_hour',
-        'upgrade_class_id',
-        'upgrade_class_class',
-        'upgrade_class_los',
-        'add_payment_pct',
         'birthweight',
         'discharge_status',
         'diagnosanya',
         'procedurenya',
-        'proc_nonbedah',
-        'proc_bedah',
-        'konsultasi',
-        'tenaga_ahli',
-        'keperawatan',
-        'penunjang',
-        'radiologi',
-        'laboratorium',
-        'pelayanandarah',
-        'rehabilitasi',
-        'kamar',
-        'rawat_intensif',
-        'obat',
-        'obatkronis',
-        'obatkemoterapi',
-        'alkes',
-        'bmhp',
-        'sewa_alat',
         'tarif_poli_eks',
         'dokter',
         'kodetarif',
@@ -67,15 +41,13 @@ class EklaimModel extends Model
         'payor_cd',
         'cob_cd',
         'coder_nik',
+        'modified_date',
         'modified_by',
         'request_01',
-        'request_02',
-        'request_03',
-        'request_04',
         'respon_01',
-        'respon_02',
-        'respon_03',
-        'respon_04',
+        'klaim_status',
+        'add_payment_amt',
+        'hospital_admission_id',
         'cara_masuk',
         'ventilator',
         'upgrade_class_payor',
@@ -83,29 +55,10 @@ class EklaimModel extends Model
         'diastole',
         'diagnosa_inagrouper',
         'procedure_inagrouper',
-        'pemulasaran_jenazah',
-        'kantong_jenazah',
-        'peti_jenazah',
-        'plastik_erat',
-        'desinfektan_jenazah',
-        'covid19_status_cd',
-        'nomor_kartu_t',
-        'covid19_cc_ind',
-        'covid19_rs_darurat_ind',
-        'covid19_co_insidense_ind',
-        'covid19_penunjang_pengurang',
-        'terapi_konvalesen',
-        'isoman_ind',
         'bayi_lahir_status_cd',
         'dializer_single_use',
         'kantong_darah',
-        'apgar',
-        'persalinan',
-        'add_payment_amt',
-        'claim_value',
-        'klaim_status',
-        'claim_final',
-        'claim_finalby'
+        'claim_value'
     ];
 
     // Dates
@@ -113,4 +66,104 @@ class EklaimModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'modified_date';
     protected $updatedField  = 'modified_date';
+
+
+    function insertOrUpdateClaim($dataClaim)
+    {
+        $sql = "
+        MERGE INTO eklaim_klaim AS target
+        USING (SELECT 
+            ? AS trans_id, ? AS nosep_klaim
+        ) AS source
+        ON target.trans_id = source.trans_id AND target.nosep_klaim = source.nosep_klaim
+        WHEN MATCHED THEN 
+            UPDATE SET 
+                visit_id = ?, nomr = ?, nosep = ?, nosep_inap = ?, tgl_masuk = ?, tgl_keluar = ?, 
+                jnsrawat = ?, klsrawat = ?, adl_sub_acute = ?, adl_chronic = ?, icu_indikator = ?, 
+                icu_los = ?, ventilator_hour = ?, birthweight = ?, discharge_status = ?, tarif_poli_eks = ?, 
+                dokter = ?, kodetarif = ?, payor_id = ?, payor_cd = ?, cob_cd = ?, coder_nik = ?, 
+                modified_by = ?, request_01 = ?, cara_masuk = ?, sistole = ?, diastole = ?, 
+                dializer_single_use = ?, kantong_darah = ?, modified_date = getdate()
+        WHEN NOT MATCHED THEN 
+            INSERT (
+                trans_id, visit_id, nomr, nosep, nosep_inap, nosep_klaim, tgl_masuk, tgl_keluar, 
+                jnsrawat, klsrawat, adl_sub_acute, adl_chronic, icu_indikator, icu_los, 
+                ventilator_hour, birthweight, discharge_status, tarif_poli_eks, dokter, kodetarif, 
+                payor_id, payor_cd, cob_cd, coder_nik, modified_by, request_01, cara_masuk, 
+                sistole, diastole, dializer_single_use, kantong_darah
+            )
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            );";
+
+        $values = [
+            $dataClaim['trans_id'],
+            $dataClaim['nosep_klaim'], // for USING
+            $dataClaim['visit_id'],
+            $dataClaim['nomr'],
+            $dataClaim['nosep'],
+            $dataClaim['nosep_inap'],
+            $dataClaim['tgl_masuk'],
+            $dataClaim['tgl_keluar'],
+            $dataClaim['jnsrawat'],
+            $dataClaim['klsrawat'],
+            $dataClaim['adl_sub_acute'],
+            $dataClaim['adl_chronic'],
+            $dataClaim['icu_indikator'],
+            $dataClaim['icu_los'],
+            $dataClaim['ventilator_hour'],
+            $dataClaim['birthweight'],
+            $dataClaim['discharge_status'],
+            $dataClaim['tarif_poli_eks'],
+            $dataClaim['dokter'],
+            $dataClaim['kodetarif'],
+            $dataClaim['payor_id'],
+            $dataClaim['payor_cd'],
+            $dataClaim['cob_cd'],
+            $dataClaim['coder_nik'],
+            $dataClaim['modified_by'],
+            $dataClaim['request_01'],
+            $dataClaim['cara_masuk'],
+            $dataClaim['sistole'],
+            $dataClaim['diastole'],
+            $dataClaim['dializer_single_use'],
+            $dataClaim['kantong_darah'],
+            // values for INSERT
+            $dataClaim['trans_id'],
+            $dataClaim['visit_id'],
+            $dataClaim['nomr'],
+            $dataClaim['nosep'],
+            $dataClaim['nosep_inap'],
+            $dataClaim['nosep_klaim'],
+            $dataClaim['tgl_masuk'],
+            $dataClaim['tgl_keluar'],
+            $dataClaim['jnsrawat'],
+            $dataClaim['klsrawat'],
+            $dataClaim['adl_sub_acute'],
+            $dataClaim['adl_chronic'],
+            $dataClaim['icu_indikator'],
+            $dataClaim['icu_los'],
+            $dataClaim['ventilator_hour'],
+            $dataClaim['birthweight'],
+            $dataClaim['discharge_status'],
+            $dataClaim['tarif_poli_eks'],
+            $dataClaim['dokter'],
+            $dataClaim['kodetarif'],
+            $dataClaim['payor_id'],
+            $dataClaim['payor_cd'],
+            $dataClaim['cob_cd'],
+            $dataClaim['coder_nik'],
+            $dataClaim['modified_by'],
+            $dataClaim['request_01'],
+            $dataClaim['cara_masuk'],
+            $dataClaim['sistole'],
+            $dataClaim['diastole'],
+            $dataClaim['dializer_single_use'],
+            $dataClaim['kantong_darah']
+        ];
+
+        $db = db_connect();
+
+        return $this->db->query($sql, $values);
+    }
 }

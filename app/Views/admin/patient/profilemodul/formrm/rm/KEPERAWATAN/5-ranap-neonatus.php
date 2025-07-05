@@ -17,15 +17,15 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
     <script src="<?= base_url('assets/libs/qrcode/qrcode.min.js') ?>"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -116,8 +116,12 @@
             <tbody>
                 <tr>
                     <td class="p-1">
-                        <b>Keluhan Utama</b>
+                        <b>Autoanamnase</b>
                         <p class="m-0 mt-1 p-0"><?= @$val['anamnesis']; ?></p>
+                    </td>
+                    <td class="p-1">
+                        <b>Alloanamnase</b>
+                        <p class="m-0 mt-1 p-0"><?= @$val['alo_anamnesis']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Riwayat Penyakit Sekarang</b>
@@ -232,60 +236,62 @@
                         <p class="m-0 mt-1 p-0"><?= @$val['imt']; ?></p>
                     </td>
                 </tr>
-                <tr class="d-flex">
-                    <td class="p-1 col-3">
-                        <b>Kesan Umum</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['keadaan_umum']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Pergerakan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['pergerakan']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Warna Kulit</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['warna_kulit']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Turgor</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['turgur']; ?></p>
-                    </td>
-                </tr>
-                <tr class="d-flex">
-                    <td class="p-1 col-3">
-                        <b>Tonus</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['tonus']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Suara</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['suara']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Reflek Moro</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['reflek_moro']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Reflek Mengisap</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['reflek_menghisap']; ?></p>
-                    </td>
-                </tr>
-                <tr class="d-flex">
-                    <td class="p-1 col-3">
-                        <b>Memegang</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['memegang']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Tonus Leher</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['tonus_leher']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Lingkar Kepala</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['lingkar_kepala']; ?></p>
-                    </td>
-                    <td class="p-1 col-3">
-                        <b>Lingkar Dada</b>
-                        <p class="m-0 mt-1 p-0"><?= @$neonatus['lingkar_dada']; ?></p>
-                    </td>
-                </tr>
+                <?php if (count($neonatus)) {
+                ?><tr class="d-flex">
+                        <td class="p-1 col-3">
+                            <b>Kesan Umum</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['keadaan_umum']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Pergerakan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['pergerakan']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Warna Kulit</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['warna_kulit']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Turgor</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['turgur']; ?></p>
+                        </td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="p-1 col-3">
+                            <b>Tonus</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['tonus']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Suara</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['suara']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Reflek Moro</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['reflek_moro']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Reflek Mengisap</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['reflek_menghisap']; ?></p>
+                        </td>
+                    </tr>
+                    <tr class="d-flex">
+                        <td class="p-1 col-3">
+                            <b>Memegang</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['memegang']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Tonus Leher</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['tonus_leher']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Lingkar Kepala</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['lingkar_kepala']; ?></p>
+                        </td>
+                        <td class="p-1 col-3">
+                            <b>Lingkar Dada</b>
+                            <p class="m-0 mt-1 p-0"><?= @$neonatus['lingkar_dada']; ?></p>
+                        </td>
+                    </tr><?php
+                        } ?>
             </tbody>
         </table>
         <?php if (count($nutrition) > 0) {
@@ -294,17 +300,84 @@
                 <h5 class="text-start">Skrining Gizi</h5>
             </div>
             <div class="d-flex flex-wrap mb-3">
-                <?php foreach ($nutrition as $key => $tidur) : ?>
-                    <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $tidur['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"> @$tidur['value_desc']></p>
-                    </div>
-                <?php endforeach ?>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>Kategori Usia</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['age_cat'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>BB</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['weight'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>TB</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['height'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>IMT</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['imt'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>Step 1|Skor IMT</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['step1_score_imt'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>Step 2|Skor Penurunan BB</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['step2_score_wightloss'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>Step 3|Skor Efek Penyakit Akut</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['step3_score_acute_disease'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>Step 4|Resiko Malnutrisi Keseluruhan</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['step4_score_malnutrition'] ?></p>
+                </div>
+                <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                    <b>Step 5|Management Guidelines</b>
+                    <p class="m-0 mt-1 p-0"> <?php echo @$nutrition['step5'] ?></p>
+                </div>
             </div>
         <?php
         } ?>
 
+        <?php if (!empty($val['gcs_desc'])) { ?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b><i>GCS / Tingkat Kesadaran</i></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>GCS E / Respon Membuka Mata :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_e'] . '] ' . @$val['gsc_e_desc']; ?>.</span>
+                                    <b>GCS V / Respon Verbal Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_v'] . '] ' . @$val['gsc_v_desc']; ?>.</span>
+                                    <b>GCS M / Respon Motorik Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_m'] . '] ' . @$val['gsc_m_desc']; ?>.</span>
+                                </div>
 
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>Score GCS : </b>
+                                    <span class="m-0 mt-1 p-0"><?= @$val['gcs_desc']; ?></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Keadaan Umum</b>
+                            <p class="m-0 mt-1 p-0"><?= !empty(@$val['namadiagnosa']) ? @$val['namadiagnosa'] : '-'; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php } ?>
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -313,37 +386,45 @@
                 </tr>
                 <tr>
                     <td class="p-1" style="width: 50%;">
-                        <p class="m-0 mt-1 p-0"><?= @$val['pain_score'] == '0' ? 'Tidak ada nyeri' : ''; ?></p>
-                        <p class="m-0 mt-1 p-0"><?= @$val['pain_desc']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['pain_score']; ?></p>
                     </td>
                     <td class="p-1" style="width: 50%;">
-                        <b>Penjelasan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_desc']; ?></p>
-                        <b>Tipe Resiko Jatuh</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score']; ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="p1" colspan="2">Triase</th>
+                </tr>
+                <tr>
+                    <td class="p-1" colspan="2">
+                        <p class="m-0 mt-1 p-0"><?= @$val['ats_tipe']; ?></p>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-
-        <div class="d-flex flex-wrap mb-3">
-            <div class="p-2" style="width: 50%; border: .5px solid #dee2e6; border-right:none; box-sizing:border-box;">
-                <b>Luka Operasi</b> <br>
-                <b>Deskripsi Nyeri</b> <br>
-                <b>Hipo/Hipertermi</b>
-            </div>
-            <div style="width: 50%;">
-                <?php foreach ($hipertensi as $key => $hiper) : ?>
-                    <div class="d-flex  border-custom">
-                        <div style="width: 100%;" class="p-1">
-                            <b><?= $hiper['parameter_desc'] ?></b>
-                            <p class="m-0 mt-1 p-0"><?= @$hiper['value_desc']; ?></p>
+        <?php if (count($hipertensi) > 0) {
+        ?>
+            <div class="d-flex flex-wrap mb-3">
+                <div class="p-2" style="width: 50%; border: .5px solid #dee2e6; border-right:none; box-sizing:border-box;">
+                    <b>Luka Operasi</b> <br>
+                    <b>Deskripsi Nyeri</b> <br>
+                    <b>Hipo/Hipertermi</b>
+                </div>
+                <div style="width: 50%;">
+                    <?php foreach ($hipertensi as $key => $hiper) : ?>
+                        <div class="d-flex  border-custom">
+                            <div style="width: 100%;" class="p-1">
+                                <b><?= $hiper['parameter_desc'] ?></b>
+                                <p class="m-0 mt-1 p-0"><?= @$hiper['value_desc']; ?></p>
+                            </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
+        <?php
+        } ?>
+
 
         <?php if (count($activity) > 0) {
         ?>
@@ -506,10 +587,10 @@
                 <?php foreach ($neurosensoris as $key => $neuro) : ?>
                     <div class="col-3 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                         <b><?= $neuro['parameter_desc'] ?></b>
-                        <p class="m-0 mt-1 p-0"><?= (@$neuro['value_desc'] != '0'); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= (@$neuro['value_desc']); ?></p>
                     </div>
                 <?php endforeach ?>
-                <div class="col-9 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <!--  <div class="col-9 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                     <b>GCS</b><br>
                     <b>E :</b><br> <span class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_e'] . '] ' . @$val['gsc_e_desc']; ?></span><br>
                     <b>V :</b><br> <span class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_v'] . '] ' . @$val['gsc_v_desc']; ?></span><br>
@@ -517,7 +598,7 @@
 
                     <b>Score pGCS : </b>
                     <span class="m-0 mt-1 p-0"><?= @$val['gcs_desc']; ?></span>
-                </div>
+                </div> -->
             </div>
         <?php
         } ?>

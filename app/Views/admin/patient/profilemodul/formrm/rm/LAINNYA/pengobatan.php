@@ -27,47 +27,47 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -148,11 +148,11 @@
                         <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
                             <?php if (!empty($visit['date_of_birth'])) : ?>
-                            <p class="m-0 mt-1 p-0">
-                                <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
-                            </p>
+                                <p class="m-0 mt-1 p-0">
+                                    <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
+                                </p>
                             <?php else : ?>
-                            <p class="m-0 mt-1 p-0">-</p>
+                                <p class="m-0 mt-1 p-0">-</p>
                             <?php endif; ?>
                         </td>
                         <td class="p-1" colspan="2">
@@ -275,58 +275,61 @@
 
 </body>
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+    $(document).ready(function() {
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
 
-    renderTables()
+        renderTables()
 
-})
+    })
 
-const renderTables = () => {
-    <?php $dataJson = json_encode($data); ?>
-    let dataResult = []
-    let data = <?php echo $dataJson; ?>;
+    const renderTables = () => {
+        <?php $dataJson = json_encode($data); ?>
+        let dataResult = []
+        let data = <?php echo $dataJson; ?>;
 
-    if (data.length > 1) {
-        data.map((e) => {
-            dataResult += `<tr>
+        console.log(data);
+
+
+        if (data.length > 1) {
+            data.map((e) => {
+                dataResult += `<tr>
                             <td>${e.nama_obat}</td>
                             <td>${e.aturan_pakai}</td>
-                            <td>${!e.module_id ? "":e.module_id}</td>
-                            <td>${!e.received_date? "": moment(e.received_date).format("DD-MM-YYYY HH:mm")}</td>
+                            <td>${!e.rute ? "" :e.rute}</td>
+                            <td>${!e.tgl_pemberian? "": moment(e.tgl_pemberian).format("DD-MM-YYYY HH:mm")}</td>
                         </tr>`
-        })
-    } else {
-        dataResult = `<tr style="height: 200px;">
+            })
+        } else {
+            dataResult = `<tr style="height: 200px;">
                             <td colspan="4">
                                <center> 
                                    <h3>Data Kosong</h3>
                                </center>
                             </td>
                         </tr>`
+        }
+
+
+        $("#data-tables").html(dataResult)
+
+
     }
-
-
-    $("#data-tables").html(dataResult)
-
-
-}
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

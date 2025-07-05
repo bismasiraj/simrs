@@ -96,7 +96,7 @@
                         <tr class="mb-0">
                             <td width="30%">Alamat</td>
                             <td width="1%">:</td>
-                            <td><?= $visit['contact_address']; ?></td>
+                            <td><?= $visit['visitor_address']; ?></td>
                         </tr>
                     </table>
                 </div>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div id="monitoringRecoveryRoom-1" class="table tablecustom-responsive">
-                        <table class="table">
+                        <table class="table table-sm">
                             <thead class="table">
                                 <tr>
                                     <th scope="col">Date</th>
@@ -391,7 +391,7 @@
                         </div>
                     </div>
                     <div id="monitoringDurante-1" class="table tablecustom-responsive">
-                        <table class="table">
+                        <table class="table table-sm">
                             <thead class="table">
                                 <tr>
                                     <th scope="col">Date</th>
@@ -512,8 +512,10 @@
                     <div class="col-auto" align="center">
                         <div>Dokter</div>
                         <div class="mb-1">
-                            <div id="qrcode"></div>
+                            <div id="qrcodepertama"></div>
                         </div>
+                        <div id="qrcodepertama_name"></div>
+
                     </div>
                 </div>
             </div>
@@ -548,7 +550,7 @@
                             <tr class="mb-0">
                                 <td width="30%">Alamat</td>
                                 <td width="1%">:</td>
-                                <td><?= $visit['contact_address']; ?></td>
+                                <td><?= $visit['visitor_address']; ?></td>
                             </tr>
                         </table>
                     </div>
@@ -561,7 +563,6 @@
                         <thead class="table">
                             <tr>
                                 <th scope="col">Diagnosis</th>
-                                <th scope="col">Jenis Kasus</th>
                                 <th scope="col">Kategori Diagnosis</th>
 
                             </tr>
@@ -582,7 +583,6 @@
                         <thead class="table">
                             <tr>
                                 <th scope="col">Diagnosis</th>
-                                <th scope="col">Jenis Kasus</th>
                                 <th scope="col">Kategori Diagnosis</th>
 
                             </tr>
@@ -847,13 +847,16 @@
                 <div class="mb-1">
                     <div id="qrcode"></div>
                 </div>
+                <div id="qrcode-name"></div>
             </div>
-            <div class="col"></div>
+            <div class="col-7"></div>
             <div class="col-auto" align="center">
                 <div>Pasien</div>
                 <div class="mb-1">
                     <div id="qrcode1"></div>
                 </div>
+                <div id="qrcode1_name"></div>
+
             </div>
         </div>
     </div>
@@ -861,24 +864,95 @@
 
 
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: `<?= $visit['fullname']; ?>`,
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
-</script>
-<script>
-var qrcode = new QRCode(document.getElementById("qrcode1"), {
-    text: `<?= $visit['diantar_oleh']; ?>`,
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+const cropTransparentPNG = (base64, callback) => {
+
+    console.log("sasasasa");
+
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        let top = null,
+            bottom = null,
+            left = null,
+            right = null;
+
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                const index = (y * canvas.width + x) * 4;
+                const alpha = data[index + 3];
+                if (alpha > 0) {
+                    if (top === null || y < top) top = y;
+                    if (bottom === null || y > bottom) bottom = y;
+                    if (left === null || x < left) left = x;
+                    if (right === null || x > right) right = x;
+                }
+            }
+        }
+
+        if (top === null) return callback(null); // tidak ada gambar
+
+        const width = right - left + 1;
+        const height = bottom - top + 1;
+
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width;
+        croppedCanvas.height = height;
+
+        const croppedCtx = croppedCanvas.getContext('2d');
+        croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+        const croppedBase64 = croppedCanvas.toDataURL('image/png');
+        callback(croppedBase64);
+    };
+    img.src = base64;
+};
+
+const base64_ttd_dok = <?= json_encode($val['ttd_dok'] ?? '') ?>;
+if (base64_ttd_dok) {
+    $('#qrcode').html(
+        `<img src="${base64_ttd_dok}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+    $('#qrcodepertama').html(
+        `<img src="${base64_ttd_dok}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+    $('#qrcode-name').html(`<?= $val['ttd_dokter_name']?>;`)
+    $('#qrcodepertama_name').html(`<?= $val['ttd_dokter_name']?>;`)
+} else {
+    $('#qrcode').html('');
+    $('#qrcodepertama').html('')
+}
+
+
+const base64_ttd_ps = <?= json_encode($val['ttd_pasien']?? '') ?>;
+// if (base64_ttd_ps) {
+//     $('#qrcode1').html(
+//         `<img src="${base64_ttd_ps}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+// } else {
+//     $('#qrcode1').html('');
+// }
+
+if (base64_ttd_ps) {
+    cropTransparentPNG(base64_ttd_ps, (croppedImage) => {
+        if (croppedImage) {
+            $('#qrcode1').html(
+                `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+            );
+            $('#qrcode1_name').html('<?=$visit['diantar_oleh']?>');
+        } else {
+            $('#qrcode1').html('');
+        }
+    });
+} else {
+    $('#qrcode1').html('');
+}
 </script>
 
 <style>
@@ -926,49 +1000,48 @@ $(document).ready(function() {
 
 
 const ChartMonitoringDurante = (props) => {
-    let rawData = props?.data || [];
+    const rawData = props?.data || [];
     let dataRendersTables = '';
+    const groupedData = {};
 
-    let groupedData = {};
+    // Grouping data berdasarkan waktu (format: 'DD MMM YYYY HH:mm')
+    rawData.forEach(item => {
+        const dateTime = item?.examination_date ?
+            moment(item?.examination_date).format('DD MM YYYY HH:mm') :
+            null;
 
-    rawData?.forEach(item => {
-        let dateTime = item?.examination_date ? moment(item?.examination_date).format(
-            'DD MMM YYYY HH:mm') : null;
         if (dateTime && !groupedData[dateTime]) {
             groupedData[dateTime] = {
                 nadi: [],
                 temperature: [],
                 saturasi: [],
                 tension_upper: [],
-                tension_below: []
+                tension_below: [],
+                nafas: []
             };
         }
+
         if (dateTime) {
             groupedData[dateTime].nadi.push(parseInt(item?.nadi ?? 0));
-            groupedData[dateTime].temperature.push(parseInt(item?.temperature ?? 0));
-            groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 10));
+            groupedData[dateTime].temperature.push(parseFloat(item?.temperature ?? 0));
+            groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 0));
             groupedData[dateTime].tension_upper.push(parseInt(item?.tension_upper ?? 0));
             groupedData[dateTime].tension_below.push(parseInt(item?.tension_below ?? 0));
+            groupedData[dateTime].nafas.push(parseInt(item?.nafas ?? 0));
         }
     });
 
+    const allDates = Object.keys(groupedData);
+    const dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('DD MMM YYYY'))));
+    const times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
 
-    let allDates = Object.keys(groupedData);
-    let dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format(
-        'DD MMM YYYY'))));
-    let times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
-
-    let labels = dates.flatMap(date => times.filter((_, index) => allDates[index].startsWith(date)));
-
+    // Label gabungan tanggal dan jam
+    const labels = allDates.map(dt => dt); // Format: 'DD MMM YYYY HH:mm'
 
     if (props?.body_requestChart) {
-        let datasets = [{
+        const datasets = [{
                 label: 'Nadi',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (groupedData[
-                        key]?.nadi.length || 1) : null;
-                }),
+                data: labels.map(label => average(groupedData[label]?.nadi)),
                 backgroundColor: 'rgba(235, 125, 52, 0.2)',
                 borderColor: '#eb7d34',
                 fill: true,
@@ -977,11 +1050,7 @@ const ChartMonitoringDurante = (props) => {
             },
             {
                 label: 'Suhu',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.temperature.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.temperature.length || 1) : null;
-                }),
+                data: labels.map(label => average(groupedData[label]?.temperature)),
                 backgroundColor: 'rgba(52, 101, 235, 0.2)',
                 borderColor: '#3465eb',
                 fill: true,
@@ -990,11 +1059,7 @@ const ChartMonitoringDurante = (props) => {
             },
             {
                 label: 'SPO2',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.saturasi.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.saturasi.length || 1) : null;
-                }),
+                data: labels.map(label => average(groupedData[label]?.saturasi)),
                 backgroundColor: 'rgba(18, 41, 105, 0.2)',
                 borderColor: '#122969',
                 fill: true,
@@ -1003,11 +1068,7 @@ const ChartMonitoringDurante = (props) => {
             },
             {
                 label: 'Sistole',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.tension_upper.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.tension_upper.length || 1) : null;
-                }),
+                data: labels.map(label => average(groupedData[label]?.tension_upper)),
                 backgroundColor: 'rgba(61, 235, 52, 0.2)',
                 borderColor: '#3deb34',
                 fill: true,
@@ -1016,11 +1077,7 @@ const ChartMonitoringDurante = (props) => {
             },
             {
                 label: 'Diastole',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.tension_below.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.tension_below.length || 1) : null;
-                }),
+                data: labels.map(label => average(groupedData[label]?.tension_below)),
                 backgroundColor: 'rgba(61, 235, 52, 0.2)',
                 borderColor: '#3deb34',
                 fill: true,
@@ -1029,11 +1086,7 @@ const ChartMonitoringDurante = (props) => {
             },
             {
                 label: 'Respirasi',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (groupedData[
-                        key]?.nadi.length || 1) : null;
-                }),
+                data: labels.map(label => average(groupedData[label]?.nafas)),
                 backgroundColor: 'rgba(230, 242, 5, 0.2)',
                 borderColor: '#e6f205',
                 fill: true,
@@ -1042,105 +1095,110 @@ const ChartMonitoringDurante = (props) => {
             }
         ];
 
-        const ctxChart = document?.getElementById(`${props?.body_requestChart}`)?.getContext('2d');
-        new Chart(ctxChart, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            options: {
-                plugins: {
-                    datalabels: false
+        const ctxChart = document?.getElementById(props.body_requestChart)?.getContext('2d');
+        if (ctxChart) {
+            new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
                 },
-                scales: {
-                    yNadi: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Nadi'
+                options: {
+                    plugins: {
+                        datalabels: false
+                    },
+                    scales: {
+                        yNadi: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Nadi'
+                            }
+                        },
+                        yTemperature: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Suhu'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        ySaturasi: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'SPO2'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        yTension: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Tekanan Darah'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        yRespirasi: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Respirasi'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
                         }
                     },
-                    yTemperature: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Suhu'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    ySaturasi: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'SPO2'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    yTension: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Tekanan Darah'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    yRespirasi: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Respirasi'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 10,
-                        right: 10,
-                        top: 10,
-                        bottom: 10
+                    layout: {
+                        padding: 10
                     }
                 }
-            }
-        });
+            });
+        } else {
+            console.warn("Canvas chart tidak ditemukan:", props.body_requestChart);
+        }
     }
 
-
+    // Render tabel
     const tableBody = $(`#${props?.body_requestTabels}`);
     if (tableBody.length) {
         dataRendersTables = rawData.map(item => `
-                                        <tr>
-                                            <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
-                                            <td>${item?.tension_upper ?? 0}</td>
-                                            <td>${item?.tension_below?? 0}</td>
-                                            <td>${item?.nadi?? 0}</td>
-                                            <td>${item?.temperature?? 0}</td>
-                                            <td>${item?.nafas?? 0}</td>
-                                            <td>${item?.saturasi?? 0}</td>
-                                            <td>${item?.pemeriksaan ?? "-"}</td>
-                                            <td>${item?.petugas ?? "-"}</td>
-                                        </tr>
-                                    `).join('');
-
+            <tr>
+                <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
+                <td>${item?.tension_upper ?? 0}</td>
+                <td>${item?.tension_below ?? 0}</td>
+                <td>${item?.nadi ?? 0}</td>
+                <td>${item?.temperature ?? 0}</td>
+                <td>${item?.nafas ?? 0}</td>
+                <td>${item?.saturasi ?? 0}</td>
+                <td>${item?.pemeriksaan ?? "-"}</td>
+                <td>${item?.petugas ?? "-"}</td>
+            </tr>
+        `).join('');
         tableBody.html(dataRendersTables);
     } else {
         console.log("Table body element not found.");
     }
+
+    // Fungsi bantu menghitung rata-rata
+    function average(arr) {
+        if (!Array.isArray(arr) || arr.length === 0) return null;
+        return arr.reduce((a, b) => a + b, 0) / arr.length;
+    }
 };
+
 
 const getRequestVtRangeAnesthesia = (props) => {
     let {
@@ -1149,8 +1207,6 @@ const getRequestVtRangeAnesthesia = (props) => {
         body_requestCharts,
         body_requestTables
     } = props;
-
-
 
 
     filters.forEach((filter, index) => {
@@ -1211,8 +1267,7 @@ const getDataDiagnosaPreoperatif = (props) => {
             const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
             const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
             result += `<tr>
-                                <td>${item?.diagnosa_desc}</td>
-                                <td>${sufferTypeText}</td>
+                                <td>${item?.diagnosa_name ?? item?.diagnosa_desc}</td>
                                 <td>${diagCatText}</td>
                             </tr>`
         })
@@ -1378,8 +1433,7 @@ const getDataDiagnosaPostoperatif = (props) => {
                 const sufferTypeText = sufferTypes[item?.suffer_type] || "Unknown";
                 const diagCatText = diagCategories[item?.diag_cat] || "Unknown";
                 result += `<tr>
-                                <td>${item?.diagnosa_desc}</td>
-                                <td>${sufferTypeText}</td>
+                                <td>${item?.diagnosa_name ?? item?.diagnosa_desc}</td>
                                 <td>${diagCatText}</td>
                             </tr>`
             })

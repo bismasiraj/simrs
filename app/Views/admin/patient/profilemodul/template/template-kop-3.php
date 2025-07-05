@@ -4,10 +4,10 @@
     </div>
     <div class="col-10 text-center">
         <h3><?= @$kop['name_of_org_unit'] ?></h3>
-        <h5><?= strtoupper(@$kop['kota']) ?></h5>
-        <b><?= @$kop['contact_address'] ?></b>
-        <br>
-        <b><?= 'Telp ' . @$kop['phone'] . ' Fax: ' . @$kop['fax'] ?></b>
+        <!-- <h3>Surakarta</h3> -->
+        <p class="mb-0"><?= @$kop['contact_address'] ?>, <?= @$kop['phone']; ?>, Fax: <?= @$kop['fax']; ?>,
+            <?= @$kop['kota']; ?></p>
+        <p><?= @$kop['sk']; ?></p>
     </div>
 </div>
 <div class="border border-2 border-dark mb-3"></div>

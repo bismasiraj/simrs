@@ -245,11 +245,9 @@ class Report extends \App\Controllers\BaseController
         $mulai = $this->request->getPost('mulai');
         $akhir = $this->request->getPost('akhir');
 
+        $employeusers = user()->employee_id ?? '%';
 
-
-        $kunjungan = $this->lowerKey($pv->getregisterpoli($mulai, $akhir, $status_pasien_id, '1', $clinic_id, '%'));
-
-
+        $kunjungan = $this->lowerKey($pv->getregisterpoli($mulai, $akhir, $status_pasien_id, '0', $clinic_id,  $employeusers));
 
         // colecting parameter
         $faskesModel = new InasisFaskesModel();
@@ -298,8 +296,6 @@ class Report extends \App\Controllers\BaseController
                         $kunjungan[$key]['follow_up'] = $followup[$key1]['followup'];
                     }
                 }
-
-
 
 
                 $row = array();
@@ -459,6 +455,14 @@ class Report extends \App\Controllers\BaseController
 
         $kunjungan = $this->lowerKey($pv->getregistermasuk($mulai, $akhir, $status_pasien_id, '1', $clinic_id));
 
+        $employeusers = user()->employee_id;
+
+        if (!empty($employeusers)) {
+            $kunjungan = array_filter($kunjungan, function ($row) use ($employeusers) {
+                return isset($row['employee_id']) && $row['employee_id'] == $employeusers;
+            });
+        }
+
 
 
         // colecting parameter
@@ -562,6 +566,7 @@ class Report extends \App\Controllers\BaseController
         return json_encode($json_data);
     }
 
+
     public function registerkeluar()
     {
         $giTipe = 7;
@@ -574,37 +579,44 @@ class Report extends \App\Controllers\BaseController
         $sessionData = ['selectedMenu' => $selectedMenu];
         $this->session->set($sessionData);
 
+        // return json_encode($selectedMenu);
+
         $img_time = new Time('now');
         $img_timestamp = $img_time->getTimestamp();
 
+        $userEmployee = user()->employee_id;
         $clinicModel = new ClinicModel();
-        $clinic = $this->lowerKey($clinicModel->where('stype_id', '3')->findAll());
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
 
         $statusPasien = new StatusPasienModel();
         $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
 
-
         $header = [];
         $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Nama</th>
-                        <th>No.CM</th>
-                        <th>Gender</th>
-                        <th>Umur</th>
-                        <th>Alamat</th>
-                        <th>Status Bayar</th>
-                        <th>No.Kartu</th>
-                        <th>No.SEP</th>
-                        <th>Bangsal</th>
-                        <th>Dokter</th>
-                        <th>Diagnosa</th>
-                        <th>Cara Keluar</th>
-                        <th>Asal Rujukan</th>
-                        <th>No.Rujukan</th>
-                        <th>Tgl Rujukan</th>
-                        <th>Diagnosa Awal</th>
-                    </tr>';
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Nama</th>
+                    <th>No.CM</th>
+                    <th>Gender</th>
+                    <th>Umur</th>
+                    <th>Alamat</th>
+                    <th>Status Bayar</th>
+                    <th>No.Kartu</th>
+                    <th>No.SEP</th>
+                    <th>Bangsal</th>
+                    <th>Dokter</th>
+                    <th>Diagnosa</th>
+                    <th>Cara Keluar</th>
+                    <th>Asal Rujukan</th>
+                    <th>No.Rujukan</th>
+                    <th>Tgl Rujukan</th>
+                    <th>Diagnosa Awal</th>
+                </tr>';
+
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -612,10 +624,13 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'clinic' => $clinic,
+            // 'dokter' => $dokter,
             'status' => $status,
-            'heder' => $header
+            'header' => $header
+            // 'visitStatus' => $visitStatus
         ]);
     }
+
 
     public function registerkeluarpost()
     {
@@ -633,9 +648,15 @@ class Report extends \App\Controllers\BaseController
         $akhir = $this->request->getPost('akhir');
 
 
-
         $kunjungan = $this->lowerKey($pv->getregisterkeluar($mulai, $akhir, $status_pasien_id, '1', $clinic_id));
 
+        $employeusers = user()->employee_id;
+
+        if (!empty($employeusers)) {
+            $kunjungan = array_filter($kunjungan, function ($row) use ($employeusers) {
+                return isset($row['employee_id']) && $row['employee_id'] == $employeusers;
+            });
+        }
 
 
         // colecting parameter
@@ -658,7 +679,7 @@ class Report extends \App\Controllers\BaseController
 
 
         // dd($kunjungan);
-        $dt_data     = array();
+        $dt_data   = array();
         if (!empty($kunjungan)) {
             foreach ($kunjungan as $key => $value) {
 
@@ -808,10 +829,7 @@ class Report extends \App\Controllers\BaseController
         $mulai = $this->request->getPost('mulai');
         $akhir = $this->request->getPost('akhir');
 
-
-
         $kunjungan = $this->lowerKey($pv->getregisterkeluar($mulai, $akhir, $status_pasien_id, '1', $clinic_id));
-
 
 
         // colecting parameter
@@ -970,6 +988,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function registermelahirkanpost()
     {
         if (!$this->request->is('post')) {
@@ -1022,6 +1041,7 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+
     public function rmkunjungan()
     {
         $giTipe = 7;
@@ -1089,6 +1109,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function rmkunjunganpost()
     {
         if (!$this->request->is('post')) {
@@ -1253,6 +1274,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function rmkunjunganranappost()
     {
         if (!$this->request->is('post')) {
@@ -1454,6 +1476,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function rmkunjunganranapstatuspost()
     {
         if (!$this->request->is('post')) {
@@ -1604,6 +1627,7 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+
     public function rmkunjunganklinik()
     {
         $giTipe = 7;
@@ -1648,6 +1672,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function rmkunjunganklinikpost()
     {
         if (!$this->request->is('post')) {
@@ -1786,6 +1811,7 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+
     public function rmkunjunganstatus()
     {
         $giTipe = 7;
@@ -1824,6 +1850,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function rmkunjunganstatuspost()
     {
         if (!$this->request->is('post')) {
@@ -2006,6 +2033,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function rmkunjunganugdpost()
     {
         if (!$this->request->is('post')) {
@@ -2058,6 +2086,7 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+
     public function rmtopxrajal()
     {
         $giTipe = 7;
@@ -2092,6 +2121,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header,
         ]);
     }
+
     public function rmtopxrajalpost()
     {
         if (!$this->request->is('post')) {
@@ -2148,6 +2178,7 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+
     public function rmtopxranap()
     {
         $giTipe = 7;
@@ -2182,6 +2213,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header,
         ]);
     }
+
     public function rmtopxranappost()
     {
         if (!$this->request->is('post')) {
@@ -2238,6 +2270,7 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+
     public function rmtopxugd()
     {
         $giTipe = 7;
@@ -2272,6 +2305,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function rmtopxugdpost()
     {
         if (!$this->request->is('post')) {
@@ -2328,6 +2362,7 @@ class Report extends \App\Controllers\BaseController
         );
         echo json_encode($json_data);
     }
+
     public function rmindexrajal()
     {
         $giTipe = 7;
@@ -4642,6 +4677,7 @@ class Report extends \App\Controllers\BaseController
                         <th style="padding-right: 20px;">Waktu Datang</th>
                         <th style="padding-right: 20px;">Waktu Keluar</th>
                         <th style="padding-right: 20px;">Nama</th>
+                        <th style="padding-right: 20px;">Kode Booking</th>
                         <th style="padding-right: 20px;">Poli</th>
                         <th style="padding-right: 20px;">No MR</th>
                         <th style="padding-right: 20px;">Status Pasien</th>
@@ -4680,7 +4716,7 @@ class Report extends \App\Controllers\BaseController
         $tipeantrol = $this->request->getPost('tipeantrol');
 
         $db = db_connect();
-        $sql = $db->query("select bb.trans_id, pv.DIANTAR_OLEH, NAME_OF_CLINIC,tipe,convert(char(8), mintime, 108) mintime,convert(char(8), maxtime, 108) maxtime, time1, time2, time3, time4, time5, time6, time7,
+        $sql = $db->query("select bb.trans_id, pv.DIANTAR_OLEH, NAME_OF_CLINIC,tipe,convert(char(8), dateadd(hour,7,mintime), 108) mintime,convert(char(8), dateadd(hour,7,maxtime), 108) maxtime, time1, time2, time3, time4, time5, time6, time7,
         sp.name_of_status_pasien,
         pv.no_registration,
         ea.fullname,
@@ -4786,7 +4822,8 @@ class Report extends \App\Controllers\BaseController
                 $row[] = substr($kunjungan[$key]['visit_date'], 0, 16);
                 $row[] = $kunjungan[$key]['mintime'];
                 $row[] = $kunjungan[$key]['maxtime'];
-                $row[] = $kunjungan[$key]['diantar_oleh'];
+                $row[] = $kunjungan[$key]['diantar_oleh'] . '<button onclick="getListTask(\'' . $kunjungan[$key]['trans_id'] . '\',\'' . $kunjungan[$key]['no_registration'] . '\')">getlist</button>';
+                $row[] = $kunjungan[$key]['trans_id'];
                 $row[] = $kunjungan[$key]['name_of_clinic'];
                 $row[] = $kunjungan[$key]['no_registration'];
                 $row[] = $kunjungan[$key]['name_of_status_pasien'];
@@ -4835,6 +4872,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = '';
             $row[] = '';
             $row[] = '';
+            $row[] = '';
+            $row[] = '';
             $row[] = '<h4>Rata-rata Waktu: </h4>';
             $row[] = "<h4>" . date('H:i:s', (int)$avg12) . "</h4>";
             $row[] = "<h4>" . date('H:i:s', (int)$avg23) . "</h4>";
@@ -4849,6 +4888,7 @@ class Report extends \App\Controllers\BaseController
             $row[] = '';
             $row[] = '<h4>Waktu Tunggu Total: </h4>';
             $row[] = "<h4>" . date('H:i:s', (int)$avgall) . "</h4>";
+            $row[] = '';
             $row[] = '';
             $row[] = '';
             $row[] = '';
@@ -4881,12 +4921,14 @@ class Report extends \App\Controllers\BaseController
             $row[] = '';
             $row[] = '';
             $row[] = '';
+            $row[] = '';
             $dt_data[] = $row;
 
             $row = [];
             $row[] = '';
             $row[] = '<h4>Data Lengkap: </h4>';
             $row[] = "<h4>" . $complete . "</h4>";
+            $row[] = '';
             $row[] = '';
             $row[] = '';
             $row[] = '';
@@ -4919,6 +4961,7 @@ class Report extends \App\Controllers\BaseController
             $row[] = '';
             $row[] = '';
             $row[] = '';
+            $row[] = '';
             $dt_data[] = $row;
 
             $row = [];
@@ -4938,13 +4981,157 @@ class Report extends \App\Controllers\BaseController
             $row[] = '';
             $row[] = '';
             $row[] = '';
+            $row[] = '';
             $dt_data[] = $row;
         }
         $json_data = array(
-            "body"            => $dt_data,
+            "body" => $dt_data,
+            "data" => $kunjungan
         );
         echo json_encode($json_data);
     }
+
+
+    public function foantroltimestamp()
+    {
+        $giTipe = 7;
+        $title = 'Laporan Antrian Online by Timestamp';
+
+        $orgunit = $this->getOrgCode();
+
+        $selectedMenu = ['fin'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_timestamp = $this->getImgTime();
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th style="padding-right: 20px;">Tanggal Kunjung</th>
+                        <th style="padding-right: 20px;">Waktu Datang</th>
+                        <th style="padding-right: 20px;">Waktu Keluar</th>
+                        <th style="padding-right: 20px;">Nama</th>
+                        <th style="padding-right: 20px;">Kode Booking</th>
+                        <th style="padding-right: 20px;">Poli</th>
+                        <th style="padding-right: 20px;">No MR</th>
+                        <th style="padding-right: 20px;">Status Pasien</th>
+                        <th style="padding-right: 20px;">DPJP</th>
+                        <th style="padding-right: 20px;">Tipe Akhir</th>
+                        <th style="padding-right: 20px;">Task ID 1</th>
+                        <th style="padding-right: 20px;">Task ID 2</th>
+                        <th style="padding-right: 20px;">Task ID 3</th>
+                        <th style="padding-right: 20px;">Task ID 4</th>
+                        <th style="padding-right: 20px;">Task ID 5</th>
+                        <th style="padding-right: 20px;">Task ID 6</th>
+                        <th style="padding-right: 20px;">Task ID 7</th>
+                    </tr>';
+
+
+        return view('admin\report\register', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'tipeantrol' => '1',
+            'header' => $header,
+        ]);
+    }
+    public function foantroltimestamppost()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+        $model = new TreatmentBillModel();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $tipeantrol = $this->request->getPost('tipeantrol');
+
+        $db = db_connect();
+        $sql = $db->query("select bb.trans_id, pv.DIANTAR_OLEH, NAME_OF_CLINIC,tipe,convert(char(8), mintime, 108) mintime,convert(char(8), maxtime, 108) maxtime, time1, time2, time3, time4, time5, time6, time7,
+        sp.name_of_status_pasien,
+        pv.no_registration,
+        ea.fullname,
+        pv.visit_date,
+        convert(varchar(5),DateDiff(s, time1, time2)/3600)+':'+convert(varchar(5),DateDiff(s, time1, time2)%3600/60)+':'+convert(varchar(5),(DateDiff(s, time1, time2)%60)) time12,
+        convert(varchar(5),DateDiff(s, time2, time3)/3600)+':'+convert(varchar(5),DateDiff(s, time2, time3)%3600/60)+':'+convert(varchar(5),(DateDiff(s, time2, time3)%60)) time23,
+        convert(varchar(5),DateDiff(s, time3, time4)/3600)+':'+convert(varchar(5),DateDiff(s, time3, time4)%3600/60)+':'+convert(varchar(5),(DateDiff(s, time3, time4)%60)) time34,
+        convert(varchar(5),DateDiff(s, time4, time5)/3600)+':'+convert(varchar(5),DateDiff(s, time4, time5)%3600/60)+':'+convert(varchar(5),(DateDiff(s, time4, time5)%60)) time45,
+        convert(varchar(5),DateDiff(s, time5, time6)/3600)+':'+convert(varchar(5),DateDiff(s, time5, time6)%3600/60)+':'+convert(varchar(5),(DateDiff(s, time5, time6)%60)) time56,
+        convert(varchar(5),DateDiff(s, time6, time7)/3600)+':'+convert(varchar(5),DateDiff(s, time6, time7)%3600/60)+':'+convert(varchar(5),(DateDiff(s, time6, time7)%60)) time67
+        from
+        (select trans_id,no_registration,max(tipe) tipe,max(case when tipe = '21' then dateadd(hour,7,waktu) else null end) as mintime,
+        max(dateadd(hour,7,waktu)) maxtime,
+        max(case when tipe = '21' then dateadd(hour,7,waktu) else null end) as time1,
+        max(case when tipe = '22' then dateadd(hour,7,waktu) else null end) as time2,
+        max(case when tipe = '23' then dateadd(hour,7,waktu) else null end) as time3,
+        max(case when tipe = '24' then dateadd(hour,7,waktu) else null end) as time4,
+        max(case when tipe = '25' then dateadd(hour,7,waktu) else null end) as time5,
+        max(case when tipe = '26' then dateadd(hour,7,waktu) else null end) as time6,
+        max(case when tipe = '27' then dateadd(hour,7,waktu) else null end) as time7
+        from BATCHING_BRIDGING
+        where MODIFIED_DATE between ('$mulai') and DATEADD(day,1,('$akhir'))
+        group by trans_id, NO_REGISTRATION) bb 
+        inner join PASIEN_VISITATION pv on
+        pv.trans_id = bb.TRANS_ID and pv.CLINIC_ID_FROM = 'P000'
+        inner join status_pasien sp on pv.status_pasien_id = sp.status_pasien_id
+        inner join clinic c on c.CLINIC_ID = pv.CLINIC_ID
+        inner join employee_all ea on pv.employee_id = ea.employee_id
+        where tipe like '$tipeantrol'
+        and tipe like '2%'
+        and visit_date between ('$mulai') and DATEADD(day,1,('$akhir'))");
+
+
+        $kunjungan = $this->lowerKey($sql->getResultArray());
+
+        // return json_encode(($kunjungan[56]['time6']) == '');
+
+        $dt_data     = array();
+        $i = 0;
+        $sum12 = [];
+        $sum23 = [];
+        $sum34 = [];
+        $sum45 = [];
+        $sum56 = [];
+        $sum67 = [];
+        $complete = 0;
+        if (!empty($kunjungan)) {
+            foreach ($kunjungan as $key => $value) {
+
+                $i++;
+                $row = [];
+                $row[] = $i;
+                $row[] = substr($kunjungan[$key]['visit_date'], 0, 16);
+                $row[] = $kunjungan[$key]['mintime'];
+                $row[] = $kunjungan[$key]['maxtime'];
+                $row[] = $kunjungan[$key]['diantar_oleh'] . '<button onclick="getListTask(\'' . $kunjungan[$key]['trans_id'] . '\',\'' . $kunjungan[$key]['no_registration'] . '\')">getlist</button>';
+                $row[] = $kunjungan[$key]['trans_id'];
+                $row[] = $kunjungan[$key]['name_of_clinic'];
+                $row[] = $kunjungan[$key]['no_registration'];
+                $row[] = $kunjungan[$key]['name_of_status_pasien'];
+                $row[] = $kunjungan[$key]['fullname'];
+                $row[] = $kunjungan[$key]['tipe'];
+                $row[] = $kunjungan[$key]['time1'];
+                $row[] = $kunjungan[$key]['time2'];
+                $row[] = $kunjungan[$key]['time3'];
+                $row[] = $kunjungan[$key]['time4'];
+                $row[] = $kunjungan[$key]['time5'];
+                $row[] = $kunjungan[$key]['time6'];
+                $row[] = $kunjungan[$key]['time7'];
+
+                $dt_data[] = $row;
+            }
+        }
+        $json_data = array(
+            "body" => $dt_data,
+            "data" => $kunjungan
+        );
+        echo json_encode($json_data);
+    }
+
     public function aptrekapnota()
     {
         $giTipe = 7;
@@ -4996,6 +5183,7 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+
     public function aptrekapnotapost()
     {
         if (!$this->request->is('post')) {
@@ -10330,6 +10518,6547 @@ class Report extends \App\Controllers\BaseController
         $json_data = array(
             "body" => $dt_data
         );
+        echo json_encode($json_data);
+    }
+
+    // Dasboard poli
+    // =============================================================================
+
+    public function pjbList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER PENJAMIN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjamin</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                        <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pjbListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            SELECT 
+                    ISNULL(p.payertype, 'PENJAMIN LAIN-LAIN') AS PAYERTYPE,
+                    COUNT(visit_id) AS total, 
+                    SUM(CASE WHEN class_room_id IS NULL and isattended = 1 THEN 1 else 0 END) AS isrj, 
+                    SUM(CASE WHEN class_room_id IS NOT NULL and isattended = 1  THEN 1  else 0 END) AS isranap, 
+                    SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                    SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi 
+                FROM pasien_visitation
+                LEFT JOIN payor_type p ON pasien_visitation.status_pasien_id IN 
+                    (SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type)
+                WHERE 
+                    visit_date BETWEEN @mulai AND @akhir  
+                    AND clinic_id IN (SELECT clinic_id FROM clinic WHERE STYPE_ID = 1)
+                GROUP BY 
+                    ISNULL(p.payertype, 'PENJAMIN LAIN-LAIN')
+                ORDER BY 
+                 PAYERTYPE DESC;
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'isrj' => 0,
+                'isranap' => 0,
+                'isrj_isranap' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['payertype'];
+                $row[] = $rows['total'];
+                $row[] = $rows['isrj'];
+                $row[] = $rows['isranap'];
+                $row[] = $rows['isrj'] + $rows['isranap'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = 0;
+                $row[] = $rows['belum_konfirmasi'];
+
+                $totalKeseluruhan['total'] += (int)$rows['total'];
+                $totalKeseluruhan['isrj'] += (int)$rows['isrj'];
+                $totalKeseluruhan['isranap'] += (int)$rows['isranap'];
+                $totalKeseluruhan['isrj_isranap'] += (int)$rows['isrj'] + (int)$rows['isranap'];
+                $totalKeseluruhan['belum_dilayani'] += (int)$rows['belum_dilayani'];
+                $totalKeseluruhan['batal'] += 0;
+                $totalKeseluruhan['belum_konfirmasi'] += (int)$rows['belum_konfirmasi'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['isrj'],
+                $totalKeseluruhan['isranap'],
+                $totalKeseluruhan['isrj_isranap'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function ppkList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER KLINIK';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Poliklinik</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" colspan="2">Rujukan</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                       <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                        <th class="p-1">Langsung</th>
+                        <th class="p-1">Konsultan</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppkListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            
+            SELECT 
+                        c.name_of_clinic,
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL and isattended = 1 THEN 1 else 0 END) AS isrj, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL and isattended = 1  THEN 1  else 0 END) AS isranap, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN class_room_id IS NULL  AND CLINIC_ID_FROM = 'P000' and isattended = 1 THEN 1 ELSE 0 END) AS rjlive, 
+                         SUM(CASE WHEN class_room_id IS NULL AND CLINIC_ID_FROM <> 'P000' and isattended = 1 THEN 1 ELSE 0 END) AS rjkonsul, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi 
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN payor_type p ON pasien_visitation.status_pasien_id IN 
+                        (SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type)
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND c.clinic_id IN (SELECT clinic_id FROM clinic WHERE STYPE_ID = 1)
+                    GROUP BY 
+                        c.name_of_clinic
+                    ORDER BY
+                        c.name_of_clinic ASC
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'isrj' => 0,
+                'isranap' => 0,
+                'isrj_isranap' => 0,
+                'belum_dilayani' => 0,
+                'rjlive' => 0,
+                'rjkonsul' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['name_of_clinic'];
+                $row[] = $rows['total'];
+                $row[] = $rows['isrj'];
+                $row[] = $rows['isranap'];
+                $row[] = $rows['isrj'] + $rows['isranap'];
+                $row[] = $rows['rjlive'];
+                $row[] = $rows['rjkonsul'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = 0;
+                $row[] = $rows['belum_konfirmasi'];
+
+                $totalKeseluruhan['total'] += (int)$rows['total'];
+                $totalKeseluruhan['isrj'] += (int)$rows['isrj'];
+                $totalKeseluruhan['isranap'] += (int)$rows['isranap'];
+                $totalKeseluruhan['isrj_isranap'] += (int)$rows['isrj'] + (int)$rows['isranap'];
+                $totalKeseluruhan['belum_dilayani'] += (int)$rows['belum_dilayani'];
+                $totalKeseluruhan['rjlive'] += (int)$rows['rjlive'];
+                $totalKeseluruhan['rjkonsul'] += (int)$rows['rjkonsul'];
+                $totalKeseluruhan['batal'] += 0;
+                $totalKeseluruhan['belum_konfirmasi'] += (int)$rows['belum_konfirmasi'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['isrj'],
+                $totalKeseluruhan['isranap'],
+                $totalKeseluruhan['isrj_isranap'],
+                $totalKeseluruhan['rjlive'],
+                $totalKeseluruhan['rjkonsul'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function pkbList()
+    {
+        $giTipe = 7;
+        $title = 'DATA PENGUNJUNG RS PER klinik';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  >Poliklinik</th>
+                        <th class="p-1" >Umum</th>
+                        <th class="p-1" >BPJS</th>
+                        <th class="p-1" >Asuransi</th>
+                        <th class="p-1" >Jumlah</th>
+                    </tr>
+                   
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pkbListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            SELECT 
+                C.NAME_OF_CLINIC,
+                COUNT(visit_id) AS total_pasien,
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) = 2 THEN 1 ELSE 0 END) AS bpjs, 
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) = 1 THEN 1 ELSE 0 END) AS umum, 
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) = 4 THEN 1 ELSE 0 END) AS asuransi,
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) NOT IN (1,2,4) THEN 1 ELSE 0 END) AS lainnya
+            FROM pasien_visitation 
+            LEFT JOIN CLINIC C ON C.CLINIC_ID = pasien_visitation.CLINIC_ID
+            LEFT JOIN payor_type p ON pasien_visitation.status_pasien_id IN 
+                (SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type)
+            WHERE 
+                visit_date BETWEEN @mulai AND @akhir
+                AND C.STYPE_ID IN (1,10)
+            GROUP BY 
+                C.NAME_OF_CLINIC
+            ORDER BY 
+                C.NAME_OF_CLINIC ASC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'umum' => 0,
+                'bpjs' => 0,
+                'asuransi' => 0,
+                'total' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['name_of_clinic'];
+                $row[] = $rows['umum'];
+                $row[] = $rows['bpjs'];
+                $row[] = $rows['asuransi'];
+                $row[] = $rows['umum'] + $rows['bpjs'] + $rows['asuransi'];
+
+                $totalKeseluruhan['umum'] += (int)$rows['umum'];
+                $totalKeseluruhan['bpjs'] += (int)$rows['bpjs'];
+                $totalKeseluruhan['asuransi'] += (int)$rows['asuransi'];
+                $totalKeseluruhan['total'] += (int)$rows['umum'] + (int)$rows['bpjs'] + (int)$rows['asuransi'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['umum'],
+                $totalKeseluruhan['bpjs'],
+                $totalKeseluruhan['asuransi'],
+                $totalKeseluruhan['total']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function ppdList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER KLINIK PER DOKTER';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Poliklinik-Dokter</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                        <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+            WITH ClinicData AS (
+                    SELECT 
+                        c.name_of_clinic,
+                        '' AS fullname, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        1 AS is_clinic_header
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND c.clinic_id IN (SELECT clinic_id FROM clinic WHERE STYPE_ID = 1)
+                        AND stype_id in (1,10)
+                    GROUP BY c.name_of_clinic
+                ),
+                DoctorData AS (
+                    SELECT 
+                        c.name_of_clinic,
+                        COALESCE(ea.fullname, '-') AS fullname, -- Nama dokter
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        0 AS is_clinic_header
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND c.clinic_id IN (SELECT clinic_id FROM clinic WHERE STYPE_ID = 1)
+                        AND stype_id in (1,10)
+                    GROUP BY c.name_of_clinic, ea.fullname
+                )
+
+                SELECT * FROM (
+                    SELECT * FROM ClinicData
+                    UNION ALL
+                    SELECT * FROM DoctorData
+                ) AS CombinedData
+                ORDER BY name_of_clinic ASC, is_clinic_header DESC, fullname ASC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'pulang' => 0,
+                'ranap' => 0,
+                'terlayani' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = !empty($rows['fullname'])
+                    ? htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8')
+                    : '<b><center>' . htmlspecialchars($rows['name_of_clinic'], ENT_QUOTES, 'UTF-8') . '</center></b>';
+
+                $row[] = $rows['total'];
+                $row[] = $rows['pulang'];
+                $row[] = $rows['ranap'];
+                $row[] = $rows['terlayani'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = $rows['batal'];
+                $row[] = $rows['belum_konfirmasi'];
+
+                if ((int)$rows['is_clinic_header'] === 1) {
+                    $totalKeseluruhan['total'] += (int)$rows['total'];
+                    $totalKeseluruhan['pulang'] += (int)$rows['pulang'];
+                    $totalKeseluruhan['ranap'] += (int)$rows['ranap'];
+                    $totalKeseluruhan['terlayani'] += (int)$rows['terlayani'];
+                    $totalKeseluruhan['belum_dilayani'] += (int)$rows['belum_dilayani'];
+                    $totalKeseluruhan['batal'] += (int)$rows['batal'];
+                    $totalKeseluruhan['belum_konfirmasi'] += (int)$rows['belum_konfirmasi'];
+                }
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['pulang'],
+                $totalKeseluruhan['ranap'],
+                $totalKeseluruhan['terlayani'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function dppList()
+    {
+        $giTipe = 7;
+        $title = 'DATA PASIEN DOKTER PER PENJAMIN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjaminan</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                     <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function dppListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+            WITH FullnameData AS (
+                    SELECT 
+                        ea.fullname, 
+                        '' AS payertype, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        1 AS is_fullname_header
+                    FROM pasien_visitation
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND ea.fullname IS NOT NULL 
+                        and clinic_id in (select clinic_id from clinic where stype_id in (1,10) )
+                    GROUP BY ea.fullname
+                ),
+                PayertypeData AS (
+                    SELECT 
+                        ea.fullname, -- Nama dokter
+                        COALESCE(pt.payertype, '-') AS payertype, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        0 AS is_fullname_header
+                    FROM pasien_visitation
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    LEFT JOIN payor_type pt ON pasien_visitation.status_pasien_id IN 
+                        (SELECT status_pasien_id FROM status_pasien WHERE payor_type = pt.payor_type)
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND ea.fullname IS NOT NULL 
+                        and clinic_id in (select clinic_id from clinic where stype_id in (1,10) )
+                    GROUP BY ea.fullname, pt.payertype
+                )
+
+                SELECT * FROM (
+                    SELECT * FROM FullnameData
+                    UNION ALL
+                    SELECT * FROM PayertypeData
+                ) AS CombinedData
+                ORDER BY fullname ASC, is_fullname_header DESC, payertype ASC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'pulang' => 0,
+                'ranap' => 0,
+                'terlayani' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = !empty($rows['payertype'])
+                    ? htmlspecialchars($rows['payertype'], ENT_QUOTES, 'UTF-8')
+                    : '<b><center>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</center></b>';
+
+                $row[] = $rows['total'];
+                $row[] = $rows['pulang'];
+                $row[] = $rows['ranap'];
+                $row[] = $rows['terlayani'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = $rows['batal'];
+                $row[] = $rows['belum_konfirmasi'];
+
+                if ((int)$rows['is_fullname_header'] === 1) {
+                    $totalKeseluruhan['total'] += (int)$rows['total'];
+                    $totalKeseluruhan['pulang'] += (int)$rows['pulang'];
+                    $totalKeseluruhan['ranap'] += (int)$rows['ranap'];
+                    $totalKeseluruhan['terlayani'] += (int)$rows['terlayani'];
+                    $totalKeseluruhan['belum_dilayani'] += (int)$rows['belum_dilayani'];
+                    $totalKeseluruhan['batal'] += (int)$rows['batal'];
+                    $totalKeseluruhan['belum_konfirmasi'] += (int)$rows['belum_konfirmasi'];
+                }
+
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['pulang'],
+                $totalKeseluruhan['ranap'],
+                $totalKeseluruhan['terlayani'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function rpdList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER KLINIK PER DOKTER DAN CARA BAYAR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjaminan</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                       <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function rpdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+           WITH ClinicData AS (
+                    -- Data utama per Klinik
+                    SELECT 
+                        c.name_of_clinic AS clinic_name,
+                        NULL AS fullname,
+                        NULL AS payertype,
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        0 AS urutan
+                    FROM pasien_visitation
+
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    WHERE visit_date BETWEEN @mulai AND @akhir  
+                        AND c.STYPE_ID = 1
+                    GROUP BY c.name_of_clinic
+                ),
+                FullnameData AS (
+                    -- Data fullname per Klinik
+                    SELECT 
+                        c.name_of_clinic AS clinic_name,
+                        COALESCE(ea.fullname, '-') AS fullname,
+                        NULL AS payertype,
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        1 AS urutan
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = pasien_visitation.EMPLOYEE_ID
+                    WHERE visit_date BETWEEN @mulai AND @akhir  
+                        AND c.STYPE_ID = 1
+                    GROUP BY c.name_of_clinic, ea.fullname
+                    HAVING COUNT(visit_id) > 0 
+                ),
+                PayertypeData AS (
+                    -- Data payertype per Fullname
+                    SELECT 
+                        c.name_of_clinic AS clinic_name,
+                        COALESCE(ea.fullname, '-') AS fullname,
+                        COALESCE(pt.payertype, 'TANPA PAYERTYPE') AS payertype, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        2 AS urutan
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = pasien_visitation.EMPLOYEE_ID
+                    LEFT JOIN status_pasien sp ON pasien_visitation.status_pasien_id = sp.status_pasien_id
+                    LEFT JOIN payor_type pt ON sp.payor_type = pt.payor_type
+                    WHERE visit_date BETWEEN @mulai AND @akhir  
+                        AND c.STYPE_ID = 1
+                    GROUP BY c.name_of_clinic, ea.fullname, pt.payertype
+                    HAVING COUNT(visit_id) > 0 
+                )
+
+                SELECT 
+                    clinic_name,
+                    fullname,
+                    payertype,
+                    total, pulang, ranap, terlayani, belum_dilayani, belum_konfirmasi, batal,urutan
+                FROM (
+                    SELECT * FROM ClinicData
+                    UNION ALL
+                    SELECT * FROM FullnameData
+                    UNION ALL
+                    SELECT * FROM PayertypeData
+                ) AS CombinedData
+                ORDER BY clinic_name ASC, fullname ASC, urutan ASC;
+
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total_row = [
+                'total' => 0,
+                'pulang' => 0,
+                'ranap' => 0,
+                'terlayani' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = !empty($rows['payertype'])
+                    ? htmlspecialchars($rows['payertype'], ENT_QUOTES, 'UTF-8')
+                    : (!empty($rows['fullname'])
+                        ? (
+                            $rows['urutan'] == 2
+                            ? '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>'
+                            : ($rows['urutan'] == 1
+                                ? '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>'
+                                : '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>')
+                        )
+                        : '<b><center>' . htmlspecialchars($rows['clinic_name'], ENT_QUOTES, 'UTF-8') . '</center></b>'
+                    );
+
+                $row[] = $rows['total'];
+                $row[] = $rows['pulang'];
+                $row[] = $rows['ranap'];
+                $row[] = $rows['terlayani'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = $rows['batal'];
+                $row[] = $rows['belum_konfirmasi'];
+
+                if ((int)$rows['urutan'] === 0) {
+                    $total_row['total'] += $rows['total'];
+                    $total_row['pulang'] += $rows['pulang'];
+                    $total_row['ranap'] += $rows['ranap'];
+                    $total_row['terlayani'] += $rows['terlayani'];
+                    $total_row['belum_dilayani'] += $rows['belum_dilayani'];
+                    $total_row['batal'] += $rows['batal'];
+                    $total_row['belum_konfirmasi'] += $rows['belum_konfirmasi'];
+                }
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>Total</center></b>',
+                $total_row['total'],
+                $total_row['pulang'],
+                $total_row['ranap'],
+                $total_row['terlayani'],
+                $total_row['belum_dilayani'],
+                $total_row['batal'],
+                $total_row['belum_konfirmasi']
+            ];
+        }
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+
+    public function rvpList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER KLINIK PER DOKTER DAN CARA BAYAR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjaminan</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                        <th class="p-1">Pulang</th>
+                        <th class="p-1">Ranap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+
+    // Dasboard Rawat Inap
+    // =============================================================================
+
+    public function pasienCaraBayarInapList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PULANG PER PENJAMIN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">Penjamin</th>
+                        <th class="p-1">Jumlah</th>
+                        <th class="p-1">Sembuh</th>
+                        <th class="p-1">Dirujuk</th>
+                        <th class="p-1">Meninggal < 48 Jam</th>
+                        <th class="p-1">Meninggal > 48 Jam</th>
+                        <th class="p-1">APS</th>
+                        <th class="p-1">Lari</th>
+                        <th class="p-1">Rawat Jalan</th>
+               
+                    </tr>
+                    
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pasienCaraBayarInapListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            
+           SELECT 
+                    SUM(CASE WHEN pv.keluar_id = 1 THEN 1 ELSE 0 END) AS sembuh,
+                    SUM(CASE WHEN pv.keluar_id = 2 THEN 1 ELSE 0 END) AS rujuk,
+                    SUM(CASE WHEN pv.keluar_id = 3 THEN 1 ELSE 0 END) AS meninggal3,
+                    SUM(CASE WHEN pv.keluar_id = 4 THEN 1 ELSE 0 END) AS meninggal4,
+                    SUM(CASE WHEN pv.keluar_id = 5 THEN 1 ELSE 0 END) AS aps,
+                    SUM(CASE WHEN pv.keluar_id = 6 THEN 1 ELSE 0 END) AS lari,
+                    SUM(CASE WHEN pv.keluar_id = 7 THEN 1 ELSE 0 END) AS rj,
+                    SUM(CASE WHEN pv.keluar_id = 35 THEN 1 ELSE 0 END) AS prsadmin,
+                    p.payertype,
+                    CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                    COUNT(pv.visit_id) AS jml
+                FROM pv
+                LEFT JOIN clinic c 
+                    ON pv.class_room_id IN (
+                        SELECT class_room_id FROM class_room cr WHERE cr.CLINIC_ID = c.clinic_id
+                    )
+                LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = pv.EMPLOYEE_inap
+                LEFT JOIN payor_type p 
+                    ON pv.status_pasien_id IN (
+                        SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type
+                    )
+                WHERE 
+                    pv.EXIT_DATE >= DATEADD(HOUR, 0, @mulai) 
+                    AND pv.EXIT_DATE < DATEADD(HOUR, 24, @akhir)
+                    AND c.stype_id IN (3)
+                    AND pv.keluar_id NOT IN (0, 32, 33, 34)
+                    AND pv.class_room_id IS NOT NULL
+                    AND pv.keluar_id IS NOT NULL
+                    AND pv.bed_id IS NOT NULL
+                GROUP BY 
+                    p.payertype,
+                    CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END
+                ORDER BY 
+                    p.payertype DESC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total = [
+                'jml' => 0,
+                'sembuh' => 0,
+                'rujuk' => 0,
+                'meninggal3' => 0,
+                'meninggal4' => 0,
+                'aps' => 0,
+                'lari' => 0,
+                'rj' => 0,
+                'prsadmin' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['payertype'];
+                $row[] = $rows['jml'];
+                $row[] = $rows['sembuh'];
+                $row[] = $rows['rujuk'];
+                $row[] = $rows['meninggal3'];
+                $row[] = $rows['meninggal4'];
+                $row[] = $rows['aps'];
+                $row[] = $rows['lari'];
+                $row[] = $rows['rj'];
+                $row[] = $rows['prsadmin'];
+
+                $total['jml'] += (int)$rows['jml'];
+                $total['sembuh'] += (int)$rows['sembuh'];
+                $total['rujuk'] += (int)$rows['rujuk'];
+                $total['meninggal3'] += (int)$rows['meninggal3'];
+                $total['meninggal4'] += (int)$rows['meninggal4'];
+                $total['aps'] += (int)$rows['aps'];
+                $total['lari'] += (int)$rows['lari'];
+                $total['rj'] += (int)$rows['rj'];
+                $total['prsadmin'] += (int)$rows['prsadmin'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $total['jml'],
+                $total['sembuh'],
+                $total['rujuk'],
+                $total['meninggal3'],
+                $total['meninggal4'],
+                $total['aps'],
+                $total['lari'],
+                $total['rj'],
+                $total['prsadmin']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function pperBangsalInapList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PULANG PER BANGSAL';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">Bangsal</th>
+                        <th class="p-1">Jumlah</th>
+                        <th class="p-1">Sembuh</th>
+                        <th class="p-1">Dirujuk</th>
+                        <th class="p-1">Meninggal < 48 Jam</th>
+                        <th class="p-1">Meninggal > 48 Jam</th>
+                        <th class="p-1">APS</th>
+                        <th class="p-1">Lari</th>
+                        <th class="p-1">Rawat Jalan</th>
+               
+                    </tr>
+                
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pperBangsalInapListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            
+          SELECT 
+                    SUM(CASE WHEN pv.keluar_id = 1 THEN 1 ELSE 0 END) AS sembuh,
+                    SUM(CASE WHEN pv.keluar_id = 2 THEN 1 ELSE 0 END) AS rujuk,
+                    SUM(CASE WHEN pv.keluar_id = 3 THEN 1 ELSE 0 END) AS meninggal3,
+                    SUM(CASE WHEN pv.keluar_id = 4 THEN 1 ELSE 0 END) AS meninggal4,
+                    SUM(CASE WHEN pv.keluar_id = 5 THEN 1 ELSE 0 END) AS aps,
+                    SUM(CASE WHEN pv.keluar_id = 6 THEN 1 ELSE 0 END) AS lari,
+                    SUM(CASE WHEN pv.keluar_id = 7 THEN 1 ELSE 0 END) AS rj,
+                    SUM(CASE WHEN pv.keluar_id = 35 THEN 1 ELSE 0 END) AS prsadmin,
+                    c.name_of_clinic,
+                    CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                    COUNT(pv.visit_id) AS jml
+                FROM pv
+                LEFT JOIN clinic c 
+                    ON pv.class_room_id IN (
+                        SELECT class_room_id FROM class_room cr WHERE cr.CLINIC_ID = c.clinic_id
+                    )
+                LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = pv.EMPLOYEE_inap
+                LEFT JOIN payor_type p 
+                    ON pv.status_pasien_id IN (
+                        SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type
+                    )
+                WHERE 
+                    pv.EXIT_DATE >= DATEADD(HOUR, 0, @mulai) 
+                    AND pv.EXIT_DATE < DATEADD(HOUR, 24, @akhir)
+                    AND c.stype_id IN (3)
+                    AND pv.keluar_id NOT IN (0, 32, 33, 34)
+                    AND pv.class_room_id IS NOT NULL
+                    AND pv.keluar_id IS NOT NULL
+                    AND pv.bed_id IS NOT NULL
+                GROUP BY 
+                    c.name_of_clinic,
+                    CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END
+                ORDER BY 
+                c.name_of_clinic DESC;
+
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total = [
+                'jml' => 0,
+                'sembuh' => 0,
+                'rujuk' => 0,
+                'meninggal3' => 0,
+                'meninggal4' => 0,
+                'aps' => 0,
+                'lari' => 0,
+                'rj' => 0,
+                'prsadmin' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['name_of_clinic'];
+                $row[] = $rows['jml'];
+                $row[] = $rows['sembuh'];
+                $row[] = $rows['rujuk'];
+                $row[] = $rows['meninggal3'];
+                $row[] = $rows['meninggal4'];
+                $row[] = $rows['aps'];
+                $row[] = $rows['lari'];
+                $row[] = $rows['rj'];
+                $row[] = $rows['prsadmin'];
+
+                $total['jml'] += (int)$rows['jml'];
+                $total['sembuh'] += (int)$rows['sembuh'];
+                $total['rujuk'] += (int)$rows['rujuk'];
+                $total['meninggal3'] += (int)$rows['meninggal3'];
+                $total['meninggal4'] += (int)$rows['meninggal4'];
+                $total['aps'] += (int)$rows['aps'];
+                $total['lari'] += (int)$rows['lari'];
+                $total['rj'] += (int)$rows['rj'];
+                $total['prsadmin'] += (int)$rows['prsadmin'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $total['jml'],
+                $total['sembuh'],
+                $total['rujuk'],
+                $total['meninggal3'],
+                $total['meninggal4'],
+                $total['aps'],
+                $total['lari'],
+                $total['rj'],
+                $total['prsadmin']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function bangsalpayInapList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PULANG PER BANGSAL PER PENJAMIN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">Bangsal</th>
+                        <th class="p-1">Jumlah</th>
+                        <th class="p-1">Sembuh</th>
+                        <th class="p-1">Dirujuk</th>
+                        <th class="p-1">Meninggal < 48 Jam</th>
+                        <th class="p-1">Meninggal > 48 Jam</th>
+                        <th class="p-1">APS</th>
+                        <th class="p-1">Lari</th>
+                        <th class="p-1">Rawat Jalan</th>
+               
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function bangsalpayInapListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+           WITH KlinikGroup AS (
+                    SELECT 
+                        c.name_of_clinic,
+                        p.payertype,
+                        CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                        SUM(CASE WHEN pv.keluar_id = 1 THEN 1 ELSE 0 END) AS sembuh,
+                        SUM(CASE WHEN pv.keluar_id = 2 THEN 1 ELSE 0 END) AS rujuk,
+                        SUM(CASE WHEN pv.keluar_id = 3 THEN 1 ELSE 0 END) AS meninggal3,
+                        SUM(CASE WHEN pv.keluar_id = 4 THEN 1 ELSE 0 END) AS meninggal4,
+                        SUM(CASE WHEN pv.keluar_id = 5 THEN 1 ELSE 0 END) AS aps,
+                        SUM(CASE WHEN pv.keluar_id = 6 THEN 1 ELSE 0 END) AS lari,
+                        SUM(CASE WHEN pv.keluar_id = 7 THEN 1 ELSE 0 END) AS rj,
+                        SUM(CASE WHEN pv.keluar_id = 35 THEN 1 ELSE 0 END) AS prsadmin,
+                        COUNT(pv.visit_id) AS jml
+                    FROM pv
+                    LEFT JOIN clinic c 
+                        ON pv.class_room_id IN (
+                            SELECT class_room_id FROM class_room cr WHERE cr.CLINIC_ID = c.clinic_id
+                        )
+                    LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = pv.EMPLOYEE_inap
+                    LEFT JOIN payor_type p 
+                        ON pv.status_pasien_id IN (
+                            SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type
+                        )
+                    WHERE 
+                        pv.EXIT_DATE >= DATEADD(HOUR, 0, @mulai) 
+                        AND pv.EXIT_DATE < DATEADD(HOUR, 24, @akhir)
+                        AND c.stype_id IN (3)
+                        AND pv.keluar_id NOT IN (0, 32, 33, 34)
+                        AND pv.class_room_id IS NOT NULL
+                        AND pv.keluar_id IS NOT NULL
+                        AND pv.bed_id IS NOT NULL
+                    GROUP BY 
+                        c.name_of_clinic, p.payertype, CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END
+                )
+
+                SELECT 
+                    1 AS nomor,
+                    name_of_clinic,
+                    NULL AS payertype,
+                    isrj,
+                    SUM(sembuh) AS sembuh,
+                    SUM(rujuk) AS rujuk,
+                    SUM(meninggal3) AS meninggal3,
+                    SUM(meninggal4) AS meninggal4,
+                    SUM(aps) AS aps,
+                    SUM(lari) AS lari,
+                    SUM(rj) AS rj,
+                    SUM(prsadmin) AS prsadmin,
+                    SUM(jml) AS jml
+                FROM KlinikGroup
+                GROUP BY name_of_clinic, isrj
+
+                UNION ALL
+
+                SELECT 
+                    2 AS nomor,
+                    name_of_clinic,
+                    payertype,
+                    isrj,
+                    sembuh,
+                    rujuk,
+                    meninggal3,
+                    meninggal4,
+                    aps,
+                    lari,
+                    rj,
+                    prsadmin,
+                    jml
+                FROM KlinikGroup
+
+                ORDER BY name_of_clinic, nomor ASC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total = [
+                'jml' => 0,
+                'sembuh' => 0,
+                'rujuk' => 0,
+                'meninggal3' => 0,
+                'meninggal4' => 0,
+                'aps' => 0,
+                'lari' => 0,
+                'rj' => 0,
+                'prsadmin' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $label = $rows['payertype'] ?? '<b>' . $rows['name_of_clinic'] . '</b>';
+                $row[] = $label;
+
+                $row[] = $rows['jml'];
+                $row[] = $rows['sembuh'];
+                $row[] = $rows['rujuk'];
+                $row[] = $rows['meninggal3'];
+                $row[] = $rows['meninggal4'];
+                $row[] = $rows['aps'];
+                $row[] = $rows['lari'];
+                $row[] = $rows['rj'];
+                $row[] = $rows['prsadmin'];
+
+                if ($rows['nomor'] == 1) {
+                    $total['jml'] += (int)$rows['jml'];
+                    $total['sembuh'] += (int)$rows['sembuh'];
+                    $total['rujuk'] += (int)$rows['rujuk'];
+                    $total['meninggal3'] += (int)$rows['meninggal3'];
+                    $total['meninggal4'] += (int)$rows['meninggal4'];
+                    $total['aps'] += (int)$rows['aps'];
+                    $total['lari'] += (int)$rows['lari'];
+                    $total['rj'] += (int)$rows['rj'];
+                    $total['prsadmin'] += (int)$rows['prsadmin'];
+                }
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $total['jml'],
+                $total['sembuh'],
+                $total['rujuk'],
+                $total['meninggal3'],
+                $total['meninggal4'],
+                $total['aps'],
+                $total['lari'],
+                $total['rj'],
+                $total['prsadmin']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function ppdInapList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PULANG PER BANGSAL PER DPJP';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '
+                     <tr>
+                         <th class="p-1">Bangsal / DPJP</th>
+                        <th class="p-1">Jumlah</th>
+                        <th class="p-1">Sembuh</th>
+                        <th class="p-1">Dirujuk</th>
+                        <th class="p-1">Meninggal < 48 Jam</th>
+                        <th class="p-1">Meninggal > 48 Jam</th>
+                        <th class="p-1">APS</th>
+                        <th class="p-1">Lari</th>
+                        <th class="p-1">Rawat Jalan</th>
+               
+                    </tr>
+                   
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppdInapListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+           WITH fullnameGroup AS (
+                SELECT 
+                    c.name_of_clinic,
+                    EA.FULLNAME,
+                    KELUAR_ID AS isattended,
+                    CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                    SUM(CASE WHEN pv.keluar_id = 1 THEN 1 ELSE 0 END) AS sembuh,
+                    SUM(CASE WHEN pv.keluar_id = 2 THEN 1 ELSE 0 END) AS rujuk,
+                    SUM(CASE WHEN pv.keluar_id = 3 THEN 1 ELSE 0 END) AS meninggal3,
+                    SUM(CASE WHEN pv.keluar_id = 4 THEN 1 ELSE 0 END) AS meninggal4,
+                    SUM(CASE WHEN pv.keluar_id = 5 THEN 1 ELSE 0 END) AS aps,
+                    SUM(CASE WHEN pv.keluar_id = 6 THEN 1 ELSE 0 END) AS lari,
+                    SUM(CASE WHEN pv.keluar_id = 7 THEN 1 ELSE 0 END) AS rj,
+                    SUM(CASE WHEN pv.keluar_id = 35 THEN 1 ELSE 0 END) AS prsadmin,
+                    COUNT(visit_id) AS jml 
+                FROM pv
+                LEFT OUTER JOIN clinic c ON pv.class_room_id IN (
+                    SELECT class_room_id 
+                    FROM class_room cr 
+                    WHERE cr.CLINIC_ID = c.clinic_id
+                )
+                LEFT OUTER JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = pv.EMPLOYEE_inap
+                LEFT OUTER JOIN payor_type p ON pv.status_pasien_id IN (
+                    SELECT status_pasien_id 
+                    FROM status_pasien 
+                    WHERE payor_type = p.payor_type
+                )
+                WHERE pv.EXIT_DATE >= DATEADD(hour, 0, @mulai) 
+                AND pv.EXIT_DATE < DATEADD(hour, 24, @akhir)
+                AND c.stype_id IN (3) 
+                AND keluar_id NOT IN (0, 32, 33, 34)
+                AND pv.class_room_id IS NOT NULL
+                AND pv.keluar_id IS NOT NULL
+                AND pv.bed_id IS NOT NULL
+                GROUP BY c.name_of_clinic, EA.FULLNAME, keluar_id, CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END
+            )
+            SELECT 
+                1 AS nomor,
+                fullname,
+                NULL AS name_of_clinic,
+                isrj,
+                SUM(sembuh) AS sembuh,
+                SUM(rujuk) AS rujuk,
+                SUM(meninggal3) AS meninggal3,
+                SUM(meninggal4) AS meninggal4,
+                SUM(aps) AS aps,
+                SUM(lari) AS lari,
+                SUM(rj) AS rj,
+                SUM(prsadmin) AS prsadmin,
+                SUM(jml) AS jml
+            FROM fullnameGroup
+            GROUP BY fullname, isrj
+
+            UNION ALL
+
+            SELECT 
+                2 AS nomor,
+                fullname,
+                name_of_clinic,
+                isrj,
+                sembuh,
+                rujuk,
+                meninggal3,
+                meninggal4,
+                aps,
+                lari,
+                rj,
+                prsadmin,
+                jml
+            FROM fullnameGroup
+
+            ORDER BY fullname, nomor ASC;
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total = [
+                'jml' => 0,
+                'sembuh' => 0,
+                'rujuk' => 0,
+                'meninggal3' => 0,
+                'meninggal4' => 0,
+                'aps' => 0,
+                'lari' => 0,
+                'rj' => 0,
+                'prsadmin' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $label = $rows['name_of_clinic'] ?? '<b>' . $rows['fullname'] . '</b>';
+                $row[] = $label;
+
+                $row[] = $rows['jml'];
+                $row[] = $rows['sembuh'];
+                $row[] = $rows['rujuk'];
+                $row[] = $rows['meninggal3'];
+                $row[] = $rows['meninggal4'];
+                $row[] = $rows['aps'];
+                $row[] = $rows['lari'];
+                $row[] = $rows['rj'];
+                $row[] = $rows['prsadmin'];
+
+                if ($rows['nomor'] == 1) {
+                    $total['jml'] += (int)$rows['jml'];
+                    $total['sembuh'] += (int)$rows['sembuh'];
+                    $total['rujuk'] += (int)$rows['rujuk'];
+                    $total['meninggal3'] += (int)$rows['meninggal3'];
+                    $total['meninggal4'] += (int)$rows['meninggal4'];
+                    $total['aps'] += (int)$rows['aps'];
+                    $total['lari'] += (int)$rows['lari'];
+                    $total['rj'] += (int)$rows['rj'];
+                    $total['prsadmin'] += (int)$rows['prsadmin'];
+                }
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $total['jml'],
+                $total['sembuh'],
+                $total['rujuk'],
+                $total['meninggal3'],
+                $total['meninggal4'],
+                $total['aps'],
+                $total['lari'],
+                $total['rj'],
+                $total['prsadmin']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function dppInapList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PULANG PER DPJP PER BAYAR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '
+                        <tr>
+                            <th class="p-1">Bangsal / DPJP</th>
+                        <th class="p-1">Jumlah</th>
+                        <th class="p-1">Sembuh</th>
+                        <th class="p-1">Dirujuk</th>
+                        <th class="p-1">Meninggal < 48 Jam</th>
+                        <th class="p-1">Meninggal > 48 Jam</th>
+                        <th class="p-1">APS</th>
+                        <th class="p-1">Lari</th>
+                        <th class="p-1">Rawat Jalan</th>
+                
+                    </tr>
+                    
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function dppInapListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+           WITH fullnameGroup AS (
+                SELECT 
+                    p.payertype,
+                    EA.FULLNAME,
+                    KELUAR_ID AS isattended,
+                    CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                    SUM(CASE WHEN pv.keluar_id = 1 THEN 1 ELSE 0 END) AS sembuh,
+                    SUM(CASE WHEN pv.keluar_id = 2 THEN 1 ELSE 0 END) AS rujuk,
+                    SUM(CASE WHEN pv.keluar_id = 3 THEN 1 ELSE 0 END) AS meninggal3,
+                    SUM(CASE WHEN pv.keluar_id = 4 THEN 1 ELSE 0 END) AS meninggal4,
+                    SUM(CASE WHEN pv.keluar_id = 5 THEN 1 ELSE 0 END) AS aps,
+                    SUM(CASE WHEN pv.keluar_id = 6 THEN 1 ELSE 0 END) AS lari,
+                    SUM(CASE WHEN pv.keluar_id = 7 THEN 1 ELSE 0 END) AS rj,
+                    SUM(CASE WHEN pv.keluar_id = 35 THEN 1 ELSE 0 END) AS prsadmin,
+                    COUNT(visit_id) AS jml 
+                FROM pv
+                LEFT OUTER JOIN clinic c ON pv.class_room_id IN (
+                    SELECT class_room_id 
+                    FROM class_room cr 
+                    WHERE cr.CLINIC_ID = c.clinic_id
+                )
+                LEFT OUTER JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = pv.EMPLOYEE_inap
+                LEFT OUTER JOIN payor_type p ON pv.status_pasien_id IN (
+                    SELECT status_pasien_id 
+                    FROM status_pasien 
+                    WHERE payor_type = p.payor_type
+                )
+                WHERE pv.EXIT_DATE >= DATEADD(hour, 0, @mulai) 
+                AND pv.EXIT_DATE < DATEADD(hour, 24, @akhir)
+                AND c.stype_id IN (3) 
+                AND keluar_id NOT IN (0, 32, 33, 34)
+                AND pv.class_room_id IS NOT NULL
+                AND pv.keluar_id IS NOT NULL
+                AND pv.bed_id IS NOT NULL
+                GROUP BY p.payertype, EA.FULLNAME, keluar_id, CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END
+            )
+            SELECT 
+                1 AS nomor,
+                fullname,
+                NULL AS payertype,
+                isrj,
+                SUM(sembuh) AS sembuh,
+                SUM(rujuk) AS rujuk,
+                SUM(meninggal3) AS meninggal3,
+                SUM(meninggal4) AS meninggal4,
+                SUM(aps) AS aps,
+                SUM(lari) AS lari,
+                SUM(rj) AS rj,
+                SUM(prsadmin) AS prsadmin,
+                SUM(jml) AS jml
+            FROM fullnameGroup
+            GROUP BY fullname, isrj
+
+            UNION ALL
+
+            SELECT 
+                2 AS nomor,
+                fullname,
+                payertype,
+                isrj,
+                sembuh,
+                rujuk,
+                meninggal3,
+                meninggal4,
+                aps,
+                lari,
+                rj,
+                prsadmin,
+                jml
+            FROM fullnameGroup
+
+            ORDER BY fullname, nomor ASC;
+
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total = [
+                'jml' => 0,
+                'sembuh' => 0,
+                'rujuk' => 0,
+                'meninggal3' => 0,
+                'meninggal4' => 0,
+                'aps' => 0,
+                'lari' => 0,
+                'rj' => 0,
+                'prsadmin' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $label = $rows['payertype'] ?? '<b>' . $rows['fullname'] . '</b>';
+                $row[] = $label;
+
+                $row[] = $rows['jml'];
+                $row[] = $rows['sembuh'];
+                $row[] = $rows['rujuk'];
+                $row[] = $rows['meninggal3'];
+                $row[] = $rows['meninggal4'];
+                $row[] = $rows['aps'];
+                $row[] = $rows['lari'];
+                $row[] = $rows['rj'];
+                $row[] = $rows['prsadmin'];
+
+                if ($rows['nomor'] == 1) {
+                    $total['jml'] += (int)$rows['jml'];
+                    $total['sembuh'] += (int)$rows['sembuh'];
+                    $total['rujuk'] += (int)$rows['rujuk'];
+                    $total['meninggal3'] += (int)$rows['meninggal3'];
+                    $total['meninggal4'] += (int)$rows['meninggal4'];
+                    $total['aps'] += (int)$rows['aps'];
+                    $total['lari'] += (int)$rows['lari'];
+                    $total['rj'] += (int)$rows['rj'];
+                    $total['prsadmin'] += (int)$rows['prsadmin'];
+                }
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $total['jml'],
+                $total['sembuh'],
+                $total['rujuk'],
+                $total['meninggal3'],
+                $total['meninggal4'],
+                $total['aps'],
+                $total['lari'],
+                $total['rj'],
+                $total['prsadmin']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function rpdInapList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PULANG PER BANGSAL PER DPJP PER BAYAR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '
+                    <tr>
+                        <th class="p-1">Bangsal / DPJP</th>
+                    <th class="p-1">Jumlah</th>
+                    <th class="p-1">Sembuh</th>
+                    <th class="p-1">Dirujuk</th>
+                    <th class="p-1">Meninggal < 48 Jam</th>
+                    <th class="p-1">Meninggal > 48 Jam</th>
+                    <th class="p-1">APS</th>
+                    <th class="p-1">Lari</th>
+                    <th class="p-1">Rawat Jalan</th>
+
+                </tr>
+                
+            ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function rpdInapListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+          WITH fullnameGroup AS (
+                    SELECT 
+                        p.payertype,
+                        EA.FULLNAME,
+                        c.name_of_clinic,
+                        CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                        SUM(CASE WHEN pv.keluar_id = 1 THEN 1 ELSE 0 END) AS sembuh,
+                        SUM(CASE WHEN pv.keluar_id = 2 THEN 1 ELSE 0 END) AS rujuk,
+                        SUM(CASE WHEN pv.keluar_id = 3 THEN 1 ELSE 0 END) AS meninggal3,
+                        SUM(CASE WHEN pv.keluar_id = 4 THEN 1 ELSE 0 END) AS meninggal4,
+                        SUM(CASE WHEN pv.keluar_id = 5 THEN 1 ELSE 0 END) AS aps,
+                        SUM(CASE WHEN pv.keluar_id = 6 THEN 1 ELSE 0 END) AS lari,
+                        SUM(CASE WHEN pv.keluar_id = 7 THEN 1 ELSE 0 END) AS rj,
+                        SUM(CASE WHEN pv.keluar_id = 35 THEN 1 ELSE 0 END) AS prsadmin,
+                        COUNT(visit_id) AS jml 
+                    FROM pv
+                    LEFT JOIN clinic c ON pv.class_room_id IN (
+                        SELECT class_room_id 
+                        FROM class_room cr 
+                        WHERE cr.CLINIC_ID = c.clinic_id
+                    )
+                    LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = pv.EMPLOYEE_inap
+                    LEFT JOIN payor_type p ON pv.status_pasien_id IN (
+                        SELECT status_pasien_id 
+                        FROM status_pasien 
+                        WHERE payor_type = p.payor_type
+                    )
+                    WHERE pv.EXIT_DATE >= @mulai 
+                        AND pv.EXIT_DATE <= @akhir
+                        AND c.stype_id IN (3) 
+                        AND keluar_id NOT IN (0, 32, 33, 34)
+                        AND pv.class_room_id IS NOT NULL
+                        AND pv.keluar_id IS NOT NULL
+                        AND pv.bed_id IS NOT NULL
+                    GROUP BY p.payertype, EA.FULLNAME, c.name_of_clinic, 
+                            CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END
+                ),
+
+                detailPerPayertype AS (
+                    SELECT 
+                        3 AS nomor,
+                        name_of_clinic,
+                        FULLNAME,
+                        payertype,
+                        isrj,
+                        sembuh,
+                        rujuk,
+                        meninggal3,
+                        meninggal4,
+                        aps,
+                        lari,
+                        rj,
+                        prsadmin,
+                        jml
+                    FROM fullnameGroup
+                ),
+
+                rekapPerFullname AS (
+                    SELECT 
+                        2 AS nomor,
+                        name_of_clinic,
+                        FULLNAME,
+                        NULL AS payertype,
+                        isrj,
+                        SUM(sembuh) AS sembuh,
+                        SUM(rujuk) AS rujuk,
+                        SUM(meninggal3) AS meninggal3,
+                        SUM(meninggal4) AS meninggal4,
+                        SUM(aps) AS aps,
+                        SUM(lari) AS lari,
+                        SUM(rj) AS rj,
+                        SUM(prsadmin) AS prsadmin,
+                        SUM(jml) AS jml
+                    FROM detailPerPayertype
+                    GROUP BY name_of_clinic, FULLNAME, isrj
+                )
+
+                SELECT 
+                    1 AS nomor,
+                    name_of_clinic,
+                    NULL AS FULLNAME,
+                    NULL AS payertype,
+                    isrj,
+                    SUM(sembuh) AS sembuh,
+                    SUM(rujuk) AS rujuk,
+                    SUM(meninggal3) AS meninggal3,
+                    SUM(meninggal4) AS meninggal4,
+                    SUM(aps) AS aps,
+                    SUM(lari) AS lari,
+                    SUM(rj) AS rj,
+                    SUM(prsadmin) AS prsadmin,
+                    SUM(jml) AS jml
+                FROM fullnameGroup
+                GROUP BY name_of_clinic, isrj
+
+                UNION ALL
+
+                SELECT * FROM rekapPerFullname
+
+                UNION ALL
+
+                SELECT * FROM detailPerPayertype
+
+                ORDER BY name_of_clinic, fullname, payertype, nomor;
+
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total = [
+                'jml' => 0,
+                'sembuh' => 0,
+                'rujuk' => 0,
+                'meninggal3' => 0,
+                'meninggal4' => 0,
+                'aps' => 0,
+                'lari' => 0,
+                'rj' => 0,
+                'prsadmin' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                if ($rows['nomor'] == 1) {
+                    $label =  '<b><center>' . $rows['name_of_clinic'] . '<center></b>';
+                } else  if ($rows['nomor'] == 2) {
+                    $label =  '<b>' . $rows['fullname'] . '</b>';
+                } else {
+                    $label = $rows['payertype'] ?? '<b>' . $rows['fullname'] . '</b>';
+                }
+
+
+                $row[] = $label;
+
+                $row[] = $rows['jml'];
+                $row[] = $rows['sembuh'];
+                $row[] = $rows['rujuk'];
+                $row[] = $rows['meninggal3'];
+                $row[] = $rows['meninggal4'];
+                $row[] = $rows['aps'];
+                $row[] = $rows['lari'];
+                $row[] = $rows['rj'];
+                $row[] = $rows['prsadmin'];
+
+                if ($rows['nomor'] == 1) {
+                    $total['jml'] += (int)$rows['jml'];
+                    $total['sembuh'] += (int)$rows['sembuh'];
+                    $total['rujuk'] += (int)$rows['rujuk'];
+                    $total['meninggal3'] += (int)$rows['meninggal3'];
+                    $total['meninggal4'] += (int)$rows['meninggal4'];
+                    $total['aps'] += (int)$rows['aps'];
+                    $total['lari'] += (int)$rows['lari'];
+                    $total['rj'] += (int)$rows['rj'];
+                    $total['prsadmin'] += (int)$rows['prsadmin'];
+                }
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $total['jml'],
+                $total['sembuh'],
+                $total['rujuk'],
+                $total['meninggal3'],
+                $total['meninggal4'],
+                $total['aps'],
+                $total['lari'],
+                $total['rj'],
+                $total['prsadmin']
+            ];
+        }
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function ppjkInapList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PULANG PER BANGSAL';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1" rowspan="2">Bangsal</th>
+                        <th class="p-1" colspan="3">Jumlah</th>
+                        <th class="p-1" colspan="3">Sembuh</th>
+                        <th class="p-1" colspan="3">Dirujuk</th>
+                        <th class="p-1" colspan="3">Meninggal < 48 Jam</th>
+                        <th class="p-1" colspan="3">Meninggal > 48 Jam</th>
+                        <th class="p-1" colspan="3">APS</th>
+                        <th class="p-1" colspan="3">Lari</th>
+                        <th class="p-1" colspan="3">Rawat Jalan</th>
+                        <th class="p-1" colspan="3">Proses Adminitrasi</th>
+                    </tr>
+                    <tr>
+                         <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                         <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                          <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                          <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                          <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                          <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                          <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                          <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                          <th class="p-1">Total</th>
+                        <th class="p-1">Lk</th>
+                        <th class="p-1">Pr</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppjkInapListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = db_connect();
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+
+        WITH KlinikGroup AS (
+                SELECT 
+                    c.name_of_clinic,
+                    CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                    SUM(CASE WHEN pv.keluar_id = 1 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS sembuhLK,
+                    SUM(CASE WHEN pv.keluar_id = 1 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS sembuhPR,
+                    SUM(CASE WHEN pv.keluar_id = 2 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS rujukLK,
+                    SUM(CASE WHEN pv.keluar_id = 2 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS rujukPR,
+                    SUM(CASE WHEN pv.keluar_id = 3 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS meninggal3LK,
+                    SUM(CASE WHEN pv.keluar_id = 3 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS meninggal3PR,
+                    SUM(CASE WHEN pv.keluar_id = 4 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS meninggal4LK,
+                    SUM(CASE WHEN pv.keluar_id = 4 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS meninggal4PR,
+                    SUM(CASE WHEN pv.keluar_id = 5 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS apsLK,
+                    SUM(CASE WHEN pv.keluar_id = 5 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS apsPR,
+                    SUM(CASE WHEN pv.keluar_id = 6 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS lariLK,
+                    SUM(CASE WHEN pv.keluar_id = 6 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS lariPR,
+                    SUM(CASE WHEN pv.keluar_id = 7 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS rjLK,
+                    SUM(CASE WHEN pv.keluar_id = 7 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS rjPR,
+                    SUM(CASE WHEN pv.keluar_id = 35 AND ISNULL(pv.gender,1) = 1 THEN 1 ELSE 0 END) AS prsadminLK,
+                    SUM(CASE WHEN pv.keluar_id = 35 AND ISNULL(pv.gender,1) = 2 THEN 1 ELSE 0 END) AS prsadminPR,
+                    COUNT(CASE WHEN pv.gender = 1 THEN 1 END) AS jmlLK,
+                    COUNT(CASE WHEN pv.gender = 2 THEN 1 END) AS jmlPR
+                FROM pv
+                LEFT JOIN clinic c 
+                    ON pv.class_room_id IN (
+                        SELECT class_room_id FROM class_room cr WHERE cr.CLINIC_ID = c.clinic_id
+                    )
+                WHERE 
+                    pv.EXIT_DATE >= DATEADD(HOUR, 0, @mulai) 
+                    AND pv.EXIT_DATE < DATEADD(HOUR, 24, @akhir)
+                    AND c.stype_id IN (3)
+                    AND pv.keluar_id NOT IN (0, 32, 33, 34)
+                    AND pv.class_room_id IS NOT NULL
+                    AND pv.keluar_id IS NOT NULL
+                    AND pv.bed_id IS NOT NULL
+                GROUP BY 
+                    c.name_of_clinic, CASE WHEN pv.class_room_id IS NULL THEN 1 ELSE 0 END
+            )
+
+            SELECT 
+                1 AS nomor,
+                name_of_clinic,
+                isrj,
+                sembuhLK,
+                sembuhPR,
+                (sembuhLK + sembuhPR) AS sembuh,
+                rujukLK,
+                rujukPR,
+                (rujukLK + rujukPR) AS rujuk,
+                meninggal3LK,
+                meninggal3PR,
+                (meninggal3LK + meninggal3PR) AS meninggal3,
+                meninggal4LK,
+                meninggal4PR,
+                (meninggal4LK + meninggal4PR) AS meninggal4,
+                apsLK,
+                apsPR,
+                (apsLK + apsPR) AS aps,
+                lariLK,
+                lariPR,
+                (lariLK + lariPR) AS lari,
+                rjLK,
+                rjPR,
+                (rjLK + rjPR) AS rj,
+                prsadminLK,
+                prsadminPR,
+                (prsadminLK + prsadminPR) AS prsadmin,
+                jmlLK ,
+                jmlPR,
+                (jmlLK + jmlPR) AS jml
+            FROM KlinikGroup
+            ORDER BY name_of_clinic, nomor ASC;
+        ")->getResultArray());
+
+        $dt_data = [];
+        $total = [
+            'jml' => 0,
+            'jmlLK' => 0,
+            'jmlPR' => 0,
+            'sembuh' => 0,
+            'sembuhLK' => 0,
+            'sembuhPR' => 0,
+            'rujuk' => 0,
+            'rujukLK' => 0,
+            'rujukPR' => 0,
+            'meninggal3' => 0,
+            'meninggal3LK' => 0,
+            'meninggal3PR' => 0,
+            'meninggal4' => 0,
+            'meninggal4LK' => 0,
+            'meninggal4PR' => 0,
+            'aps' => 0,
+            'apsLK' => 0,
+            'apsPR' => 0,
+            'lari' => 0,
+            'lariLK' => 0,
+            'lariPR' => 0,
+            'rj' => 0,
+            'rjLK' => 0,
+            'rjPR' => 0,
+            'prsadmin' => 0,
+            'prsadminLK' => 0,
+            'prsadminPR' => 0
+        ];
+
+        if (!empty($data)) {
+            foreach ($data as $rows) {
+                $row = [];
+                $label =  '<b><center>' . $rows['name_of_clinic'] . '<center></b>';
+                $row[] = $label;
+
+                $row[] = $rows['jml'];
+                $row[] = $rows['jmllk'];
+                $row[] = $rows['jmlpr'];
+                $row[] = $rows['sembuh'];
+                $row[] = $rows['sembuhlk'];
+                $row[] = $rows['sembuhpr'];
+                $row[] = $rows['rujuk'];
+                $row[] = $rows['rujuklk'];
+                $row[] = $rows['rujukpr'];
+                $row[] = $rows['meninggal3'];
+                $row[] = $rows['meninggal3lk'];
+                $row[] = $rows['meninggal3pr'];
+                $row[] = $rows['meninggal4'];
+                $row[] = $rows['meninggal4lk'];
+                $row[] = $rows['meninggal4pr'];
+                $row[] = $rows['aps'];
+                $row[] = $rows['apslk'];
+                $row[] = $rows['apspr'];
+                $row[] = $rows['lari'];
+                $row[] = $rows['larilk'];
+                $row[] = $rows['laripr'];
+                $row[] = $rows['rj'];
+                $row[] = $rows['rjlk'];
+                $row[] = $rows['rjpr'];
+                $row[] = $rows['prsadmin'];
+                $row[] = $rows['prsadminlk'];
+                $row[] = $rows['prsadminpr'];
+
+                $total['jml'] += (int)$rows['jml'];
+                $total['jmlLK'] += (int)$rows['jmllk'];
+                $total['jmlPR'] += (int)$rows['jmlpr'];
+                $total['sembuh'] += (int)$rows['sembuh'];
+                $total['sembuhLK'] += (int)$rows['sembuhlk'];
+                $total['sembuhPR'] += (int)$rows['sembuhpr'];
+                $total['rujuk'] += (int)$rows['rujuk'];
+                $total['rujukLK'] += (int)$rows['rujuklk'];
+                $total['rujukPR'] += (int)$rows['rujukpr'];
+                $total['meninggal3'] += (int)$rows['meninggal3'];
+                $total['meninggal3LK'] += (int)$rows['meninggal3lk'];
+                $total['meninggal3PR'] += (int)$rows['meninggal3pr'];
+                $total['meninggal4'] += (int)$rows['meninggal4'];
+                $total['meninggal4LK'] += (int)$rows['meninggal4lk'];
+                $total['meninggal4PR'] += (int)$rows['meninggal4pr'];
+                $total['aps'] += (int)$rows['aps'];
+                $total['apsLK'] += (int)$rows['apslk'];
+                $total['apsPR'] += (int)$rows['apspr'];
+                $total['lari'] += (int)$rows['lari'];
+                $total['lariLK'] += (int)$rows['larilk'];
+                $total['lariPR'] += (int)$rows['laripr'];
+                $total['rj'] += (int)$rows['rj'];
+                $total['rjLK'] += (int)$rows['rjlk'];
+                $total['rjPR'] += (int)$rows['rjpr'];
+                $total['prsadmin'] += (int)$rows['prsadmin'];
+                $total['prsadminLK'] += (int)$rows['prsadminlk'];
+                $total['prsadminPR'] += (int)$rows['prsadminpr'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $total['jml'],
+                $total['jmlLK'],
+                $total['jmlPR'],
+                $total['sembuh'],
+                $total['sembuhLK'],
+                $total['sembuhPR'],
+                $total['rujuk'],
+                $total['rujukLK'],
+                $total['rujukPR'],
+                $total['meninggal3'],
+                $total['meninggal3LK'],
+                $total['meninggal3PR'],
+                $total['meninggal4'],
+                $total['meninggal4LK'],
+                $total['meninggal4PR'],
+                $total['aps'],
+                $total['apsLK'],
+                $total['apsPR'],
+                $total['lari'],
+                $total['lariLK'],
+                $total['lariPR'],
+                $total['rj'],
+                $total['rjLK'],
+                $total['rjPR'],
+                $total['prsadmin'],
+                $total['prsadminLK'],
+                $total['prsadminPR']
+            ];
+        }
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    // Dasboard IGD
+    // =============================================================================
+
+    public function pjbigdList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER PENJAMIN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjamin</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                        <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pjbigdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            SELECT 
+                    ISNULL(p.payertype, 'PENJAMIN LAIN-LAIN') AS PAYERTYPE,
+                    COUNT(visit_id) AS total, 
+                    SUM(CASE WHEN class_room_id IS NULL and isattended = 1 THEN 1 else 0 END) AS isrj, 
+                    SUM(CASE WHEN class_room_id IS NOT NULL and isattended = 1  THEN 1  else 0 END) AS isranap, 
+                    SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                    SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi 
+                FROM pasien_visitation
+                LEFT JOIN payor_type p ON pasien_visitation.status_pasien_id IN 
+                    (SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type)
+                WHERE 
+                    visit_date BETWEEN @mulai AND @akhir  
+                    AND CLINIC_ID IN ('P012')
+                GROUP BY 
+                    ISNULL(p.payertype, 'PENJAMIN LAIN-LAIN')
+                ORDER BY 
+                 PAYERTYPE DESC;
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'isrj' => 0,
+                'isranap' => 0,
+                'isrj_isranap' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['payertype'];
+                $row[] = $rows['total'];
+                $row[] = $rows['isrj'];
+                $row[] = $rows['isranap'];
+                $row[] = $rows['isrj'] + $rows['isranap'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = 0;
+                $row[] = $rows['belum_konfirmasi'];
+
+                $totalKeseluruhan['total'] += (int)$rows['total'];
+                $totalKeseluruhan['isrj'] += (int)$rows['isrj'];
+                $totalKeseluruhan['isranap'] += (int)$rows['isranap'];
+                $totalKeseluruhan['isrj_isranap'] += (int)$rows['isrj'] + (int)$rows['isranap'];
+                $totalKeseluruhan['belum_dilayani'] += (int)$rows['belum_dilayani'];
+                $totalKeseluruhan['batal'] += 0;
+                $totalKeseluruhan['belum_konfirmasi'] += (int)$rows['belum_konfirmasi'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['isrj'],
+                $totalKeseluruhan['isranap'],
+                $totalKeseluruhan['isrj_isranap'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function ppkigdList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER KLINIK';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Poliklinik</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                            <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppkigdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            SELECT 
+                        c.name_of_clinic,
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL and isattended = 1 THEN 1 else 0 END) AS isrj, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL and isattended = 1  THEN 1  else 0 END) AS isranap, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi 
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN payor_type p ON pasien_visitation.status_pasien_id IN 
+                        (SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type)
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND c.clinic_id IN ('P012')
+                    GROUP BY 
+                        c.name_of_clinic
+                    ORDER BY
+                        c.name_of_clinic ASC
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'isrj' => 0,
+                'isranap' => 0,
+                'isrj_isranap' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['name_of_clinic'];
+                $row[] = $rows['total'];
+                $row[] = $rows['isrj'];
+                $row[] = $rows['isranap'];
+                $row[] = $rows['isrj'] + $rows['isranap'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = 0;
+                $row[] = $rows['belum_konfirmasi'];
+
+                $totalKeseluruhan['total'] += (int)$rows['total'];
+                $totalKeseluruhan['isrj'] += (int)$rows['isrj'];
+                $totalKeseluruhan['isranap'] += (int)$rows['isranap'];
+                $totalKeseluruhan['isrj_isranap'] += (int)$rows['isrj'] + (int)$rows['isranap'];
+                $totalKeseluruhan['belum_dilayani'] += (int)$rows['belum_dilayani'];
+                $totalKeseluruhan['batal'] += 0;
+                $totalKeseluruhan['belum_konfirmasi'] += (int)$rows['belum_konfirmasi'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['isrj'],
+                $totalKeseluruhan['isranap'],
+                $totalKeseluruhan['isrj_isranap'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function pkbigdList()
+    {
+        $giTipe = 7;
+        $title = 'DATA PENGUNJUNG IRD';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  >Pelayanan</th>
+                        <th class="p-1" >Umum</th>
+                        <th class="p-1" >BPJS</th>
+                        <th class="p-1" >Asuransi</th>
+                        <th class="p-1" >Kerjasama</th>
+                        <th class="p-1" >Lainnya</th>
+                        <th class="p-1" >Jumlah</th>
+                    </tr>
+                   
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pkbigdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            SELECT 
+                C.NAME_OF_CLINIC,
+                COUNT(visit_id) AS total_pasien,
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) = 2 THEN 1 ELSE 0 END) AS bpjs, 
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) = 1 THEN 1 ELSE 0 END) AS umum, 
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) = 4 THEN 1 ELSE 0 END) AS asuransi,
+				SUM(CASE WHEN COALESCE(p.payor_type, 0) = 3 THEN 1 ELSE 0 END) AS kerjasama,
+                SUM(CASE WHEN COALESCE(p.payor_type, 0) NOT IN (1,2,4) THEN 1 ELSE 0 END) AS lainnya
+            FROM pasien_visitation 
+            LEFT JOIN CLINIC C ON C.CLINIC_ID = pasien_visitation.CLINIC_ID
+            LEFT JOIN payor_type p ON pasien_visitation.status_pasien_id IN 
+                (SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type)
+            WHERE 
+                visit_date BETWEEN @mulai AND @akhir
+                AND C.CLINIC_ID IN ('P012')
+            GROUP BY 
+                C.NAME_OF_CLINIC
+            ORDER BY 
+                C.NAME_OF_CLINIC ASC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'umum' => 0,
+                'bpjs' => 0,
+                'asuransi' => 0,
+                'kerjasama' => 0,
+                'lainnya' => 0,
+                'total' => 0
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['name_of_clinic'];
+                $row[] = $rows['umum'];
+                $row[] = $rows['bpjs'];
+                $row[] = $rows['asuransi'];
+                $row[] = $rows['kerjasama'];
+                $row[] = $rows['lainnya'];
+                $row[] = $rows['umum'] + $rows['bpjs'] + $rows['asuransi'] + $rows['kerjasama'] + $rows['lainnya'];
+
+                $totalKeseluruhan['umum'] += (int)$rows['umum'];
+                $totalKeseluruhan['bpjs'] += (int)$rows['bpjs'];
+                $totalKeseluruhan['asuransi'] += (int)$rows['asuransi'];
+                $totalKeseluruhan['kerjasama'] += (int)$rows['kerjasama'];
+                $totalKeseluruhan['lainnya'] += (int)$rows['lainnya'];
+                $totalKeseluruhan['total'] += (int)$rows['umum'] + (int)$rows['bpjs'] + (int)$rows['asuransi'] + (int)$rows['kerjasama'] + (int)$rows['lainnya'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['umum'],
+                $totalKeseluruhan['bpjs'],
+                $totalKeseluruhan['asuransi'],
+                $totalKeseluruhan['kerjasama'],
+                $totalKeseluruhan['lainnya'],
+                $totalKeseluruhan['total']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function ppdigdList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN IRD PER DOKTER';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Poliklinik-Dokter</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                           <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppdigdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+             WITH ClinicData AS (
+                    SELECT 
+                        c.name_of_clinic,
+                        '' AS fullname, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        1 AS is_clinic_header
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                         AND c.CLINIC_ID IN ('P012')
+                     -- AND stype_id in (1,10)
+                    GROUP BY c.name_of_clinic
+                ),
+                DoctorData AS (
+                    SELECT 
+                        c.name_of_clinic,
+                        COALESCE(ea.fullname, '-') AS fullname, -- Nama dokter
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        0 AS is_clinic_header
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND c.clinic_id IN ('P012')
+                        --AND stype_id in (1,10)
+                    GROUP BY c.name_of_clinic, ea.fullname
+                )
+
+                SELECT * FROM (
+                    SELECT * FROM ClinicData
+                    UNION ALL
+                    SELECT * FROM DoctorData
+                ) AS CombinedData
+                ORDER BY name_of_clinic ASC, is_clinic_header DESC, fullname ASC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'pulang' => 0,
+                'ranap' => 0,
+                'terlayani' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = !empty($rows['fullname'])
+                    ? htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8')
+                    : '<b><center>' . htmlspecialchars($rows['name_of_clinic'], ENT_QUOTES, 'UTF-8') . '</center></b>';
+
+                $row[] = $rows['total'];
+                $row[] = $rows['pulang'];
+                $row[] = $rows['ranap'];
+                $row[] = $rows['terlayani'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = $rows['batal'];
+                $row[] = $rows['belum_konfirmasi'];
+
+                if ((int)$rows['is_clinic_header'] === 1) {
+                    $totalKeseluruhan['total'] += (int)$rows['total'];
+                    $totalKeseluruhan['pulang'] += (int)$rows['pulang'];
+                    $totalKeseluruhan['ranap'] += (int)$rows['ranap'];
+                    $totalKeseluruhan['terlayani'] += (int)$rows['terlayani'];
+                    $totalKeseluruhan['belum_dilayani'] += (int)$rows['belum_dilayani'];
+                    $totalKeseluruhan['batal'] += (int)$rows['batal'];
+                    $totalKeseluruhan['belum_konfirmasi'] += (int)$rows['belum_konfirmasi'];
+                }
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['pulang'],
+                $totalKeseluruhan['ranap'],
+                $totalKeseluruhan['terlayani'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function dppigdList()
+    {
+        $giTipe = 7;
+        $title = 'DATA PASIEN DOKTER PER PENJAMIN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjaminan</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                          <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function dppigdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+            WITH FullnameData AS (
+                    SELECT 
+                        ea.fullname, 
+                        '' AS payertype, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        1 AS is_fullname_header
+                    FROM pasien_visitation
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND ea.fullname IS NOT NULL 
+                        and clinic_id in ('P012')
+                    GROUP BY ea.fullname
+                ),
+                PayertypeData AS (
+                    SELECT 
+                        ea.fullname, -- Nama dokter
+                        COALESCE(pt.payertype, '-') AS payertype, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        0 AS is_fullname_header
+                    FROM pasien_visitation
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    LEFT JOIN payor_type pt ON pasien_visitation.status_pasien_id IN 
+                        (SELECT status_pasien_id FROM status_pasien WHERE payor_type = pt.payor_type)
+                    WHERE 
+                        visit_date BETWEEN @mulai AND @akhir  
+                        AND ea.fullname IS NOT NULL 
+                        and clinic_id in ('P012')
+                    GROUP BY ea.fullname, pt.payertype
+                )
+
+                SELECT * FROM (
+                    SELECT * FROM FullnameData
+                    UNION ALL
+                    SELECT * FROM PayertypeData
+                ) AS CombinedData
+                ORDER BY fullname ASC, is_fullname_header DESC, payertype ASC;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'pulang' => 0,
+                'ranap' => 0,
+                'terlayani' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = (!empty($rows['payertype']) && $rows['payertype'] !== '-')
+                    ? htmlspecialchars($rows['payertype'], ENT_QUOTES, 'UTF-8')
+                    : ((isset($rows['is_fullname_header']) && $rows['is_fullname_header'] == 1)
+                        ? '<b><center>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</center></b>'
+                        : '');
+
+                $row[] = $rows['total'];
+                $row[] = $rows['pulang'];
+                $row[] = $rows['ranap'];
+                $row[] = $rows['terlayani'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = $rows['batal'];
+                $row[] = $rows['belum_konfirmasi'];
+
+                if ((int)$rows['is_fullname_header'] === 1) {
+                    $totalKeseluruhan['total'] += $rows['total'];
+                    $totalKeseluruhan['pulang'] += $rows['pulang'];
+                    $totalKeseluruhan['ranap'] += $rows['ranap'];
+                    $totalKeseluruhan['terlayani'] += $rows['terlayani'];
+                    $totalKeseluruhan['belum_dilayani'] += $rows['belum_dilayani'];
+                    $totalKeseluruhan['batal'] += $rows['batal'];
+                    $totalKeseluruhan['belum_konfirmasi'] += $rows['belum_konfirmasi'];
+                }
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['pulang'],
+                $totalKeseluruhan['ranap'],
+                $totalKeseluruhan['terlayani'],
+                $totalKeseluruhan['belum_dilayani'],
+                $totalKeseluruhan['batal'],
+                $totalKeseluruhan['belum_konfirmasi']
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function rpdigdList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN IRD PER DOKTER DAN CARA BAYAR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjaminan</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                         <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function rpdigdListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = '$mulai 00:00:00';
+            SET @akhir = '$akhir 23:59:59';
+    
+         WITH ClinicData AS (
+                    -- Data utama per Klinik
+                    SELECT 
+                        c.name_of_clinic AS clinic_name,
+                        NULL AS fullname,
+                        NULL AS payertype,
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        0 AS urutan
+                    FROM pasien_visitation
+
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    WHERE visit_date BETWEEN @mulai AND @akhir  
+                        AND c.CLINIC_ID IN ('P012')
+                    GROUP BY c.name_of_clinic
+                ),
+                FullnameData AS (
+                    -- Data fullname per Klinik
+                    SELECT 
+                        c.name_of_clinic AS clinic_name,
+                        COALESCE(ea.fullname, '-') AS fullname,
+                        NULL AS payertype,
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        1 AS urutan
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = pasien_visitation.EMPLOYEE_ID
+                    WHERE visit_date BETWEEN @mulai AND @akhir  
+                       AND c.CLINIC_ID IN ('P012')
+                    GROUP BY c.name_of_clinic, ea.fullname
+                    HAVING COUNT(visit_id) > 0 
+                ),
+                PayertypeData AS (
+                    -- Data payertype per Fullname
+                    SELECT 
+                        c.name_of_clinic AS clinic_name,
+                        COALESCE(ea.fullname, '-') AS fullname,
+                        COALESCE(pt.payertype, '') AS payertype, 
+                        COUNT(visit_id) AS total, 
+                        SUM(CASE WHEN class_room_id IS NULL AND isattended = 1 THEN 1 ELSE 0 END) AS pulang, 
+                        SUM(CASE WHEN class_room_id IS NOT NULL AND isattended = 1 THEN 1 ELSE 0 END) AS ranap, 
+                        SUM(CASE WHEN isattended = 1 THEN 1 ELSE 0 END) AS terlayani, 
+                        SUM(CASE WHEN isattended = 0 THEN 1 ELSE 0 END) AS belum_dilayani, 
+                        SUM(CASE WHEN isattended IN (8,9) THEN 1 ELSE 0 END) AS belum_konfirmasi, 
+                        0 AS batal,
+                        2 AS urutan
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL ea ON ea.EMPLOYEE_ID = pasien_visitation.EMPLOYEE_ID
+                    LEFT JOIN status_pasien sp ON pasien_visitation.status_pasien_id = sp.status_pasien_id
+                    LEFT JOIN payor_type pt ON sp.payor_type = pt.payor_type
+                    WHERE visit_date BETWEEN @mulai AND @akhir  
+                      AND c.CLINIC_ID IN ('P012')
+                    GROUP BY c.name_of_clinic, ea.fullname, pt.payertype
+                    HAVING COUNT(visit_id) > 0 
+                )
+
+                SELECT 
+                    clinic_name,
+                    fullname,
+                    payertype,
+                    total, pulang, ranap, terlayani, belum_dilayani, belum_konfirmasi, batal,urutan
+                FROM (
+                    SELECT * FROM ClinicData
+                    UNION ALL
+                    SELECT * FROM FullnameData
+                    UNION ALL
+                    SELECT * FROM PayertypeData
+                ) AS CombinedData
+                ORDER BY clinic_name ASC, fullname ASC, urutan ASC;
+
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $total_row = [
+                'total' => 0,
+                'pulang' => 0,
+                'ranap' => 0,
+                'terlayani' => 0,
+                'belum_dilayani' => 0,
+                'batal' => 0,
+                'belum_konfirmasi' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = isset($rows['payertype']) && $rows['payertype'] !== null
+                    ? htmlspecialchars($rows['payertype'], ENT_QUOTES, 'UTF-8')
+                    : (
+                        !empty($rows['fullname'])
+                        ? '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>'
+                        : '<b><center>' . htmlspecialchars($rows['clinic_name'], ENT_QUOTES, 'UTF-8') . '</center></b>'
+                    );
+
+
+                $row[] = $rows['total'];
+                $row[] = $rows['pulang'];
+                $row[] = $rows['ranap'];
+                $row[] = $rows['terlayani'];
+                $row[] = $rows['belum_dilayani'];
+                $row[] = $rows['batal'];
+                $row[] = $rows['belum_konfirmasi'];
+
+                if ((int)$rows['urutan'] === 0) {
+                    $total_row['total'] += $rows['total'];
+                    $total_row['pulang'] += $rows['pulang'];
+                    $total_row['ranap'] += $rows['ranap'];
+                    $total_row['terlayani'] += $rows['terlayani'];
+                    $total_row['belum_dilayani'] += $rows['belum_dilayani'];
+                    $total_row['batal'] += $rows['batal'];
+                    $total_row['belum_konfirmasi'] += $rows['belum_konfirmasi'];
+                }
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>Total</center></b>',
+                $total_row['total'],
+                $total_row['pulang'],
+                $total_row['ranap'],
+                $total_row['terlayani'],
+                $total_row['belum_dilayani'],
+                $total_row['batal'],
+                $total_row['belum_konfirmasi']
+            ];
+        }
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function rvpigdList()
+    {
+        $giTipe = 7;
+        $title = 'REKAPITULASI PASIEN PER KLINIK PER DOKTER DAN CARA BAYAR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjaminan</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                        <th class="p-1" rowspan="2">Belum Dilayani</th>
+                        <th class="p-1" rowspan="2">Batal</th>
+                        <th class="p-1" rowspan="2">Belum Konfirm</th>
+                    </tr>
+                    <tr>
+                           <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rawat Inap</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+
+
+    // Dasboard BIll
+    // =============================================================================
+
+    public function pkBillList()
+    {
+        $giTipe = 7;
+        $title = 'REKAP PENERIMAAN TUNAI PER KASIR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">Tanggal</th>
+                        <th class="p-1">Klinik</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+                   
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pkBillListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            DECLARE @cashier NVARCHAR(50);
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+            SET @cashier = '' ; 
+
+                    
+            WITH data_grouped AS (
+                    SELECT 
+                        CONVERT(DATE, ta.TREAT_DATE) AS treat_date,
+                        c.name_of_clinic,
+                        ISNULL(ea.fullname, ta.cashier) AS fullname,  -- pakai cashier jika fullname kosong
+                        SUM(ta.bayar) AS bayar
+                    FROM 
+                        treatment_bayar ta
+                    JOIN 
+                        CLINIC c ON ta.CLINIC_ID = c.CLINIC_ID
+                    LEFT JOIN 
+                        user_login ul ON ta.cashier = ul.username
+                    LEFT JOIN 
+                        employee_all ea ON ea.employee_id = ul.employee_id
+                    WHERE 
+                        ta.TREAT_DATE BETWEEN @mulai AND @akhir
+                        AND (@cashier = '' OR ta.cashier = @cashier)
+                    GROUP BY 
+                        CONVERT(DATE, ta.TREAT_DATE),
+                        c.name_of_clinic,
+                        ISNULL(ea.fullname, ta.cashier)
+                ),
+                subtotal AS (
+                    SELECT 
+                        fullname,
+                        SUM(bayar) AS total_bayar
+                    FROM data_grouped
+                    GROUP BY fullname
+                ),
+                detail_numbered AS (
+                    SELECT 
+                        dg.fullname,
+                        dg.treat_date,
+                        dg.name_of_clinic,
+                        dg.bayar
+                    FROM data_grouped dg
+                )
+                SELECT 
+                    1 AS nomor,
+                    s.fullname,
+                    NULL AS treat_date,
+                    NULL AS name_of_clinic,
+                    s.total_bayar AS bayar
+                FROM subtotal s
+
+                UNION ALL
+
+                SELECT 
+                    2 AS nomor,
+                    d.fullname,
+                    d.treat_date,
+                    d.name_of_clinic,
+                    d.bayar
+                FROM detail_numbered d
+
+                ORDER BY fullname, nomor, treat_date, name_of_clinic;
+
+
+        ")->getResultArray());
+
+
+        $dt_data = [];
+        if (!empty($data)) {
+            $dt_data = [];
+
+            foreach ($data as $rows) {
+                $row = [];
+
+                if ($rows['nomor'] == 1) {
+                    $row[] = '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>';
+                    $row[] = '';
+                    $row[] = '<b>' . number_format((float) $rows['bayar'], 0, ',', '.') . '</b>';
+                } elseif ($rows['nomor'] == 2) {
+                    $row[] = $rows['treat_date'];
+                    $row[] = $rows['name_of_clinic'];
+                    $row[] = number_format($rows['bayar'], 0, ',', '.');
+                }
+
+                $dt_data[] = $row;
+            }
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function pdBillList()
+    {
+        $giTipe = 7;
+        $title = 'REKAP PENERIMAAN TUNAI PER KASIR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">Tanggal</th>
+                        <th class="p-1">Nama Pasien</th>
+                        <th class="p-1">No.RM</th>
+                        <th class="p-1">Cara Bayar</th>
+                        <th class="p-1">Pelayanan</th>
+                        <th class="p-1">Transaksi</th>
+                        <th class="p-1">Nilai</th>
+                    </tr>
+                   
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pdBillListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            DECLARE @cashier NVARCHAR(50);
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+            SET @cashier = '';
+
+          
+            WITH data_grouped AS (
+                SELECT 
+                    CONVERT(DATE, ta.TREAT_DATE) AS treat_date,
+                    ta.no_registration,
+                    c.name_of_clinic,
+                    ISNULL(ea.fullname, ta.cashier) AS fullname,
+                    SUM(ta.bayar) AS bayar,
+                    pt.payertype,
+                    ta.thename,
+                    CASE 
+                    WHEN ta.ISRJ = 1 THEN 'Rawat Jalan'
+                        WHEN ta.ISRJ = 0 THEN 'Rawat Inap'
+                        ELSE 'Tidak Diketahui'
+                    END AS jenis_rawat
+                FROM treatment_bayar ta
+                JOIN CLINIC c ON ta.CLINIC_ID = c.CLINIC_ID
+                LEFT JOIN user_login ul ON ta.cashier = ul.username
+                LEFT JOIN employee_all ea ON ul.employee_id = ea.employee_id
+                LEFT JOIN status_pasien sp ON ta.status_pasien_id = sp.status_pasien_id
+                LEFT JOIN payor_type pt ON sp.payor_type = pt.payor_type
+                WHERE ta.TREAT_DATE BETWEEN @mulai AND @akhir
+                AND (@cashier = '' OR ta.cashier = @cashier)
+                GROUP BY 
+                    CONVERT(DATE, ta.TREAT_DATE),
+                    c.name_of_clinic,
+                    ta.no_registration,
+                    c.name_of_clinic,
+                    ISNULL(ea.fullname, ta.cashier),
+                    ta.thename,
+                    ta.isrj,
+                    pt.payertype
+
+            ),
+            subtotal AS (
+                SELECT 
+                    fullname,
+                    SUM(bayar) AS total_bayar
+                FROM data_grouped
+                GROUP BY fullname
+            )
+           SELECT 
+                1 AS nomor,
+                s.fullname,
+                  NULL AS treat_date,
+                NULL AS thename,
+                NULL AS name_of_clinic,
+                NULL AS no_registration,
+                NULL AS jenis_rawat,
+                NULL AS payertype,
+                s.total_bayar AS bayar
+            FROM subtotal s
+
+
+            UNION ALL
+
+            SELECT 
+                2 AS nomor,
+                dg.fullname,
+                dg.treat_date,
+                dg.thename,
+                dg.name_of_clinic,
+                dg.no_registration,
+                dg.jenis_rawat,
+                dg.payertype,
+                dg.bayar
+            FROM data_grouped dg
+
+            ORDER BY fullname, nomor, treat_date, name_of_clinic;
+
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $dt_data = [];
+
+            foreach ($data as $rows) {
+                $row = [];
+
+                if ($rows['nomor'] == 1) {
+                    $row[] = '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '<b>' . number_format((float) $rows['bayar'], 0, ',', '.') . '</b>';
+                } elseif ($rows['nomor'] == 2) {
+                    $row[] = $rows['treat_date'];
+                    $row[] = $rows['thename'];
+                    $row[] = $rows['no_registration'];
+                    $row[] = $rows['payertype'];
+                    $row[] = $rows['name_of_clinic'];
+                    $row[] = $rows['jenis_rawat'];
+                    $row[] = number_format($rows['bayar'], 0, ',', '.');
+                }
+
+                $dt_data[] = $row;
+            }
+        }
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function skBillList()
+    {
+        $giTipe = 7;
+        $title = 'REKAP SETORAN TUNAI PER KASIR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                    <th class="p-1">Tanggal</th>
+                    <th class="p-1">Klinik</th>
+                    <th class="p-1">Penerimaan Tunai</th>
+                    <th class="p-1">Nilai Setoran</th>
+                </tr>';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function skBillListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            DECLARE @cashier NVARCHAR(50);
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+            SET @cashier = '' ; 
+
+                    
+           WITH data_grouped AS (
+                SELECT 
+                    CONVERT(DATE, ta.TREAT_DATE) AS treat_date,
+                    c.name_of_clinic,
+                    ISNULL(ea.fullname, ta.cashier) AS fullname,  
+                    SUM(ta.bayar) AS bayar,
+                    SUM(CASE WHEN ta.SPPKASIR IS NOT NULL THEN ta.bayar ELSE 0 END) AS setoran
+                FROM 
+                    treatment_bayar ta
+                JOIN 
+                    CLINIC c ON ta.CLINIC_ID = c.CLINIC_ID
+                LEFT JOIN 
+                    user_login ul ON ta.cashier = ul.username
+                LEFT JOIN 
+                    employee_all ea ON ea.employee_id = ul.employee_id
+                WHERE 
+                    ta.TREAT_DATE BETWEEN @mulai AND @akhir
+                    AND (@cashier = '' OR ta.cashier = @cashier)
+                GROUP BY 
+                    CONVERT(DATE, ta.TREAT_DATE),
+                    c.name_of_clinic,
+                    ISNULL(ea.fullname, ta.cashier)
+            ),
+            subtotal AS (
+                SELECT 
+                    fullname,
+                    SUM(bayar) AS total_bayar,
+                    SUM(setoran) AS total_setoran
+                FROM data_grouped
+                GROUP BY fullname
+            ),
+            detail_numbered AS (
+                SELECT 
+                    dg.fullname,
+                    dg.treat_date,
+                    dg.name_of_clinic,
+                    dg.bayar,
+                    dg.setoran
+                FROM data_grouped dg
+            )
+            SELECT 
+                1 AS nomor,
+                s.fullname,
+                NULL AS treat_date,
+                NULL AS name_of_clinic,
+                s.total_bayar AS bayar,
+                s.total_setoran AS setoran
+            FROM subtotal s
+
+            UNION ALL
+
+            SELECT 
+                2 AS nomor,
+                d.fullname,
+                d.treat_date,
+                d.name_of_clinic,
+                d.bayar,
+                d.setoran
+            FROM detail_numbered d
+
+            ORDER BY fullname, nomor, treat_date, name_of_clinic;
+
+
+        ")->getResultArray());
+
+
+        $dt_data = [];
+        if (!empty($data)) {
+            $dt_data = [];
+
+            foreach ($data as $rows) {
+                $row = [];
+
+                if ($rows['nomor'] == 1) {
+                    $row[] = '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>';
+                    $row[] = '';
+                    $row[] = '<b>' . number_format((float) $rows['bayar'], 0, ',', '.') . '</b>';
+                    $row[] = '<b>' . number_format((float) $rows['setoran'], 0, ',', '.') . '</b>';
+                } elseif ($rows['nomor'] == 2) {
+                    $row[] = $rows['treat_date'];
+                    $row[] = $rows['name_of_clinic'];
+                    $row[] = number_format($rows['bayar'], 0, ',', '.');
+                    $row[] = number_format($rows['setoran'], 0, ',', '.');
+                }
+
+                $dt_data[] = $row;
+            }
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function sdBillList()
+    {
+        $giTipe = 7;
+        $title = 'DETAIL SETORAN TUNAI PER KASIR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                    <th class="p-1">Tanggal</th>
+                    <th class="p-1">Nama Pasien</th>
+                    <th class="p-1">No.RM</th>
+                    <th class="p-1">Cara Bayar</th>
+                    <th class="p-1">Pelayanan</th>
+                    <th class="p-1">Transaksi</th>
+                    <th class="p-1">Nilai Tunai</th>
+                    <th class="p-1">Nilai Setoran</th>
+                </tr>';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function sdBillListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            DECLARE @cashier NVARCHAR(50);
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+            SET @cashier = '' ; 
+
+         
+            WITH data_grouped AS (
+                SELECT 
+                    CONVERT(DATE, ta.TREAT_DATE) AS treat_date,
+                    ta.no_registration,
+                    c.name_of_clinic,
+                    ISNULL(ea.fullname, ta.cashier) AS fullname,
+                    SUM(ta.bayar) AS bayar,
+					SUM(CASE WHEN ta.SPPKASIR IS NOT NULL THEN ta.bayar ELSE 0 END) AS setoran,
+                    pt.payertype,
+                    ta.thename,
+                    CASE 
+                    WHEN ta.ISRJ = 1 THEN 'Rawat Jalan'
+                        WHEN ta.ISRJ = 0 THEN 'Rawat Inap'
+                        ELSE 'Tidak Diketahui'
+                    END AS jenis_rawat
+                FROM treatment_bayar ta
+                JOIN CLINIC c ON ta.CLINIC_ID = c.CLINIC_ID
+                LEFT JOIN user_login ul ON ta.cashier = ul.username
+                LEFT JOIN employee_all ea ON ul.employee_id = ea.employee_id
+                LEFT JOIN status_pasien sp ON ta.status_pasien_id = sp.status_pasien_id
+                LEFT JOIN payor_type pt ON sp.payor_type = pt.payor_type
+                WHERE ta.TREAT_DATE BETWEEN @mulai AND @akhir
+                AND (@cashier = '' OR ta.cashier = @cashier)
+                GROUP BY 
+                    CONVERT(DATE, ta.TREAT_DATE),
+                    c.name_of_clinic,
+                    ta.no_registration,
+                    c.name_of_clinic,
+                    ISNULL(ea.fullname, ta.cashier),
+                    ta.thename,
+                    ta.isrj,
+                    pt.payertype
+
+            ),
+            subtotal AS (
+                SELECT 
+                    fullname,
+                    SUM(bayar) AS total_bayar,
+                    SUM(setoran) AS total_setoran
+                FROM data_grouped
+                GROUP BY fullname
+            )
+           SELECT 
+                1 AS nomor,
+                s.fullname,
+                  NULL AS treat_date,
+                NULL AS thename,
+                NULL AS name_of_clinic,
+                NULL AS no_registration,
+                NULL AS jenis_rawat,
+                NULL AS payertype,
+                s.total_bayar AS bayar,
+                s.total_setoran AS setoran
+            FROM subtotal s
+
+            UNION ALL
+
+            SELECT 
+                2 AS nomor,
+                dg.fullname,
+                dg.treat_date,
+                dg.thename,
+                dg.name_of_clinic,
+                dg.no_registration,
+                dg.jenis_rawat,
+                dg.payertype,
+                dg.bayar,
+				dg.setoran
+            FROM data_grouped dg
+
+            ORDER BY fullname, nomor, treat_date, name_of_clinic;
+        ")->getResultArray());
+
+
+        $dt_data = [];
+        if (!empty($data)) {
+
+            $dt_data = [];
+
+            foreach ($data as $rows) {
+                $row = [];
+
+                if ($rows['nomor'] == 1) {
+                    $row[] = '<b>' . htmlspecialchars($rows['fullname'], ENT_QUOTES, 'UTF-8') . '</b>';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '';
+                    $row[] = '<b>' . number_format((float) $rows['bayar'], 0, ',', '.') . '</b>';
+                    $row[] = '<b>' . number_format((float) $rows['setoran'], 0, ',', '.') . '</b>';
+                } elseif ($rows['nomor'] == 2) {
+                    $row[] = $rows['treat_date'];
+                    $row[] = $rows['thename'];
+                    $row[] = $rows['no_registration'];
+                    $row[] = $rows['payertype'];
+                    $row[] = $rows['name_of_clinic'];
+                    $row[] = $rows['jenis_rawat'];
+                    $row[] = number_format($rows['bayar'], 0, ',', '.');
+                    $row[] = number_format($rows['setoran'], 0, ',', '.');
+                }
+
+                $dt_data[] = $row;
+            }
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+
+    // Laporan Grafik
+    // =============================================================================
+
+    public function pjbChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">STATUS BAYAR</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pjbChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            WITH KUNJUNGAN_UNIK AS (
+                SELECT DISTINCT
+                    P.NO_REGISTRATION,
+                    CAST(PV.VISIT_DATE AS DATE) AS TANGGAL_KUNJUNGAN,
+                    CAST(P.REGISTRATION_DATE AS DATE) AS TANGGAL_REGISTRASI,
+                    ISNULL(PT.PAYERTYPE, 'PENJAMIN LAIN-LAIN') AS PAYERTYPE
+                FROM 
+                    PASIEN P
+                INNER JOIN 
+                    PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                LEFT JOIN 
+                    STATUS_PASIEN SP ON P.STATUS_PASIEN_ID = SP.STATUS_PASIEN_ID
+                LEFT JOIN 
+                    PAYOR_TYPE PT ON SP.PAYOR_TYPE = PT.PAYOR_TYPE
+                WHERE 
+                    PV.VISIT_DATE BETWEEN @mulai AND @akhir
+                    AND PV.NO_REGISTRATION <> '000000'
+                    AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+            )
+
+            SELECT 
+                PAYERTYPE,
+                COUNT(CASE WHEN TANGGAL_KUNJUNGAN = TANGGAL_REGISTRASI THEN 1 END) AS baru,
+                COUNT(CASE WHEN TANGGAL_KUNJUNGAN <> TANGGAL_REGISTRASI THEN 1 END) AS lama,
+                COUNT(*) AS total
+            FROM 
+                KUNJUNGAN_UNIK
+            GROUP BY 
+                PAYERTYPE
+            ORDER BY 
+                total DESC;
+               
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['payertype'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function ppkChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS BERDASARKAN DAERAH';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">KOTA/KAB</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppkChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+
+            WITH KUNJUNGAN_UNIK AS (
+                    SELECT DISTINCT
+                        CAST(PV.VISIT_DATE AS DATE) AS TANGGAL_KUNJUNGAN,
+                        CAST(P.REGISTRATION_DATE AS DATE) AS TANGGAL_REGISTRASI,
+                        ISNULL(K.NAMA_KOTA, ' ') AS NAMA_KOTA,
+                        P.NO_REGISTRATION
+                    FROM 
+                        PASIEN P
+                    LEFT JOIN KALURAHAN KAL ON P.KAL_ID = KAL.KAL_ID
+                    LEFT JOIN KECAMATAN KEC ON KAL.KEC_ID = KEC.KEC_ID
+                    LEFT JOIN KOTA K ON KEC.KODE_KOTA = K.KODE_KOTA
+                    INNER JOIN PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                    WHERE 
+                        PV.VISIT_DATE BETWEEN @mulai AND @akhir
+                        AND PV.NO_REGISTRATION <> '000000'
+                        AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+                )
+
+                SELECT 
+                    NAMA_KOTA,
+                    COUNT(CASE WHEN TANGGAL_KUNJUNGAN = TANGGAL_REGISTRASI THEN 1 END) AS BARU,
+                    COUNT(CASE WHEN TANGGAL_KUNJUNGAN <> TANGGAL_REGISTRASI THEN 1 END) AS LAMA,
+                    COUNT(*) AS TOTAL
+                FROM 
+                    KUNJUNGAN_UNIK
+                GROUP BY 
+                    NAMA_KOTA
+                ORDER BY 
+                    NAMA_KOTA;
+
+                
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['nama_kota'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function pkbChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS PER KELOMPOK UMUR';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">KELOMPOK UMUR</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function pkbChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+           
+            WITH KUNJUNGAN_UMUR AS (
+                    SELECT DISTINCT
+                        AR.DISPLAY,
+                        CAST(P.REGISTRATION_DATE AS DATE) AS TGL_REGISTRASI,
+                        CAST(PV.VISIT_DATE AS DATE) AS TGL_KUNJUNGAN,
+                        P.NO_REGISTRATION
+                    FROM 
+                        PASIEN P
+                    JOIN PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                    JOIN AGE_RANGE AR ON 
+                        ISNULL(DATEDIFF(DAY, P.DATE_OF_BIRTH, PV.VISIT_DATE), 0) BETWEEN AR.LOWER_BOUND AND AR.UPPER_BOUND
+                    WHERE 
+                        PV.VISIT_DATE BETWEEN @mulai AND @akhir
+                        AND PV.NO_REGISTRATION <> '000000'
+                        AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+                )
+
+                SELECT 
+                    DISPLAY,
+                    COUNT(CASE WHEN TGL_KUNJUNGAN = TGL_REGISTRASI THEN 1 END) AS BARU,
+                    COUNT(CASE WHEN TGL_KUNJUNGAN <> TGL_REGISTRASI THEN 1 END) AS LAMA,
+                    COUNT(*) AS TOTAL
+                FROM 
+                    KUNJUNGAN_UMUR
+                GROUP BY 
+                    DISPLAY
+                ORDER BY 
+                    TOTAL DESC;
+               
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['display'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function ppdChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS PER JENIS KELAMIN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">JENIS KELAMIN</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppdChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+          WITH KUNJUNGAN_SEX AS (
+            SELECT 
+                    ISNULL(S.NAME_OF_GENDER, ' ') AS NAME_OF_GENDER,
+                    CAST(P.REGISTRATION_DATE AS DATE) AS TGL_REGISTRASI,
+                    CAST(PV.VISIT_DATE AS DATE) AS TGL_KUNJUNGAN,
+                    P.NO_REGISTRATION
+                FROM 
+                    PASIEN P
+                JOIN PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                LEFT JOIN SEX S ON P.GENDER = S.GENDER
+                WHERE 
+                    PV.VISIT_DATE BETWEEN @mulai AND @akhir
+                    AND PV.NO_REGISTRATION <> '000000'
+                    AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+            )
+
+            SELECT 
+                NAME_OF_GENDER,
+                COUNT(CASE WHEN TGL_KUNJUNGAN = TGL_REGISTRASI THEN 1 END) AS BARU,
+                COUNT(CASE WHEN TGL_KUNJUNGAN <> TGL_REGISTRASI THEN 1 END) AS LAMA,
+                COUNT(*) AS TOTAL
+            FROM 
+                KUNJUNGAN_SEX
+            GROUP BY 
+                NAME_OF_GENDER
+            ORDER BY 
+                NAME_OF_GENDER;
+
+               
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['name_of_gender'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function dppChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS PER BAHASA';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">KELOMPOK BAHASA</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function dppChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+             WITH KUNJUNGAN_NATIONALITY AS (
+                    SELECT 
+                        N.NATIONALITY AS display,
+                        CAST(P.REGISTRATION_DATE AS DATE) AS TGL_REGISTRASI,
+                        CAST(PV.VISIT_DATE AS DATE) AS TGL_KUNJUNGAN,
+                        P.NO_REGISTRATION
+                    FROM 
+                        PASIEN P
+                    JOIN PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                    JOIN NATIONALITY N ON P.NATION_ID = N.NATION_ID
+                    WHERE 
+                        PV.VISIT_DATE BETWEEN @mulai AND @akhir
+                        AND PV.NO_REGISTRATION <> '000000'
+                        AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+                )
+
+                SELECT 
+                    display,
+                    COUNT(CASE WHEN TGL_KUNJUNGAN = TGL_REGISTRASI THEN 1 END) AS BARU,
+                    COUNT(CASE WHEN TGL_KUNJUNGAN <> TGL_REGISTRASI THEN 1 END) AS LAMA,
+                    COUNT(*) AS TOTAL
+                FROM 
+                    KUNJUNGAN_NATIONALITY
+                GROUP BY 
+                    display
+                ORDER BY 
+                    TOTAL DESC;
+               
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['display'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function ppaChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS PER AGAMA';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">KELOMPOK AGAMA</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppaChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+          
+            WITH KUNJUNGAN_AGAMA AS (
+                SELECT 
+                    A.NAMA_AGAMA AS display,
+                    CAST(P.REGISTRATION_DATE AS DATE) AS TGL_REGISTRASI,
+                    CAST(PV.VISIT_DATE AS DATE) AS TGL_KUNJUNGAN,
+                    P.NO_REGISTRATION
+                FROM 
+                    PASIEN P
+                JOIN PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                JOIN AGAMA A ON P.KODE_AGAMA = A.KODE_AGAMA
+                WHERE 
+                    PV.VISIT_DATE BETWEEN @mulai AND @akhir
+                    AND PV.NO_REGISTRATION <> '000000'
+                    AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+            )
+
+            SELECT 
+                display,
+                COUNT(CASE WHEN TGL_KUNJUNGAN = TGL_REGISTRASI THEN 1 END) AS BARU,
+                COUNT(CASE WHEN TGL_KUNJUNGAN <> TGL_REGISTRASI THEN 1 END) AS LAMA,
+                COUNT(*) AS TOTAL
+            FROM 
+                KUNJUNGAN_AGAMA
+            GROUP BY 
+                display
+            ORDER BY 
+                TOTAL DESC;
+               
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['display'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function ppkerChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS PER PEKERJAAN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">KELOMPOK PEKERJAAN</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppkerChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+           WITH KUNJUNGAN_JOB AS (
+                SELECT 
+                    JC.NAME_OF_JOB AS display,
+                    CAST(P.REGISTRATION_DATE AS DATE) AS TGL_REGISTRASI,
+                    CAST(PV.VISIT_DATE AS DATE) AS TGL_KUNJUNGAN,
+                    P.NO_REGISTRATION
+                FROM 
+                    PASIEN P
+                JOIN PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                LEFT JOIN JOB_CATEGORY JC ON ISNULL(P.JOB_ID, 10) = JC.JOB_ID
+                WHERE 
+                    PV.VISIT_DATE BETWEEN @mulai AND @akhir
+                    AND PV.NO_REGISTRATION <> '000000'
+                    AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+            )
+
+            SELECT 
+                display,
+                COUNT(CASE WHEN TGL_KUNJUNGAN = TGL_REGISTRASI THEN 1 END) AS BARU,
+                COUNT(CASE WHEN TGL_KUNJUNGAN <> TGL_REGISTRASI THEN 1 END) AS LAMA,
+                COUNT(*) AS TOTAL
+            FROM 
+                KUNJUNGAN_JOB
+            GROUP BY 
+                display
+            ORDER BY 
+                TOTAL DESC;
+
+               
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['display'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+    public function ppdiChartList()
+    {
+        $giTipe = 7;
+        $title = 'GRAFIK PENGUNJUNG RS PER PENDIDIKAN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1">KELOMPOK PENDIDIKAN</th>
+                        <th class="p-1">Baru </th>
+                        <th class="p-1">Lama</th>
+                        <th class="p-1">Jumlah</th>
+                    </tr>
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report-chart', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function ppdiChartListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+           WITH KUNJUNGAN_EDUCATION AS (
+                SELECT 
+                    ed.NAME_OF_EDU_TYPE AS display,
+                    CAST(p.REGISTRATION_DATE AS DATE) AS TGL_REGISTRASI,
+                    CAST(pv.VISIT_DATE AS DATE) AS TGL_KUNJUNGAN,
+                    p.NO_REGISTRATION
+                FROM 
+                    PASIEN P
+                JOIN PASIEN_VISITATION PV ON P.NO_REGISTRATION = PV.NO_REGISTRATION
+                LEFT JOIN EDUCATION_TYPE ed ON ISNULL(P.EDUCATION_TYPE_CODE, 9) = ed.EDUCATION_TYPE_CODE
+                WHERE 
+                    pv.VISIT_DATE BETWEEN @mulai AND @akhir
+                    AND pv.NO_REGISTRATION <> '000000'
+                    AND PV.CLINIC_ID IN (SELECT CLINIC_ID FROM CLINIC WHERE STYPE_ID IN (1,5))
+            )
+
+            SELECT 
+                display,
+                COUNT(CASE WHEN TGL_KUNJUNGAN = TGL_REGISTRASI THEN 1 END) AS BARU,
+                COUNT(CASE WHEN TGL_KUNJUNGAN <> TGL_REGISTRASI THEN 1 END) AS LAMA,
+                COUNT(*) AS TOTAL
+            FROM 
+                KUNJUNGAN_EDUCATION
+            GROUP BY 
+                display
+            ORDER BY 
+                TOTAL DESC;
+
+               
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'baru' => 0,
+                'lama' => 0,
+
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+                $row[] = $rows['display'];
+                $row[] = $rows['baru'];
+                $row[] = $rows['lama'];
+                $row[] = $rows['lama'] + $rows['baru'];
+
+                $totalKeseluruhan['baru'] += (int)$rows['baru'];
+                $totalKeseluruhan['lama'] += (int)$rows['lama'];
+                $totalKeseluruhan['total'] += (int)$rows['lama'] + (int)$rows['baru'];
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['baru'],
+                $totalKeseluruhan['lama'],
+                $totalKeseluruhan['total'],
+            ];
+        }
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+    public function lpppList()
+    {
+        $giTipe = 7;
+        $title = 'LAPORAN PASIEN PER PELAYANAN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjamin</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                    </tr>
+                    <tr>
+                        <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rujukan</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header
+        ]);
+    }
+
+    public function lpppListpost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            WITH DataKunjungan AS (
+                    SELECT 
+                        CASE 
+                            WHEN c.STYPE_ID = 1 THEN 'Poliklinik Rawat Jalan'
+                            WHEN c.STYPE_ID = 5 THEN 'Unit Gawat Darurat' 
+                            ELSE '' 
+                        END AS instalasi,
+                        EA.FULLNAME,
+                        p.payertype,
+                        isattended,
+                        CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                        CASE 
+                            WHEN clinic_id_from = 'P000' THEN '0'
+                            WHEN WAY_ID = 16 THEN '0'
+                            ELSE '1' 
+                        END AS rujukan
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    LEFT JOIN payor_type p 
+                        ON status_pasien_id IN (
+                            SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type
+                        )
+                    WHERE visit_date >= DATEADD(HOUR, 0, @mulai) 
+                    AND visit_date < DATEADD(HOUR, 24, @akhir)
+                    AND c.stype_id IN (1,5)
+                ),
+                GroupKunjungan AS (
+                    SELECT 
+                        instalasi,
+                        FULLNAME,
+                        payertype,
+                        COUNT(*) AS jml,
+                        MAX(isattended) AS isattended,
+                        MAX(isrj) AS isrj,
+                        MAX(rujukan) AS rujukan
+                    FROM DataKunjungan
+                    GROUP BY instalasi, FULLNAME, payertype
+                ),
+                DetailPayer AS (
+                    SELECT 
+                        3 AS nomor,
+                        instalasi,
+                        FULLNAME,
+                        payertype,
+                        MAX(isattended) AS isattended,
+                        MAX(isrj) AS isrj,
+                        MAX(rujukan) AS rujukan,
+                        SUM(jml) AS jml
+                    FROM GroupKunjungan
+                    GROUP BY instalasi, FULLNAME, payertype
+                ),
+                Detail AS (
+                    SELECT 
+                        2 AS nomor,
+                        instalasi,
+                        FULLNAME,
+                        NULL AS payertype,
+                        NULL AS isattended,
+                        MAX(isrj) AS isrj,
+                        MAX(rujukan) AS rujukan,
+                        SUM(jml) AS jml
+                    FROM DetailPayer
+                    GROUP BY instalasi, FULLNAME
+                ),
+                Rekap AS (
+                    SELECT 
+                        1 AS nomor,
+                        instalasi,
+                        NULL AS FULLNAME,
+                        NULL AS payertype,
+                        NULL AS isattended,
+                        NULL AS isrj,
+                        NULL AS rujukan,
+                        SUM(jml) AS jml
+                    FROM Detail
+                    GROUP BY instalasi
+                )
+
+                SELECT nomor, instalasi, FULLNAME, payertype, isattended, isrj, rujukan, jml
+                FROM Rekap
+
+                UNION ALL
+
+                SELECT nomor, instalasi, FULLNAME, payertype, isattended, isrj, rujukan, jml
+                FROM Detail
+
+                UNION ALL
+
+                SELECT nomor, instalasi, FULLNAME, payertype, isattended, isrj, rujukan, jml
+                FROM DetailPayer
+
+                ORDER BY instalasi, FULLNAME, payertype;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'isrj' => 0,
+                'rujukan' => 0,
+                'isrj_isranap' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+
+                if ($rows['nomor'] == 1) {
+                    $row[] = '<b>' . $rows['instalasi'] . '</b>';
+                } elseif ($rows['nomor'] == 2) {
+                    $row[] = '&nbsp;' . $rows['fullname'];
+                } elseif ($rows['nomor'] == 3) {
+                    $row[] = '&nbsp;&nbsp;' . $rows['payertype'];
+                } else {
+                    $row[] = '-';
+                }
+
+                $row[] = $rows['jml'];
+                $row[] = $rows['isrj'];
+                $row[] = $rows['rujukan'];
+                $row[] = $rows['jml'];
+                if ($rows['nomor'] == 1) {
+                    $totalKeseluruhan['total'] += (int)$rows['jml'];
+                    $totalKeseluruhan['isrj'] += (int)$rows['isrj'];
+                    $totalKeseluruhan['rujukan'] += (int)$rows['rujukan'];
+                    $totalKeseluruhan['isrj_isranap'] += (int)$rows['jml'];
+                }
+
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['isrj'],
+                $totalKeseluruhan['rujukan'],
+                $totalKeseluruhan['isrj_isranap'],
+            ];
+        }
+
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
+        echo json_encode($json_data);
+    }
+
+
+
+    public function lpppList1()
+    {
+        $giTipe = 7;
+        $title = 'LAPORAN PASIEN PER PELAYANAN';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['rm'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $userEmployee = user()->employee_id;
+        $clinicModel = new ClinicModel();
+        if (is_null($userEmployee)) {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->findAll());
+        } else {
+            $clinic = $this->lowerKey($clinicModel->whereIn('stype_id', [1, 2, 3, 5])->where("clinic_id in (select clinic_id from doctor_schedule where employee_id = '$userEmployee')")->findAll());
+        }
+
+
+        $sexModel = new SexModel();
+        $sex  = $this->lowerKey($sexModel->findAll());
+
+        $statusPasien = new StatusPasienModel();
+        $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
+
+        $isnew = ['Lama', 'Baru'];
+
+        $kotaModel = new KotaModel();
+        $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
+
+        $menu = [
+            ['label' => 'Active', 'url' => '#', 'active' => true, 'disabled' => false],
+            ['label' => 'Link 1', 'url' => '#', 'active' => false, 'disabled' => false],
+            ['label' => 'Link 2', 'url' => '#', 'active' => false, 'disabled' => false],
+            ['label' => 'Disabled', 'url' => '#', 'active' => false, 'disabled' => true]
+        ];
+
+
+
+        $header = [];
+        $header = '<tr>
+                        <th class="p-1"  rowspan="2">Penjamin</th>
+                        <th class="p-1" rowspan="2">Terdaftar</th>
+                        <th class="p-1" colspan="3">Terlayani</th>
+                    </tr>
+                    <tr>
+                        <th class="p-1">Rawat Jalan</th>
+                        <th class="p-1">Rujukan</th>
+                        <th class="p-1">Total</th>
+                    </tr>
+
+                ';
+        $db = db_connect();
+        $kop = $this->lowerKey($db->query("SELECT org_unit_code,sk,kecamatan,kelurahan,kota,name_of_org_unit,contact_address FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+        return view('admin\report\rl-report1copy', [
+            'kop' => $kop,
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'btn_sub' => true,
+            'mulai' => true,
+            'akhir' => true,
+            'filterlenght' => '-1',
+            // 'status' => $status,
+            // 'clinic' => $clinic,
+            // 'sex' => $sex,
+            // 'isnew' => $isnew,
+            // 'kota' => $kota,
+            'header' => $header,
+            'menu' => $menu
+        ]);
+    }
+
+    public function lpppList1post()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $data = $this->lowerKey($db->query("
+            DECLARE @mulai DATETIME;
+            DECLARE @akhir DATETIME;
+            SET @mulai = CONVERT(DATETIME, '$mulai 00:00:00', 120);
+            SET @akhir = CONVERT(DATETIME, '$akhir 23:59:59', 120);
+    
+            WITH DataKunjungan AS (
+                    SELECT 
+                        CASE 
+                            WHEN c.STYPE_ID = 1 THEN 'Poliklinik Rawat Jalan'
+                            WHEN c.STYPE_ID = 5 THEN 'Unit Gawat Darurat' 
+                            ELSE '' 
+                        END AS instalasi,
+                        EA.FULLNAME,
+                        p.payertype,
+                        isattended,
+                        CASE WHEN class_room_id IS NULL THEN 1 ELSE 0 END AS isrj,
+                        CASE 
+                            WHEN clinic_id_from = 'P000' THEN '0'
+                            WHEN WAY_ID = 16 THEN '0'
+                            ELSE '1' 
+                        END AS rujukan
+                    FROM pasien_visitation
+                    LEFT JOIN clinic c ON pasien_visitation.clinic_id = c.clinic_id
+                    LEFT JOIN EMPLOYEE_ALL EA ON EA.EMPLOYEE_ID = PASIEN_VISITATION.EMPLOYEE_ID
+                    LEFT JOIN payor_type p 
+                        ON status_pasien_id IN (
+                            SELECT status_pasien_id FROM status_pasien WHERE payor_type = p.payor_type
+                        )
+                    WHERE visit_date >= DATEADD(HOUR, 0, @mulai) 
+                    AND visit_date < DATEADD(HOUR, 24, @akhir)
+                    AND c.stype_id IN (1,5)
+                ),
+                GroupKunjungan AS (
+                    SELECT 
+                        instalasi,
+                        FULLNAME,
+                        payertype,
+                        COUNT(*) AS jml,
+                        MAX(isattended) AS isattended,
+                        MAX(isrj) AS isrj,
+                        MAX(rujukan) AS rujukan
+                    FROM DataKunjungan
+                    GROUP BY instalasi, FULLNAME, payertype
+                ),
+                DetailPayer AS (
+                    SELECT 
+                        3 AS nomor,
+                        instalasi,
+                        FULLNAME,
+                        payertype,
+                        MAX(isattended) AS isattended,
+                        MAX(isrj) AS isrj,
+                        MAX(rujukan) AS rujukan,
+                        SUM(jml) AS jml
+                    FROM GroupKunjungan
+                    GROUP BY instalasi, FULLNAME, payertype
+                ),
+                Detail AS (
+                    SELECT 
+                        2 AS nomor,
+                        instalasi,
+                        FULLNAME,
+                        NULL AS payertype,
+                        NULL AS isattended,
+                        MAX(isrj) AS isrj,
+                        MAX(rujukan) AS rujukan,
+                        SUM(jml) AS jml
+                    FROM DetailPayer
+                    GROUP BY instalasi, FULLNAME
+                ),
+                Rekap AS (
+                    SELECT 
+                        1 AS nomor,
+                        instalasi,
+                        NULL AS FULLNAME,
+                        NULL AS payertype,
+                        NULL AS isattended,
+                        NULL AS isrj,
+                        NULL AS rujukan,
+                        SUM(jml) AS jml
+                    FROM Detail
+                    GROUP BY instalasi
+                )
+
+                SELECT nomor, instalasi, FULLNAME, payertype, isattended, isrj, rujukan, jml
+                FROM Rekap
+
+                UNION ALL
+
+                SELECT nomor, instalasi, FULLNAME, payertype, isattended, isrj, rujukan, jml
+                FROM Detail
+
+                UNION ALL
+
+                SELECT nomor, instalasi, FULLNAME, payertype, isattended, isrj, rujukan, jml
+                FROM DetailPayer
+
+                ORDER BY instalasi, FULLNAME, payertype;
+
+        ")->getResultArray());
+
+        $dt_data = [];
+
+        if (!empty($data)) {
+            $totalKeseluruhan = [
+                'total' => 0,
+                'isrj' => 0,
+                'rujukan' => 0,
+                'isrj_isranap' => 0
+            ];
+
+            foreach ($data as $rows) {
+                $row = [];
+
+                if ($rows['nomor'] == 1) {
+                    $row[] = '<b>' . $rows['instalasi'] . '</b>';
+                } elseif ($rows['nomor'] == 2) {
+                    $row[] = '&nbsp;' . $rows['fullname'];
+                } elseif ($rows['nomor'] == 3) {
+                    $row[] = '&nbsp;&nbsp;' . $rows['payertype'];
+                } else {
+                    $row[] = '-';
+                }
+
+                $row[] = $rows['jml'];
+                $row[] = $rows['isrj'];
+                $row[] = $rows['rujukan'];
+                $row[] = $rows['jml'];
+                if ($rows['nomor'] == 1) {
+                    $totalKeseluruhan['total'] += (int)$rows['jml'];
+                    $totalKeseluruhan['isrj'] += (int)$rows['isrj'];
+                    $totalKeseluruhan['rujukan'] += (int)$rows['rujukan'];
+                    $totalKeseluruhan['isrj_isranap'] += (int)$rows['jml'];
+                }
+
+
+                $dt_data[] = $row;
+            }
+
+            $dt_data[] = [
+                '<b><center>TOTAL</center></b>',
+                $totalKeseluruhan['total'],
+                $totalKeseluruhan['isrj'],
+                $totalKeseluruhan['rujukan'],
+                $totalKeseluruhan['isrj_isranap'],
+            ];
+        }
+
+
+
+        $json_data = [
+            "body" => $dt_data
+        ];
         echo json_encode($json_data);
     }
 }

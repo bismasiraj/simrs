@@ -5,14 +5,18 @@ namespace App\Controllers\Admin\rm;
 use App\Controllers\Admin\AssDermatovenerologi;
 use App\Controllers\Admin\AssNeurology;
 use App\Controllers\BaseController;
+use App\Models\Assessment\EducationFormModel;
 use App\Models\Assessment\FallRiskDetailModel;
 use App\Models\Assessment\FallRiskModel;
 use App\Models\Assessment\GcsModel;
+use App\Models\Assessment\IndicatorModel;
 use App\Models\Assessment\LokalisModel;
 use App\Models\Assessment\PainDetilModel;
 use App\Models\Assessment\PainIntervensiModel;
 use App\Models\Assessment\PainMonitoringModel;
+use App\Models\Assessment\PasienTransferModel;
 use App\Models\Assessment\RespirationModel;
+use App\Models\Assessment\TriaseDetilModel;
 use App\Models\ExaminationDetailModel;
 use App\Models\ExaminationModel;
 use App\Models\OrganizationunitModel;
@@ -21,6 +25,7 @@ use App\Models\PasienDiagnosasModel;
 use App\Models\PasienHistoryModel;
 use App\Models\PasienProceduresModel;
 use App\Models\PasienVisitationModel;
+use App\Models\TreatmentBillModel;
 use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 
@@ -43,30 +48,30 @@ class AssessmentMedis extends BaseController
             if ($value["id"] == "formaddarm") {
                 $medis = $this->saveAssessmentMedis($value["data"]);
             }
-            if (str_contains($value["id"], "formGcs")) {
+            if (strpos($value["id"], "formGcs") !== false) {
                 // return json_encode(is_null($value["data"]));
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $gcs = $controller->saveGcs($value["data"]);
             }
-            if (str_contains($value["id"], "formPainMonitoring")) {
+            if (strpos($value["id"], "formPainMonitoring") !== false) {
                 // return json_encode(!is_null($value["data"]) && $value["data"] != []);
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $monitoring = $controller->savePainMonitoring($value["data"]);
             }
-            if (str_contains($value["id"], "formFallRisk")) {
+            if (strpos($value["id"], "formFallRisk") !== false) {
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $fallRisk = $controller->saveFallRisk($value["data"]);
             }
-            if (str_contains($value["id"], "formTriage")) {
+            if (strpos($value["id"], "formTriage") !== false) {
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $triage = $controller->saveTriage($value["data"]);
             }
-            if (str_contains($value["id"], "FormAssessmen_Neurologi")) {
+            if (strpos($value["id"], "FormAssessmen_Neurologi") !== false) {
                 $neuroController = new AssNeurology();
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $neuro = $neuroController->saveDataLokal($value["data"]);
             }
-            if (str_contains($value["id"], "FormAssessmen_Dermatovenerologi")) {
+            if (strpos($value["id"], "FormAssessmen_Dermatovenerologi") !== false) {
                 $dermaController = new AssDermatovenerologi();
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $dermatologi = $dermaController->saveDataLokal($value["data"]);
@@ -109,23 +114,28 @@ class AssessmentMedis extends BaseController
         } else {
             $mesej = 'update';
         }
+        if ((!is_null(@$standing_order) && @$standing_order != '') && (!is_null(@$instruction) && @$instruction != ''))
+            $newInstruction =
+                "Standing Order: $standing_order"
+                . "; Terapi/Sasaran Terapi: $instruction;";
+        else if (!is_null(@$instruction) && @$instruction != '')
+            $newInstruction = "Terapi/Sasaran Terapi: $instruction;";
+        else
+            $newInstruction = '';
 
+        // return $body_id;
         $dataexam = [];
         if ($body_id != '') {
             $dataexam = [
-                'account_id' => '1',
                 'account_id' => 1,
                 'ageday' => @$ageday,
                 'agemonth' => @$agemonth,
                 'ageyear' => @$ageyear,
-                'agemonth' => @$agemonth,
-                'ageday' => @$ageday,
                 'alo_anamnase' => @$alloanamnase,
                 'anamnase' => @$anamnase,
                 'arm_diameter' => @$arm_diameter,
                 'awareness' => @$awareness,
                 'bed_id' => @$bed_id,
-                'body_id' => @$body_id,
                 'body_id' => @$pasien_diagnosa_id,
                 'cardiovasculer' => @$cardiovasculer,
                 'child_position' => @$child_position,
@@ -148,7 +158,7 @@ class AssessmentMedis extends BaseController
                 'his_simetry' => @$his_simetry,
                 'height' => @$height,
                 'in_date' => @$in_date,
-                'instruction' => @$instruction,
+                'instruction' => @$newInstruction,
                 'isrj' => @$isrj,
                 'lochia' => @$lochia,
                 'modified_by' => @$modified_by,
@@ -165,12 +175,10 @@ class AssessmentMedis extends BaseController
                 'oxygen_usage' => @$oxygen_usage,
                 'oxygen_usage_score' => @$oxygen_usage_score,
                 'pain' => @$pain,
-                'modified_by' => @$modified_by,
-                'modified_date' => @$modified_date,
-                'modified_from' => @$clinic_id,
                 'pemeriksaan' => @$pemeriksaan,
                 'petugas' => user()->getFullname(),
                 'petugas_id' => user()->getOneRoles(),
+                'petugas_type' => 11,
                 'pasien_diagnosa_id' => @$pasien_diagnosa_id,
                 'proteinuria' => @$proteinuria,
                 'respiration' => @$respiration,
@@ -179,9 +187,7 @@ class AssessmentMedis extends BaseController
                 'saturasi_score' => @$saturasi_score,
                 'temperature' => @$temperature,
                 'temperature_score' => @$temperature_score,
-                'tension_below' => @$tension_below,
-                'tension_upper' => @$tension_upper,
-                'teraphy_desc' => @$teraphy_desc,
+                'teraphy_desc' => @$diagnosa_desc,
                 'theaddress' => @$theaddress,
                 'theid' => @$theid,
                 'thename' => @$thename,
@@ -193,18 +199,24 @@ class AssessmentMedis extends BaseController
                 'trans_id' => @$trans_id,
                 'urine' => @$urine,
                 'vs_status_id' => @$vs_status_id,
-                'valid_date' => @$valid_date,
-                'valid_pasien' => @$valid_pasien,
-                'valid_user' => @$valid_user,
+                'valid_date' => @$valid_date == '' ? null : @$valid_date,
+                'valid_pasien' => @$valid_pasien == '' ? null : @$valid_pasien,
+                'valid_user' => @$valid_user == '' ? null : @$valid_user,
                 'visit_id' => @$visit_id,
                 'weight' => @$weight
             ];
+            if (@$diag_cat == 1) {
+                $dataexam['account_id'] = 7;
+            }
+            foreach ($dataexam as $key => $value) {
+                if (@$value == '') {
+                    $dataexam[$key] = null;
+                }
+            }
 
-            // return $dataexam;
+            // return $body_id;
 
             foreach ($body as $key => $value) {
-                if ($value == '')
-                    $dataexam[$key] = null;
                 // if (isset($examination_date))
                 //     $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
                 if (isset($temperature))
@@ -252,6 +264,12 @@ class AssessmentMedis extends BaseController
                 else
                     $dataexam['saturasi'] = 0;
             }
+            foreach ($dataexam as $key => $value) {
+                if (@$value == '') {
+                    unset($dataexam[$key]);
+                }
+            }
+            // return ($dataexam);
             $ex = new ExaminationModel();
             $ex->save($dataexam);
             $exd = new ExaminationDetailModel();
@@ -273,6 +291,7 @@ class AssessmentMedis extends BaseController
             'date_of_diagnosa' => str_replace('T', ' ', $date_of_diagnosa),
             'report_date' => @$report_date,
             'diagnosa_desc' => @$diagnosa_desc,
+            'diagnosa_desc_discharge' => @$diagnosa_desc_discharge,
             'employee_id' => @$employee_id,
             'diag_cat' => @$diag_cat,
             'anamnase' => @$anamnase,
@@ -304,19 +323,25 @@ class AssessmentMedis extends BaseController
             'isrj' => @$isrj,
             'gender' => @$gender,
             'doctor' => @$doctor,
-            'fullname' => @$doctor,
+            'fullname' => $this->getFullname($employee_id),
             'nokartu' => @$nokartu,
             'nosep' => @$nosep,
             'tglsep' => @$tglsep,
             'spesialistik' => @$spesialistik,
-            'sscondition_id' => new RawSql("newid()"),
+            // 'sscondition_id' => new RawSql("newid()"),
             'valid_date' => @$valid_date,
             'valid_user' => @$valid_user,
             'valid_pasien' => @$valid_pasien,
             'specialist_type_id' => @$specialist_type_id,
+            'procedure_desc' => @$procedure_desc,
+            'procedure_desc_discharge' => @$procedure_desc_discharge,
+            'discharge_way' => @$discharge_way,
+            'discharge_condition' => @$discharge_condition,
             // 'fullname' => $this->getFullname(@$employee_id),
-            'name_of_clinic' => $this->getClinicName(@$clinic_id)
+            'name_of_clinic' => $this->getClinicName(@$clinic_id),
+            'emergency' => @$emergency
         ];
+
 
         foreach ($data as $key => $value) {
             if ($value == '') {
@@ -324,7 +349,11 @@ class AssessmentMedis extends BaseController
             }
         }
 
-        // return $data;
+        foreach ($dataexam as $key => $value) {
+            if (!isset($data[$key])) {
+                $data[$key] = $dataexam[$key];
+            }
+        }
 
 
 
@@ -360,7 +389,7 @@ class AssessmentMedis extends BaseController
                 $encodedLokalis = $dataImage[1];
                 // return $data;
                 $decodedLokalis = base64_decode($encodedLokalis);
-                $lokalisPath = WRITEPATH . 'uploads/lokalis/';
+                $lokalisPath = $this->imageloc . 'uploads/lokalis/';
                 if (!is_dir($lokalisPath)) {
                     mkdir($lokalisPath, 0777, true);
                 }
@@ -432,7 +461,7 @@ class AssessmentMedis extends BaseController
         $pasienHistory = [];
 
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'GEN0009'")->getResultArray());
-        $db->query("delete from pasien_history where no_registration = '$no_registration'");
+        // $db->query("delete from pasien_history where no_registration = '$no_registration'");
         $i = 0;
         foreach ($select as $key => $value) {
             if (isset(${$value['value_id']})) {
@@ -481,26 +510,40 @@ class AssessmentMedis extends BaseController
         }
         if (!empty($proc_id)) {
             $pcs = new PasienProceduresModel();
-            $pcs->where('pasien_diagnosa_id', $pasien_diagnosa_id)->delete();
+            $pcs->where('pasien_diagnosa_id', @$pasien_diagnosa_id)->delete();
 
             foreach ($proc_id as $key => $value) {
                 $dataProc = [];
-                $dataProc['pasien_diagnosa_id'] = $pasien_diagnosa_id;
-                $dataProc['diagnosa_id'] = $proc_id[$key];
-                $dataProc['diagnosa_name'] = $proc_name[$key];
+                $dataProc['pasien_diagnosa_id'] = @$pasien_diagnosa_id;
+                $dataProc['diagnosa_id'] = @$proc_id[$key];
+                $dataProc['diagnosa_name'] = @$proc_name[$key];
                 $dataProc['modified_by'] = user_id();
                 $pcs->insert($dataProc);
             }
         }
         if (@$clinic_id == 'P012') {
             $pv = new PasienVisitationModel();
+            $emergency = @$emergency ?? '';
+            $employee_id = @$employee_id ?? '';
             $pvdata = [
-                'patient_category_id' => $emergency,
+                'patient_category_id' => @$emergency,
                 'employee_id' => @$employee_id,
-                'visit_id' => $visit_id
+                'visit_id' => @$visit_id
             ];
+
+            $tb = new TreatmentBillModel();
+            // $db->query("update pasien_visitation
+            // set patient_category_id = '$emergency',
+            // employee_id = '$employee_id'
+            // where visit_id = '$visit_id'
+            // ");
+            $pv->set([
+                'patient_category_id' => @$emergency,
+                'employee_id' => @$employee_id
+            ])->where('visit_id', @$visit_id)->update();
             // return json_encode($pvdata);
             $pv->save($pvdata);
+            $tb->where("visit_id", @$visit_id)->where("tarif_id", "0211001")->set("employee_id", @$employee_id)->update();
         }
         $data['pasienHistory'] = $pasienHistory;
 
@@ -521,19 +564,58 @@ class AssessmentMedis extends BaseController
         $body = json_decode($body, true);
         $pasien_diagnosa_id = $body['pasien_diagnosa_id'];
         $visit_id = $body['visit_id'];
+        // $triage = $this->getTriage($pasien_diagnosa_id, $visit_id);
         $gcs = $this->getGcs($pasien_diagnosa_id, $visit_id);
         $fallRisk = $this->getFallRisk($pasien_diagnosa_id, $visit_id);
         $painMonitoring = $this->getPainMonitoring($pasien_diagnosa_id, $visit_id);
         $pernapasan = $this->getPernapasan($pasien_diagnosa_id, $visit_id);
+        $educationForm = $this->getEducation($pasien_diagnosa_id, $visit_id);
+        $examDetail = $this->getExamDetail($pasien_diagnosa_id, $visit_id);
         if ($clinic_id = 'P012') {
             $apgar = $this->getApgar($pasien_diagnosa_id, $visit_id);
         }
         return $this->response->setJSON([
+            // 'triage' => $triage,
             'gcs' => $gcs,
             'fallRisk' => $fallRisk,
             'painMonitoring' => $painMonitoring,
             'pernapasan' => $pernapasan,
-            'apgar' => @$apgar
+            'apgar' => @$apgar,
+            'educationForm' => @$educationForm,
+            'examDetail' => @$examDetail
+        ]);
+    }
+    public function getExamDetail($bodyId, $visit)
+    {
+        $model = new ExaminationDetailModel();
+        if ($bodyId == '') {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->orderBy("examination_date desc")->first());
+        } else {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->first());
+        }
+        return $select;
+    }
+    public function getTriage($bodyId, $visit)
+    {
+        $db = db_connect();
+
+        $triage = $this->lowerKey($db->query("select * from assessment_indicator where visit_id = '$visit' and document_id = '$bodyId' and p_type in (select p_type from assessment_parameter_type where PARENT_ID = '004') ")->getResultArray());
+        // return json_encode($triage);
+
+        $triageDetil = "select * from assessment_triase_detail where body_id in (";
+
+        foreach ($triage as $key => $value) {
+            $triageDetil .= "'" . $value['body_id'] . "',";
+        }
+        $triageDetil = substr($triageDetil, 0, strlen($triageDetil) - 1);
+
+        $triageDetil .= ");";
+
+        $triageDetil = $this->lowerKey($db->query($triageDetil)->getResultArray());
+
+        return ([
+            'triage' => $triage,
+            'triageDetil' => $triageDetil
         ]);
     }
     public function getGcs($bodyId, $visit)
@@ -881,6 +963,15 @@ class AssessmentMedis extends BaseController
 
         return $select;
     }
+    public function getEducation($bodyId, $visit)
+    {
+        $db = db_connect();
+
+        $napas = new EducationFormModel();
+        $select = $this->lowerKey($napas->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return $select;
+    }
     public function getApgar($bodyId, $visit)
     {
 
@@ -909,5 +1000,244 @@ class AssessmentMedis extends BaseController
             'apgar' => $apgar,
             'apgarDetil' => $apgarDetil
         ]);
+    }
+    public function fillResumeMedis()
+    {
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $visit_id = $body['visit_id'];
+        $trans_id = $body['trans_id'];
+
+        $pt = new PasienTransferModel();
+        $indikasi = $pt->select("notes")->where("visit_id", $visit_id)->where("isinternal", 5)->first();
+
+        $db = db_connect();
+        // $procbedah = $db->query("select treatment from treatment_bill tb inner join treat_tarif tt on tt.tarif_id = tb.tarif_id where tb.trans_id = '$trans_id' and tt.casemix_id = 2")->getResultArray();
+        $procbedah = $db->query("select TARIF_ID as treatment From PASIEN_OPERASI where trans_id = '$trans_id'")->getResultArray();
+
+        $procnonbedah = $db->query("select treatment from treatment_bill tb inner join treat_tarif tt on tt.tarif_id = tb.tarif_id where tb.trans_id = '$trans_id' and tt.casemix_id = 1")->getResultArray();
+
+        $select = $db->query("select teraphy_desc from examination_info where visit_id = '$visit_id' and petugas_type = '11' order by examination_date desc")->getFirstRow('array');
+        $lastDiag = @$select['teraphy_desc'];
+
+        return $this->response->setJSON([
+            'indikasi' => $indikasi,
+            'procbedah' => $procbedah,
+            'procnonbedah' => $procnonbedah,
+            'lastDiag' => $lastDiag,
+        ]);
+    }
+    public function copyGcsResume()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new GcsModel();
+        $data = $this->lowerKey($model->where("visit_id", $visit)->where("account_id", '1')->orderBy("examination_date desc")->select("*")->first());
+        $org = new OrganizationunitModel();
+        $id = $org->generateId();
+        $data['body_id'] = $id;
+        $data['document_id'] = $bodyId;
+        unset($data['modified_date']);
+        $data['examination_date'] = date('Y-m-d h:i:s', time());
+        $model->insert($data);
+        $result[] = $data;
+
+        return json_encode([
+            'gcs' => $result
+        ]);
+    }
+    public function duplicateAssessmentMedis()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        try {
+            $pasien_diagnosa_id = $body['pasien_diagnosa_id'];
+
+            $pd = new PasienDiagnosaModel();
+            $dataToDuplicate = $pd->where('pasien_diagnosa_id', @$pasien_diagnosa_id) // Filter by visit_id
+                ->first(); // Fetch all rows matching the conditions
+            if (!is_null($dataToDuplicate)) {
+                if (count($dataToDuplicate) > 0) {
+                    $dataToDuplicate = $this->lowerKeyOne($dataToDuplicate);
+                    // $dataToDelete = $dataToDuplicate;
+                    // return json_encode(($dataToDuplicate));
+                    // Step 2: Prepare the data with the new body_id
+                    $dataToDelete['no_registration'] = 'x' . $dataToDuplicate['no_registration'];
+                    $dataToDelete['visit_id'] = 'x' . $dataToDuplicate['visit_id'];
+                    $dataToDelete['org_unit_code'] = 'x' . $dataToDuplicate['org_unit_code'];
+                    $dataToDelete['pasien_diagnosa_id'] = $pasien_diagnosa_id;
+                    $pd->save($dataToDelete);
+
+                    // return json_encode($pd->save($dataToDelete));
+
+                    $body_id = $this->get_bodyid();
+
+                    $dataToDuplicate['pasien_diagnosa_id'] = $body_id;  // Change body_id to '124'
+                    $dataToDuplicate['body_id'] = $body_id;  // Change body_id to '124'
+                    $dataToDuplicate['modified_by'] = user()->username;  // Change body_id to '124'
+                    $dataToDuplicate['valid_user'] = null;
+                    $dataToDuplicate['valid_pasien'] = null;
+                    $dataToDuplicate['valid_date'] = null;
+                    // Step 3: Insert the new data into the table
+                    $pd->save($dataToDuplicate);
+
+
+                    $ex = new ExaminationModel();
+                    $examToDuplicate = $ex->where('pasien_diagnosa_id', @$pasien_diagnosa_id)->first();
+                    $examToDuplicate = $this->lowerKeyOne($examToDuplicate);
+                    // $examToDelete = $examToDuplicate;
+                    $examToDelete['no_registration'] = 'x' . $examToDuplicate['no_registration'];
+                    $examToDelete['visit_id'] = 'x' . $examToDuplicate['visit_id'];
+                    $examToDelete['org_unit_code'] = 'x' . $examToDuplicate['org_unit_code'];
+                    $ex->update($pasien_diagnosa_id, $examToDelete);
+
+                    $examToDuplicate['body_id'] = $body_id;  // Change body_id to '124'
+                    $examToDuplicate['pasien_diagnosa_id'] = $body_id;  // Change body_id to '124'
+                    $examToDuplicate['modified_by'] = user()->username;  // Change body_id to '124'
+                    $examToDuplicate['valid_user'] = null;
+                    $examToDuplicate['valid_pasien'] = null;
+                    $examToDuplicate['valid_date'] = null;
+                    $ex->insert($examToDuplicate);
+
+                    $exd = new ExaminationDetailModel();
+                    $examdToDuplicate = $exd->where('body_id', @$pasien_diagnosa_id)->first();
+                    $examdToDuplicate = $this->lowerKeyOne($examdToDuplicate);
+                    // $examdToDelete = $examdToDuplicate;
+                    $examdToDelete['no_registration'] = 'x' . $examdToDuplicate['no_registration'];
+                    $examdToDelete['visit_id'] = 'x' . $examdToDuplicate['visit_id'];
+                    $examdToDelete['org_unit_code'] = 'x' . $examToDuplicate['org_unit_code'];
+                    $exd->update($pasien_diagnosa_id, $examdToDelete);
+
+                    $examdToDuplicate['body_id'] = $body_id;  // Change body_id to '124'
+                    $examdToDuplicate['document_id'] = $body_id;  // Change body_id to '124'
+                    $examdToDuplicate['modified_by'] = user()->username;  // Change body_id to '124'
+                    $examdToDuplicate['valid_user'] = null;
+                    $examdToDuplicate['valid_pasien'] = null;
+                    $examdToDuplicate['valid_date'] = null;
+                    $exd->insert($examdToDuplicate);
+
+                    try {
+                        $model = new GcsModel();
+                        $data = $this->lowerKey($model->where("document_id", $pasien_diagnosa_id)->orderBy("examination_date desc")->select("*")->first());
+                        if (!is_null($data)) {
+                            if (count($data) > 0) {
+                                $org = new OrganizationunitModel();
+                                $id = $org->generateId();
+                                $data['body_id'] = $id;
+                                $data['document_id'] = $body_id;
+                                unset($data['modified_date']);
+                                $data['examination_date'] = date('Y-m-d h:i:s', time());
+                                $model->insert($data);
+
+                                $gcsToDelete['no_registration'] = 'x' . $examdToDelete['no_registration'];
+                                $gcsToDelete['visit_id'] = 'x' . $examdToDelete['visit_id'];
+                                $gcsToDelete['trans_id'] = 'x' . $examdToDelete['trans_id'];
+                                $gcsToDelete['org_unit_code'] = 'x' . $examdToDelete['org_unit_code'];
+                                $model->where('document_id', $pasien_diagnosa_id)->set($gcsToDelete)->update();
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        //throw $th;
+                    }
+
+                    try {
+                        $model = new LokalisModel();
+                        $data = $this->lowerKey($model->where("document_id", $pasien_diagnosa_id)->findAll());
+                        if (!is_null($data)) {
+                            if (count($data) > 0) {
+                                $org = new OrganizationunitModel();
+                                $id = $org->generateId();
+                                $data['body_id'] = $id;
+                                $data['document_id'] = $body_id;
+                                unset($data['modified_date']);
+                                $data['examination_date'] = date('Y-m-d h:i:s', time());
+                                $model->insert($data);
+
+                                $dataToDelete['visit_id'] = 'x' . $examdToDelete['visit_id'];
+                                $dataToDelete['trans_id'] = 'x' . $examdToDelete['trans_id'];
+                                $model->where('document_id', $pasien_diagnosa_id)->set($dataToDelete)->update();
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        //throw $th;
+                    }
+                }
+            }
+            return $this->response->setJSON([
+                'message' => 'Berhasil',
+                'response' => 'sukses'
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'message' => $e->getMessage(),
+                'response' => 'gagal'
+            ]);
+        }
+    }
+    public function deleteAssessmentMedis()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        try {
+            $pasien_diagnosa_id = $body['pasien_diagnosa_id'];
+
+            $model = new PasienDiagnosaModel();
+            $hasil = $model->deletePasienDiagnosa($pasien_diagnosa_id);
+            $model = new ExaminationModel();
+            $hasil = $model->deletePasienDiagnosa($pasien_diagnosa_id);
+            $model = new ExaminationDetailModel();
+            $hasil = $model->deletePasienDiagnosa($pasien_diagnosa_id);
+            $model = new GcsModel();
+            $hasil = $model->deletePasienDiagnosa($pasien_diagnosa_id);
+            $model = new PainMonitoringModel();
+            $hasil = $model->deletePasienDiagnosa($pasien_diagnosa_id);
+            $model = new FallRiskModel();
+            $hasil = $model->deletePasienDiagnosa($pasien_diagnosa_id);
+            $model = new IndicatorModel();
+            $hasil = $model->deletePasienDiagnosa($pasien_diagnosa_id);
+            return $this->response->setJSON([
+                'message' => 'Berhasil',
+                'response' => 'sukses',
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'message' => $e->getMessage(),
+                'response' => 'gagal'
+            ]);
+        }
     }
 }

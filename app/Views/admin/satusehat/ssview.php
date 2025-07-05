@@ -407,7 +407,7 @@ $currency_symbol = "Rp. ";
                                                                 <select id="kasir" class="form-control" name="kasir">
                                                                     <option value="%">Semua</option>
                                                                     <?php
-                                                                    usort($kasir, fn ($a, $b) => $a['fullname'] <=> $b['fullname']);
+                                                                    usort($kasir, fn($a, $b) => $a['fullname'] <=> $b['fullname']);
                                                                     ?>
                                                                     <?php foreach ($kasir as $key => $value) { ?>
                                                                         <option value="<?= $value['username']; ?>"><?= $value['fullname']; ?></option>
@@ -725,6 +725,12 @@ $currency_symbol = "Rp. ";
                 console.log(type)
                 postEncounterCondition(0)
             }
+        } else if (type == 'viewPractitioner') {
+            console.log(type)
+            if ((ssjson.length) >= 0) {
+                console.log(type)
+                postEncounterCondition(0)
+            }
         }
     }
 
@@ -837,6 +843,46 @@ $currency_symbol = "Rp. ";
         } else {
             if (key + 1 < (ssjson.length)) {
                 getLocation(key + 1)
+            }
+        }
+
+    }
+
+    function getPractitioner(key) {
+        var element = ssjson[key]
+        if (typeof element.sspractitioner_id !== 'undefined') {
+            if (element.sspractitioner_id == '' || element.sspractitioner_id == null) {
+                console.log(element.sspractitioner_id)
+                $.ajax({
+                    url: '<?php echo base_url(); ?>satusehat/<?= basename($actual_link); ?>bridging',
+                    type: "POST",
+                    data: JSON.stringify(element),
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(data) {
+                        // $("#pasienid_" + ssjson[key].pasien_id).html(ssjson[key].pasien_id)
+                        $("#employee_id_" + element.employee_id).html(data)
+                        if (key + 1 < ssjson.length) {
+                            getPractitioner(key + 1)
+                        }
+                    },
+                    error: function() {
+                        // $("#sslocation_id_1771025808550001").html("asdf")
+                        if (key + 1 < (ssjson.length)) {
+                            getPractitioner(key + 1)
+                        }
+                    }
+                });
+            } else {
+                if (key + 1 < (ssjson.length)) {
+                    getPractitioner(key + 1)
+                }
+            }
+        } else {
+            if (key + 1 < (ssjson.length)) {
+                getPractitioner(key + 1)
             }
         }
 

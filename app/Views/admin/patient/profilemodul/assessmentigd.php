@@ -41,7 +41,7 @@ if ($visit['clinic_id'] == 'P012') {
     $menu['stabilitas'] = 0;
     $menu['edukasiintegrasi'] = 0;
     $menu['formedukasi'] = 0;
-    $menu['gcs'] = 0;
+    $menu['gcs'] = 1;
     $menu['integumen'] = 1;
     $menu['anak'] = 0; //?
     $menu['neonatus'] = 0; //?
@@ -167,7 +167,7 @@ if ($visit['clinic_id'] == 'P012') {
 </div>
 <!-- -->
 
-<div class="modal fade" id="addEducationListPlan" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="addEducationListPlan" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content rounded-4 shadow-lg">
             <div class="modal-header">
@@ -339,7 +339,7 @@ if ($visit['clinic_id'] == 'P012') {
         </div>
     </div>
 </div>
-<div class="modal fade" id="addEducationListProvision" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="addEducationListProvision" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content rounded-4 shadow-lg">
             <div class="modal-header">
@@ -543,8 +543,8 @@ if ($visit['clinic_id'] == 'P012') {
 </div>
 
 
-<div class="modal fade" id="arpModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
+<div class="modal fade" id="arpModal" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
+    <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">
                 <div class="col-md-12">
@@ -578,9 +578,9 @@ if ($visit['clinic_id'] == 'P012') {
                             <input type="hidden" id="arpkeluar_id" name="keluar_id">
                             <input type="hidden" id="arpimt_score" name="imt_score">
                             <input type="hidden" id="arpimt_desc" name="imt_desc">
-                            <input type="hidden" id="arpalo_anamnase" name="alo_anamnase">
+                            <!-- <input type="hidden" id="arpalo_anamnase" name="alo_anamnase"> -->
                             <!-- <input type="hidden" id="arpteraphy_desc" name="teraphy_desc"> -->
-                            <input type="hidden" id="arpinstruction" name="instruction">
+                            <!-- <input type="hidden" id="arpinstruction" name="instruction"> -->
                             <input type="hidden" id="arpmedical_treatment" name="medical_treatment">
                             <input type="hidden" id="arpmodified_date" name="modified_date">
                             <input type="hidden" id="arpmodified_by" name="modified_by">
@@ -648,8 +648,9 @@ if ($visit['clinic_id'] == 'P012') {
                                         <div class="mb-3">
                                             <div class="form-group">
                                                 <label for="arpexamination_date">Tanggal Assessmennt</label>
-                                                <input id="flatarpexamination_date" type="hidden" class="form-control datetimeflatpickr" />
-                                                <input name="examination_date" id="arpexamination_date" type="hidden" />
+                                                <!-- <input id="flatarpexamination_date" type="hidden" class="form-control datetimeflatpickr" />
+                                                <input name="examination_date" id="arpexamination_date" type="hidden" /> -->
+                                                <input name="examination_date" id="arpexamination_date" type="datetime-local" class="form-control" />
                                             </div>
                                         </div>
                                     </div>
@@ -665,7 +666,7 @@ if ($visit['clinic_id'] == 'P012') {
                                     <div class="col-sm-4 col-xs-12">
                                         <div class="mb-3">
                                             <div class="form-group">
-                                                <label for="arpemployee_id">Dokter</label>
+                                                <label for="arpemployee_id">Perawat</label>
                                                 <select name="employee_id" id="arpemployee_id" type="hidden" class="form-control ">
                                                 </select>
                                             </div>
@@ -699,63 +700,40 @@ if ($visit['clinic_id'] == 'P012') {
                                             </div>
                                         </div>
                                     <?php } ?>
-                                    <?php if ($menu['fallrisk'] == 1) { ?>
-                                        <div id="arpFallRisk_Group" class="accordion-item">
-                                            <h2 class="accordion-header" id="FallRiskPerawat">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskPerawat" aria-expanded="true" aria-controls="collapseFallRiskPerawat">
-                                                    <b>RESIKO JATUH</b>
-                                                </button>
-                                            </h2>
-                                            <div id="collapseFallRiskPerawat" class="accordion-collapse collapse" aria-labelledby="FallRiskPerawat" style="">
-                                                <div class="accordion-body text-muted">
-                                                    <div class="row">
-                                                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                                            <div class="col-md-12">
-                                                                <div id="bodyFallRiskPerawat">
-                                                                </div>
-                                                                <div id="bodyFallRiskPerawatAddBtn" class="col-md-12 text-center">
-                                                                    <a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-                                    <?php if ($menu['painmonitoring'] == 1) { ?>
-                                        <div id="arpPainMonitoring_Group" class="accordion-item">
-                                            <h2 class="accordion-header" id="002">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse002" aria-expanded="true" aria-controls="collapse002">
-                                                    <b>MONITORING NYERI</b>
-                                                </button>
-                                            </h2>
-                                            <div id="collapse002" class="accordion-collapse collapse" aria-labelledby="002" style="">
-                                                <div class="accordion-body text-muted">
-                                                    <div class="row">
-                                                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                                            <div class="col-md-12">
-                                                                <div id="bodyPainMonitoringPerawat">
-                                                                </div>
-                                                                <div id="bodyPainMonitoringPerawatAddBtn" class="col-md-12 text-center">
-                                                                    <a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
                                 </div>
-                                <h4 id="subjectiveGroupHeader" class="mt-4">S:</h4>
+                                <h4 id="subjectiveGroupHeader" class="mt-4"><b>SUBYEKTIF</b>:</h4>
+                                <hr>
+                                <h4>Anamnase</h4>
                                 <hr>
                                 <div class="row">
-                                    <div class="col-sm-12 mt-2 mb-4">
-                                        <div class="form-group"><label id="arpanamnase_label">Keluhan Utama</label>
-                                            <textarea name="anamnase" id="arpanamnase" placeholder="" value="" class="form-control"></textarea>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="arpdescription">Keluhan Utama</label>
+                                                <textarea id="arpdescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
+                                            </div>
                                         </div>
                                     </div>
+                                    <h4>Riwayat Penyakit Sekarang</h4>
+                                    <hr>
+                                    <div class="col-sm-6 mt-2 mb-4">
+                                        <div class="form-group"><label id="">Autoanamnase</label>
+                                            <textarea name="anamnase" id="arpanamnase" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 mt-2 mb-4">
+                                        <div class="form-group"><label id="">Alloanamnase</label>
+                                            <textarea name="alo_anamnase" id="arpalo_anamnase" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="arpdescription">Riwayat Penyakit Sekarang</label>
+                                                <textarea id="arpdescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div> -->
                                 </div>
                                 <div class="accordion mb-4" id="accodrionRiwayatARP">
                                     <div class="accordion-item">
@@ -769,70 +747,43 @@ if ($visit['clinic_id'] == 'P012') {
                                                 <div class="accordion-body text-muted">
                                                     <div class="row mb-4">
                                                         <div id="groupRiwayat" class="row">
-                                                            <div class="col-sm-12 col-xs-12">
-                                                                <div class="mb-3">
-                                                                    <div class="form-group">
-                                                                        <label for="arpdescription">Riwayat Penyakit Sekarang</label>
-                                                                        <textarea id="arpdescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php if ($visit['specialist_type_id'] == '1.05') {
-                                                            ?>
-                                                                <?php foreach ($aValue as $key => $value) {
-                                                                    if ($value['p_type'] == 'GEN0009' && $value['parameter_id'] == '06') {
-                                                                        if ($value['value_score'] == '4') {
-                                                                ?>
-                                                                            <div class="col-sm-6 col-xs-12">
-                                                                                <div class="mb-3">
-                                                                                    <div class="form-group">
-                                                                                        <label for="arp<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                        <textarea id="arp<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        <?php
-                                                                        } else if ($value['value_score'] == '2') {
-                                                                        ?>
-                                                                            <div class="col-sm-6 col-xs-12">
-                                                                                <div class="form-check mb-3">
-                                                                                    <input id="arp<?= $value['p_type'] . $value['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value['value_id']; ?>" value="1">
-                                                                                    <label class="form-check-label" for="arp<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                </div>
-                                                                            </div> <?php
-                                                                                }
-                                                                                    ?>
-                                                                <?php
-                                                                    }
-                                                                } ?>
+
                                                             <?php
-                                                            } else {
+                                                            $riwayatHeader = array_filter($aParameter, function ($value) {
+                                                                return $value['p_type'] == 'GEN0009';
+                                                            });
+                                                            foreach ($riwayatHeader as $key => $value) {
                                                             ?>
-                                                                <?php foreach ($aValue as $key => $value) {
-                                                                    if ($value['p_type'] == 'GEN0009') {
-                                                                        if ($value['value_score'] == '4') {
+                                                                <div class="row">
+                                                                    <h5><?= $value['parameter_desc']; ?></h5>
+                                                                    <hr>
+                                                                    <?php $riwayat = array_filter($aValue, function ($item) use ($value) {
+                                                                        return $item['p_type'] == $value['p_type'] && $item['parameter_id'] == $value['parameter_id'];
+                                                                    }); ?>
+                                                                </div>
+                                                                <?php foreach ($riwayat as $key1 => $value1) {
+                                                                    if ($value1['value_score'] == '4') {
                                                                 ?>
-                                                                            <div class="col-sm-6 col-xs-12">
-                                                                                <div class="mb-3">
-                                                                                    <div class="form-group">
-                                                                                        <label for="arp<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                        <textarea id="arp<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                                    </div>
+                                                                        <div class="col-sm-6 col-xs-12">
+                                                                            <div class="mb-3">
+                                                                                <div class="form-group">
+                                                                                    <label for="arp<?= $value1['p_type'] . $value1['value_id']; ?>"><?= $value1['value_desc']; ?></label>
+                                                                                    <textarea id="arp<?= $value1['p_type'] . $value1['value_id']; ?>" name="<?= $value1['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
                                                                                 </div>
                                                                             </div>
-                                                                        <?php
-                                                                        } else if ($value['value_score'] == '2') {
-                                                                        ?>
-                                                                            <div class="col-sm-6 col-xs-12">
-                                                                                <div class="form-check mb-3">
-                                                                                    <input id="arp<?= $value['p_type'] . $value['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value['value_id']; ?>" value="1">
-                                                                                    <label class="form-check-label" for="arp<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                </div>
-                                                                            </div> <?php
-                                                                                }
-                                                                                    ?>
+                                                                        </div>
+                                                                    <?php
+                                                                    } else if ($value1['value_score'] == '2') {
+                                                                    ?>
+                                                                        <div class="col-sm-6 col-xs-12">
+                                                                            <div class="form-check mb-3">
+                                                                                <input id="arp<?= $value1['p_type'] . $value1['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value1['value_id']; ?>" value="1">
+                                                                                <label class="form-check-label" for="arp<?= $value1['p_type'] . $value1['value_id']; ?>"><?= $value1['value_desc']; ?></label>
+                                                                            </div>
+                                                                        </div> <?php
+                                                                            }
+                                                                                ?>
                                                                 <?php
-                                                                    }
                                                                 } ?>
                                                             <?php
                                                             } ?>
@@ -848,7 +799,7 @@ if ($visit['clinic_id'] == 'P012') {
                                 <div class="row mb-4" id="accodrionExamInfo">
                                     <div class="">
                                         <h5 class="" id="arpheadingVitalSign">
-                                            <b>O:</b>
+                                            <b>OBYEKTIF:</b>
                                         </h5>
                                         <hr>
                                         <div id="arpcollapseVitalSign" class="col-12" aria-labelledby="" data-bs-parent="#accodrionExamInfo" style="">
@@ -968,7 +919,15 @@ if ($visit['clinic_id'] == 'P012') {
                                                         <!--==new -->
                                                         <!--==endofnew -->
                                                         <div class="col-sm-12 mt-2">
-                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                            <div class="form-group">
+                                                                <label>Keadaan Umum</label>
+                                                                <!-- <textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea> -->
+                                                                <select class="form-select" name="pemeriksaan" id="arppemeriksaan">
+                                                                    <option value="0">Baik</option>
+                                                                    <option value="1">Sedang</option>
+                                                                    <option value="2">Buruk</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <span id="arptotal_score"></span>
@@ -978,71 +937,61 @@ if ($visit['clinic_id'] == 'P012') {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mb-4" id="accodrionExamInfo">
-                                    <div class="">
-                                        <h5 class="" id="arpheadingVitalSign">
-                                            <b>A:</b>
-                                        </h5>
-                                        <hr>
-                                        <div id="collapseDiagnosaPerawat" class="col-12" aria-labelledby="" data-bs-parent="#">
-                                            <div class=" text-muted">
-                                                <div class="row mb-2">
-                                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                                        <div class="mb-4">
-                                                            <div class="staff-members">
-                                                                <div class="table tablecustom-responsive">
-                                                                    <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
-                                                                        <?php if (true) { ?>
-                                                                            <thead>
-                                                                                <th class="text-center" colspan="2">Diagnosa Perawat</th>
-                                                                            </thead>
-                                                                            <tbody id="bodyDiagPerawat">
-                                                                            </tbody>
-                                                                        <?php }   ?>
-                                                                    </table>
-                                                                </div>
-                                                                <div class="box-tab-tools" style="text-align: center;">
-                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawatBasic('bodyDiagPerawat', '', null, null, 'arpModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-to-hide"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4">
-                                    <h5 class="" id="headingSubyektif">
-                                        <b id="cpptSubyektifTitle">P</b>
-                                    </h5>
-                                    <hr>
-                                    <div id="" class="col-12" aria-labelledby="">
-                                        <div class="text-muted">
-                                            <div class="row">
-                                                <div class="col-sm-12 mt-2">
-                                                    <div class="form-group"><label id="acpptinstruction_label">Catatan Planning</label><textarea name="instruction" id="acpptinstruction" placeholder="" value="" class="form-control" row="4"></textarea></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row text-center">
-                                    <div class="col-sm-6 col-md-4 m-4">
-                                        <div id="formaddarpqrcode1" class="qrcode-class"></div>
-                                        <div id="formaddarpsigner1"></div>
-                                    </div>
-                                    <div class="col-sm-6 col-md-4 m-4">
-                                        <div id="formaddarpqrcode2" class="qrcode-class"></div>
-                                        <div id="formaddarpsigner2"></div>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-12">
                                     <hr>
                                 </div><!--./col-md-12-->
 
                             </div>
                             <div class="accordion" id="accordionAssessmentAwal">
+                                <?php if ($menu['fallrisk'] == 1) { ?>
+                                    <div id="arpFallRisk_Group" class="accordion-item">
+                                        <h2 class="accordion-header" id="FallRiskPerawat">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskPerawat" aria-expanded="true" aria-controls="collapseFallRiskPerawat">
+                                                <b>RESIKO JATUH</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseFallRiskPerawat" class="accordion-collapse collapse" aria-labelledby="FallRiskPerawat" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                        <div class="col-md-12">
+                                                            <div id="bodyFallRiskPerawat">
+                                                            </div>
+                                                            <div id="bodyFallRiskPerawatAddBtn" class="col-md-12 text-center">
+                                                                <a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <?php if ($menu['painmonitoring'] == 1) { ?>
+                                    <div id="arpPainMonitoring_Group" class="accordion-item">
+                                        <h2 class="accordion-header" id="002">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse002" aria-expanded="true" aria-controls="collapse002">
+                                                <b>MONITORING NYERI</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse002" class="accordion-collapse collapse" aria-labelledby="002" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                        <div class="col-md-12">
+                                                            <div id="bodyPainMonitoringPerawat">
+                                                            </div>
+                                                            <div id="bodyPainMonitoringPerawatAddBtn" class="col-md-12 text-center">
+                                                                <a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                                 <?php foreach ($aParent as $key => $value) { ?>
                                     <?php if ($value['parent_id'] == '005' && $visit['specialist_type_id'] == "1.04" && $menu['apgar'] == 1) { ?>
                                         <div id="arpApgar_Group" class="accordion-item">
@@ -1428,7 +1377,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPsikologiButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPsikologi(1,0, 'arpbody_id', 'bodyPsikologi')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1482,7 +1431,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi', false, 'arp')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1595,7 +1544,70 @@ if ($visit['clinic_id'] == 'P012') {
                             </div>
                             <div class="col-md-12">
                                 <hr>
-                            </div><!--./col-md-12-->
+                            </div>
+                            <div class="row mb-4" id="accodrionExamInfo">
+                                <div class="">
+                                    <h5 class="" id="arpheadingVitalSign">
+                                        <b>ASESMEN / DIAGNOSA PERAWAT:</b>
+                                    </h5>
+                                    <hr>
+                                    <div id="collapseDiagnosaPerawat" class="col-12" aria-labelledby="" data-bs-parent="#">
+                                        <div class=" text-muted">
+                                            <div class="row mb-2">
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="mb-4">
+                                                        <div class="staff-members">
+                                                            <div class="table tablecustom-responsive">
+                                                                <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                                                    <?php if (true) { ?>
+                                                                        <thead>
+                                                                            <th class="text-center" colspan="2">Diagnosa Perawat</th>
+                                                                        </thead>
+                                                                        <tbody id="bodyDiagPerawat">
+                                                                        </tbody>
+                                                                    <?php }   ?>
+                                                                </table>
+                                                            </div>
+                                                            <div class="box-tab-tools" style="text-align: center;">
+                                                                <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawatBasic('bodyDiagPerawat', '', null, null, 'arpModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-to-hide"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <h5 class="" id="headingSubyektif">
+                                    <b id="cpptSubyektifTitle">PLANNING: </b>
+                                </h5>
+                                <hr>
+                                <div id="" class="col-12" aria-labelledby="">
+                                    <div class="text-muted">
+                                        <div class="row">
+                                            <div class="col-sm-12 mt-2">
+                                                <div class="form-group"><label id="acpptinstruction_label">Catatan Planning</label><textarea name="instruction" id="arpinstruction" placeholder="" value="" class="form-control" row="4"></textarea></div>
+                                            </div>
+                                            <div class="col-sm-12 mt-2">
+                                                <div class="form-group"><label id="acpptstanding_order_label">Standing Order</label><textarea name="standing_order" id="arpstanding_order" placeholder="" value="" class="form-control" row="4"></textarea></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-sm-6 col-md-4 m-4">
+                                    <div id="formaddarpqrcode1" class="qrcode-class"></div>
+                                    <div id="formaddarpsigner1"></div>
+                                </div>
+                                <div class="col-sm-6 col-md-4 m-4">
+                                    <div id="formaddarpqrcode2" class="qrcode-class"></div>
+                                    <div id="formaddarpsigner2"></div>
+                                </div>
+                            </div>
+                            <!--./col-md-12-->
                             <!-- <div class="panel-footer text-end mb-4">
                             <button type="button" id="formaddarpbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-plus"></i> <span>Tambah</span></button>
                             <button type="button" id="formsavearpbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>

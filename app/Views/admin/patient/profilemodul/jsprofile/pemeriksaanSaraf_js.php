@@ -1,16 +1,15 @@
 <script type="text/javascript">
-(function() {
     $(document).ready(function() {
+        console.log("saraf")
         // Event click untuk modal
         $("#pemeriksaanSarafTab").off("click").on("click", function(e) {
             e.preventDefault();
             getLoadingscreen("contentToHide-pemeriksaanSaraf", "load-content-pemeriksaanSaraf")
-            groupeActionNeuInTab()
+            groupeActionInTabSaraf()
         });
     });
 
-    const groupeActionNeuInTab = async () => {
-        let visit = <?= json_encode($visit) ?>;
+    const groupeActionInTabSaraf = async () => {
         await getDataAssessmenNeurologi({
             visit: visit
         })
@@ -24,26 +23,27 @@
     }
 
     const templateNeurologi = (props) => {
+        console.log(props)
         const contentShow = [{
                 label: "",
                 type: "hidden",
                 name: "org_unit_code",
                 value: props?.data?.org_unit_code ?? props?.visit?.org_unit_code,
-                id: "neu_org_unit_code",
+                id: "org_unit_code",
                 class: ""
             }, {
                 label: "",
                 type: "hidden",
                 name: "visit_id",
                 value: props?.data?.visit_id ?? props?.visit?.visit_id,
-                id: "neu_visit_id",
+                id: "visit_id",
                 class: ""
             }, {
                 label: "",
                 type: "hidden",
                 name: "trans_id",
                 value: props?.data?.trans_id ?? props?.visit?.trans_id,
-                id: "neu_trans_id",
+                id: "trans_id",
                 class: ""
             },
             {
@@ -51,7 +51,7 @@
                 type: "hidden",
                 name: "body_id",
                 value: props?.data?.body_id ?? get_bodyid(),
-                id: "neu_body_id",
+                id: "body_id",
                 class: ""
             },
             {
@@ -59,7 +59,7 @@
                 type: "hidden",
                 name: "document_id",
                 value: props?.data?.document_id ?? props?.visit?.session_id,
-                id: "neu_document_id",
+                id: "document_id",
                 class: ""
             },
             {
@@ -67,7 +67,7 @@
                 type: "hidden",
                 name: "no_registration",
                 value: props?.data?.no_registration ?? props?.visit?.no_registration,
-                id: "neu_no_registration",
+                id: "no_registration",
                 class: ""
             },
             {
@@ -75,7 +75,7 @@
                 type: "hidden",
                 name: "examination_date",
                 value: moment(new Date()).format("YYYY-MM-DD HH:mm"),
-                id: "neu_examination_date",
+                id: "examination_date",
                 class: ""
             },
 
@@ -84,7 +84,7 @@
                 type: "text",
                 name: "vas_nrs",
                 value: props?.data?.vas_nrs || "",
-                id: "neu_vas_nrs",
+                id: "vas_nrs",
                 class: "groupe-val"
             }, {
                 group: "Pupil Kiri",
@@ -92,32 +92,32 @@
                         label: "Diameter",
                         type: "text",
                         name: "left_diameter",
-                        value: props?.data?.left_diameter || "",
-                        id: "neu_left_diameter",
+                        value: props?.data?.left_diameter || "3mm",
+                        id: "left_diameter",
                         class: "groupe-val"
                     },
                     {
                         label: "Refleks",
                         type: "text",
                         name: "left_light_reflex",
-                        value: props?.data?.left_light_reflex || "",
-                        id: "neu_left_light_reflex",
+                        value: props?.data?.left_light_reflex || "+",
+                        id: "left_light_reflex",
                         class: "groupe-val"
                     },
                     {
                         label: "Kornea",
                         type: "text",
                         name: "left_cornea",
-                        value: props?.data?.left_cornea || "",
-                        id: "neu_left_cornea",
+                        value: props?.data?.left_cornea || "Dalam batas normal",
+                        id: "left_cornea",
                         class: "groupe-val"
                     },
                     {
                         label: "Isokor Anisokor",
                         type: "text",
                         name: "left_isokor_anisokor",
-                        value: props?.data?.left_isokor_anisokor || "",
-                        id: "neu_left_isokor_anisokor",
+                        value: props?.data?.left_isokor_anisokor || "isokor",
+                        id: "left_isokor_anisokor",
                         class: "groupe-val"
                     }
                 ]
@@ -128,32 +128,32 @@
                         label: "Diameter",
                         type: "text",
                         name: "right_diameter",
-                        value: props?.data?.right_diameter || "",
-                        id: "neu_right_diameter",
+                        value: props?.data?.right_diameter || "3mm",
+                        id: "right_diameter",
                         class: "groupe-val"
                     },
                     {
                         label: "Refleks",
                         type: "text",
                         name: "right_light_reflex",
-                        value: props?.data?.right_light_reflex || "",
-                        id: "neu_right_light_reflex",
+                        value: props?.data?.right_light_reflex || "+",
+                        id: "right_light_reflex",
                         class: "groupe-val"
                     },
                     {
                         label: "Kornea",
                         type: "text",
                         name: "right_cornea",
-                        value: props?.data?.right_cornea || "",
-                        id: "neu_right_cornea",
+                        value: props?.data?.right_cornea || "Dalam batas normal",
+                        id: "right_cornea",
                         class: "groupe-val"
                     },
                     {
                         label: "Isokor Anisokor",
                         type: "text",
                         name: "right_isokor_anisokor",
-                        value: props?.data?.right_isokor_anisokor || "",
-                        id: "neu_right_isokor_anisokor",
+                        value: props?.data?.right_isokor_anisokor || "isokor",
+                        id: "right_isokor_anisokor",
                         class: "groupe-val"
                     }
                 ]
@@ -164,56 +164,56 @@
                         label: "Kaku Kuduk",
                         type: "text",
                         name: "stiff_neck",
-                        value: props?.data?.stiff_neck || "",
-                        id: "neu_stiff_neck",
+                        value: props?.data?.stiff_neck || "-",
+                        id: "stiff_neck",
                         class: "groupe-val"
                     },
                     {
                         label: "Meningeal Sign",
                         type: "text",
                         name: "meningeal_sign",
-                        value: props?.data?.meningeal_sign || "",
-                        id: "neu_meningeal_sign",
+                        value: props?.data?.meningeal_sign || "-",
+                        id: "meningeal_sign",
                         class: "groupe-val"
                     },
                     {
                         label: "Brudzinski I-IV",
                         type: "text",
                         name: "brudzinki_i_iv",
-                        value: props?.data?.brudzinki_i_iv || "",
-                        id: "neu_brudzinki_i_iv",
+                        value: props?.data?.brudzinki_i_iv || "-",
+                        id: "brudzinki_i_iv",
                         class: "groupe-val"
                     },
                     {
                         label: "Kernig Sign",
                         type: "text",
                         name: "kernig_sign",
-                        value: props?.data?.kernig_sign || "",
-                        id: "neu_kernig_sign",
+                        value: props?.data?.kernig_sign || "-",
+                        id: "kernig_sign",
                         class: "groupe-val"
                     },
                     {
                         label: "Dolls Eye Phenomena",
                         type: "text",
                         name: "dolls_eye_phenomenon",
-                        value: props?.data?.dolls_eye_phenomenon || "",
-                        id: "neu_dolls_eye_phenomenon",
+                        value: props?.data?.dolls_eye_phenomenon || "-",
+                        id: "dolls_eye_phenomenon",
                         class: "groupe-val"
                     },
                     {
                         label: "Vertebra",
                         type: "text",
                         name: "vertebra",
-                        value: props?.data?.vertebra || "",
-                        id: "neu_vertebra",
+                        value: props?.data?.vertebra || "Dalam batas normal",
+                        id: "vertebra",
                         class: "groupe-val"
                     },
                     {
                         label: "Extremity",
                         type: "text",
                         name: "extremity",
-                        value: props?.data?.extremity || "",
-                        id: "neu_extremity",
+                        value: props?.data?.extremity || "Dalam batas normal",
+                        id: "extremity",
                         class: "groupe-val"
                     },
 
@@ -225,32 +225,32 @@
                         label: "Gerak Atas Kiri ",
                         type: "text",
                         name: "motion_upper_left",
-                        value: props?.data?.motion_upper_left || "",
-                        id: "neu_motion_upper_left",
+                        value: props?.data?.motion_upper_left || "Dalam batas normal",
+                        id: "motion_upper_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Gerak Atas Kanan",
                         type: "text",
                         name: "motion_upper_right",
-                        value: props?.data?.motion_upper_right || "",
-                        id: "neu_motion_upper_right",
+                        value: props?.data?.motion_upper_right || "Dalam batas normal",
+                        id: "motion_upper_right",
                         class: "groupe-val"
                     },
                     {
                         label: "Gerak Bawah Kiri",
                         type: "text",
                         name: "motion_lower_left",
-                        value: props?.data?.motion_lower_left || "",
-                        id: "neu_motion_lower_left",
+                        value: props?.data?.motion_lower_left || "Dalam batas normal",
+                        id: "motion_lower_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Gerak Bawah Kanan",
                         type: "text",
                         name: "motion_lower_right",
-                        value: props?.data?.motion_lower_right || "",
-                        id: "neu_motion_lower_right",
+                        value: props?.data?.motion_lower_right || "Dalam batas normal",
+                        id: "motion_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -261,32 +261,32 @@
                         label: "Kekuatan Atas Kiri ",
                         type: "text",
                         name: "strength_upper_left",
-                        value: props?.data?.strength_upper_left || "",
-                        id: "neu_strength_upper_left",
+                        value: props?.data?.strength_upper_left || "5",
+                        id: "strength_upper_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Kekuatan Atas Kanan",
                         type: "text",
                         name: "strength_upper_right",
-                        value: props?.data?.strength_upper_right || "",
-                        id: "neu_strength_upper_right",
+                        value: props?.data?.strength_upper_right || "5",
+                        id: "strength_upper_right",
                         class: "groupe-val"
                     },
                     {
                         label: "Kekuatan Bawah Kiri",
                         type: "text",
                         name: "strength_lower_left",
-                        value: props?.data?.strength_lower_left || "",
-                        id: "neu_strength_lower_left",
+                        value: props?.data?.strength_lower_left || "5",
+                        id: "strength_lower_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Kekuatan Bawah Kanan",
                         type: "text",
                         name: "strength_lower_right",
-                        value: props?.data?.strength_lower_right || "",
-                        id: "neu_strength_lower_right",
+                        value: props?.data?.strength_lower_right || "5",
+                        id: "strength_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -297,32 +297,32 @@
                         label: "Reflek Fisiologi Atas Kiri",
                         type: "text",
                         name: "physiological_reflex_upper_left",
-                        value: props?.data?.physiological_reflex_upper_left || "",
-                        id: "neu_physiological_reflex_upper_left",
+                        value: props?.data?.physiological_reflex_upper_left || "+2",
+                        id: "physiological_reflex_upper_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Reflek Fisiologi Atas Kanan",
                         type: "text",
                         name: "physiological_reflex_upper_right",
-                        value: props?.data?.physiological_reflex_upper_right || "",
-                        id: "neu_physiological_reflex_upper_right",
+                        value: props?.data?.physiological_reflex_upper_right || "-2",
+                        id: "physiological_reflex_upper_right",
                         class: "groupe-val"
                     },
                     {
                         label: "Reflek Fisiologi Bawah Kiri",
                         type: "text",
                         name: "physiological_reflex_lower_left",
-                        value: props?.data?.physiological_reflex_lower_left || "",
-                        id: "neu_physiological_reflex_lower_left",
+                        value: props?.data?.physiological_reflex_lower_left || "+2",
+                        id: "physiological_reflex_lower_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Reflek Fisiologi Bawah Kanan",
                         type: "text",
                         name: "physiological_reflex_lower_right",
-                        value: props?.data?.physiological_reflex_lower_right || "",
-                        id: "neu_physiological_reflex_lower_right",
+                        value: props?.data?.physiological_reflex_lower_right || "-2",
+                        id: "physiological_reflex_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -333,32 +333,32 @@
                         label: "Reflek Patologi Atas Kiri",
                         type: "text",
                         name: "pathologycal_reflex_upper_left",
-                        value: props?.data?.pathologycal_reflex_upper_left || "",
-                        id: "neu_pathologycal_reflex_upper_left",
+                        value: props?.data?.pathologycal_reflex_upper_left || "-",
+                        id: "pathologycal_reflex_upper_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Reflek Patologi Atas Kanan",
                         type: "text",
                         name: "pathologycal_reflex_upper_right",
-                        value: props?.data?.pathologycal_reflex_upper_right || "",
-                        id: "neu_pathologycal_reflex_upper_right",
+                        value: props?.data?.pathologycal_reflex_upper_right || "-",
+                        id: "pathologycal_reflex_upper_right",
                         class: "groupe-val"
                     },
                     {
                         label: "Reflek Patologi Bawah Kiri",
                         type: "text",
                         name: "pathologycal_reflex_lower_left",
-                        value: props?.data?.pathologycal_reflex_lower_left || "",
-                        id: "neu_pathologycal_reflex_lower_left",
+                        value: props?.data?.pathologycal_reflex_lower_left || "-",
+                        id: "pathologycal_reflex_lower_left",
                         class: "groupe-val"
                     },
                     {
                         label: "Reflek Patologi Bawah Kanan",
                         type: "text",
                         name: "pathologycal_reflex_lower_right",
-                        value: props?.data?.pathologycal_reflex_lower_right || "",
-                        id: "neu_pathologycal_reflex_lower_right",
+                        value: props?.data?.pathologycal_reflex_lower_right || "-",
+                        id: "pathologycal_reflex_lower_right",
                         class: "groupe-val"
                     }
                 ]
@@ -369,16 +369,16 @@
                         label: "Clonus ",
                         type: "text",
                         name: "clonus",
-                        value: props?.data?.clonus || "",
-                        id: "neu_clonus",
+                        value: props?.data?.clonus || "-",
+                        id: "clonus",
                         class: "groupe-val"
                     },
                     {
                         label: "Sensibilitas ",
                         type: "text",
                         name: "sensibility",
-                        value: props?.data?.sensibility || "",
-                        id: "neu_sensibility",
+                        value: props?.data?.sensibility || "Dalam batas normal",
+                        id: "sensibility",
                         class: "groupe-val"
                     },
 
@@ -438,49 +438,29 @@
 
         $("#contentAssessmen_Neurologi_Show").html(`
         <div class="row">
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-outline-primary mb-3" id="default-value-groupe-neurologi">Default</button>
-            </div>
             ${contentHtml}
         </div>`);
+        // $("#contentAssessmen_Neurologi_Show").html(`
+        // <div class="row">
+        //     <div class="d-flex justify-content-end">
+        //         <button type="button" class="btn btn-outline-primary mb-3" id="default-value-groupe-neurologi">Default</button>
+        //     </div>
+        //     ${contentHtml}
+        // </div>`);
         $("#contentAssessmen_Neurologi_Hide").html(`<div class="row">${contentHtmlHide}</div>`);
 
 
-        initializeNeuFlatpickr();
         saveAssessmenNeurologi();
-        setDefaultNeuValues()
+        setDefaultValuesSaraf()
     };
 
-    const setDefaultNeuValues = () => {
+    const setDefaultValuesSaraf = () => {
         $("#default-value-groupe-neurologi").on("click", function() {
             $("#contentAssessmen_Neurologi_Show .groupe-val").each(function() {
                 $(this).val("Dalam batas normal");
             });
         });
     };
-
-    const initializeNeuFlatpickr = () => {
-        flatpickr(".datetimeflatpickr", {
-            enableTime: true,
-            dateFormat: "d/m/Y H:i", // Display format
-            time_24hr: true, // 24-hour time format
-        });
-
-        $(".datetimeflatpickr").prop("readonly", false);
-
-        $(".datetimeflatpickr").on("change", function() {
-            let theid = $(this).attr("id");
-            theid = theid.replace("flat", "");
-            let thevalue = $(this).val();
-
-            if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
-                let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
-                    "YYYY-MM-DD HH:mm"
-                );
-                $("#" + theid).val(formattedDate);
-            } else {}
-        });
-    }
 
     const getDataAssessmenNeurologi = (props) => {
         return new Promise((resolve) => {
@@ -489,7 +469,7 @@
                 org_unit_code: props?.visit?.org_unit_code,
                 session_id: props?.visit?.session_id,
             }, 'admin/AssNeurology/getData', (res) => {
-                renderDataTabelsAssessmenNeurologi({
+                templateNeurologi({
                     data: res?.value?.data?.dataAll
                 })
             }, (beforesend) => {
@@ -566,11 +546,11 @@
                 [10, 25, 50, 'All']
             ]
         });
-        actionButtonInNeuTabelss(props)
+        actionButtonInTabelss(props)
     }
 
 
-    const actionButtonInNeuTabelss = (props) => {
+    const actionButtonInTabelss = (props) => {
         $("#bodydatapemeriksaanSaraf").on("click", ".formEditNeurologi", function() {
             const id = $(this).data("id");
             const selectedData = props.data.find(item => item.body_id === id);
@@ -636,7 +616,4 @@
             }
         });
     }
-
-
-})();
 </script>

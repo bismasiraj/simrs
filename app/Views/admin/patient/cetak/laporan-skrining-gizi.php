@@ -234,7 +234,7 @@
 </script>
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `<?= $visit['fullname']; ?>`,
+        text: `<?= @$visit['fullname']; ?>`,
         width: 70,
         height: 70,
         colorDark: "#000000",

@@ -6,11 +6,17 @@ $this->extend('layout/basiclayout', [
 ]) ?>
 <?php $this->section('cssContent') ?>
 <!-- DataTables -->
-<link href="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="<?php echo base_url(); ?>assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+    type="text/css" />
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css"
+    rel="stylesheet" type="text/css" />
 
 <!-- Responsive datatable examples -->
-<link href="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+    rel="stylesheet" type="text/css" />
 <?php $this->endSection() ?>
 <?php $this->section('topbar') ?>
 <?php echo view('layout/partials/topbar.php', [
@@ -66,9 +72,17 @@ $currency_symbol = "Rp. ";
                                                                 <label>Mulai Tanggal</label>
                                                                 <div>
                                                                     <div class="input-group" id="mulai">
-                                                                        <input id="flatreportmulai" type="text" class="form-control dateflatpickr" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#mulai'>
-                                                                        <input id="reportmulai" name="mulai" type="hidden" class="" placeholder="yyyy-mm-dd">
-                                                                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                                                        <input type="text" id="mulai-date" name="mulai"
+                                                                            class="form-control  dateFlatTime-rl">
+                                                                        <!-- <input name="mulai" type="text" class="form-control"
+                                                                        placeholder="yyyy-mm-dd"
+                                                                        data-date-format="yyyy-mm-dd"
+                                                                        data-provide="datepicker"
+                                                                        data-date-autoclose="true"
+                                                                        data-date-container='#mulai'
+                                                                        value="<?= date('Y-m-d'); ?>"> -->
+                                                                        <span class="input-group-text"><i
+                                                                                class="mdi mdi-calendar"></i></span>
                                                                     </div>
                                                                     <!-- input-group -->
                                                                 </div>
@@ -81,9 +95,17 @@ $currency_symbol = "Rp. ";
                                                                 <label>Hingga Tanggal</label>
                                                                 <div>
                                                                     <div class="input-group" id="akhir">
-                                                                        <input id="flatreportakhir" type="text" class="form-control dateflatpickr" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#akhir'>
-                                                                        <input id="reportakhir" name="akhir" type="hidden">
-                                                                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                                                        <input type="text" id="akhir-date" name="akhir"
+                                                                            class="form-control   dateFlatTime-rl">
+                                                                        <!-- <input name="akhir" type="text" class="form-control"
+                                                                        placeholder="yyyy-mm-dd"
+                                                                        data-date-format="yyyy-mm-dd"
+                                                                        data-provide="datepicker"
+                                                                        data-date-autoclose="true"
+                                                                        data-date-container='#akhir'
+                                                                        value="<?= date('Y-m-d'); ?>"> -->
+                                                                        <span class="input-group-text"><i
+                                                                                class="mdi mdi-calendar"></i></span>
                                                                     </div>
                                                                     <!-- input-group -->
                                                                 </div>
@@ -94,8 +116,10 @@ $currency_symbol = "Rp. ";
                                                     if (isset($customtext)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customtextTitle; ?></label><small class="req"> *</small>
-                                                                <input id="customtext" name="customtext" placeholder="" type="text" class="form-control start_date" value="" />
+                                                                <label><?= $customtextTitle; ?></label><small class="req">
+                                                                    *</small>
+                                                                <input id="customtext" name="customtext" placeholder=""
+                                                                    type="text" class="form-control start_date" value="" />
                                                             </div>
                                                         </div>
                                                     <?php } ?>
@@ -103,8 +127,10 @@ $currency_symbol = "Rp. ";
                                                     if (isset($customtext1)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customtext1Title; ?></label><small class="req"> *</small>
-                                                                <input id="customtext1" name="customtext1" placeholder="" type="text" class="form-control start_date" value="" />
+                                                                <label><?= $customtext1Title; ?></label><small class="req">
+                                                                    *</small>
+                                                                <input id="customtext1" name="customtext1" placeholder=""
+                                                                    type="text" class="form-control start_date" value="" />
                                                             </div>
                                                         </div>
                                                     <?php } ?>
@@ -112,8 +138,10 @@ $currency_symbol = "Rp. ";
                                                     if (isset($customtext2)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customtext2Title; ?></label><small class="req"> *</small>
-                                                                <input id="customtext2" name="customtext2" placeholder="" type="text" class="form-control start_date" value="" />
+                                                                <label><?= $customtext2Title; ?></label><small class="req">
+                                                                    *</small>
+                                                                <input id="customtext2" name="customtext2" placeholder=""
+                                                                    type="text" class="form-control start_date" value="" />
                                                             </div>
                                                         </div>
                                                     <?php } ?>
@@ -121,7 +149,8 @@ $currency_symbol = "Rp. ";
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
                                                                 <label>Poli</label><small class="req"> *</small>
-                                                                <select id="klinik" class="form-control" name="clinic_id" autocomplete="off">
+                                                                <select id="klinik" class="form-control" name="clinic_id"
+                                                                    autocomplete="off">
                                                                     <option value="%">Semua</option>
                                                                     <?php $cliniclist = array();
                                                                     foreach ($clinic as $key => $value) {
@@ -163,9 +192,11 @@ $currency_symbol = "Rp. ";
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
                                                                 <label>Jenis Pasien</label><small class="req"> *</small>
-                                                                <select id="statuss" class="form-control" name="status_pasien_id">
+                                                                <select id="statuss" class="form-control"
+                                                                    name="status_pasien_id">
                                                                     <?php foreach ($status as $key => $value) { ?>
-                                                                        <option value="<?= $value['status_pasien_id']; ?>"><?= $value['name_of_status_pasien']; ?></option>
+                                                                        <option value="<?= $value['status_pasien_id']; ?>">
+                                                                            <?= $value['name_of_status_pasien']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -175,9 +206,11 @@ $currency_symbol = "Rp. ";
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
                                                                 <label>Status Kunjung</label><small class="req"> *</small>
-                                                                <select id="visitStatus" class="form-control" name="isattended">
+                                                                <select id="visitStatus" class="form-control"
+                                                                    name="isattended">
                                                                     <?php foreach ($visitStatus as $key => $value) { ?>
-                                                                        <option value="<?= $value['isattended']; ?>"><?= $value['visitstatus']; ?></option>
+                                                                        <option value="<?= $value['isattended']; ?>">
+                                                                            <?= $value['visitstatus']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -190,7 +223,8 @@ $currency_symbol = "Rp. ";
                                                                 <select id="kota" class="form-control" name="kota">
                                                                     <option value="%">Semua</option>
                                                                     <?php foreach ($kota as $key => $value) { ?>
-                                                                        <option value="<?= $value['kode_kota']; ?>"><?= $value['nama_kota']; ?></option>
+                                                                        <option value="<?= $value['kode_kota']; ?>">
+                                                                            <?= $value['nama_kota']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -228,7 +262,8 @@ $currency_symbol = "Rp. ";
                                                                 <select id="sex" class="form-control" name="sex">
                                                                     <option value="%">Semua</option>
                                                                     <?php foreach ($sex as $key => $value) { ?>
-                                                                        <option value="<?= $value['gender']; ?>"><?= $value['name_of_gender']; ?></option>
+                                                                        <option value="<?= $value['gender']; ?>">
+                                                                            <?= $value['name_of_gender']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -237,11 +272,14 @@ $currency_symbol = "Rp. ";
                                                     <?php if (!empty($regulation)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label>Jenis Barang Berdasarkan UU</label><small class="req"> *</small>
-                                                                <select id="regulation" class="form-control" name="regulation">
+                                                                <label>Jenis Barang Berdasarkan UU</label><small
+                                                                    class="req"> *</small>
+                                                                <select id="regulation" class="form-control"
+                                                                    name="regulation">
                                                                     <option value="%">Semua</option>
                                                                     <?php foreach ($regulation as $key => $value) { ?>
-                                                                        <option value="<?= $value['regulate_id']; ?>"><?= $value['regulation_type']; ?></option>
+                                                                        <option value="<?= $value['regulate_id']; ?>">
+                                                                            <?= $value['regulation_type']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -251,7 +289,9 @@ $currency_symbol = "Rp. ";
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group"><label for="diag_awal">Diagnosis</label>
                                                                 <div class="p-2 select2-full-width">
-                                                                    <select name="diagnosa_id" class="form-control patient_list_ajax" id="filldiagnosa">
+                                                                    <select name="diagnosa_id"
+                                                                        class="form-control patient_list_ajax"
+                                                                        id="filldiagnosa">
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -259,9 +299,12 @@ $currency_symbol = "Rp. ";
                                                     <?php } ?>
                                                     <?php if (!empty($itemName)) { ?>
                                                         <div class="col-sm-2 col-md-2">
-                                                            <div class="form-group"><label for="diag_awal">Nama Barang</label>
+                                                            <div class="form-group"><label for="diag_awal">Nama
+                                                                    Barang</label>
                                                                 <div class="p-2 select2-full-width">
-                                                                    <select name="nama_obat" class="form-control patient_list_ajax" id="fillitemname">
+                                                                    <select name="nama_obat"
+                                                                        class="form-control patient_list_ajax"
+                                                                        id="fillitemname">
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -269,9 +312,12 @@ $currency_symbol = "Rp. ";
                                                     <?php } ?>
                                                     <?php if (!empty($itemId)) { ?>
                                                         <div class="col-sm-2 col-md-2">
-                                                            <div class="form-group"><label for="diag_awal">Nama Barang</label>
+                                                            <div class="form-group"><label for="diag_awal">Nama
+                                                                    Barang</label>
                                                                 <div class="p-2 select2-full-width">
-                                                                    <select name="brand_id" class="form-control patient_list_ajax" id="fillitemid">
+                                                                    <select name="brand_id"
+                                                                        class="form-control patient_list_ajax"
+                                                                        id="fillitemid">
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -281,7 +327,9 @@ $currency_symbol = "Rp. ";
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group"><label for="diag_awal">Dokter</label>
                                                                 <div class="p-2 select2-full-width">
-                                                                    <select name="dokter" class="form-control patient_list_ajax" id="filldokter">
+                                                                    <select name="dokter"
+                                                                        class="form-control patient_list_ajax"
+                                                                        id="filldokter">
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -290,11 +338,13 @@ $currency_symbol = "Rp. ";
                                                     <?php if (!empty($treatTarif)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label>Transaksi Pembayaran</label><small class="req"> *</small>
+                                                                <label>Transaksi Pembayaran</label><small class="req">
+                                                                    *</small>
                                                                 <select id="tarif_id" class="form-control" name="tarif_id">
                                                                     <option value="%">Semua</option>
                                                                     <?php foreach ($treatTarif as $key => $value) { ?>
-                                                                        <option value="<?= $value['tarif_id']; ?>"><?= $value['tarif_name']; ?></option>
+                                                                        <option value="<?= $value['tarif_id']; ?>">
+                                                                            <?= $value['tarif_name']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -319,7 +369,8 @@ $currency_symbol = "Rp. ";
                                                                 <select id="shift" class="form-control" name="shift">
                                                                     <option value="%">Semua</option>
                                                                     <?php foreach ($shiftdays as $key => $value) { ?>
-                                                                        <option value="<?= $value['shift_id']; ?>"><?= $value['shift_desc']; ?></option>
+                                                                        <option value="<?= $value['shift_id']; ?>">
+                                                                            <?= $value['shift_desc']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -328,7 +379,8 @@ $currency_symbol = "Rp. ";
                                                     <?php if (!empty($custom)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customTitle; ?></label><small class="req"></small>
+                                                                <label><?= $customTitle; ?></label><small
+                                                                    class="req"></small>
                                                                 <select id="custom" class="form-control" name="custom">
                                                                     <?php foreach ($custom as $key => $value) { ?>
                                                                         <option value="<?= $key; ?>"><?= $value; ?></option>
@@ -340,7 +392,8 @@ $currency_symbol = "Rp. ";
                                                     <?php if (!empty($custom1)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customTitle1; ?></label><small class="req"></small>
+                                                                <label><?= $customTitle1; ?></label><small
+                                                                    class="req"></small>
                                                                 <select id="custom1" class="form-control" name="custom1">
                                                                     <?php foreach ($custom1 as $key => $value) { ?>
                                                                         <option value="<?= $key; ?>"><?= $value; ?></option>
@@ -352,7 +405,8 @@ $currency_symbol = "Rp. ";
                                                     <?php if (!empty($custom2)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customTitle2; ?></label><small class="req"></small>
+                                                                <label><?= $customTitle2; ?></label><small
+                                                                    class="req"></small>
                                                                 <select id="custom2" class="form-control" name="custom2">
                                                                     <?php foreach ($custom2 as $key => $value) { ?>
                                                                         <option value="<?= $key; ?>"><?= $value; ?></option>
@@ -364,7 +418,8 @@ $currency_symbol = "Rp. ";
                                                     <?php if (!empty($custom3)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customTitle3; ?></label><small class="req"></small>
+                                                                <label><?= $customTitle3; ?></label><small
+                                                                    class="req"></small>
                                                                 <select id="custom3" class="form-control" name="custom3">
                                                                     <?php foreach ($custom3 as $key => $value) { ?>
                                                                         <option value="<?= $key; ?>"><?= $value; ?></option>
@@ -376,7 +431,8 @@ $currency_symbol = "Rp. ";
                                                     <?php if (!empty($custom4)) { ?>
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
-                                                                <label><?= $customTitle4; ?></label><small class="req"></small>
+                                                                <label><?= $customTitle4; ?></label><small
+                                                                    class="req"></small>
                                                                 <select id="custom4" class="form-control" name="custom4">
                                                                     <?php foreach ($custom4 as $key => $value) { ?>
                                                                         <option value="<?= $key; ?>"><?= $value; ?></option>
@@ -389,13 +445,15 @@ $currency_symbol = "Rp. ";
                                                         <div class="col-sm-2 col-md-2">
                                                             <div class="form-group">
                                                                 <label>Tipe Layanan</label><small class="req"> *</small>
-                                                                <select id="tipeantrol" class="form-control" name="tipeantrol">
+                                                                <select id="tipeantrol" class="form-control"
+                                                                    name="tipeantrol">
                                                                     <option value="%">Semua</option>
                                                                     <option value="1">Mulai Waktu Tunggu Amisi</option>
                                                                     <option value="2">Mulai Layan Admisi</option>
                                                                     <option value="3">Mulai Tunggu Poli</option>
                                                                     <option value="4">Mulai Layan Poli</option>
-                                                                    <option value="5">Selesai layan poli/mulai tunggu farmasi</option>
+                                                                    <option value="5">Selesai layan poli/mulai tunggu
+                                                                        farmasi</option>
                                                                     <option value="6">Mulai layan farmasi</option>
                                                                     <option value="7">Selesai layan farmasi</option>
                                                                 </select>
@@ -412,7 +470,8 @@ $currency_symbol = "Rp. ";
                                                                     usort($kasir, fn($a, $b) => $a['fullname'] <=> $b['fullname']);
                                                                     ?>
                                                                     <?php foreach ($kasir as $key => $value) { ?>
-                                                                        <option value="<?= $value['username']; ?>"><?= $value['fullname']; ?></option>
+                                                                        <option value="<?= $value['username']; ?>">
+                                                                            <?= $value['fullname']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -420,7 +479,9 @@ $currency_symbol = "Rp. ";
                                                     <?php } ?>
                                                     <?php if (!empty($x)) { ?>
                                                         <div class="col-sm-3">
-                                                            <div class="form-group"><label>X</label><input type="text" name="topx" id="topx" placeholder="" value="<?= $x; ?>" class="form-control"></div>
+                                                            <div class="form-group"><label>X</label><input type="text"
+                                                                    name="topx" id="topx" placeholder="" value="<?= $x; ?>"
+                                                                    class="form-control"></div>
                                                         </div>
                                                     <?php
                                                     } ?>
@@ -428,11 +489,18 @@ $currency_symbol = "Rp. ";
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <div class="">
-                                                            <button type="submit" id="registersubmit" name="search" value="search_filter" class="btn btn-primary btn-sm pull-right"><i class="fa fa-search"></i> <?php echo lang('search'); ?></button>
+                                                            <button type="submit" id="registersubmit" name="search"
+                                                                value="search_filter"
+                                                                class="btn btn-primary btn-sm pull-right"><i
+                                                                    class="fa fa-search"></i>
+                                                                <?php echo lang('search'); ?></button>
                                                         </div>
                                                     </div>
                                                     <div class="my-4 text-center">
-                                                        <button id="showReportBtn" type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#reportModal">Lihat Data</button>
+                                                        <button id="showReportBtn" type="button"
+                                                            class="btn btn-primary waves-effect waves-light"
+                                                            data-bs-toggle="modal" data-bs-target="#reportModal">Lihat
+                                                            Data</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -466,7 +534,9 @@ $currency_symbol = "Rp. ";
                             <div class="tabsborderbg"></div>
                             <div class="box-body retrieve-data">
                                 <div class="table-responsive">
-                                    <table class="table table-hover" data-export-title="<?php echo lang('Word.opd_patient'); ?>" style="text-align: center">
+                                    <table class="table table-hover"
+                                        data-export-title="<?php echo lang('Word.opd_patient'); ?>"
+                                        style="text-align: center">
 
                                     </table>
                                 </div>
@@ -482,7 +552,8 @@ $currency_symbol = "Rp. ";
 </div>
 
 <!-- sample modal content -->
-<div id="reportModal" class="modal fade" tabindex="-1" aria-labelledby="#reportModalLabel" style="display: none;" aria-hidden="true">
+<div id="reportModal" class="modal fade" tabindex="-1" aria-labelledby="#reportModalLabel" style="display: none;"
+    aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -491,17 +562,20 @@ $currency_symbol = "Rp. ";
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div id="tableDiv" class="modal-body">
-                <table id="reportDataTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead id="headdata" class="table-primary">
-                        <?php if (isset($header)) { ?>
-                            <?= $header; ?>
-                        <?php } ?>
-                    </thead>
-                    <tbody id="bodydata">
-                    </tbody>
-                    <tfoot id="footdata">
-                    </tfoot>
-                </table>
+                <div id="table-responsive">
+                    <table id="reportDataTable" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead id="headdata" class="table-primary">
+                            <?php if (isset($header)) { ?>
+                                <?= $header; ?>
+                            <?php } ?>
+                        </thead>
+                        <tbody id="bodydata">
+                        </tbody>
+                        <tfoot id="footdata">
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -524,7 +598,8 @@ $currency_symbol = "Rp. ";
 <script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js">
+</script>
 
 <!-- <script src="<?php echo base_url(); ?>assets/js/pages/datatables.init.js"></script> -->
 <script type="text/javascript">
@@ -536,13 +611,16 @@ $currency_symbol = "Rp. ";
             title: '<?= $title; ?>'
         }, {
             extend: 'pdf',
-            title: '<?= $title; ?>'
+            title: '<?= $title; ?>',
         }, {
             extend: 'print',
             title: '<?= $title; ?>'
         }],
         title: '<?= $title; ?>',
-        aaSorting: []
+        responsive: true,
+
+        aaSorting: [],
+
     });
     var date_format_new = '';
     var dokterdpjp = new Array();
@@ -607,24 +685,95 @@ $currency_symbol = "Rp. ";
 
         // sortOption('status')
         // sortOption('visitStatus')
+        const StartToday = moment(new Date()).format("DD/MM/YYYY");
+        const today = moment(new Date()).format("DD/MM/YYYY");
 
+        $("#mulai-date").val(StartToday);
+        $("#akhir-date").val(today);
+
+
+        $("#mulai-date").on('change', function() {
+            const startDate = $(this).val();
+            const endDate = $("#akhir-date").val();
+
+
+            const formattedStartDate = convertDateRl(startDate);
+            const formattedEndDate = convertDateRl(endDate);
+
+
+            if (formattedEndDate && moment(formattedEndDate).isBefore(moment(formattedStartDate))) {
+
+                $("#akhir-date").val(moment(formattedStartDate).format("DD/MM/YYYY"));
+            }
+
+            $("#akhir-date").attr('min', formattedStartDate);
+        });
+
+
+
+        $("#akhir-date").on('change', function() {
+            const startDate = $("#mulai-date").val();
+            const endDate = $(this).val();
+
+            const formattedStartDate = convertDateRl(startDate);
+            const formattedEndDate = convertDateRl(endDate);
+
+            if (formattedEndDate && formattedEndDate < formattedStartDate) {
+                errorSwal("End date cannot be earlier than start date!");
+
+                $(this).val(moment(formattedStartDate).format("DD/MM/YYYY"));
+            }
+        });
+
+
+
+        flatpickr(".dateFlatTime-rl", {
+            enableTime: false,
+            dateFormat: "d/m/Y",
+
+            onChange: function(selectedDates, dateStr, instance) {}
+        });
+        $(".dateFlatTime-rl").prop("readonly", false)
 
     });
+
+    const convertDateRl = (dateString) => {
+        const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm"];
+        const parsedDate = moment(dateString, formats, true);
+        if (parsedDate.isValid()) {
+            return parsedDate.format("YYYY-MM-DD");
+        } else {
+            return null;
+        }
+    };
 
     $("#register").on('submit', (function(e) {
 
         e.preventDefault();
         $("#registersubmit").html('<i class="spinner-border spinner-border-sm"></i>')
+        const formData = new FormData(this);
+        const startDate = formData.get('mulai');
+        const endDate = formData.get('akhir');
+        if (startDate) {
+            const formattedStartDate = convertDateRl(startDate);
+            formData.set('mulai', formattedStartDate);
+        }
+        if (endDate) {
+            const formattedEndDate = convertDateRl(endDate);
+            formData.set('akhir', formattedEndDate);
+        }
         $.ajax({
 
             url: '<?php echo base_url(); ?>admin/report/<?= basename($actual_link); ?>post',
             type: "POST",
-            data: new FormData(this),
+            data: formData,
+            // data: new FormData(this),
             dataType: 'json',
             contentType: false,
             cache: false,
             processData: false,
             success: function(data) {
+
                 var stringcolumn = '';
                 var footercolumn = '';
                 var newDataTableVar;
@@ -632,9 +781,10 @@ $currency_symbol = "Rp. ";
                 dttable.clear()
 
                 if (typeof data.header !== 'undefined') {
-                    console.log(data.header)
                     $("#tableDiv").html("")
-                    $("#tableDiv").append('<table id="reportDataTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;"> <thead id = "headdata"class = "table-primary" ></thead> <tbody id = "bodydata" ></tbody> <tfoot id = "footdata" ></tfoot> </table>')
+                    $("#tableDiv").append(
+                        '<table id="reportDataTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;"> <thead id = "headdata"class = "table-primary" ></thead> <tbody id = "bodydata" ></tbody> <tfoot id = "footdata" ></tfoot> </table>'
+                    )
                     $("#headdata").append(data.header)
                     var fileTitle = $("#custom").text()
                     var newDataTableVar = $('#reportDataTable').DataTable({
@@ -651,24 +801,30 @@ $currency_symbol = "Rp. ";
                             extend: 'print',
                             title: fileTitle + ' - <?= $title; ?>'
                         }],
+                        responsive: true,
                         aaSorting: []
                     });
 
                 } else {
                     newDataTableVar = dttable;
                 }
-                data.body.forEach((element, key) => {
-                    console.log(element)
+                data?.body?.forEach((element, key) => {
+                    // console.log(element)
                     //  ['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00', 'Pcs', `<button type="button" onclick="rinciObatAlkes('247…ff"><i class="fa fa-search"></i> Rincian</button>`]
                     // ['UMUM', 126, 576, 169, 283, 124, 293, 114, 576, 0]
-                    var arhasil = ['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00', 'Pcs', `<button type="button" onclick="rinciObatAlkes('247…ff"><i class="fa fa-search"></i> Rincian</button>`, '2023-08-05', '2023-08-05', '2023-08-05', '2023-08-05'];
+                    var arhasil = ['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00',
+                        'Pcs',
+                        `<button type="button" onclick="rinciObatAlkes('247…ff"><i class="fa fa-search"></i> Rincian</button>`,
+                        '2023-08-05', '2023-08-05', '2023-08-05', '2023-08-05'
+                    ];
                     newDataTableVar.row.add(element).draw()
                 });
                 if (typeof data.footer !== 'undefined') {
                     data.footer.forEach((element, key) => {
                         footercolumn += '<tr class="table-light">';
                         element.forEach((element1, key1) => {
-                            footercolumn += "<td style='padding: 20px'>" + element1 + "</td>";
+                            footercolumn += "<td style='padding: 20px'>" +
+                                element1 + "</td>";
                         });
                         footercolumn += '</tr>'
 
@@ -676,7 +832,9 @@ $currency_symbol = "Rp. ";
                 }
 
                 $("#footdata").html(footercolumn);
-                $("#registersubmit").html('<button type="submit" id="registersubmit" name="search" value="search_filter" class="btn btn-primary btn-sm pull-right"><i class="fa fa-search"></i> search</button>')
+                $("#registersubmit").html(
+                    '<button type="submit" id="registersubmit" name="search" value="search_filter" class="btn btn-primary btn-sm pull-right"><i class="fa fa-search"></i> search</button>'
+                )
 
 
 
@@ -684,7 +842,9 @@ $currency_symbol = "Rp. ";
                 $('#showReportBtn').click()
             },
             error: function() {
-                $("#registersubmit").html('<button type="submit" id="registersubmit" name="search" value="search_filter" class="btn btn-primary btn-sm pull-right"><i class="fa fa-search"></i> search</button>')
+                $("#registersubmit").html(
+                    '<button type="submit" id="registersubmit" name="search" value="search_filter" class="btn btn-primary btn-sm pull-right"><i class="fa fa-search"></i> search</button>'
+                )
 
             }
         });
@@ -815,6 +975,26 @@ $currency_symbol = "Rp. ";
                     $("#rinci" + id).button('reset');
                 }
             });
+        }
+    </script>
+    <script>
+        const getListTask = (transId, no_registration) => {
+            postData({
+                kodebooking: transId,
+                norm: no_registration
+            }, 'api/antrianbpjs/getlisttaskid', (res) => {
+                alert(res)
+            })
+        }
+        const getListTaskAll = () => {
+            $.each(dataAll, function(key, value) {
+                postData({
+                    kodebooking: value?.trans_id,
+                    norm: value?.no_registration
+                }, 'api/antrianbpjs/getlisttaskid', (res) => {
+                    console.log(res)
+                })
+            })
         }
     </script>
 <?php } ?>

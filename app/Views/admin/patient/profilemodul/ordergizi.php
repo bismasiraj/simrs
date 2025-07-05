@@ -55,44 +55,43 @@ $permissions = user()->getPermissions();
 </div>
 
 
-<div class="modal fade" id="bentukGizi" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="bentukGizi" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title mt-0" id="mySmallModalLabel">Bentuk Gizi
-                </h5>
+                <h5 class="modal-title mt-0">Bentuk Gizi</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="bentukmultibox">
-                    <input type="hidden" id="bentukgizicontainer">
-                </div>
+                <input type="hidden" id="bentukgizicontainer">
+                <div id="bentukmultibox"></div>
                 <div class="panel-footer text-end mb-4">
                     <button type="button" id="saveBentukGizi" name="save"
-                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i
-                            class="fa fa-check-circle"></i> <span>Pilih</span></button>
+                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right">
+                        <i class="fa fa-check-circle"></i> <span>Pilih</span>
+                    </button>
                 </div>
             </div>
         </div><!-- /.modal-content -->
     </div>
 </div>
 
-<div class="modal fade" id="peringatanGizi" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal modal-peringatanGizi fade" id="peringatanGizi" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-dialog-centered modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title mt-0" id="mySmallModalLabel">Peringatan Gizi
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title mt-0">Peringatan Gizi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal-peringatanGizi"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="peringatanmultibox">
-                    <input type="hidden" id="peringatangizicontainer">
-                </div>
+                <input type="hidden" id="peringatangizicontainer">
+                <div id="peringatanmultibox"></div>
                 <div class="panel-footer text-end mb-4">
                     <button type="button" id="savePeringatanGizi" name="save"
-                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i
-                            class="fa fa-check-circle"></i> <span>Pilih</span></button>
+                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right">
+                        <i class="fa fa-check-circle"></i> <span>Pilih</span>
+                    </button>
                 </div>
             </div>
         </div><!-- /.modal-content -->

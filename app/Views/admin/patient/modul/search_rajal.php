@@ -3,10 +3,11 @@ $session = session();
 $gsPoli = $session->gsPoli;
 $permissions = user()->getPermissions();
 $roles = user()->getRoles();
+// dd(user()->employee_id);
 ?>
 
 <div class="tab-pane tab-content-height
-<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 22 || $giTipe == 73 || $giTipe == 50 || user()->checkRoles(['dokter'])) echo "active"; ?>
+<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 7 || $giTipe == 22 || $giTipe == 73 || $giTipe == 50 || user()->checkRoles(['dokter'])) echo "active"; ?>
 " id="rawat_jalan">
     <div class="row">
         <div class="mt-4">
@@ -32,12 +33,12 @@ $roles = user()->getRoles();
                                 <?php $cliniclist = array();
                                 if ($giTipe != 2 && $giTipe != 5 && $giTipe != 6) {
                                     foreach ($clinic as $key => $value) {
-                                        if ($clinic[$key]['stype_id'] == '1')
+                                        if (@$clinic[$key]['stype_id'] == '1')
                                             $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
                                     }
                                 } else {
                                     foreach ($clinic as $key => $value) {
-                                        if ($clinic[$key]['clinic_id'] == $gsPoli)
+                                        if (@$clinic[$key]['clinic_id'] == $gsPoli)
                                             $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
                                     }
                                 }
@@ -55,7 +56,7 @@ $roles = user()->getRoles();
                         <div class="form-group">
                             <label>Dokter</label>
                             <select id="dokter" class="form-select" name="dokter" onchange="showdate(this.value)">
-                                <?php if (!is_null(user()->employee_id) && isset($roles['11'])) { ?>
+                                <?php if (!is_null(user()->employee_id) && isset($roles['11']) && user()->employee_id != '70438' && user()->employee_id != '46') { ?>
                                     <?php if (isset($roles['2'])) {
                                     ?>
                                         <option value="%">Semua</option>
@@ -85,6 +86,7 @@ $roles = user()->getRoles();
                                 } ?>
                             </select>
                             <span class="text-danger" id="error_doctor"></span>
+                            <script></script>
                         </div>
                     </div>
 
@@ -106,13 +108,19 @@ $roles = user()->getRoles();
                         <div class="form-group">
                             <label>Relasi</label>
                             <select name="statuspasien" id="statuspasien" class="form-select">
-                                <option value="%">Semua</option>
-                                <?php foreach ($statusPasien as $key => $value) {
-                                    if ($statusPasien[$key]['name_of_status_pasien'] != null && $statusPasien[$key]['name_of_status_pasien'] != '') {
-                                ?>
-                                        <option value="<?= $statusPasien[$key]['status_pasien_id']; ?>"><?= $statusPasien[$key]['name_of_status_pasien']; ?></option>
-                                <?php }
-                                } ?>
+                                <?php if ($giTipe == 7) {
+                                ?><option value="18">BPJS</option><?php
+                                                                } else {
+                                                                    ?>
+                                    <option value="%">Semua</option>
+                                    <?php foreach ($statusPasien as $key => $value) {
+                                                                        if ($statusPasien[$key]['name_of_status_pasien'] != null && $statusPasien[$key]['name_of_status_pasien'] != '') {
+                                    ?>
+                                            <option value="<?= $statusPasien[$key]['status_pasien_id']; ?>"><?= $statusPasien[$key]['name_of_status_pasien']; ?></option>
+                                    <?php }
+                                                                    } ?>
+                                <?php
+                                                                } ?>
                             </select>
                         </div>
                     </div>
@@ -146,6 +154,7 @@ $roles = user()->getRoles();
                             <div>
                                 <div class="input-group">
                                     <input id="flatsearchmulai" type="text" class="form-control dateflatpickr" autocomplete="off">
+                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                     <input type="hidden" id="searchmulai" name="mulai">
 
                                     <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
@@ -162,6 +171,7 @@ $roles = user()->getRoles();
                             <div>
                                 <div class="input-group">
                                     <input id="flatsearchakhir" type="text" class="form-control dateflatpickr" autocomplete="off">
+                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                     <input type="hidden" id="searchakhir" name="akhir">
 
 
@@ -196,9 +206,8 @@ $roles = user()->getRoles();
                             </div>
                         </div>
                     </div>
-
-
                 </div>
+                <p class="text-danger">*List pasien ini hanya pasien yang sudah konfirmasi di pendaftaran/APM, silahkan konfirmasikan ke pendaftaran jika ada pasien yang tidak muncul di bawah</p>
             </form>
         </div>
     </div>
@@ -212,7 +221,7 @@ $roles = user()->getRoles();
                         <th>Tanggal Kunjungan/<br>Tanggal Lahir</th>
                         <th>Asuransi/Gender/<br>Agama</th>
                         <th>Poli/Asal Poli/<br>Dokter</th>
-                        <th>No SEP / Rujukan</th>
+                        <th>No SEP / Rujukan / NIK</th>
                         <th>Poli Asal / Kelas</th>
                         <th></th>
                     </tr>
@@ -232,7 +241,7 @@ $roles = user()->getRoles();
         text-align: right;
     }
 </style>
-<div id="addKunjunganModal" class="modal fade" tabindex="-1" aria-labelledby="#addKunjunganModalLabel" style="display: none;" aria-hidden="true">
+<div id="addKunjunganModal" class="modal fade" tabindex="-1" aria-labelledby="#addKunjunganModalLabel" style="display: none;" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-fullscreen">
         <form id="formpv" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
             <div class="modal-content rounded-4">
@@ -302,11 +311,11 @@ $roles = user()->getRoles();
                                                                         <?php $cliniclist = array();
                                                                         foreach ($clinic as $key => $value) {
                                                                             if ($giTipe == 5) {
-                                                                                if ($clinic[$key]['stype_id'] == '5') {
+                                                                                if (@$clinic[$key]['stype_id'] == '5') {
                                                                                     $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
                                                                                 }
-                                                                            } else if ($clinic[$key]['stype_id'] == '1') {
-                                                                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                                            } else if (@$clinic[$key]['stype_id'] == '1') {
+                                                                                @$cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
                                                                             }
                                                                         }
                                                                         asort($cliniclist);
@@ -347,20 +356,29 @@ $roles = user()->getRoles();
                                                                         foreach ($dokter as $key => $value) {
                                                                             foreach ($value as $key1 => $value1) {
                                                                                 foreach ($dpjp as $dpjpkey => $dpjpvalue) {
-                                                                                    foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
-                                                                                        if ($key1 == $dpjpkey) {
-                                                                                            $dpjplist[$dpjpkey1] = $value1;
-                                                                                        }
+                                                                                    if ($key1 == $dpjpkey) {
+                                                                                        $dpjplist[$dpjpkey] = $value;
                                                                                     }
+                                                                                    // foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                                    // }
                                                                                 }
                                                                             }
                                                                         }
                                                                         asort($dpjplist);
+                                                                        // dd($dpjplist);
                                                                         ?>
-                                                                        <?php foreach ($dpjplist as $key => $value) {
-                                                                        ?>
-                                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                        <script>
+                                                                            var dpjp = <?= json_encode($dpjplist); ?>;
+                                                                            console.log(dpjp)
+                                                                        </script>
                                                                         <?php
+                                                                        // return $dpjp;
+                                                                        foreach ($dpjplist as $key => $value) {
+                                                                            foreach ($value as $key1 => $value1) {
+                                                                        ?>
+                                                                                <option value="<?= $key1; ?>"><?= $value1; ?></option>
+                                                                        <?php
+                                                                            }
                                                                         } ?>
                                                                     </select>
                                                                 </div>
@@ -880,23 +898,36 @@ $roles = user()->getRoles();
                                                                 <div>
                                                                     <select name="sprikddpjp" id="sprikddpjp" class="form-select" style="width:100%">
                                                                         <?php $dpjplist = array();
+                                                                        // foreach ($dokter as $key => $value) {
+                                                                        //     foreach ($value as $key1 => $value1) {
+                                                                        //         foreach ($dpjp as $dpjpkey => $dpjpvalue) {
+                                                                        //             foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                        //                 if ($key1 == $dpjpkey) {
+                                                                        //                     $dpjplist[$dpjpkey1] = $value1;
+                                                                        //                 }
+                                                                        //             }
+                                                                        //         }
+                                                                        //     }
+                                                                        // }
                                                                         foreach ($dokter as $key => $value) {
                                                                             foreach ($value as $key1 => $value1) {
                                                                                 foreach ($dpjp as $dpjpkey => $dpjpvalue) {
-                                                                                    foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
-                                                                                        if ($key1 == $dpjpkey) {
-                                                                                            $dpjplist[$dpjpkey1] = $value1;
-                                                                                        }
+                                                                                    if ($key1 == $dpjpkey) {
+                                                                                        $dpjplist[$dpjpkey] = $value;
                                                                                     }
+                                                                                    // foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                                    // }
                                                                                 }
                                                                             }
                                                                         }
                                                                         asort($dpjplist);
                                                                         ?>
                                                                         <?php foreach ($dpjplist as $key => $value) {
+                                                                            foreach ($value as $key1 => $value1) {
                                                                         ?>
-                                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                                <option value="<?= $key1; ?>"><?= $value1; ?></option>
                                                                         <?php
+                                                                            }
                                                                         } ?>
                                                                     </select>
                                                                 </div>
@@ -909,8 +940,8 @@ $roles = user()->getRoles();
                                                                         <?php
                                                                         $clinicList = array();
                                                                         foreach ($clinic as $key => $value) {
-                                                                            if ($value['stype_id'] == '1') {
-                                                                                $clinicList[@$value['other_id']] = @$value['name_of_clinic'];
+                                                                            if (@$value['stype_id'] == '1') {
+                                                                                @$clinicList[@$value['other_id']] = @$value['name_of_clinic'];
                                                                         ?>
                                                                         <?php
                                                                             }
@@ -1159,7 +1190,7 @@ $roles = user()->getRoles();
         </form>
     </div><!-- /.modal-dialog -->
 </div>
-<div id="historyRajalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+<div id="historyRajalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content rounded-4">
             <div class="modal-header">

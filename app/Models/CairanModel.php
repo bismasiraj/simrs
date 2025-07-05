@@ -28,12 +28,15 @@ class CairanModel extends Model
         'drip_rate',
         'botle_amount',
         'status',
+        'iwl_time',
         'modified_date',
         'modified_by',
         'valid_date',
         'valid_user',
         'valid_pasien',
-        'fluid_category'
+        'fluid_category',
+        'iv_line',
+        'iv_description'
     ];
 
     // Dates

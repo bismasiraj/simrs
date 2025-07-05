@@ -52,7 +52,7 @@ $lochea = array_filter($aValue, function ($value) {
     </div><!--./row-->
 </div>
 
-<div class="modal fade" id="nifasModal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="nifasModal" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">

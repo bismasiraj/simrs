@@ -174,6 +174,7 @@
             <button type="button" id="btn-print-praoperasi2" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
             </button>
+            <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
             <button type="button" id="formPraOperasiAddBtn" name="save" data-loading-text="Tambah"
                 class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
             <button type="submit" id="formPraOperasiSaveBtn" name="edit"
@@ -185,6 +186,10 @@
             <button type="button" id="formPraOperasiCetakBtn" name="" onclick=""
                 data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i
                     class="fa fa-signature"></i> <span>Cetak</span></button>
+            <?php } ?>
+
+
+
         </div>
     </form>
 </div>

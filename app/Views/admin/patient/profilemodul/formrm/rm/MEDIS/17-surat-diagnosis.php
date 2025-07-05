@@ -12,16 +12,16 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -180,28 +180,28 @@
                 <label for="nama" class="col-sm-2 col-form-label">Nama</label>
                 <label for="nama" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="nama" name="nama" value="<?= $val['nama']; ?>">
+                    <input type="text" class="form-control" id="nama" name="nama" value="<?= $visit['diantar_oleh']; ?>">
                 </div>
             </div>
             <div class="row mb-1">
                 <label for="umur" class="col-sm-2 col-form-label">Umur</label>
                 <label for="umur" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="umur" name="umur" value="<?= $val['date_of_birth']; ?> (<?= $val['umur']; ?>)">
+                    <input type="text" class="form-control" id="umur" name="umur" value="<?= @@$val['date_of_birth']; ?> (<?= @@$val['umur']; ?>)">
                 </div>
             </div>
             <div class="row mb-1">
                 <label for="jeniskel" class="col-sm-2 col-form-label">Jenis Kelamin</label>
                 <label for="jeniskel" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="jeniskel" name="jeniskel" value="<?= $val['jeniskel']; ?>">
+                    <input type="text" class="form-control" id="jeniskel" name="jeniskel" value="<?= @$val['jeniskel']; ?>">
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="alamat" class="col-sm-2 col-form-label">Alamat</label>
                 <label for="alamat" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="alamat" name="alamat" value="<?= $val['alamat']; ?>">
+                    <input type="text" class="form-control" id="alamat" name="alamat" value="<?= @$val['alamat']; ?>">
                 </div>
             </div>
             <div class="row mb-1">
@@ -213,35 +213,35 @@
                 <label for="tgl_masuk" class="col-sm-2 col-form-label">Tanggal</label>
                 <label for="tgl_masuk" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="tgl_masuk" name="tgl_masuk" value="<?= $val['tgl_masuk']; ?>">
+                    <input type="text" class="form-control" id="tgl_masuk" name="tgl_masuk" value="<?= @$val['tgl_masuk']; ?>">
                 </div>
             </div>
             <div class="row mb-1">
                 <label for="diagnosis" class="col-sm-2 col-form-label">Diagnosis</label>
                 <label for="diagnosis" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="diagnosis" name="diagnosis" value="<?= $val['diagnosis']; ?>">
+                    <input type="text" class="form-control" id="diagnosis" name="diagnosis" value="<?= @$val['diagnosis']; ?>">
                 </div>
             </div>
             <div class="row mb-1">
                 <label for="keterangan" class="col-sm-2 col-form-label">Keterangan</label>
                 <label for="keterangan" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="keterangan" name="keterangan" value="<?= $val['keterangan']; ?>">
+                    <input type="text" class="form-control" id="keterangan" name="keterangan" value="<?= @$val['keterangan']; ?>">
                 </div>
             </div>
             <div class="row mb-1">
                 <label for="tindakan" class="col-sm-2 col-form-label">Tindakan</label>
                 <label for="tindakan" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="tindakan" name="tindakan" value="<?= $val['tindakan']; ?>">
+                    <input type="text" class="form-control" id="tindakan" name="tindakan" value="<?= @$val['tindakan']; ?>">
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="farmakologi" class="col-sm-2 col-form-label">Terapi</label>
                 <label for="farmakologi" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
-                    <input type="text" class="form-control" id="farmakologi" name="farmakologi" value="<?= $val['farmakologi']; ?>">
+                    <input type="text" class="form-control" id="farmakologi" name="farmakologi" value="<?= @$val['farmakologi']; ?>">
                 </div>
             </div>
             <div class="row mb-3">
@@ -268,11 +268,11 @@
 
 </body>
 
-<?php if (!is_null($val['valid_user'])) {
+<?php if (!is_null(@$val['valid_user'])) {
 ?>
     <script>
         var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: '<?= $val['valid_user'] . ': ' . $val['valid_date']; ?>',
+            text: '<?= @$val['valid_user'] . ': ' . @$val['valid_date']; ?>',
             width: 150,
             height: 150,
             colorDark: "#000000",

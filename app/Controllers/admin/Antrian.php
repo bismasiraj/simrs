@@ -38,8 +38,11 @@ class Antrian extends \App\Controllers\BaseController
                                                         FROM DOCTOR_SCHEDULE,   
                                                             EMPLOYEE_ALL  ,DAYS_NUMBER DN ,days
                                                         WHERE ( DOCTOR_SCHEDULE.EMPLOYEE_ID = EMPLOYEE_ALL.EMPLOYEE_ID )  and  
-                                                            convert(date,the_day) = convert(date,getdate()) and DOCTOR_SCHEDULE.DAY_ID = days.DAY_ID and 
-                                                    days.DAY_NAME = dn.NAMA_HARI ")->getResultArray());
+                                                           -- convert(date,the_day) = convert(date,getdate()) and DOCTOR_SCHEDULE.DAY_ID = days.DAY_ID and 
+                                                    days.DAY_NAME = dn.NAMA_HARI  group by EMPLOYEE_all.EMPLOYEE_ID,   
+                                                            EMPLOYEE_ALL.FULLNAME,
+                                                            employee_all.taspen ,
+                                                             DOCTOR_SCHEDULE.CLINIC_ID")->getResultArray());
 
 
 
@@ -80,15 +83,15 @@ class Antrian extends \App\Controllers\BaseController
             ->where('display_ip !=', '')
             ->where('display_ip IS NOT NULL')
             ->get()
-            ->getRow(0, 'array');
+            ->getRow();
 
-        if ($existingIp) {
-            return $this->response->setJSON([
-                'message' => 'IP address sudah ada',
-                'respon' => false
-            ]);
-            // return $this->response->setStatusCode(400, 'IP address already in use');
-        }
+        // if ($existingIp) {
+        //     return $this->response->setJSON([
+        //         'message' => 'IP address sudah ada',
+        //         'respon' => false
+        //     ]);
+        //     // return $this->response->setStatusCode(400, 'IP address already in use');
+        // }
         $builder->set([
             'clinic_id'     => $requestData->clinic_id,
             'display_ip'    => $requestData->display_ip,
@@ -126,20 +129,19 @@ class Antrian extends \App\Controllers\BaseController
 
     public function getDataDisplay()
     {
-
         $request = service('request');
         $requestData = $request->getJSON();
 
-        // var_dump($requestData);
-
         $db = db_connect();
+
+        $employeeIds = is_array($requestData->employees) ? implode("','", $requestData->employees) : $requestData->employees;
 
         $data = $this->lowerKey($db->query("SELECT 
                             ap.tanggal_panggil AS tanggal_panggil, 
                             ap.status_panggil AS status_panggil,
                             ap.NO_REGISTRATION AS no_registration, 
                             ap.THENAME AS thename, 
-                            ap.Id As id,
+                            ap.Id AS id,
                             ap.visit_id,
                             ad.EMPLOYEE_CODE + RIGHT(CAST(100 + ap.no_urut AS VARCHAR(3)), 2) AS no_tiket,
                             ad.CLINIC_ID AS clinic_id, 
@@ -151,32 +153,30 @@ class Antrian extends \App\Controllers\BaseController
                         AND ad.EMPLOYEE_ID = ap.employee_id
                         AND ap.status_panggil = 1
                         AND ap.loket = '$requestData->poli'
-                        AND ap.employee_id = '$requestData->employee'
+                        AND ap.employee_id IN ('$employeeIds')
                         AND CONVERT(DATE, ap.tanggal_daftar) = CONVERT(DATE, GETDATE())
                         AND CONVERT(DATE, ap.tanggal_panggil) = CONVERT(DATE, GETDATE())
                         ORDER BY ap.tanggal_panggil")->getResultArray());
 
         $dataTerlayani = $this->lowerKey($db->query("SELECT org_unit_code,
-                                            isnull ((select count(visit_id) from antrian_poli apl where apl.employee_id = '$requestData->employee'
-                                            and year(apl.tanggal_daftar) = year(getdate()) 
-                                            and month(apl.tanggal_daftar) = month(getdate()) 
-                                            and day(apl.tanggal_daftar) = day(getdate()) ),0) as jml_pasien,
+                                        ISNULL((SELECT COUNT(visit_id) 
+                                                FROM antrian_poli apl 
+                                                WHERE apl.employee_id IN ('$employeeIds') AND apl.loket = '$requestData->poli' AND  visit_id in (select visit_id from PASIEN_VISITATION)
+                                                AND CONVERT(DATE, apl.tanggal_daftar) = CONVERT(DATE, GETDATE())), 0) AS jml_pasien,
+    
+                                        ISNULL((SELECT COUNT(visit_id) 
+                                                FROM antrian_poli apl 
+                                                WHERE apl.loket = '$requestData->poli' AND apl.employee_id IN ('$employeeIds')  AND  visit_id in (select visit_id from PASIEN_VISITATION)
+                                                AND CONVERT(DATE, apl.tanggal_daftar) = CONVERT(DATE, GETDATE())
+                                                AND status_panggil = 2), 0) AS jml_terlayani
+                                        FROM ORGANIZATIONUNIT")->getResultArray());
 
-                                            isnull((select count(visit_id) from antrian_poli apl where apl.loket = '$requestData->poli'
-                                            and year(apl.tanggal_daftar) = year(getdate()) 
-                                            and month(apl.tanggal_daftar) = month(getdate()) 
-                                            and day(apl.tanggal_daftar) = day(getdate())
-                                            and status_panggil = 2 ),0) as jml_TERlayanI 
-                                            from ORGANIZATIONUNIT")->getResultArray());
         $dataTerlayani = $dataTerlayani[0] ?? null;
-
-
 
         $data = [
             'data' => $data,
             'terlayani' => $dataTerlayani
         ];
-
 
         if (empty($data)) {
             return $this->response->setJSON([
@@ -191,6 +191,7 @@ class Antrian extends \App\Controllers\BaseController
             ]);
         }
     }
+
 
     public function getPoliAndEmployeeDisplay()
     {
@@ -309,7 +310,7 @@ class Antrian extends \App\Controllers\BaseController
         $existingRecord = $builder->where('visit_id', $requestData->visit_id)
             ->where('id', $requestData->id)
             ->get()
-            ->getRow(0, 'array');
+            ->getRow();
 
 
         if (!$existingRecord) {
@@ -321,7 +322,7 @@ class Antrian extends \App\Controllers\BaseController
 
         $builder->set([
             'status_panggil' => 2,
-            'modified_by' => user()->username
+            // 'modified_by' => user()->username
         ]);
 
         $builder->where('visit_id', $requestData->visit_id)
@@ -404,7 +405,7 @@ class Antrian extends \App\Controllers\BaseController
         $builder = $db->table('antrian_pendaftaran');
         $existingRecord = $builder->where('id', $requestData->id)
             ->get()
-            ->getRow(0, 'array');
+            ->getRow();
 
 
         if (!$existingRecord) {

@@ -13,61 +13,61 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -146,11 +146,11 @@
                         <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
                             <?php if (!empty($visit['date_of_birth'])) : ?>
-                            <p class="m-0 mt-1 p-0">
-                                <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
-                            </p>
+                                <p class="m-0 mt-1 p-0">
+                                    <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
+                                </p>
                             <?php else : ?>
-                            <p class="m-0 mt-1 p-0">-</p>
+                                <p class="m-0 mt-1 p-0">-</p>
                             <?php endif; ?>
                         </td>
                         <td class="p-1" colspan="2">
@@ -162,7 +162,7 @@
                         <td class="p-1">
                             <b>DPJP</b>
 
-                            <p class="m-0 mt-1 p-0"><?= @$visit['sspractitioner_name'] ?? @$visit['fullname'] ; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['sspractitioner_name'] ?? @@$visit['fullname']; ?></p>
                         </td>
                         <td class="p-1">
                             <b>Department</b>
@@ -223,51 +223,51 @@
 
 </body>
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+    $(document).ready(function() {
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
 
-    renderTables()
+        renderTables()
 
-})
+    })
 
-const renderTables = () => {
-    <?php $dataJson = json_encode($data); ?>
-    let dataResult = '';
-    let data = <?php echo $dataJson; ?>;
-    let totalQuantity = 0;
+    const renderTables = () => {
+        <?php $dataJson = json_encode($data); ?>
+        let dataResult = '';
+        let data = <?php echo $dataJson; ?>;
+        let totalQuantity = 0;
 
-    let groupedData = {};
+        let groupedData = {};
 
-    data.forEach((e) => {
-        let key = `${e.treat_date}-${e.brand_id}`;
+        data.forEach((e) => {
+            let key = `${e.treat_date}-${e.brand_id}`;
 
-        if (!groupedData[key]) {
-            groupedData[key] = {
-                nama_obat: e.description,
-                aturan_pakai: e.description2,
-                quantity: 0,
-                treat_date: e.treat_date,
-                signa: e.signa_5,
+            if (!groupedData[key]) {
+                groupedData[key] = {
+                    nama_obat: e.description,
+                    aturan_pakai: e.description2,
+                    quantity: 0,
+                    treat_date: e.treat_date,
+                    signa: e.signa_5,
 
-                times: [],
-            };
-        }
-        groupedData[key].quantity += parseFloat(e.quantity_detail) || 0;
+                    times: [],
+                };
+            }
+            groupedData[key].quantity += parseFloat(e.quantity_detail) || 0;
 
-        if (e?.received_date) {
-            groupedData[key].times.push(moment(e.received_date).format("HH:mm"));
-        }
-    });
+            if (e?.received_date) {
+                groupedData[key].times.push(moment(e.received_date).format("HH:mm"));
+            }
+        });
 
-    let index = 1;
+        let index = 1;
 
-    for (let key in groupedData) {
-        const group = groupedData[key];
+        for (let key in groupedData) {
+            const group = groupedData[key];
 
-        const timesRow = group.times.length > 0 ? group.times.map(time => `<td>${time}</td>`).join('') :
-            `<td colspan="10">-</td>`;
+            const timesRow = group.times.length > 0 ? group.times.map(time => `<td>${time}</td>`).join('') :
+                `<td colspan="10">-</td>`;
 
-        dataResult += `<tr>
+            dataResult += `<tr>
             <td>${index++}</td>
             <td>${moment(group.treat_date).format("DD-MM-YYYY")}</td>
             <td>${group.nama_obat}</td>
@@ -278,39 +278,39 @@ const renderTables = () => {
             ${timesRow} 
         </tr>`;
 
-        totalQuantity += group.quantity;
-    }
+            totalQuantity += group.quantity;
+        }
 
 
-    if (data.length === 0) {
-        dataResult = `<tr style="height: 200px;">
+        if (data.length === 0) {
+            dataResult = `<tr style="height: 200px;">
                         <td colspan="10">
                            <center> 
                                <h3>Data Kosong</h3>
                            </center>
                         </td>
                     </tr>`;
-    }
+        }
 
 
-    $("#data-tables").html(dataResult);
-};
+        $("#data-tables").html(dataResult);
+    };
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

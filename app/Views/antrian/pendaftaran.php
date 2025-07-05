@@ -39,21 +39,26 @@
                     <div id="queueDisplay" class="queue-item mt-3 pointer fw-bold" style="display: none;">Menunggu
                         antrian...
                     </div>
-                    <div id="groupe-content" class="row">
 
-                    </div>
 
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="video-container">
-                    <!-- <iframe id="videoFrame" frameborder="0" allowfullscreen></iframe> -->
-                    <video id="videoPlayer" class="pointer" autoplay style="width: 100%;"></video>
+
+            <div class="col-md-5" style="margin-top: 23vh;">
+                <div id="groupe-content" class="row">
+
                 </div>
                 <div id="clock" class="text-center mt-2">
 
                 </div>
+            </div>
+            <div class="col-md-6" hidden>
+                <div class="video-container">
+                    <!-- <iframe id="videoFrame" frameborder="0" allowfullscreen></iframe> -->
+                    <video id="videoPlayer" class="pointer" autoplay style="width: 100%;" muted></video>
+                </div>
+
             </div>
         </div>
     </div>

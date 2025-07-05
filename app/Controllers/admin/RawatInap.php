@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Controllers\Aplicares;
 use App\Models\CaraKeluarModel;
 use App\Models\ClassModel;
 use App\Models\ClassRoomModel;
@@ -197,11 +198,13 @@ class RawatInap extends \App\Controllers\BaseController
             ];
             $ta->update($bill_id[$key], $data);
             $lastKeluar = $keluar_id[$key];
+            $lastExit = $exit_date[$key];
         }
 
         $response['metadata']['code'] = 200;
         $response['metadata']['message'] = "Berhasil Simpan";
         $response['response']['lastkeluar'] = $lastKeluar;
+        $response['response']['exit_date'] = $lastExit;
 
         return json_encode($response);
     }
@@ -660,15 +663,15 @@ class RawatInap extends \App\Controllers\BaseController
 
         $data['request']['t_sep'] = $sep;
 
-        // $response = $this->sendVclaim($url, 'PUT', json_encode($data));
+        $response = $this->sendVclaim($url, 'PUT', json_encode($data));
 
-        $response = '{
-          "metaData": {
-            "code": "200",
-            "message": "Sukses"
-          },
-          "response": "1101R0070420V000017"
-        }';
+        // $response = '{
+        //   "metaData": {
+        //     "code": "200",
+        //     "message": "Sukses"
+        //   },
+        //   "response": "1101R0070420V000017"
+        // }';
 
         return json_encode(json_decode($response, true));
     }
@@ -776,5 +779,63 @@ class RawatInap extends \App\Controllers\BaseController
         $body = json_decode($body, true);
 
         $visit = $body['visit'];
+    }
+    public function updateAplicares()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $class_room_id = $body['class_room_id'];
+        $apl = new Aplicares();
+        $result = $apl->updateTT($class_room_id);
+        return $this->response->setJSON($result);
+    }
+    public function updateAplicaresAll()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $apl = new Aplicares();
+        $result = $apl->updateAllTT();
+        return $this->response->setJSON($result);
+    }
+    public function getTT()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $apl = new Aplicares();
+        $result = $apl->getTT();
+        return $this->response->setJSON($result);
+    }
+    public function removeTT()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $apl = new Aplicares();
+        $result = $apl->getTT();
+
+        $data = [];
+        $value = [
+            "kodekelas" => "NIC",
+            "koderuang" => "E-KAHFI-1113"
+        ];
+        $data['body'] = $value;
+        $data['result'] = $apl->removeTT($value);
+        $resultData[] = $data;
+        return $this->response->setJSON($resultData);
+
+        foreach ($result['response']['response']['list'] as $key => $value) {
+            $data['body'] = $value;
+            $data['result'] = $apl->removeTT($value);
+            $resultData[] = $data;
+        }
+        return $this->response->setJSON($resultData);
+    }
+    public function insertAplicaresAll()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $apl = new Aplicares();
+        $result = $apl->insertTT();
+        return $this->response->setJSON($result);
     }
 }

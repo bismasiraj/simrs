@@ -35,22 +35,22 @@ if ($visit['clinic_id'] == 'P012') {
     $menu['painmonitoring'] = 1;
     $menu['triase'] = 1;
     $menu['apgar'] = 0;
-    $menu['skrininggizi'] = 1;
+    $menu['skrininggizi'] = 0;
     $menu['adl'] = 0;
     $menu['dekubitus'] = 0;
     $menu['stabilitas'] = 0;
     $menu['edukasiintegrasi'] = 0;
     $menu['formedukasi'] = 0;
     $menu['gcs'] = 0;
-    $menu['integumen'] = 1;
+    $menu['integumen'] = 0;
     $menu['anak'] = 0; //?
     $menu['neonatus'] = 0; //?
-    $menu['neurosensoris'] = 1;
+    $menu['neurosensoris'] = 0;
     $menu['pencernaan'] = 0;
     $menu['pernapasan'] = 0;
-    $menu['perkemihan'] = 1;
+    $menu['perkemihan'] = 0;
     $menu['psikologi'] = 0;
-    $menu['sirkulasi'] = 1;
+    $menu['sirkulasi'] = 0;
     $menu['seksual'] = 0;
     $menu['social'] = 0;
     $menu['tht'] = 0; //hearing
@@ -117,383 +117,7 @@ if ($visit['clinic_id'] == 'P012') {
 </div>
 <!-- -->
 
-<div class="modal fade" id="addEducationListPlan" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content rounded-4 shadow-lg">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Tambah List Perencanaan Edukasi</h3>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div class="modal-body pt0 pb0">
-                <form id="formEducationIntegrationPlan" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-
-                    <input name="body_id" id="eduplanbody_id" type="hidden" class="form-control" />
-                    <input name="plan_ke" id="eduplanplan_ke" type="hidden" class="form-control" />
-                    <input name="p_type" id="eduplanp_type" type="hidden" class="form-control" />
-
-
-                    <div class="row">
-                        <!-- <div class="col-sm-12">
-                            <div class="box-header border-b mb-10 pl-0 pt0">
-                                <div class="row">
-
-                                </div>
-                            </div>
-                        </div> -->
-                        <hr>
-                        <div class="row mb-4">
-                            <div class="col-sm-12">
-                                <div class="form-group"><label for="employee_id">Materi Edukasi</label>
-                                    <div class="row p-3">
-                                        <div class="col-md-6 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_material" id="eduplaneducation_material1" checked="" value="1">
-                                            <label class="form-check-label" for="eduplaneducation_material1">
-                                                Pilih Material
-                                            </label>
-                                        </div>
-                                        <div class=" col-md-6 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_material" id="eduplaneducation_material2" checked="" value="2">
-                                            <label class="form-check-label" for="eduplaneducation_material2">
-                                                Tulis Bebas
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 mb-2">
-                                <div class="form-group"><label>Judul Edukasi</label>
-                                    <select type="text" name="treatment_type" id="eduplantreatment_type" placeholder="" value="" class="form-control">
-                                        <option value="0491501">Hak dan Kewajiban pasien</option>
-                                        <option value="0491502">Diagnosa, Tanda dan Gejala</option>
-                                        <option value="0491503">Diet</option>
-                                        <option value="0491504">Obat-obat yang didapat</option>
-                                        <option value="0491505">Penggunaan alat medis yang aman dan efektif</option>
-                                        <option value="0491506">Rehabilitasi Medik</option>
-                                        <option value="0491507">Manajemen Nyeri</option>
-                                        <option value="0491508">Pencegahan dan pengendalian infeksi</option>
-                                        <option value="0491509">Lain-lain</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group mb-2"><label>Taggal Edukasi</label><input type="datetime-local" name="examination_date" id="eduplanexamination_date" placeholder="" value="" class="form-control"></div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group"><label for="employee_id">Pemberian Edukasi</label>
-                                    <div class="row p-3">
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionBidan" checked="" value="1">
-                                            <label class="form-check-label" for="eduplaneducation_provisionBidan">
-                                                Bidan
-                                            </label>
-                                        </div>
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionDokter" checked="" value="2">
-                                            <label class="form-check-label" for="eduplaneducation_provisionDokter">
-                                                Dokter
-                                            </label>
-                                        </div>
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionAhliGizi" checked="" value="3">
-                                            <label class="form-check-label" for="eduplaneducation_provisionAhliGizi">
-                                                Ahli Gizi
-                                            </label>
-                                        </div>
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionTerapis" checked="" value="4">
-                                            <label class="form-check-label" for="eduplaneducation_provisionTerapis">
-                                                Terapis
-                                            </label>
-                                        </div>
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionBidan" checked="" value="5">
-                                            <label class="form-check-label" for="eduplaneducation_provisionBidan">
-                                                Bidan
-                                            </label>
-                                        </div>
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaeducation_provisionnLainlain" checked="" value="6">
-                                            <label class="form-check-label" for="eduplaeducation_provisionnLainlain">
-                                                Lain-lain
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group"><label for="employee_id">Sasaran Edukasi</label>
-                                    <div class="row p-3">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_target" id="eduplaneducation_target1" checked="" value="1">
-                                            <label class="form-check-label" for="eduplaneducation_target1">
-                                                Pasien
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_target" id="eduplaneducation_target2" checked="" value="2">
-                                            <label class="form-check-label" for="eduplaneducation_target2">
-                                                Dokter
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_target" id="eduplaneducation_target3" checked="" value="3">
-                                            <label class="form-check-label" for="eduplaneducation_target3">
-                                                Ahli Gizi
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group"><label for="employee_id">Metode Edukasi</label>
-                                    <div class="row p-3">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" value="1" id="eduplaneducation_methodLeaflet" checked="">
-                                            <label class="form-check-label" for="eduplaneducation_methodLeaflet">
-                                                Leaflet
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" value="2" id="eduplaneducation_methodDemonstrasi" checked="">
-                                            <label class="form-check-label" for="eduplaneducation_methodDemonstrasi">
-                                                Demonstrasi
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" value="3" id="eduplaneducation_methodWawancara" checked="">
-                                            <label class="form-check-label" for="eduplaneducation_methodWawancara">
-                                                Wawancara
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group mb-2"><label>Penjelasan Metode Evaluasi</label><input type="text" name="EDUCATION_EVALUATION" id="eduplaneducation_evaluation" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
-                            </div>
-                        </div>
-                    </div><!--./row-->
-                    <div class="pull-right">
-                        <button type="button" id="formEducationIntegrationPlanBtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary" onclick="saveEducationIntegrationPlan()"><?php echo lang('Word.save'); ?></button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="addEducationListProvision" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content rounded-4 shadow-lg">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div class="modal-body pt0 pb0">
-                <form id="formEducationIntegrationProvision" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-
-                    <input name="body_id" id="eduprovbody_id" type="hidden" class="form-control" />
-                    <input name="provision_ke" id="eduprovprovision_ke" type="hidden" class="form-control" />
-                    <input name="p_type" id="eduprovp_type" type="hidden" class="form-control" />
-
-
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="box-header border-b mb-10 pl-0 pt0">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Tambah List Perencanaan Edukasi</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row mb-4">
-                            <div class="col-sm-12">
-                                <div class="form-group"><label for="">Materi Edukasi</label>
-                                    <div class="row p-3">
-                                        <div class="col-md-6 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_material" id="eduproveducation_material1" checked="" value="1">
-                                            <label class="form-check-label" for="eduproveducation_material1">
-                                                Pilih Material
-                                            </label>
-                                        </div>
-                                        <div class=" col-md-6 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_material" id="eduproveducation_material2" checked="" value="2">
-                                            <label class="form-check-label" for="eduproveducation_material2">
-                                                Tulis Bebas
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 mb-2">
-                                <div class="form-group"><label>Judul Edukasi</label>
-                                    <select type="text" name="treatment_type" id="eduprovtreatment_type" placeholder="" value="" class="form-control">
-                                        <option value="1">Pengertian penyakit</option>
-                                        <option value="2">Gizi</option>
-                                        <option value="3">Farmasi</option>
-                                        <option value="4">Rehabilitasi Medik</option>
-                                        <option value="5">Nyeri dan Manajemen Nyeri</option>
-                                        <option value="6">Pencegahan dan Pengendalian Infeksi</option>
-                                        <option value="7">Pelayanan Saat Pelayanan di RS</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group mb-2">
-                                    <label>Deskripsi Edukasi</label>
-                                    <textarea type="datetime-local" name="education_desc" id="eduproveducation_desc" placeholder="" value="" class="form-control">
-                                        </textarea>
-                                </div>
-                                <script>
-                                    $(function() {
-                                        initializeQuillEditorsById("eduproveducation_desc")
-                                    })
-                                </script>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group"><label for="">Tingkat Pemahaman Awal</label>
-                                    <div class="row p-3">
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="understanding_level" id="eduprovunderstanding_level1" checked="" value="1">
-                                            <label class="form-check-label" for="eduprovunderstanding_level1">
-                                                Sudah Mengerti
-                                            </label>
-                                        </div>
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="understanding_level" id="eduprovunderstanding_level2" checked="" value="2">
-                                            <label class="form-check-label" for="eduprovunderstanding_level2">
-                                                Edukasi Ulang
-                                            </label>
-                                        </div>
-                                        <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="understanding_level" id="eduprovunderstanding_level3" checked="" value="3">
-                                            <label class="form-check-label" for="eduprovunderstanding_level3">
-                                                Hal Baru
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group mb-2">
-                                    <label>Assessment Ulang</label>
-                                    <input type="checkbox" name="re_assessment" id="eduprovre_assessment" placeholder="" value="" class="form-check-input">
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group mb-2">
-                                    <label>Tanggal/Jam Edukasi</label>
-                                    <input type="datetime-local" name="examination_date" id="eduprovexamination_date" placeholder="" value="" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group"><label for="employee_id">Metode Edukasi</label>
-                                    <div class="row p-3">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduproveducation_method1" checked="" value="1">
-                                            <label class="form-check-label" for="eduproveducation_method1">
-                                                Leaflet
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduproveducation_method2" checked="" value="2">
-                                            <label class="form-check-label" for="eduproveducation_method2">
-                                                Demonstrasi
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduproveducation_method3" checked="" value="3">
-                                            <label class="form-check-label" for="eduproveducation_method3">
-                                                Wawancara
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group"><label for="employee_id">Evaluasi/Verifikasi</label>
-                                    <div class="row p-3">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="evaluation" id="eduprovevaluation1" checked="" value="1">
-                                            <label class="form-check-label" for="eduprovevaluation1">
-                                                Sudah Mengerti
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="evaluation" id="eduprovevaluation2" checked="" value="2">
-                                            <label class="form-check-label" for="eduprovevaluation2">
-                                                Re-Edukasi
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="evaluation" id="eduprovevaluation3" checked="" value="3">
-                                            <label class="form-check-label" for="eduprovevaluation3">
-                                                Re-Demo
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group mb-2">
-                                    <label>Tgl Reedukasi</label>
-                                    <input type="datetime-local" name="reevaluation_date" id="eduprovreevaluation_date" placeholder="" value="" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group"><label for="">Re-evaluasi</label>
-                                    <div class="row p-3">
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="re_evaluation" id="eduprovre_evaluation1" checked="" value="1">
-                                            <label class="form-check-label" for="eduprovre_evaluation1">
-                                                Leaflet
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="re_evaluation" id="eduprovre_evaluation2" checked="" value="2">
-                                            <label class="form-check-label" for="eduprovre_evaluation2">
-                                                Demonstrasi
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="re_evaluation" id="eduprovre_evaluation3" checked="" value="3">
-                                            <label class="form-check-label" for="eduprovre_evaluation3">
-                                                Wawancara
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group mb-2"><label>Lama Edukasi</label><input type="text" name="education_duration" id="eduproveducation_duration" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
-                            </div>
-                        </div>
-                    </div><!--./row-->
-                    <div class="pull-right">
-                        <button type="button" id="formEducationIntegrationProvisionBtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary" onclick="saveEducationIntegrationProvision()"><?php echo lang('Word.save'); ?></button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="arbModal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="arbModal" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -530,7 +154,7 @@ if ($visit['clinic_id'] == 'P012') {
                             <input type="hidden" id="arbimt_desc" name="imt_desc">
                             <input type="hidden" id="arbalo_anamnase" name="alo_anamnase">
                             <!-- <input type="hidden" id="arbteraphy_desc" name="teraphy_desc"> -->
-                            <input type="hidden" id="arbinstruction" name="instruction">
+                            <!-- <input type="hidden" id="arbinstruction" name="instruction"> -->
                             <input type="hidden" id="arbmedical_treatment" name="medical_treatment">
                             <input type="hidden" id="arbmodified_date" name="modified_date">
                             <input type="hidden" id="arbmodified_by" name="modified_by">
@@ -596,8 +220,9 @@ if ($visit['clinic_id'] == 'P012') {
                                         <div class="mb-3">
                                             <div class="form-group">
                                                 <label for="arbexamination_date">Tanggal Assessmennt</label>
-                                                <input id="flatarbexamination_date" type="hidden" class="form-control datetimeflatpickr" />
-                                                <input name="examination_date" id="arbexamination_date" type="hidden" />
+                                                <!-- <input id="flatarbexamination_date" type="hidden" class="form-control datetimeflatpickr" /> -->
+                                                <!-- <input name="examination_date" id="arbexamination_date" type="hidden" /> -->
+                                                <input name="examination_date" id="arbexamination_date" type="datetime-local" class="form-control" />
                                             </div>
                                         </div>
                                     </div>
@@ -620,7 +245,7 @@ if ($visit['clinic_id'] == 'P012') {
                                         </div>
                                     </div>
                                 </div>
-                                <h4 id="subjectiveGroupHeader">S:</h4>
+                                <!-- <h4 id="subjectiveGroupHeader">S:</h4> -->
                                 <hr>
                                 <div class="row">
                                     <div class="col-sm-12 mt-2 mb-4">
@@ -649,31 +274,44 @@ if ($visit['clinic_id'] == 'P012') {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <?php foreach ($aValue as $key => $value) {
-                                                                if ($value['p_type'] == 'GEN0009') {
-                                                                    if ($value['value_score'] == '4') {
+                                                            <?php
+                                                            $riwayatHeader = array_filter($aParameter, function ($value) {
+                                                                return $value['p_type'] == 'GEN0009';
+                                                            });
+                                                            foreach ($riwayatHeader as $key => $value) {
                                                             ?>
+                                                                <div class="row">
+                                                                    <h5><?= $value['parameter_desc']; ?></h5>
+                                                                    <hr>
+                                                                    <?php $riwayat = array_filter($aValue, function ($item) use ($value) {
+                                                                        return $item['p_type'] == $value['p_type'] && $item['parameter_id'] == $value['parameter_id'];
+                                                                    }); ?>
+                                                                </div>
+                                                                <?php foreach ($riwayat as $key1 => $value1) {
+                                                                    if ($value1['value_score'] == '4') {
+                                                                ?>
                                                                         <div class="col-sm-6 col-xs-12">
                                                                             <div class="mb-3">
                                                                                 <div class="form-group">
-                                                                                    <label for="arb<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                    <textarea id="arb<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
+                                                                                    <label for="arb<?= $value1['p_type'] . $value1['value_id']; ?>"><?= $value1['value_desc']; ?></label>
+                                                                                    <textarea id="arb<?= $value1['p_type'] . $value1['value_id']; ?>" name="<?= $value1['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     <?php
-                                                                    } else if ($value['value_score'] == '2') {
+                                                                    } else if ($value1['value_score'] == '2') {
                                                                     ?>
                                                                         <div class="col-sm-6 col-xs-12">
                                                                             <div class="form-check mb-3">
-                                                                                <input id="arb<?= $value['p_type'] . $value['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value['value_id']; ?>" value="1">
-                                                                                <label class="form-check-label" for="arb<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
+                                                                                <input id="arb<?= $value1['p_type'] . $value1['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value1['value_id']; ?>" value="1">
+                                                                                <label class="form-check-label" for="arb<?= $value1['p_type'] . $value1['value_id']; ?>"><?= $value1['value_desc']; ?></label>
                                                                             </div>
                                                                         </div> <?php
                                                                             }
                                                                                 ?>
+                                                                <?php
+                                                                } ?>
                                                             <?php
-                                                                }
                                                             } ?>
                                                         </div>
                                                     </div>
@@ -684,12 +322,12 @@ if ($visit['clinic_id'] == 'P012') {
                                 </div>
                                 <?php if ($visit['specialist_type_id'] == '1.05') {
                                 ?>
-                                    <div class="accordion mb-4" id="accodrionRiwayatBidanARB">
+                                    <!-- <div class="accordion mb-4" id="accodrionRiwayatBidanARB">
                                         <div class="accordion-item">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="arbheadingRiwayatBidanARB">
                                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#arbcollapseRiwayatBidanARB" aria-expanded="false" aria-controls="arbcollapseRiwayatBidanARB">
-                                                        <b>RIWAYAT KEHAMILAN</b>
+                                                        <b>RIWAYAT KEBIDANAN DAN KANDUNGAN</b>
                                                     </button>
                                                 </h2>
                                                 <div id="arbcollapseRiwayatBidanARB" class="accordion-collapse collapse" aria-labelledby="arbheadingRiwayatBidanARB" data-bs-parent="#accodrionExamInfo" style="">
@@ -730,14 +368,14 @@ if ($visit['clinic_id'] == 'P012') {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 <?php
                                 } ?>
                                 <!-- <h4 id="objectiveGroupHeader">O:</h4> -->
                                 <div class="row mb-4" id="accodrionExamInfo">
                                     <div class="">
                                         <h5 class="" id="arbheadingVitalSign">
-                                            <b>O:</b>
+                                            <b>Catatan Pemeriksaan Obsetric:</b>
                                         </h5>
                                         <hr>
                                         <div id="arbcollapseVitalSign" class="col-12" aria-labelledby="" data-bs-parent="#accodrionExamInfo" style="">
@@ -760,7 +398,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="form-group">
                                                                 <label>BB(Kg)</label>
                                                                 <div class=" position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="arbweight" placeholder="" value="" class="form-control">
+                                                                    <input onchange="" type="text" name="weight" id="arbweight" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-bb"></span>
                                                                 </div>
                                                             </div>
@@ -769,7 +407,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="form-group">
                                                                 <label>Tinggi(cm)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="arbheight" placeholder="" value="" class="form-control">
+                                                                    <input onchange="" type="text" name="height" id="arbheight" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-arbheight"></span>
                                                                 </div>
                                                             </div>
@@ -778,7 +416,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="form-group">
                                                                 <label>Suhu(°C)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="arbtemperature" placeholder="" value="" class="form-control">
+                                                                    <input onchange="" type="text" name="temperature" id="arbtemperature" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-arbtemperature"></span>
                                                                 </div>
                                                             </div>
@@ -787,7 +425,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="form-group">
                                                                 <label>Nadi(/menit)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="arbnadi" placeholder="" value="" class="form-control">
+                                                                    <input onchange="" type="text" name="nadi" id="arbnadi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-arbnadi"></span>
                                                                 </div>
                                                             </div>
@@ -796,12 +434,12 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="form-group"><label>T.Darah(mmHg)</label>
                                                                 <div class="col-sm-12 " style="display: flex;  align-items: center;">
                                                                     <div class="position-relative">
-                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arbtension_upper" placeholder="" value="" class="form-control">
+                                                                        <input onchange="" type="text" name="tension_upper" id="arbtension_upper" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                         <span class="h6" id="badge-arbtension_upper"></span>
                                                                     </div>
                                                                     <h4 class="mx-2">/</h4>
                                                                     <div class="position-relative">
-                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arbtension_below" placeholder="" value="" class="form-control">
+                                                                        <input onchange="" type="text" name="tension_below" id="arbtension_below" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                         <span class="h6" id="badge-arbtension_below"></span>
                                                                     </div>
                                                                 </div>
@@ -811,7 +449,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="form-group">
                                                                 <label>Saturasi(SpO2%)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arbsaturasi" placeholder="" value="" class="form-control">
+                                                                    <input onchange="" type="text" name="saturasi" id="arbsaturasi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-arbsaturasi"></span>
                                                                 </div>
                                                             </div>
@@ -820,15 +458,33 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="form-group">
                                                                 <label>Nafas/RR(/menit)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="arbnafas" placeholder="" value="" class="form-control">
+                                                                    <input onchange="" type="text" name="nafas" id="arbnafas" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-arbnafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 d-none">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="arm_diameter" id="arbarm_diameter" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arbarm_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="oxygen_usage" id="arboxygen_usage" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arboxygen_usage"></span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                             <div class="form-group">
                                                                 <label>Kesadaran</label>
-                                                                <select class="form-select" name="awareness" id="arbawareness" onchange="vitalsignInput(this)">
+                                                                <select class="form-select" name="awareness" id="arbawareness" onchange="">
                                                                     <option value="0">Sadar</option>
                                                                     <option value="3">Nyeri</option>
                                                                     <option value="10">Unrespon</option>
@@ -839,36 +495,98 @@ if ($visit['clinic_id'] == 'P012') {
                                                         <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                             <div class="form-group">
                                                                 <label>Nyeri</label>
-                                                                <select class="form-select" name="pain" id="prslexampain" onchange="vitalsignInput(this)">
+                                                                <select class="form-select" name="pain" id="arbexampain" onchange="">
                                                                     <option value="0">Normal</option>
                                                                     <option value="3">Abnormal</option>
                                                                 </select>
-                                                                <span class="h6" id="badge-prslexampain"></span>
+                                                                <span class="h6" id="badge-arbexampain"></span>
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                             <div class="form-group">
                                                                 <label>Discharge/Lokia</label>
-                                                                <select class="form-select" name="lochia" id="prslexamlochia" onchange="vitalsignInput(this)">
+                                                                <select class="form-select" name="lochia" id="arbexamlochia" onchange="">
+                                                                    <option value="">-</option>
                                                                     <option value="0">Normal</option>
                                                                     <option value="3">Abnormal</option>
                                                                 </select>
-                                                                <span class="h6" id="badge-prslexamlokia"></span>
+                                                                <span class="h6" id="badge-arbexamlokia"></span>
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                             <div class="form-group">
                                                                 <label>Proteinuria (Perhari)</label>
-                                                                <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="vitalsignInput(this)">
+                                                                <select class="form-select" name="proteinuria" id="arbexamproteinuria" onchange="">
                                                                     <option value="0">-</option>
                                                                     <option value="2">+</option>
                                                                     <option value="3">++</option>
                                                                 </select>
-                                                                <span class="h6" id="badge-prslexamproteinuria"></span>
+                                                                <span class="h6" id="badge-arbexamproteinuria"></span>
                                                             </div>
                                                         </div>
-                                                        <!--==new -->
-                                                        <!--==endofnew -->
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Cervix</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="cervix" id="arbcervix" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arbcervix"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>DJJ</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="djj" id="arbdjj" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arbdjj"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>TFU</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="tfu" id="arbtfu" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arbtfu"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Letak Anak</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="child_potition" id="arbchild_potition" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arbchild_potition"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Bunyi Jantung</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="heart_sound" id="arbheart_sound" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arbheart_sound"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Oedema</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="oedema" id="arboedema" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arboedema"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Urine</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="" type="text" name="urine" id="arburine" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <span class="h6" id="badge-arburine"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         <div class="col-sm-12 mt-2">
                                                             <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arbpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                         </div>
@@ -883,14 +601,14 @@ if ($visit['clinic_id'] == 'P012') {
                                 <div class="row mb-4" id="accodrionExamInfo">
                                     <div class="">
                                         <h5 class="" id="arbheadingVitalSign">
-                                            <b>A:</b>
+                                            <b>Diagnosa Bidan:</b>
                                         </h5>
                                         <hr>
                                         <div id="" class="col-12" aria-labelledby="">
                                             <div class="text-muted">
                                                 <div class="row">
                                                     <div class="col-sm-12 mt-2">
-                                                        <div class="form-group"><label id="arbteraphy_desc_label">Diagnosa Bidan</label><textarea name="teraphy_desc" id="arbteraphy_desc" placeholder="" value="" class="form-control" row="4"></textarea></div>
+                                                        <div class="form-group"><label id="arbteraphy_desc_label"></label><textarea name="teraphy_desc" id="arbteraphy_desc" placeholder="" value="" class="form-control" row="4"></textarea></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -899,14 +617,14 @@ if ($visit['clinic_id'] == 'P012') {
                                 </div>
                                 <div class="row mb-4">
                                     <h5 class="" id="headingSubyektif">
-                                        <b id="cpptSubyektifTitle">P</b>
+                                        <b id="cpptSubyektifTitle">Catatan Planning:</b>
                                     </h5>
                                     <hr>
                                     <div id="" class="col-12" aria-labelledby="">
                                         <div class="text-muted">
                                             <div class="row">
                                                 <div class="col-sm-12 mt-2">
-                                                    <div class="form-group"><label id="arbinstruction_label">Catatan Planning</label><textarea name="instruction" id="arbinstruction" placeholder="" value="" class="form-control" row="4"></textarea></div>
+                                                    <div class="form-group"><label id="arbinstruction_label"></label><textarea name="instruction" id="arbinstruction" placeholder="" value="" class="form-control" row="4"></textarea></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1356,7 +1074,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPernapasan(1,0, 'arbbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPernapasan(1,0, 'arbbody_id', 'bodyPernapasan', 'arb')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1378,12 +1096,12 @@ if ($visit['clinic_id'] == 'P012') {
                                                 <div class="accordion-body text-muted">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <div id="bodyPsikologi">
+                                                            <div id="bodyPsikologiBidan">
                                                             </div>
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPsikologiButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPsikologi(1,0, 'arbbody_id', 'bodyPsikologiBidan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1437,7 +1155,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addSirkulasi(1,0,'arbbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addSirkulasi(1,0,'arbbody_id', 'bodySirkulasi', false, 'arb')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>

@@ -29,7 +29,7 @@ class SatuSehat extends BaseController
         $this->session = session();
         $this->session->set(['selectedMenu' => '']);
     }
-    protected $orgunitcode = '1771014';
+    protected $orgunitcode = '3372238';
 
     protected $baseurloath = 'https://api-satusehat.kemkes.go.id/oauth2/v1';
     protected $baseurlfhir = 'https://api-satusehat.kemkes.go.id/fhir-r4/v1';
@@ -140,7 +140,7 @@ class SatuSehat extends BaseController
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'client_id=fUcn9oKZiLM8nXWOUmxqlJOaMo80QQF6fJkQBZZhdbkZNzSF&client_secret=pxifAfWAFv13byLQ3BwOVAGpBkwEAWCXFgeGr2uYi7Gz2ACA1cMERfqmeJqXn9T6',
+            CURLOPT_POSTFIELDS => 'client_id=2x9FWuRLgSMvsZmaDJRy38LjYzruYCW6EYdGAZr1rUMy6Aek&client_secret=1M8ZcLncUGmunv9QuxLngKuL7fti5oYHdXBGRhmtxrwBpKVxlw0gdpuPxZZvQJXo',
             CURLOPT_HTTPHEADER => array(
                 // 'Authorization: Bearer LA6Fj2oGDjACsnNuBoOCQHItAlIK',
                 'Content-Type: application/x-www-form-urlencoded'
@@ -685,23 +685,34 @@ class SatuSehat extends BaseController
         $ssToken = $select['sstoken'];
 
         $c = new EmployeeAllModel();
-        // $clinic = $this->lowerKey($c->select("*")->orderBy('clinic_id OFFSET 20 ROWS
-        // FETCH NEXT 30 ROWS ONLY')->findAll());
         $db = db_connect();
         $employee = $this->lowerKey($db->query("select employee_id, npk from  employee_all
         where SPECIALIST_TYPE_ID is not null
         order by npk
         ")->getResultArray());
-        // return json_encode($clinic);
-        $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid")->find($this->orgunitcode));
-        $ssorgid = $select['ssorganizationid'];
+        // $org = new OrganizationunitModel();
+        // $select = $this->lowerKey($org->select("ssorganizationid")->find($this->orgunitcode));
+        // $ssorgid = $select['ssorganizationid'];
         foreach ($employee as $key => $value) {
             if ($value['npk']) {
                 $curl = curl_init();
 
+                // curl_setopt_array($curl, array(
+                //     CURLOPT_URL => 'https://api-satusehat.kemkes.go.id/fhir-r4/v1/Practitioner?identifier=https://fhir.kemkes.go.id/id/nik|' . $value['npk'],
+                //     CURLOPT_RETURNTRANSFER => true,
+                //     CURLOPT_ENCODING => '',
+                //     CURLOPT_MAXREDIRS => 10,
+                //     CURLOPT_TIMEOUT => 0,
+                //     CURLOPT_FOLLOWLOCATION => true,
+                //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                //     CURLOPT_CUSTOMREQUEST => 'GET',
+                //     CURLOPT_HTTPHEADER => array(
+                //         'Content-Type: application/json',
+                //         'Authorization: Bearer ' . $ssToken
+                //     ),
+                // ));
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://api-satusehat.kemkes.go.id/fhir-r4/v1/Practitioner?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $value['npk'],
+                    CURLOPT_URL => $this->baseurlfhir . '/Practitioner?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $value['npk'],
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -722,8 +733,9 @@ class SatuSehat extends BaseController
                 $return[] = $response;
                 $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
                 curl_close($curl);
+                // return json_encode($httpcode);
 
-                if ($httpcode != 401) {
+                if ($httpcode != 401 && $httpcode != 400) {
                     if (isset($response['entry'][0]['resource']['id'])) {
                         // if (isset($response['id'])) {
                         $c->update($employee[$key]['employee_id'], [
@@ -736,8 +748,8 @@ class SatuSehat extends BaseController
                         ]);
                     }
                 } else {
-                    $token = $this->getToken();
-                    return $token;
+                    $ssToken = $this->getToken();
+                    // return $token;
                 }
             }
         }
@@ -776,6 +788,815 @@ class SatuSehat extends BaseController
         curl_close($curl);
 
         return $response;
+    }
+    public function postEncounterByVisit()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
+        $ssToken = $select['sstoken'];
+
+        $db = db_connect();
+        $query = "select SSPASIEN_ID, NAME_OF_PASIEN,
+                    ea.SSPRACTITIONER_ID,
+                    ea.fullname,
+                    c.SSLOCATION_ID,
+                    c.name_of_clinic,
+                    pv.VISIT_ID,
+                    u.SSORGANIZATIONID,
+                    u.SSTOKEN,
+                    p.pasien_id as npk,
+                    p.no_registration,
+                    pv.visit_date
+                    from PASIEN p inner join PASIEN_VISITATION pv
+                    on p.no_registration = pv.NO_REGISTRATION
+                    inner join EMPLOYEE_ALL ea on ea.EMPLOYEE_ID = pv.EMPLOYEE_ID
+                    inner join clinic c on c.CLINIC_ID = pv.CLINIC_ID
+                    inner join ORGANIZATIONUNIT u on u.ORG_UNIT_CODE = p.ORG_UNIT_CODE
+                    where pv.VISIT_ID = '$visit'";
+        $select = $db->query($query)->getFirstRow();
+
+        $select = $this->lowerKey($select);
+
+        $ssToken = $select['sstoken'];
+        $sspasien_id = $select['sspasien_id'];
+        $sspractitioner_id = $select['sspractitioner_id'];
+        $fullname = $select['fullname'];
+        $sslocation_id = $select['sslocation_id'];
+        $ssorganizationid = $select['ssorganizationid'];
+        $npk = $select['npk'];
+        $no_registration = $select['no_registration'];
+        $name_of_pasien = $select['name_of_pasien'];
+        $visit_date = $select['visit_date'];
+        $visit_date = substr($visit_date, 0, 16);
+        $visit_date = str_replace(" ", "T", $visit_date);
+        $name_of_clinic = $select['name_of_clinic'];
+
+        if (is_null($sspasien_id)) {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $this->baseurlfhir . '/Patient?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $npk,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $ssToken
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            $response = json_decode($response, true);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            curl_close($curl);
+            // return json_encode($response);
+
+            if ($httpcode != 401) {
+                $statuscode = null;
+                if (isset($response['entry'])) {
+                    $statuscode = "200";
+                }
+                // $db->query("update satu_sehat set status = '$statuscode', result = '" . $response . "' where trans_id = '" . $value['trans_id'] . "' and tipe = '" . $value['tipe'] . "'");
+            } else {
+                $ssToken = $this->getToken();
+                return $ssToken;
+            }
+            if (!isset($response['entry']['0']['resource']['id'])) {
+                return response()->setStatusCode(401);
+            } else {
+                $sspasien_id = $response['entry']['0']['resource']['id'];
+                $db->query("update pasien set sspasien_id = '" . $response['entry']['0']['resource']['id'] . "' where no_registration = '$no_registration'");
+            }
+        }
+
+        $encounterData = [
+            "resourceType" => "Encounter",
+            "status" => "arrived",
+            "class" => [
+                "system" => "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code" => "AMB",
+                "display" => "ambulatory"
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $sspasien_id,
+                "display" => $name_of_pasien
+            ],
+            "participant" => [[
+                "type" => [[
+                    "coding" => [[
+                        "system" => "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                        "code" => "ATND",
+                        "display" => "attender"
+                    ]]
+                ]],
+                "individual" => [
+                    "reference" => "Practitioner/" . $sspractitioner_id,
+                    "display" => $fullname // Replace this with actual selected option text
+                ]
+            ]],
+            "period" => [
+                "start" => $visit_date . ":00+07:00" // Ensure $pvvisit_date is in correct format (e.g., '2025-06-11T09:00')
+            ],
+            "location" => [[
+                "location" => [
+                    "reference" => "Location/" . $sslocation_id,
+                    "display" => $name_of_clinic // Replace with actual selected clinic name
+                ]
+            ]],
+            "statusHistory" => [[
+                "status" => "arrived",
+                "period" => [
+                    "start" => $visit_date . ":00+07:00"
+                ]
+            ]],
+            "serviceProvider" => [
+                "reference" => "Organization/" . $ssorganizationid
+            ],
+            "identifier" => [[
+                "system" => "http://sys-ids.kemkes.go.id/encounter/" . $ssorganizationid,
+                "value" => $visit
+            ]]
+        ];
+        $curl = curl_init();
+        // Log initial API call
+        $db->table('ApiTrafficLog')->insert([
+            'visit_id' => $visit,
+            'endpoint' => '/Encounter',
+            'request_payload' => json_encode($encounterData),
+            'success' => 0,
+            'retry_count' => 0,
+            'httpmethod' => 'post'
+        ]);
+        $logId = $db->insertID();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->baseurlfhir . '/Encounter',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($encounterData),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $ssToken,
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        $db->table('ApiTrafficLog')
+            ->where('id', $logId)
+            ->update([
+                'response_payload' => $response,
+                'http_status' => $httpcode,
+                'success' => ($httpcode >= 200 && $httpcode < 300) ? 1 : 0,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        curl_close($curl);
+
+        // return $response;
+        try {
+            $jsonresp = json_decode($response, true);
+            $ssencounter_id = $jsonresp['id'];
+            $db->query("update pasien_visitation set ssencounter_id = '$ssencounter_id' where visit_id = '$visit'");
+
+            return $response;
+        } catch (\Exception $e) {
+            return $response;
+        }
+    }
+
+    public function putEncounterByVisit()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
+        $ssToken = $select['sstoken'];
+
+        $db = db_connect();
+        $query = "select SSPASIEN_ID, NAME_OF_PASIEN,
+                    ea.SSPRACTITIONER_ID,
+                    ea.fullname,
+                    c.SSLOCATION_ID,
+                    c.name_of_clinic,
+                    pv.VISIT_ID,
+                    u.SSORGANIZATIONID,
+                    u.SSTOKEN,
+                    p.pasien_id as npk,
+                    p.no_registration,
+                    pv.visit_date,
+                    pv.ssencounter_id,
+                    pv.trans_id
+                    from PASIEN p inner join PASIEN_VISITATION pv
+                    on p.no_registration = pv.NO_REGISTRATION
+                    inner join EMPLOYEE_ALL ea on ea.EMPLOYEE_ID = pv.EMPLOYEE_ID
+                    inner join clinic c on c.CLINIC_ID = pv.CLINIC_ID
+                    inner join ORGANIZATIONUNIT u on u.ORG_UNIT_CODE = p.ORG_UNIT_CODE
+                    where pv.VISIT_ID = '$visit'";
+        $select = $db->query($query)->getFirstRow();
+
+
+        $select = $this->lowerKey($select);
+
+
+
+        $ssToken = $select['sstoken'];
+        $sspasien_id = $select['sspasien_id'];
+        $sspractitioner_id = $select['sspractitioner_id'];
+        $ssencounter_id = $select['ssencounter_id'];
+        $fullname = $select['fullname'];
+        $sslocation_id = $select['sslocation_id'];
+        $ssorganizationid = $select['ssorganizationid'];
+        $npk = $select['npk'];
+        $no_registration = $select['no_registration'];
+        $name_of_pasien = $select['name_of_pasien'];
+        $visit_date = $select['visit_date'];
+        $visit_date = substr($visit_date, 0, 16);
+        $visit_date = str_replace(" ", "T", $visit_date);
+        $name_of_clinic = $select['name_of_clinic'];
+        $trans_id = $select['trans_id'];
+
+        $queryTask = "select waktu, tipe from batching_bridging where trans_id = '$trans_id' and tipe in (23,24,25)";
+        $selectTask = $db->query($queryTask)->getResultArray();
+
+        $task3 = null;
+        $task4 = null;
+        $task5 = null;
+
+        foreach ($selectTask as $key => $value) {
+            if ($value['tipe'] == '23') {
+                $task3 = $value['waktu'];
+                $task3 = substr($task3, 0, 16);
+                $task3 = str_replace(" ", "T", $task3);
+            } else if ($value['tipe'] == '24') {
+                $task4 = $value['waktu'];
+                $task4 = substr($task4, 0, 16);
+                $task4 = str_replace(" ", "T", $task4);
+            } else if ($value['tipe'] == '25') {
+                $task5 = $value['waktu'];
+                $task5 = substr($task5, 0, 16);
+                $task5 = str_replace(" ", "T", $task5);
+            }
+        }
+
+
+        $encounterData = [
+            "resourceType" => "Encounter",
+            "id" => "3dedcec9-885d-435e-9ac5-58853cb216bb",
+            "identifier" => [[
+                "system" => "http://sys-ids.kemkes.go.id/encounter/" . $ssorganizationid,
+                "value" => $visit
+            ]],
+            "status" => "finished",
+            "class" => [
+                "system" => "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code" => "AMB",
+                "display" => "ambulatory"
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $sspasien_id,
+                "display" => $name_of_pasien
+            ],
+            "participant" => [[
+                "type" => [[
+                    "coding" => [[
+                        "system" => "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                        "code" => "ATND",
+                        "display" => "attender"
+                    ]]
+                ]],
+                "individual" => [
+                    "reference" => "Practitioner/" . $sspractitioner_id,
+                    "display" => $fullname // Replace this with actual selected option text
+                ]
+            ]],
+            "period" => [
+                "start" => $visit_date . ":00+07:00",
+                "end" => $task5 . ":00+07:00"
+            ],
+            "location" => [[
+                "location" => [
+                    "reference" => "Location/" . $sslocation_id,
+                    "display" => $name_of_clinic // Replace with actual selected clinic name
+                ]
+            ]],
+            // "diagnosis" => [
+            //     [
+            //         "condition" => [
+            //             "reference" => "Condition/4bbbe654-14f5-4ab3-a36e-a1e307f67bb8",
+            //             "display" => "Tuberculosis of lung, confirmed by sputum microscopy with or without culture"
+            //         ],
+            //         "use" => [
+            //             "coding" => [
+            //                 [
+            //                     "system" => "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+            //                     "code" => "DD",
+            //                     "display" => "Discharge diagnosis"
+            //                 ]
+            //             ]
+            //         ],
+            //         "rank" => 1
+            //     ],
+            //     [
+            //         "condition" => [
+            //             "reference" => "Condition/666970c2-d79f-4242-89f9-d0ffab9e36cf",
+            //             "display" => "Non-insulin-dependent diabetes mellitus without complications"
+            //         ],
+            //         "use" => [
+            //             "coding" => [
+            //                 [
+            //                     "system" => "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+            //                     "code" => "DD",
+            //                     "display" => "Discharge diagnosis"
+            //                 ]
+            //             ]
+            //         ],
+            //         "rank" => 2
+            //     ]
+            // ],
+            "statusHistory" => [
+                [
+                    "status" => "arrived",
+                    "period" => [
+                        "start" => $visit_date . ":00+07:00",
+                        "end" => $task3 . ":00+07:00"
+                    ]
+                ],
+                [
+                    "status" => "in-progress",
+                    "period" => [
+                        "start" => $task3 . ":00+07:00",
+                        "end" => $task4 . ":00+07:00"
+                    ]
+                ],
+                [
+                    "status" => "finished",
+                    "period" => [
+                        "start" => $task4 . ":00+07:00",
+                        "end" => $task5 . ":00+07:00"
+                    ]
+                ]
+            ],
+            "serviceProvider" => [
+                "reference" => "Organization/" . $ssorganizationid
+            ]
+        ];
+
+        $curl = curl_init();
+        // Log initial API call
+        $db->table('ApiTrafficLog')->insert([
+            'visit_id' => $visit,
+            'endpoint' => '/Encounter',
+            'request_payload' => json_encode($encounterData),
+            'success' => 0,
+            'retry_count' => 0,
+            'httpmethod' => 'put'
+        ]);
+        $logId = $db->insertID();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->baseurlfhir . '/Encounter',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => json_encode($encounterData),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $ssToken,
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        $db->table('ApiTrafficLog')
+            ->where('id', $logId)
+            ->update([
+                'response_payload' => $response,
+                'http_status' => $httpcode,
+                'success' => ($httpcode >= 200 && $httpcode < 300) ? 1 : 0,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        curl_close($curl);
+
+        return $response;
+    }
+    public function postEncounterByVisitEnd()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
+        $ssToken = $select['sstoken'];
+
+        $db = db_connect();
+        $query = "select SSPASIEN_ID, NAME_OF_PASIEN,
+                    ea.SSPRACTITIONER_ID,
+                    ea.fullname,
+                    c.SSLOCATION_ID,
+                    c.name_of_clinic,
+                    pv.VISIT_ID,
+                    u.SSORGANIZATIONID,
+                    u.SSTOKEN,
+                    p.pasien_id as npk,
+                    p.no_registration,
+                    pv.visit_date,
+                    pv.trans_id
+                    from PASIEN p inner join PASIEN_VISITATION pv
+                    on p.no_registration = pv.NO_REGISTRATION
+                    inner join EMPLOYEE_ALL ea on ea.EMPLOYEE_ID = pv.EMPLOYEE_ID
+                    inner join clinic c on c.CLINIC_ID = pv.CLINIC_ID
+                    inner join ORGANIZATIONUNIT u on u.ORG_UNIT_CODE = p.ORG_UNIT_CODE
+                    where pv.VISIT_ID = '$visit'";
+        $select = $db->query($query)->getFirstRow();
+
+        $select = $this->lowerKey($select);
+
+        $ssToken = $select['sstoken'];
+        $sspasien_id = $select['sspasien_id'];
+        $sspractitioner_id = $select['sspractitioner_id'];
+        $fullname = $select['fullname'];
+        $sslocation_id = $select['sslocation_id'];
+        $ssorganizationid = $select['ssorganizationid'];
+        $npk = $select['npk'];
+        $no_registration = $select['no_registration'];
+        $name_of_pasien = $select['name_of_pasien'];
+        $visit_date = $select['visit_date'];
+        $visit_date = substr($visit_date, 0, 16);
+        $visit_date = str_replace(" ", "T", $visit_date);
+        $name_of_clinic = $select['name_of_clinic'];
+        $trans_id = $select['trans_id'];
+
+        $queryTask = "select waktu, tipe from batching_bridging where trans_id = '$trans_id' and tipe in (23,24,25)";
+        $selectTask = $db->query($queryTask)->getResultArray();
+
+        $task3 = null;
+        $task4 = null;
+        $task5 = null;
+
+        foreach ($selectTask as $key => $value) {
+            if ($value['tipe'] == '23') {
+                $task3 = $value['waktu'];
+                $task3 = substr($task3, 0, 16);
+                $task3 = str_replace(" ", "T", $task3);
+            } else if ($value['tipe'] == '24') {
+                $task4 = $value['waktu'];
+                $task4 = substr($task4, 0, 16);
+                $task4 = str_replace(" ", "T", $task4);
+            } else if ($value['tipe'] == '25') {
+                $task5 = $value['waktu'];
+                $task5 = substr($task5, 0, 16);
+                $task5 = str_replace(" ", "T", $task5);
+            }
+        }
+        if (is_null($sspasien_id)) {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $this->baseurlfhir . '/Patient?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $npk,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $ssToken
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            $response = json_decode($response, true);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            curl_close($curl);
+            // return json_encode($response);
+
+            if ($httpcode != 401) {
+                $statuscode = null;
+                if (isset($response['entry'])) {
+                    $statuscode = "200";
+                }
+                // $db->query("update satu_sehat set status = '$statuscode', result = '" . $response . "' where trans_id = '" . $value['trans_id'] . "' and tipe = '" . $value['tipe'] . "'");
+            } else {
+                $ssToken = $this->getToken();
+                return $ssToken;
+            }
+            if (!isset($response['entry']['0']['resource']['id'])) {
+                return response()->setStatusCode(401);
+            } else {
+                $sspasien_id = $response['entry']['0']['resource']['id'];
+                $db->query("update pasien set sspasien_id = '" . $response['entry']['0']['resource']['id'] . "' where no_registration = '$no_registration'");
+            }
+        }
+
+        $encounterData = [
+            "resourceType" => "Encounter",
+            "status" => "arrived",
+            "class" => [
+                "system" => "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code" => "AMB",
+                "display" => "ambulatory"
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $sspasien_id,
+                "display" => $name_of_pasien
+            ],
+            "participant" => [[
+                "type" => [[
+                    "coding" => [[
+                        "system" => "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                        "code" => "ATND",
+                        "display" => "attender"
+                    ]]
+                ]],
+                "individual" => [
+                    "reference" => "Practitioner/" . $sspractitioner_id,
+                    "display" => $fullname // Replace this with actual selected option text
+                ]
+            ]],
+            "period" => [
+                "start" => $visit_date . ":00+07:00",
+                "end" => $task5 . ":00+07:00"
+            ],
+            "location" => [[
+                "location" => [
+                    "reference" => "Location/" . $sslocation_id,
+                    "display" => $name_of_clinic // Replace with actual selected clinic name
+                ]
+            ]],
+            "statusHistory" => [
+                [
+                    "status" => "arrived",
+                    "period" => [
+                        "start" => $visit_date . ":00+07:00",
+                        "end" => $task3 . ":00+07:00"
+                    ]
+                ],
+                [
+                    "status" => "in-progress",
+                    "period" => [
+                        "start" => $task3 . ":00+07:00",
+                        "end" => $task4 . ":00+07:00"
+                    ]
+                ],
+                [
+                    "status" => "finished",
+                    "period" => [
+                        "start" => $task4 . ":00+07:00",
+                        "end" => $task5 . ":00+07:00"
+                    ]
+                ]
+            ],
+            "serviceProvider" => [
+                "reference" => "Organization/" . $ssorganizationid
+            ],
+            "identifier" => [[
+                "system" => "http://sys-ids.kemkes.go.id/encounter/" . $ssorganizationid,
+                "value" => $visit
+            ]]
+        ];
+        $curl = curl_init();
+        // Log initial API call
+        $db->table('ApiTrafficLog')->insert([
+            'visit_id' => $visit,
+            'endpoint' => '/Encounter',
+            'request_payload' => json_encode($encounterData),
+            'success' => 0,
+            'retry_count' => 0,
+            'httpmethod' => 'post'
+        ]);
+        $logId = $db->insertID();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->baseurlfhir . '/Encounter',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($encounterData),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $ssToken,
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        $db->table('ApiTrafficLog')
+            ->where('id', $logId)
+            ->update([
+                'response_payload' => $response,
+                'http_status' => $httpcode,
+                'success' => ($httpcode >= 200 && $httpcode < 300) ? 1 : 0,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        curl_close($curl);
+
+        // return $response;
+        try {
+            $jsonresp = json_decode($response, true);
+            $ssencounter_id = $jsonresp['id'];
+            $db->query("update pasien_visitation set ssencounter_id = '$ssencounter_id' where visit_id = '$visit'");
+
+            return $response;
+        } catch (\Exception $e) {
+            return $response;
+        }
+    }
+    public function postConditionByPasienDiagnosa()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit_id'];
+        $pasien_diagnosa_id = @$body['pasien_diagnosa_id'];
+        $body_id = @$body['body_id'];
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
+        $ssToken = $select['sstoken'];
+
+        $db = db_connect();
+        $query = "select SSPASIEN_ID, NAME_OF_PASIEN,
+                    ea.SSPRACTITIONER_ID,
+                    ea.fullname,
+                    c.SSLOCATION_ID,
+                    c.name_of_clinic,
+                    pv.VISIT_ID,
+                    u.SSORGANIZATIONID,
+                    u.SSTOKEN,
+                    p.pasien_id as npk,
+                    p.no_registration,
+                    pv.visit_date,
+                    pv.trans_id,
+                    pv.ssencounter_id
+                    from PASIEN p inner join PASIEN_VISITATION pv
+                    on p.no_registration = pv.NO_REGISTRATION
+                    inner join EMPLOYEE_ALL ea on ea.EMPLOYEE_ID = pv.EMPLOYEE_ID
+                    inner join clinic c on c.CLINIC_ID = pv.CLINIC_ID
+                    inner join ORGANIZATIONUNIT u on u.ORG_UNIT_CODE = p.ORG_UNIT_CODE
+                    where pv.VISIT_ID = '$visit'";
+        $select = $db->query($query)->getFirstRow();
+
+        $select = $this->lowerKey($select);
+
+        $ssToken = $select['sstoken'];
+        $sspasien_id = $select['sspasien_id'];
+        $sspractitioner_id = $select['sspractitioner_id'];
+        $fullname = $select['fullname'];
+        $sslocation_id = $select['sslocation_id'];
+        $ssorganizationid = $select['ssorganizationid'];
+        $npk = $select['npk'];
+        $no_registration = $select['no_registration'];
+        $name_of_pasien = $select['name_of_pasien'];
+        $visit_date = $select['visit_date'];
+        $visit_date = substr($visit_date, 0, 16);
+        $visit_date = str_replace(" ", "T", $visit_date);
+        $name_of_clinic = $select['name_of_clinic'];
+        $trans_id = $select['trans_id'];
+        $ssencounter_id = $select['ssencounter_id'];
+
+        $query = "select * from pasien_diagnosas
+                where pasien_diagnosa_id = '$pasien_diagnosa_id' or pasien_diagnosa_id = '$body_id' ";
+        // if (is_null($body_id)) {
+        // } else {
+        //     $query = "select * from pasien_diagnosas
+        //             where pasien_diagnosa_id = '$body_id'";
+        // }
+        // $return['message'] = 'success';
+        // $return['code'] = 200;
+        // $return['data'] = $query;
+        // return $this->response->setJSON($return);
+
+        $diag = $db->query($query)->getResultArray();
+        $diag = $this->lowerKey($diag);
+        $responses = [];
+        foreach ($diag as $key => $value) {
+            $condition = [
+                "resourceType" => "Condition",
+                "clinicalStatus" => [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                            "code" => "active",
+                            "display" => "Active"
+                        ]
+                    ]
+                ],
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => "http://terminology.hl7.org/CodeSystem/condition-category",
+                                "code" => "encounter-diagnosis",
+                                "display" => "Encounter Diagnosis"
+                            ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/sid/icd-10",
+                            "code" => $value['diagnosa_id'],
+                            "display" => $value['diagnosa_name']
+                        ]
+                    ],
+                    "text" => $value['diagnosa_name']
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $sspasien_id,
+                    "display" => $name_of_pasien
+                ],
+                "encounter" => [
+                    "reference" => "Encounter/" . $ssencounter_id
+                ]
+            ];
+            // return $this->response->setJSON($condition);
+
+
+            $curl = curl_init();
+            // Log initial API call
+            $db->table('ApiTrafficLog')->insert([
+                'visit_id' => $visit,
+                'endpoint' => '/Condition',
+                'request_payload' => json_encode($condition),
+                'success' => 0,
+                'retry_count' => 0,
+                'httpmethod' => 'post'
+            ]);
+            $logId = $db->insertID();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $this->baseurlfhir . '/Condition',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($condition),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . $ssToken,
+                    'Content-Type: application/json'
+                ),
+            ));
+
+
+            $response = curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            $db->table('ApiTrafficLog')
+                ->where('id', $logId)
+                ->update([
+                    'response_payload' => $response,
+                    'http_status' => $httpcode,
+                    'success' => ($httpcode >= 200 && $httpcode < 300) ? 1 : 0,
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            curl_close($curl);
+
+            $responses[] = json_decode($response, true);
+
+            try {
+                $jsonresp = json_decode($response, true);
+                $sscondition_id = $jsonresp['id'];
+                $db->query("update pasien_diagnosas set sscondition_id = '$ssencounter_id' where pasien_diagnosa_id = '" . $value['pasien_diagnosa_id'] . "' and diagnosa_id = '" . $value['diagnosa_id'] . "'");
+            } catch (\Exception $e) {
+            }
+        }
+        $return['message'] = 'success';
+        $return['code'] = 200;
+        $return['data'] = $responses;
+        return $this->response->setJSON($return);
     }
     public function generateBatchingBundleSingle()
     {
@@ -1492,6 +2313,8 @@ class SatuSehat extends BaseController
         $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
         $c = new ClinicModel();
+
+
         if (!is_null($body["clinic_id"]) && $body["clinic_id"] != '') {
             $curl = curl_init();
 
@@ -1523,6 +2346,7 @@ class SatuSehat extends BaseController
                     ]);
                     return json_encode($response["entry"][0]["resource"]["id"]);
                 } else {
+                    // return json_encode($ssorgid);
                     $curl = curl_init();
 
                     curl_setopt_array($curl, array(
@@ -1592,6 +2416,8 @@ class SatuSehat extends BaseController
                 $token = $this->getToken();
                 return $token;
             }
+        } else {
+            return json_encode("gamasuk");
         }
     }
 
@@ -1715,6 +2541,44 @@ class SatuSehat extends BaseController
                 // $row[] = $value['visit_date'];
                 $row[] = 'Bed ' . $value['bed_id'] . ', Bangsal ' . $value['name_of_class'];
                 $row[] = $value['ssclinic_id'];
+
+                $dt_data[] = $row;
+                $i++;
+            }
+        }
+
+        $json_data = array(
+            "body" => $dt_data,
+            "jsonData" => $select
+        );
+        echo json_encode($json_data);
+    }
+    public function viewLocationpost()
+    {
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $clinic_id = $this->request->getPost('clinic_id');
+
+        $cr = new ClassRoomModel();
+        // $select = $this->lowerKey($cr->join("clinic c","class_room.clinic_id = c.clinic_id", "inner")->select("class_room.SSLOCATIONBED_ID, class_room."))
+
+        $db = db_connect();
+        $select = $this->lowerKey($db->query("select clinic_id, name_of_clinic, ssclinic_id, sslocation_id from clinic")->getResultArray());
+
+        $dt_data = array();
+
+        if (!empty($select)) {
+            $kunjbaru = [];
+            $i = 0;
+
+            foreach ($select as $key => $value) {
+                $row = [];
+                $row[] = $i + 1;
+                $row[] = $value['ssclinic_id'];
+                // $row[] = $value['visit_date'];
+                $row[] = $value['name_of_clinic'];
+                $row[] = '<div id="clinic_id_' . str_replace('.', '', $value['clinic_id']) . '">' . $value['sslocation_id'];
 
                 $dt_data[] = $row;
                 $i++;
@@ -2134,8 +2998,9 @@ class SatuSehat extends BaseController
 
         $db = db_connect();
         $select = $db->query("select ea.fullname, ea.employee_id, ea.sspractitioner_id,st.specialist_type, ea.npk from EMPLOYEE_ALL ea
-        inner join SPECIALIST_TYPE st on ea.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        left outer join SPECIALIST_TYPE st on ea.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
         where employee_id like '%$dokter$' or fullname like '%$dokter%'
+        and ea.specialist_type_id is not null
         order by fullname")->getResultArray();
         // return json_encode($select);
         $dt_data = array();

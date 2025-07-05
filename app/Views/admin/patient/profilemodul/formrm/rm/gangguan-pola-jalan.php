@@ -13,68 +13,68 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
 
     <style>
-    .table-container-split {
-        display: flex;
-        justify-content: space-between;
-        padding: 20px;
-    }
+        .table-container-split {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
 
-    .table-container-split table {
-        width: 45%;
-    }
+        .table-container-split table {
+            width: 45%;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
 
-    thead.border {
-        border-bottom: 1px solid black !important;
-        border-top: 1px solid black !important;
-    }
+        thead.border {
+            border-bottom: 1px solid black !important;
+            border-top: 1px solid black !important;
+        }
 
-    tbody.border {
-        border-bottom: 1px solid black !important;
-    }
+        tbody.border {
+            border-bottom: 1px solid black !important;
+        }
     </style>
 </head>
 
@@ -113,30 +113,30 @@
                         <p><strong>I. Diisi oleh Pasien/Peserta</strong></p>
                     </div>
                     <div class="col-6 text-end">
-                        <p><strong>No. RM/Reg :</strong> <?=$visit['no_registration']?></p>
+                        <p><strong>No. RM/Reg :</strong> <?= $visit['no_registration'] ?></p>
                     </div>
                 </div>
                 <table class="table">
                     <tbody>
                         <tr>
                             <td><strong>Nama Pasien</strong></td>
-                            <td><?=$visit['diantar_oleh']?></td>
+                            <td><?= $visit['diantar_oleh'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Tanggal Lahir</strong></td>
-                            <td><?=$visit['date_of_birth']?></td>
+                            <td><?= $visit['date_of_birth'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Alamat</strong></td>
-                            <td><?=$visit['contact_address']?></td>
+                            <td><?= $visit['contact_address'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Telp/HP</strong></td>
-                            <td><?=$visit['phone_number']?></td>
+                            <td><?= $visit['phone_number'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Hubungan dengan bertanggung</strong></td>
-                            <td><?=$visit['family_notes']?></td>
+                            <td><?= $visit['family_notes'] ?></td>
                         </tr>
 
                     </tbody>
@@ -149,11 +149,11 @@
                     <tbody>
                         <tr>
                             <td><strong>Tanggal Pelayanan</strong></td>
-                            <td><?=@$fisioterapi['vactination_date']?></td>
+                            <td><?= @$fisioterapi['vactination_date'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Anamnesa</strong></td>
-                            <td><?=@$diagnosa['diagnosa']['anamnase']?></td>
+                            <td><?= @$diagnosa['diagnosa']['anamnase'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Pemeriksaan Fisik dan Uji</strong></td>
@@ -165,7 +165,7 @@
                         </tr>
                         <tr>
                             <td><strong>Diagnosis Medis (ICD-10)</strong></td>
-                            <td><?=@$diagnosa['diagnosas']['diagnosa_name']?></td>
+                            <td><?= @$diagnosa['diagnosas']['diagnosa_name'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Diagnosis Fungsi (ICD-10)</strong></td>
@@ -240,63 +240,63 @@
 </body>
 
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`Surakarta,${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`)
-    <?php $dataJson = json_encode($visit); ?>
-    let data = <?php echo $dataJson; ?>;
+    $(document).ready(function() {
+        $("#datetime-now").html(`Surakarta,${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`)
+        <?php $dataJson = json_encode($visit); ?>
+        let data = <?php echo $dataJson; ?>;
 
-    <?php $dataJson1 = json_encode(@$diagnosa); ?>
-    let data2 = <?php echo $dataJson1; ?>;
+        <?php $dataJson1 = json_encode(@$diagnosa); ?>
+        let data2 = <?php echo $dataJson1; ?>;
 
-    console.log(data2);
-
-
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: `${data?.pengirim_name ?? data?.diantar_oleh}`, // Your text here
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `${data?.fullname}`, // Your text here
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+        console.log(data2);
 
 
-})
+        var qrcode = new QRCode(document.getElementById("qrcode1"), {
+            text: `${data?.pengirim_name ?? data?.diantar_oleh}`, // Your text here
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: `${data?.fullname}`, // Your text here
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+
+
+    })
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        /* scale: 85; */
-    }
+    @media print {
+        @page {
+            margin: none;
+            /* scale: 85; */
+        }
 
-    .container {
-        width: 100%;
-        /* Sesuaikan dengan lebar kertas A4 */
-    }
+        .container {
+            width: 100%;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
 
-    td {
-        background-color: inherit;
-        color: inherit;
-        border: inherit;
-        padding: inherit;
-        text-align: inherit;
-    }
+        td {
+            background-color: inherit;
+            color: inherit;
+            border: inherit;
+            padding: inherit;
+            text-align: inherit;
+        }
 
-}
+    }
 </style>
 
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

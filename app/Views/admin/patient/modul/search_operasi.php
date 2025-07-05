@@ -64,11 +64,11 @@ $cliniclist = array();
                         <span class="text-danger" id="error_search_type"></span>
                     </div>
 
-                    <div class="col-sm-6 col-md-2" <?php if (user()->employee_id != '' && !is_null(user()->employee_id)) { ?> style="display: none;" <?php } ?>>
+                    <div class="col-sm-6 col-md-2" <?php if (user()->employee_id != '' && !is_null(user()->employee_id)) { ?> <?php } ?>>
                         <div class="form-group">
                             <label>Dokter</label>
                             <select id="dokter" class="form-control" name="dokter" onchange="showdate(this.value)">
-                                <?php if (is_null(user()->employee_id)) { ?>
+                                <?php if (is_null(user()->employee_id) && user()->employee_id != '70438' && user()->employee_id != '46') { ?>
                                     <option value="%">Semua</option>
                                     <?php $dokterlist = array();
                                     foreach ($dokter as $key => $value) {
@@ -82,6 +82,7 @@ $cliniclist = array();
                                         <option value="<?= $key; ?>"><?= $value; ?></option>
                                     <?php }
                                 } else { ?>
+                                    <option value="%">Semua</option>
                                     <?php $dokterlist = array();
                                     foreach ($dokter as $key => $value) {
                                         foreach ($value as $key1 => $value1) {

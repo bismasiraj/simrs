@@ -59,6 +59,8 @@ $permission = user()->getPermissions();
                                 <input id="avtageday" name="ageday" placeholder="" type="hidden" class="form-control block" value="" />
                                 <input id="avtbody_id" name="body_id" placeholder="" type="hidden" class="form-control block" value="" />
                                 <input id="avtmodified_by" name="modified_by" placeholder="" type="hidden" class="form-control block" value="" />
+                                <input id="avtpetugas" name="petugas" placeholder="" type="hidden" class="form-control block" value="" />
+                                <input id="avtpetugas_id" name="petugas_id" placeholder="" type="hidden" class="form-control block" value="" />
                                 <input id="avttrans_id" name="trans_id" placeholder="" type="hidden" class="form-control block" value="" /> <!--==new -->
                                 <input id="avtaccount_id" name="account_id" placeholder="" type="hidden" class="form-control block" value="" /> <!--==new -->
                                 <!-- <input id="avtvs_status_id" name="vs_status_id" placeholder="" type="hidden" class="form-control block" value="" /> -->
@@ -194,32 +196,33 @@ $permission = user()->getPermissions();
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>Nyeri</label>
-                                                                    <select class="form-select" name="pain" id="prslexampain" onchange="">
+                                                                    <select class="form-select" name="pain" id="avtexampain" onchange="">
                                                                         <option value="0">Normal</option>
                                                                         <option value="3">Abnormal</option>
                                                                     </select>
-                                                                    <span class="h6" id="badge-prslexampain"></span>
+                                                                    <span class="h6" id="badge-avtexampain"></span>
                                                                 </div>
                                                             </div>
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>Discharge/Lokia</label>
-                                                                    <select class="form-select" name="lochia" id="prslexamlochia" onchange="">
+                                                                    <select class="form-select" name="lochia" id="avtexamlochia" onchange="">
+                                                                        <option value="">-</option>
                                                                         <option value="0">Normal</option>
                                                                         <option value="3">Abnormal</option>
                                                                     </select>
-                                                                    <span class="h6" id="badge-prslexamlokia"></span>
+                                                                    <span class="h6" id="badge-avtexamlokia"></span>
                                                                 </div>
                                                             </div>
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>Proteinuria (Perhari)</label>
-                                                                    <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="">
+                                                                    <select class="form-select" name="proteinuria" id="avtexamproteinuria" onchange="">
                                                                         <option value="0">-</option>
                                                                         <option value="2">+</option>
                                                                         <option value="3">++</option>
                                                                     </select>
-                                                                    <span class="h6" id="badge-prslexamproteinuria"></span>
+                                                                    <span class="h6" id="badge-avtexamproteinuria"></span>
                                                                 </div>
                                                             </div>
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
@@ -374,7 +377,7 @@ $permission = user()->getPermissions();
                                         </div>
                                     </div> -->
                                     <div class="col-sm-6" style="display: none;">
-                                        <div class="form-group"><label>Perawat</label><input type="text" name="petugas" id="avtpetugas" placeholder="" value="<?= user_id(); ?>" class="form-control"></div>
+                                        <!-- <div class="form-group"><label>Perawat</label><input type="text" name="petugas" id="avtpetugas" placeholder="" value="<?= user_id(); ?>" class="form-control"></div> -->
                                     </div>
                                 </div>
                                 <span id="avttotal_score"></span>

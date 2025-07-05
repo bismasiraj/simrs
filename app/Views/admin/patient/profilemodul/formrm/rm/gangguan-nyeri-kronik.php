@@ -13,107 +13,107 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
+        .form-control,
 
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    .table-container-split {
-        display: flex;
-        justify-content: space-between;
-        padding: 20px;
-    }
+        .table-container-split {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
 
-    .table-container-split table {
-        width: 45%;
-    }
+        .table-container-split table {
+            width: 45%;
+        }
 
-    @page {
-        size: A4;
-    }
-
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
-
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
-
-    thead.border {
-        border-bottom: 1px solid black !important;
-        border-top: 1px solid black !important;
-    }
-
-    tbody.border {
-        border-bottom: 1px solid black !important;
-    }
-
-    @media print {
         @page {
-            margin: none;
-            /* scale: 85; */
+            size: A4;
         }
 
-        .container {
-            width: 100%;
-            /* Sesuaikan dengan lebar kertas A4 */
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
         }
 
-        td {
-            background-color: inherit;
-            color: inherit;
-            border: inherit;
-            padding: inherit;
-            text-align: inherit;
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
         }
 
-        .d-flex button {
-            display: none;
+        thead.border {
+            border-bottom: 1px solid black !important;
+            border-top: 1px solid black !important;
         }
 
-    }
+        tbody.border {
+            border-bottom: 1px solid black !important;
+        }
+
+        @media print {
+            @page {
+                margin: none;
+                /* scale: 85; */
+            }
+
+            .container {
+                width: 100%;
+                /* Sesuaikan dengan lebar kertas A4 */
+            }
+
+            td {
+                background-color: inherit;
+                color: inherit;
+                border: inherit;
+                padding: inherit;
+                text-align: inherit;
+            }
+
+            .d-flex button {
+                display: none;
+            }
+
+        }
     </style>
 </head>
 
@@ -151,30 +151,30 @@
                     <p><strong>I. Diisi oleh Pasien/Peserta</strong></p>
                 </div>
                 <div class="col-6 text-end">
-                    <p><strong>No. RM/Reg :</strong> <?=$visit['no_registration']?></p>
+                    <p><strong>No. RM/Reg :</strong> <?= $visit['no_registration'] ?></p>
                 </div>
             </div>
             <table class="table">
                 <tbody>
                     <tr>
                         <td><strong>Nama Pasien</strong></td>
-                        <td><?=@$visit['diantar_oleh']?></td>
+                        <td><?= @$visit['diantar_oleh'] ?></td>
                     </tr>
                     <tr>
                         <td><strong>Tanggal Lahir</strong></td>
-                        <td><?=@$visit['date_of_birth']?></td>
+                        <td><?= @$visit['date_of_birth'] ?></td>
                     </tr>
                     <tr>
                         <td><strong>Alamat</strong></td>
-                        <td><?=@$visit['contact_address']?></td>
+                        <td><?= @$visit['contact_address'] ?></td>
                     </tr>
                     <tr>
                         <td><strong>Telp/HP</strong></td>
-                        <td><?=@$visit['phone_number']?></td>
+                        <td><?= @$visit['phone_number'] ?></td>
                     </tr>
                     <tr>
                         <td><strong>Hubungan dengan bertanggung</strong></td>
-                        <td><?=@$visit['family_notes']?></td>
+                        <td><?= @$visit['family_notes'] ?></td>
                     </tr>
 
                 </tbody>
@@ -187,22 +187,22 @@
                     <tbody>
                         <tr>
                             <td><strong>Tanggal Pelayanan</strong></td>
-                            <td><?=@$fisioterapi['vactination_date']?></td>
+                            <td><?= @$fisioterapi['vactination_date'] ?></td>
                         </tr>
                         <tr>
                             <td><strong>Anamnesa</strong></td>
                             <?php if (isset($diagnosa) && is_array($diagnosa)): ?>
-                            <td>
-                                <?php 
-                                        $anamnaseList = [];
-                                        foreach ($diagnosa as $item) {
-                                            if (!empty($item['anamnase'])) { 
-                                                $anamnaseList[] = $item['anamnase'];
-                                            }
+                                <td>
+                                    <?php
+                                    $anamnaseList = [];
+                                    foreach ($diagnosa as $item) {
+                                        if (!empty($item['anamnase'])) {
+                                            $anamnaseList[] = $item['anamnase'];
                                         }
-                                        echo implode(', ', $anamnaseList); 
+                                    }
+                                    echo implode(', ', $anamnaseList);
                                     ?>
-                            </td>
+                                </td>
                             <?php endif; ?>
 
 
@@ -238,24 +238,24 @@
                         <tr>
                             <td><strong>Diagnosis Medis (ICD-10)</strong></td>
                             <?php if (isset($diagnosa) && is_array($diagnosa)): ?>
-                            <td>
-                                <?php 
+                                <td>
+                                    <?php
                                     $diag_medis = [];
                                     foreach ($diagnosa as $item) {
-                                        if ($item['diag_cat'] == '1') { 
+                                        if ($item['diag_cat'] == '1') {
                                             $diag_medis[] = $item['diagnosa_desc'];
                                         }
                                     }
-                                    echo implode(', ', $diag_medis); 
-                                ?>
-                            </td>
+                                    echo implode(', ', $diag_medis);
+                                    ?>
+                                </td>
                             <?php endif; ?>
                         </tr>
                         <tr>
                             <td><strong>Diagnosis Fungsi (ICD-10)</strong></td>
                             <td><?php if (isset($diagnosa) && is_array($diagnosa)): ?>
                             <td>
-                                <?php 
+                                <?php
                                     $diag_fungsi = [];
                                     foreach ($diagnosa as $item) {
                                         if ($item['diag_cat'] == '17') { // Memeriksa diag_cat
@@ -265,7 +265,7 @@
                                     echo implode(', ', $diag_fungsi); // Menggabungkan dengan koma dan spasi
                                 ?>
                             </td>
-                            <?php endif; ?></td>
+                        <?php endif; ?></td>
                         </tr>
                         <tr>
                             <td><strong>Pemeriksaan Penunjang/Tata</strong></td>
@@ -453,76 +453,76 @@
 </body>
 
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`Surakarta,${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`)
+    $(document).ready(function() {
+        $("#datetime-now").html(`Surakarta,${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`)
 
-    function toggleOtherDesc() {
-        if ($('#other_checkbox').is(':checked')) {
-            $('#other_desc').show().prop('disabled', false);
-        } else {
-            $('#other_desc').hide().val('').prop('disabled', true);
+        function toggleOtherDesc() {
+            if ($('#other_checkbox').is(':checked')) {
+                $('#other_desc').show().prop('disabled', false);
+            } else {
+                $('#other_desc').hide().val('').prop('disabled', true);
+            }
         }
-    }
 
-    toggleOtherDesc();
-
-    $('#other_checkbox').on('change', function() {
         toggleOtherDesc();
-    });
+
+        $('#other_checkbox').on('change', function() {
+            toggleOtherDesc();
+        });
 
 
-    function toggleSuspectDetails() {
-        if ($('#suspect_no').is(':checked')) {
-            $('#suspect_details_container').show();
-            $('#suspect_worker').prop('disabled', false);
-        } else if ($('#suspect_yes').is(':checked')) {
-            $('#suspect_details_container').hide();
-            $('#suspect_worker').val('').prop('disabled', true);
+        function toggleSuspectDetails() {
+            if ($('#suspect_no').is(':checked')) {
+                $('#suspect_details_container').show();
+                $('#suspect_worker').prop('disabled', false);
+            } else if ($('#suspect_yes').is(':checked')) {
+                $('#suspect_details_container').hide();
+                $('#suspect_worker').val('').prop('disabled', true);
+            }
         }
-    }
 
 
-    toggleSuspectDetails();
-
-
-    $('input[name="suspect_worker"]').on('change', function() {
         toggleSuspectDetails();
-    });
-
-    <?php $dataJson = json_encode($visit); ?>
-    let data = <?php echo $dataJson; ?>;
-
-    <?php $dataJson1 = json_encode(@$diagnosa); ?>
-    let data2 = <?php echo $dataJson1; ?>;
-
-    console.log(data2);
 
 
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: `${data?.pengirim_name ?? data?.diantar_oleh}`, // Your text here
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+        $('input[name="suspect_worker"]').on('change', function() {
+            toggleSuspectDetails();
+        });
 
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `${data?.fullname}`, // Your text here
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+        <?php $dataJson = json_encode($visit); ?>
+        let data = <?php echo $dataJson; ?>;
+
+        <?php $dataJson1 = json_encode(@$diagnosa); ?>
+        let data2 = <?php echo $dataJson1; ?>;
+
+        console.log(data2);
 
 
-})
+        var qrcode = new QRCode(document.getElementById("qrcode1"), {
+            text: `${data?.pengirim_name ?? data?.diantar_oleh}`, // Your text here
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: `${data?.fullname}`, // Your text here
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+
+
+    })
 </script>
 
 
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

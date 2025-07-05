@@ -1,98 +1,119 @@
+<?php
+// $db = db_connect();
+
+// $exam_info = $db->query("SELECT TOP 1 weight, height, vs_status_id, temperature, nadi, tension_upper, tension_below, saturasi, nafas 
+//     FROM EXAMINATION_DETAIL 
+//     WHERE VISIT_ID = ? 
+//     ORDER BY EXAMINATION_DATE DESC", [@$visit['visit_id']])->getRowArray();
+
+// $exam_info = [
+//     'weight' => $exam_info['weight'] ?? 0,
+//     'height' => $exam_info['height'] ?? 0,
+//     'vs_status_id' => $exam_info['vs_status_id'] ?? null,
+//     'temperature' => $exam_info['temperature'] ?? null,
+//     'nadi' => $exam_info['nadi'] ?? null,
+//     'tension_upper' => $exam_info['tension_upper'] ?? null,
+//     'tension_below' => $exam_info['tension_below'] ?? null,
+//     'saturasi' => $exam_info['saturasi'] ?? null,
+//     'nafas' => $exam_info['nafas'] ?? null,
+// ];
+?>
+
 <div class="tab-pane fade" id="anesthesi-lengkap">
     <form action="" id="form-laporanAnesthesi-lengkap">
         <input id="clinic_id-laporanAnesthesi-lengkap" name="clinic_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['clinic_id']; ?>" />
+            class="form-control block" value="<?= @$visit['clinic_id']; ?>" />
         <input id="class_room_id-laporanAnesthesi-lengkap" name="class_room_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['class_room_id']; ?>" />
+            class="form-control block" value="<?= @$visit['class_room_id']; ?>" />
         <input id="bed_id-laporanAnesthesi-lengkap" name="bed_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['bed_id']; ?>" />
+            class="form-control block" value="<?= @$visit['bed_id']; ?>" />
         <input id="keluar_id-laporanAnesthesi-lengkap" name="keluar_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['keluar_id']; ?>" />
+            class="form-control block" value="<?= @$visit['keluar_id']; ?>" />
         <input id="employee_id-laporanAnesthesi-lengkap" name="employee_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['employee_id']; ?>" />
+            class="form-control block" value="<?= @$visit['employee_id']; ?>" />
         <input id="no_registration-laporanAnesthesi-lengkap" name="no_registration" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['no_registration']; ?>" />
+            class="form-control block" value="<?= @$visit['no_registration']; ?>" />
         <input id="visit_id-laporanAnesthesi-lengkap" name="visit_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['visit_id']; ?>" />
+            class="form-control block" value="<?= @$visit['visit_id']; ?>" />
         <input id="org_unit_code-laporanAnesthesi-lengkap" name="org_unit_code" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['org_unit_code']; ?>" />
+            class="form-control block" value="<?= @$visit['org_unit_code']; ?>" />
         <input id="pasien_diagnosa_id-laporanAnesthesi-lengkap" name="pasien_diagnosa_id" placeholder="" type="hidden"
             class="form-control block" value="" />
         <input id="doctor-laporanAnesthesi-lengkap" name="doctor" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
+            class="form-control block" value="<?= @@$visit['doctor'] ?? @@$visit['fullname']; ?>" />
         <input id="kal_id-laporanAnesthesi-lengkap" name="kal_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['kal_id']; ?>" />
+            class="form-control block" value="<?= @@$visit['kal_id']; ?>" />
         <input id="theid-laporanAnesthesi-lengkap" name="theid" placeholder="" type="hidden" class="form-control block"
-            value="<?= @$visit['theid']; ?>" />
+            value="<?= @@$visit['theid']; ?>" />
         <input id="thename-laporanAnesthesi-lengkap" name="thename" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['theid']; ?>" />
+            class="form-control block" value="<?= @@$visit['theid']; ?>" />
         <input id="theaddress-laporanAnesthesi-lengkap" name="theaddress" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['theid']; ?>" />
+            class="form-control block" value="<?= @@$visit['theid']; ?>" />
         <input id="status_pasien_id-laporanAnesthesi-lengkap" name="status_pasien_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['status_pasien_id']; ?>" />
+            class="form-control block" value="<?= @@$visit['status_pasien_id']; ?>" />
         <input id="isrj-laporanAnesthesi-lengkap" name="isrj" placeholder="" type="hidden" class="form-control block"
-            value="<?= @$visit['isrj']; ?>" />
+            value="<?= @@$visit['isrj']; ?>" />
         <input id="gender-laporanAnesthesi-lengkap" name="gender" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['gender']; ?>" />
+            class="form-control block" value="<?= @@$visit['gender']; ?>" />
         <input id="ageyear-laporanAnesthesi-lengkap" name="ageyear" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['ageyear']; ?>" />
+            class="form-control block" value="<?= @@$visit['ageyear']; ?>" />
         <input id="agemonth-laporanAnesthesi-lengkap" name="agemonth" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['agemonth']; ?>" />
+            class="form-control block" value="<?= @@$visit['agemonth']; ?>" />
         <input id="ageday-laporanAnesthesi-lengkap" name="ageday" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['ageday']; ?>" />
+            class="form-control block" value="<?= @@$visit['ageday']; ?>" />
         <input id="body_id-laporanAnesthesi-lengkap" name="body_id" placeholder="" type="hidden"
             class="form-control block" value="" />
         <input id="modified_by-laporanAnesthesi-lengkap" name="modified_by" placeholder="" type="hidden"
             class="form-control block" value="<?= user()->username ?>" />
         <input id="trans_id-laporanAnesthesi-lengkap" name="trans_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['trans_id']; ?>" />
+            class="form-control block" value="<?= @@$visit['trans_id']; ?>" />
 
         <input id="clinic_id-laporanAnesthesi-lengkap-durantee" name="clinic_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['clinic_id']; ?>" />
+            class="form-control block" value="<?= @$visit['clinic_id']; ?>" />
         <input id="class_room_id-laporanAnesthesi-lengkap-durantee" name="class_room_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['class_room_id']; ?>" />
+            class="form-control block" value="<?= @$visit['class_room_id']; ?>" />
         <input id="bed_id-laporanAnesthesi-lengkap-durantee" name="bed_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['bed_id']; ?>" />
+            class="form-control block" value="<?= @$visit['bed_id']; ?>" />
         <input id="keluar_id-laporanAnesthesi-lengkap-durantee" name="keluar_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['keluar_id']; ?>" />
+            class="form-control block" value="<?= @$visit['keluar_id']; ?>" />
         <input id="employee_id-laporanAnesthesi-lengkap-durantee" name="employee_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['employee_id']; ?>" />
+            class="form-control block" value="<?= @$visit['employee_id']; ?>" />
         <input id="no_registration-laporanAnesthesi-lengkap-durantee" name="no_registration" placeholder=""
-            type="hidden" class="form-control block" value="<?= $visit['no_registration']; ?>" />
+            type="hidden" class="form-control block" value="<?= @$visit['no_registration']; ?>" />
         <input id="visit_id-laporanAnesthesi-lengkap-durantee" name="visit_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['visit_id']; ?>" />
+            class="form-control block" value="<?= @$visit['visit_id']; ?>" />
         <input id="org_unit_code-laporanAnesthesi-lengkap-durantee" name="org_unit_code" placeholder="" type="hidden"
-            class="form-control block" value="<?= $visit['org_unit_code']; ?>" />
+            class="form-control block" value="<?= @$visit['org_unit_code']; ?>" />
         <input id="pasien_diagnosa_id-laporanAnesthesi-lengkap-durantee" name="pasien_diagnosa_id" placeholder=""
             type="hidden" class="form-control block" value="" />
         <input id="doctor-laporanAnesthesi-lengkap-durantee" name="doctor" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
+            class="form-control block" value="<?= @@$visit['doctor'] ?? @@$visit['fullname']; ?>" />
         <input id="kal_id-laporanAnesthesi-lengkap-durantee" name="kal_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['kal_id']; ?>" />
+            class="form-control block" value="<?= @@$visit['kal_id']; ?>" />
         <input id="theid-laporanAnesthesi-lengkap-durantee" name="theid" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['theid']; ?>" />
+            class="form-control block" value="<?= @@$visit['theid']; ?>" />
         <input id="thename-laporanAnesthesi-lengkap-durantee" name="thename" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['theid']; ?>" />
+            class="form-control block" value="<?= @@$visit['theid']; ?>" />
         <input id="theaddress-laporanAnesthesi-lengkap-durantee" name="theaddress" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['theid']; ?>" />
+            class="form-control block" value="<?= @@$visit['theid']; ?>" />
         <input id="status_pasien_id-laporanAnesthesi-lengkap-durantee" name="status_pasien_id" placeholder=""
-            type="hidden" class="form-control block" value="<?= @$visit['status_pasien_id']; ?>" />
+            type="hidden" class="form-control block" value="<?= @@$visit['status_pasien_id']; ?>" />
         <input id="isrj-laporanAnesthesi-lengkap-durantee" name="isrj" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['isrj']; ?>" />
+            class="form-control block" value="<?= @@$visit['isrj']; ?>" />
         <input id="gender-laporanAnesthesi-lengkap-durantee" name="gender" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['gender']; ?>" />
+            class="form-control block" value="<?= @@$visit['gender']; ?>" />
         <input id="ageyear-laporanAnesthesi-lengkap-durantee" name="ageyear" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['ageyear']; ?>" />
+            class="form-control block" value="<?= @@$visit['ageyear']; ?>" />
         <input id="agemonth-laporanAnesthesi-lengkap-durantee" name="agemonth" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['agemonth']; ?>" />
+            class="form-control block" value="<?= @@$visit['agemonth']; ?>" />
         <input id="ageday-laporanAnesthesi-lengkap-durantee" name="ageday" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['ageday']; ?>" />
+            class="form-control block" value="<?= @@$visit['ageday']; ?>" />
         <input id="body_id-laporanAnesthesi-lengkap-durantee" name="body_id_durantee" placeholder="" type="hidden"
             class="form-control block" value="" />
         <input id="modified_by-laporanAnesthesi-lengkap-durantee" name="modified_by" placeholder="" type="hidden"
             class="form-control block" value="<?= user()->username ?>" />
         <input id="trans_id-laporanAnesthesi-lengkap-durantee" name="trans_id" placeholder="" type="hidden"
-            class="form-control block" value="<?= @$visit['trans_id']; ?>" />
+            class="form-control block" value="<?= @@$visit['trans_id']; ?>" />
         <div id="accordionLengkap" class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingUmum">
@@ -113,27 +134,27 @@
                                             <tr>
                                                 <td width="150px"><b>Pasien</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['diantar_oleh']; ?></span></td>
+                                                <td><span id=""><?= @@$visit['diantar_oleh']; ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>ID (KTP)</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['account_id'] ?></span></td>
+                                                <td><span id=""><?= @@$visit['account_id'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Gender</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['gendername'] ?></span></td>
+                                                <td><span id=""><?= @@$visit['gendername'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Date of Birth</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['date_of_birth'] ?? '' ?></span></td>
+                                                <td><span id=""><?= @@$visit['date_of_birth'] ?? '' ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Patient Age</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['age'] ?></span></td>
+                                                <td><span id=""><?= @@$visit['age'] ?></span></td>
                                             </tr>
                                         </tbody>
 
@@ -146,27 +167,27 @@
                                             <tr>
                                                 <td width="150px"><b>Department</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['name_of_clinic_from'] ?></span></td>
+                                                <td><span id=""><?= @@$visit['name_of_clinic_from'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Dokter DPJP</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['fullname'] ?></span></td>
+                                                <td><span id=""><?= @@@$visit['fullname'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Ward/Room</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['name_of_clinic'] ?></span></td>
+                                                <td><span id=""><?= @@$visit['name_of_clinic'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Bed No</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['bed'] ?></span></td>
+                                                <td><span id=""><?= @@$visit['bed'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Room Class</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['class_id'] ?></span></td>
+                                                <td><span id=""><?= @@$visit['class_id'] ?></span></td>
                                             </tr>
                                         </tbody>
 
@@ -465,6 +486,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+
+                                                        <button type="button"
+                                                            id="btn-save-vitalSignLaporanAnesthesiLengkap2"
+                                                            class="btn btn-primary btn-save-vitalSignLaporanAnesthesiLengkap2"><i
+                                                                class="fas fa-save"></i>
+                                                            Simpan</button>
+                                                    <?php } ?>
                                                 </div>
                                                 <!--./col-lg-7-->
                                             </div>
@@ -480,11 +509,16 @@
                                 </form>
                             </div>
                         </div>
+
                         <div class="box-tab-tools text-center mt-4">
                             <a data-toggle="modal"
                                 onclick="setDataVitalSignLaporanAnesthesiLengkap('vitalSignLaporanAnesthesiLengkap2','formvitalsign-laporanAnesthesi-lengkap2')"
-                                class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
+                                id="tambahVtLaporanAnesthesiLengkap2Show" class="btn btn-primary btn-lg"
+                                style="width: 300px"><i class=" fa fa-plus"></i> Tambah
                                 Vitalsign</a>
+                            <a data-toggle="modal" id="sembunyikanVtLaporanAnesthesiLengkap2Show"
+                                class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i>
+                                Sembunyikan Form</a>
                         </div>
                         <h3>Histori Vital Sign</h3>
                         <table class="table table-striped table-hover">
@@ -509,6 +543,8 @@
                     </div>
                     <div class="accordion-body" id="informasiMedis-laporan-monitoring-durante-2">
                     </div>
+                    <div class="accordion-body" id="body-recovery-room-oprs029-oprs033"></div>
+
                 </div>
             </div>
 
@@ -614,7 +650,6 @@
                 </h2>
                 <div id="flush-collapseRecoveryRoomMonitoring" class="accordion-collapse collapse"
                     aria-labelledby="flush-headingRecoveryRoomMonitoring" data-bs-parent="#accordionLengkap">
-                    <div class="accordion-body" id="body-recovery-room-oprs029-oprs033"></div>
                     <div class="accordion-body" id="informasiMedis-laporan-recovery-room-monitoring"></div>
                     <div class="accordion-body" id="informasiMedis-laporan-recovery-room-monitoringg">
                         <div id="vitalSignLaporanAnesthesiLengkap3" class="card border-1 rounded-4 m-4 p-4"
@@ -847,6 +882,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+
+                                                        <button type="button"
+                                                            id="btn-save-vitalSignLaporanAnesthesiLengkap3"
+                                                            class="btn btn-primary btn-save-vitalSignLaporanAnesthesiLengkap2"><i
+                                                                class="fas fa-save"></i>
+                                                            Simpan</button>
+                                                    <?php } ?>
                                                 </div>
                                                 <!--./col-lg-7-->
                                             </div>
@@ -862,11 +905,16 @@
                                 </form>
                             </div>
                         </div>
+
                         <div class="box-tab-tools text-center mt-4">
                             <a data-toggle="modal"
                                 onclick="setDataVitalSignLaporanAnesthesiLengkap2('vitalSignLaporanAnesthesiLengkap3','formvitalsign-laporanAnesthesi-lengkap3')"
-                                class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
+                                id="tambahVtLaporanAnesthesiLengkap3Show" class="btn btn-primary btn-lg"
+                                style="width: 300px"><i class=" fa fa-plus"></i> Tambah
                                 Vitalsign</a>
+                            <a data-toggle="modal" id="sembunyikanVtLaporanAnesthesiLengkap3Show"
+                                class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i>
+                                Sembunyikan Form</a>
                         </div>
                         <h3>Histori Vital Sign</h3>
                         <table class="table table-striped table-hover">
@@ -900,41 +948,27 @@
             <button type="button" id="btn-print-anestesi-lengkap" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
             </button>
-            <button type="button" id="btn-save-laporan-anesthesiLengkap" class="btn btn-primary btn-save-operasi"><i
-                    class="fas fa-save"></i> Simpan</button>
+
+
+            <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+                <button type="button" id="btn-save-laporan-anesthesiLengkap" class="btn btn-primary btn-save-operasi"><i
+                        class="fas fa-save"></i> Simpan</button>
+            <?php } ?>
+
         </div>
     </form>
 </div>
 
 <script type='text/javascript'>
-    var mrJson;
-    var lastOrder = 0;
-    var vitalsign = <?= json_encode($exam); ?>;
-    var visit = '<?= $visit['visit_id']; ?>'
-    var nomor = '<?= $visit['no_registration']; ?>';
-
     $(document).ready(function(e) {
 
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
+        // var bodyIdLengkap = ''
 
-        var bodyIdLengkap = ''
-
-        const date = new Date();
-        bodyIdLengkap = date.toISOString().substring(0, 23);
-        bodyIdLengkap = bodyIdLengkap.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T",
-            "");
-        $("#body_id-laporanAnesthesi-lengkap").val(bodyIdLengkap)
+        // const date = new Date();
+        // bodyIdLengkap = date.toISOString().substring(0, 23);
+        // bodyIdLengkap = bodyIdLengkap.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T",
+        //     "");
+        // $("#body_id-laporanAnesthesi-lengkap").val(bodyIdLengkap)
 
     })
 
@@ -959,6 +993,14 @@
         });
     })
 
+    $("#sembunyikanVtLaporanAnesthesiLengkap2Show").off().on("click", function() {
+        $("#tambahVtLaporanAnesthesiLengkap2Show").show()
+        $("#vitalSignLaporanAnesthesiLengkap2").slideUp()
+        $("#vitalSignLaporanAnesthesiLengkap2").hide()
+        $("#sembunyikanVtLaporanAnesthesiLengkap2Show").hide()
+    })
+
+
     function setDataVitalSignLaporanAnesthesiLengkap(container_id, body) {
         $("#" + container_id).find("input, textarea").val(null)
         $("#" + container_id).find("#total_score-laporanAnesthesi-lengkap-durantee").html("")
@@ -971,31 +1013,53 @@
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         // $("#body_id-laporanAnesthesi-lengkap-durantee").val(bodyId)
-        $("#clinic_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['clinic_id']; ?>')
-        $("#trans_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['trans_id']; ?>')
-        $("#class_room_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['class_room_id']; ?>')
+        $("#clinic_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['clinic_id']; ?>')
+        $("#trans_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['trans_id']; ?>')
+        $("#class_room_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['class_room_id']; ?>')
         $("#bed_id-laporanAnesthesi-lengkap-durantee").val()
-        $("#keluar_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['keluar_id']; ?>')
-        $("#employee_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['employee_id']; ?>')
-        $("#no_registration-laporanAnesthesi-lengkap-durantee").val('<?= $visit['no_registration']; ?>')
-        $("#visit_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['visit_id']; ?>')
-        $("#org_unit_code-laporanAnesthesi-lengkap-durantee").val('<?= $visit['org_unit_code']; ?>')
-        $("#doctor-laporanAnesthesi-lengkap-durantee").val('<?= $visit['fullname']; ?>')
-        $("#kal_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['kal_id']; ?>')
-        $("#theid-laporanAnesthesi-lengkap-durantee").val('<?= $visit['pasien_id']; ?>')
-        $("#thename-laporanAnesthesi-lengkap-durantee").val('<?= $visit['diantar_oleh']; ?>')
-        $("#theaddress-laporanAnesthesi-lengkap-durantee").val('<?= $visit['visitor_address']; ?>')
-        $("#status_pasien_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['status_pasien_id']; ?>')
-        $("#isrj-laporanAnesthesi-lengkap-durantee").val('<?= $visit['isrj']; ?>')
-        $("#gender-laporanAnesthesi-lengkap-durantee").val('<?= $visit['gender']; ?>')
-        $("#ageyear-laporanAnesthesi-lengkap-durantee").val('<?= $visit['ageyear']; ?>')
-        $("#agemonth-laporanAnesthesi-lengkap-durantee").val('<?= $visit['agemonth']; ?>')
-        $("#ageday-laporanAnesthesi-lengkap-durantee").val('<?= $visit['ageday']; ?>')
+        $("#keluar_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['keluar_id']; ?>')
+        $("#employee_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['employee_id']; ?>')
+        $("#no_registration-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['no_registration']; ?>')
+        $("#visit_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['visit_id']; ?>')
+        $("#org_unit_code-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['org_unit_code']; ?>')
+        $("#doctor-laporanAnesthesi-lengkap-durantee").val('<?= @@$visit['fullname']; ?>')
+        $("#kal_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['kal_id']; ?>')
+        $("#theid-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['pasien_id']; ?>')
+        $("#thename-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['diantar_oleh']; ?>')
+        $("#theaddress-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['visitor_address']; ?>')
+        $("#status_pasien_id-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['status_pasien_id']; ?>')
+        $("#isrj-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['isrj']; ?>')
+        $("#gender-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['gender']; ?>')
+        $("#ageyear-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['ageyear']; ?>')
+        $("#agemonth-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['agemonth']; ?>')
+        $("#ageday-laporanAnesthesi-lengkap-durantee").val('<?= @$visit['ageday']; ?>')
         $("#examination_date-laporanAnesthesi-lengkap-durantee").val(get_date())
+        $("#flatexamination_date-laporanAnesthesi-lengkap-durantee").val(moment(get_date()).format("DD/MM/YYYY HH:mm"))
+            .trigger("change")
 
 
+        postData({
+                visit_id: '<?= @$visit['visit_id']; ?>',
+                account_id: '12'
+            }, 'admin/PatientOperationRequest/getExaminfoTop',
+            (res) => {
+                let exam_info = res.examInfo || {};
+
+                $("#vs_status_id-laporanAnesthesi-lengkap-durantee").val(exam_info?.vs_status_id ?? "")
+                $('#weight-laporanAnesthesi-lengkap-durantee').val(exam_info?.weight || 0);
+                $('#height-laporanAnesthesi-lengkap-durantee').val(exam_info?.height || 0);
+                $('#temperature-laporanAnesthesi-lengkap-durantee').val(exam_info?.temperature || 0);
+                $('#nadi-laporanAnesthesi-lengkap-durantee').val(exam_info?.nadi || 0);
+                $('#tension_upper-laporanAnesthesi-lengkap-durantee').val(exam_info?.tension_upper || 0);
+                $('#tension_below-laporanAnesthesi-lengkap-durantee').val(exam_info?.tension_below || 0);
+                $('#saturasi-laporanAnesthesi-lengkap-durantee').val(exam_info?.saturasi || 0);
+                $('#nafas-laporanAnesthesi-lengkap-durantee').val(exam_info?.nafas || 0);
+            }
+        );
 
         $("#" + container_id).slideDown()
+        $("#sembunyikanVtLaporanAnesthesiLengkap2Show").show()
+        $("#tambahVtLaporanAnesthesiLengkap2Show").hide()
     }
     const addRowVitalSigncatatanLaporanAnesthesiLengkap = (examselect, key, container_id, account_id = null) => { //bisma
         let examinationDate = examselect.examination_date ? examselect.examination_date.substring(0, 16) : 'N/A';
@@ -1016,10 +1080,12 @@
                     '><i class="fa fa-copy"></i> Copy</button>'
                 ))
                 .append($("<td rowspan='2'>").html(
-                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id +
-                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
+                    '<button type="button" onclick="removeLaporanLengkapVt(\'' + examselect.body_id + '\', \'' +
+                    account_id + '\')" ' +
+                    'class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
                     (account_id == '11' ? 'style="display:none;"' : '') +
                     '><i class="fa fa-trash"></i></button>'
+
                 ))
             )
             .append($("<tr>")
@@ -1030,6 +1096,15 @@
                 .append($("<td>").html(examselect.temperature + '/°C'))
                 .append($("<td>").html(examselect.saturasi + '/SpO2%'))
             );
+    }
+
+    function removeLaporanLengkapVt(id, accountId = null) {
+        postData({
+            body_id: id
+        }, 'admin/PatientOperationRequest/deleteExamDetail', (res) => {
+            successSwal('berhasil.');
+            getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesiLengkap2', accountId)
+        })
     }
 
     function copyvitalSignLaporanAnesthesiLengkap(data, key) {
@@ -1131,11 +1206,12 @@
     }
 
     function getVitalSignLaporanAnesthesiLengkap(container_id, account_id) {
+
         $.ajax({
             url: '<?php echo base_url(); ?>admin/PatientOperationRequest/getExaminfo',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'account_id': account_id
             }),
@@ -1144,14 +1220,21 @@
             cache: false,
             processData: false,
             success: function(data) {
-                vitalsign = data.examInfo
 
-                $("#" + container_id).html("")
-                vitalsign.forEach((element, key) => {
-                    examselect = vitalsign[key];
-                    addRowVitalSigncatatanLaporanAnesthesiLengkap(examselect, key, container_id,
-                        account_id)
-                });
+                if (data.examInfo.length > 0) {
+                    vitalsign = data.examInfo
+
+                    $("#" + container_id).html("")
+                    vitalsign.forEach((element, key) => {
+                        examselect = vitalsign[key];
+                        addRowVitalSigncatatanLaporanAnesthesiLengkap(examselect, key, container_id,
+                            account_id)
+                    });
+                } else {
+                    $("#" + container_id).html("")
+
+                }
+
             },
             error: function() {
 
@@ -1159,6 +1242,12 @@
         });
     }
 
+    $("#sembunyikanVtLaporanAnesthesiLengkap3Show").off().on("click", function() {
+        $("#tambahVtLaporanAnesthesiLengkap3Show").show()
+        $("#vitalSignLaporanAnesthesiLengkap3").slideUp()
+        $("#vitalSignLaporanAnesthesiLengkap3").hide()
+        $("#sembunyikanVtLaporanAnesthesiLengkap3Show").hide()
+    })
 
     function setDataVitalSignLaporanAnesthesiLengkap2(container_id, body) {
         $("#" + body).find("input, textarea").val(null)
@@ -1168,33 +1257,59 @@
         var bodyId = ''
 
         const date = new Date();
-        bodyId = date.toISOString().substring(0, 23);
-        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
-        $("#body_id-laporanAnesthesi-lengkap").val(bodyId)
-        $("#clinic_id-laporanAnesthesi-lengkap").val('<?= $visit['clinic_id']; ?>')
-        $("#trans_id-laporanAnesthesi-lengkap").val('<?= $visit['trans_id']; ?>')
-        $("#class_room_id-laporanAnesthesi-lengkap").val('<?= $visit['class_room_id']; ?>')
+        // bodyId = date.toISOString().substring(0, 23);
+        // bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        // $("#body_id-laporanAnesthesi-lengkap").val(bodyId)
+        $("#clinic_id-laporanAnesthesi-lengkap").val('<?= @$visit['clinic_id']; ?>')
+        $("#trans_id-laporanAnesthesi-lengkap").val('<?= @$visit['trans_id']; ?>')
+        $("#class_room_id-laporanAnesthesi-lengkap").val('<?= @$visit['class_room_id']; ?>')
         $("#bed_id-laporanAnesthesi-lengkap").val()
-        $("#keluar_id-laporanAnesthesi-lengkap").val('<?= $visit['keluar_id']; ?>')
-        $("#employee_id-laporanAnesthesi-lengkap").val('<?= $visit['employee_id']; ?>')
-        $("#no_registration-laporanAnesthesi-lengkap").val('<?= $visit['no_registration']; ?>')
-        $("#visit_id-laporanAnesthesi-lengkap").val('<?= $visit['visit_id']; ?>')
-        $("#org_unit_code-laporanAnesthesi-lengkap").val('<?= $visit['org_unit_code']; ?>')
-        $("#doctor-laporanAnesthesi-lengkap").val('<?= $visit['fullname']; ?>')
-        $("#kal_id-laporanAnesthesi-lengkap").val('<?= $visit['kal_id']; ?>')
-        $("#theid-laporanAnesthesi-lengkap").val('<?= $visit['pasien_id']; ?>')
-        $("#thename-laporanAnesthesi-lengkap").val('<?= $visit['diantar_oleh']; ?>')
-        $("#theaddress-laporanAnesthesi-lengkap").val('<?= $visit['visitor_address']; ?>')
-        $("#status_pasien_id-laporanAnesthesi-lengkap").val('<?= $visit['status_pasien_id']; ?>')
-        $("#isrj-laporanAnesthesi-lengkap").val('<?= $visit['isrj']; ?>')
-        $("#gender-laporanAnesthesi-lengkap").val('<?= $visit['gender']; ?>')
-        $("#ageyear-laporanAnesthesi-lengkap").val('<?= $visit['ageyear']; ?>')
-        $("#agemonth-laporanAnesthesi-lengkap").val('<?= $visit['agemonth']; ?>')
-        $("#ageday-laporanAnesthesi-lengkap").val('<?= $visit['ageday']; ?>')
-        $("#flatexamination_date-laporanAnesthesi-lengkap").val(get_date())
+        $("#keluar_id-laporanAnesthesi-lengkap").val('<?= @$visit['keluar_id']; ?>')
+        $("#employee_id-laporanAnesthesi-lengkap").val('<?= @$visit['employee_id']; ?>')
+        $("#no_registration-laporanAnesthesi-lengkap").val('<?= @$visit['no_registration']; ?>')
+        $("#visit_id-laporanAnesthesi-lengkap").val('<?= @$visit['visit_id']; ?>')
+        $("#org_unit_code-laporanAnesthesi-lengkap").val('<?= @$visit['org_unit_code']; ?>')
+        $("#doctor-laporanAnesthesi-lengkap").val('<?= @@$visit['fullname']; ?>')
+        $("#kal_id-laporanAnesthesi-lengkap").val('<?= @$visit['kal_id']; ?>')
+        $("#theid-laporanAnesthesi-lengkap").val('<?= @$visit['pasien_id']; ?>')
+        $("#thename-laporanAnesthesi-lengkap").val('<?= @$visit['diantar_oleh']; ?>')
+        $("#theaddress-laporanAnesthesi-lengkap").val('<?= @$visit['visitor_address']; ?>')
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val('<?= @$visit['status_pasien_id']; ?>')
+        $("#isrj-laporanAnesthesi-lengkap").val('<?= @$visit['isrj']; ?>')
+        $("#gender-laporanAnesthesi-lengkap").val('<?= @$visit['gender']; ?>')
+        $("#ageyear-laporanAnesthesi-lengkap").val('<?= @$visit['ageyear']; ?>')
+        $("#agemonth-laporanAnesthesi-lengkap").val('<?= @$visit['agemonth']; ?>')
+        $("#ageday-laporanAnesthesi-lengkap").val('<?= @$visit['ageday']; ?>')
+        $("#flatexamination_date-laporanAnesthesi-lengkap").val(moment(get_date()).format("DD/MM/YYYY HH:mm"))
+        $("#examination_date-laporanAnesthesi-lengkap").val(moment(get_date()).format("YYYY-MM-DD HH:mm"))
 
 
         $("#" + container_id).slideDown()
+
+
+        postData({
+                visit_id: '<?= @$visit['visit_id']; ?>',
+                account_id: '13'
+            }, 'admin/PatientOperationRequest/getExaminfoTop',
+            (res) => {
+
+                let exam_info = res.examInfo || {};
+
+                $("#vs_status_id-laporanAnesthesi-lengkap").val(exam_info?.vs_status_id ?? "")
+                $('#weight-laporanAnesthesi-lengkap').val(exam_info?.weight || 0);
+                $('#height-laporanAnesthesi-lengkap').val(exam_info?.height || 0);
+                $('#temperature-laporanAnesthesi-lengkap').val(exam_info?.temperature || 0);
+                $('#nadi-laporanAnesthesi-lengkap').val(exam_info?.nadi || 0);
+                $('#tension_upper-laporanAnesthesi-lengkap').val(exam_info?.tension_upper || 0);
+                $('#tension_below-laporanAnesthesi-lengkap').val(exam_info?.tension_below || 0);
+                $('#saturasi-laporanAnesthesi-lengkap').val(exam_info?.saturasi || 0);
+                $('#nafas-laporanAnesthesi-lengkap').val(exam_info?.nafas || 0);
+            }
+        );
+
+
+        $("#sembunyikanVtLaporanAnesthesiLengkap3Show").show()
+        $("#tambahVtLaporanAnesthesiLengkap3Show").hide()
     }
     const addRowVitalSigncatatanLaporanAnesthesiLengkap2 = (examselect, key, container_id, account_id = null, element) => {
         let examinationDate = examselect.examination_date ? examselect.examination_date.substring(0, 16) : 'N/A';
@@ -1211,13 +1326,14 @@
                     '<button type="button" onclick="copyvitalSignLaporanAnesthesiLengkap2(\'' + btoa(JSON.stringify(
                         examselect)).replace(/'/g, "\\'") + '\', ' + key +
                     ')" class="btn btn-success" data-row-id="1" autocomplete="off" ' +
-                    (account_id == '11' ? 'style="display:none;"' : 'style="display:block;"') +
+                    (account_id == '12' ? 'style="display:none;"' : 'style="display:block;"') +
                     '><i class="fa fa-copy"></i> Copy</button>'
                 ))
                 .append($("<td rowspan='2'>").html(
-                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id +
-                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
-                    (account_id == '11' ? 'style="display:none;"' : '') +
+                    '<button type="button" onclick="removeLaporanAnesthesiLengkap2(\'' + examselect.body_id +
+                    '\', \'' +
+                    '12' + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
+                    (account_id == '12' ? 'style="display:none;"' : '') +
                     '><i class="fa fa-trash"></i></button>'
                 ))
             )
@@ -1230,6 +1346,18 @@
                 .append($("<td>").html(examselect.saturasi + '/SpO2%'))
             );
 
+    }
+
+    function removeLaporanAnesthesiLengkap2(id, account_id = null) {
+
+        postData({
+            body_id: id,
+            account_id: account_id
+        }, 'admin/PatientOperationRequest/deleteExamDetail', (res) => {
+            successSwal('berhasil.');
+
+            // getVitalSignLaporanAnesthesiLengkap2('vitalSignBodyLaporanAnesthesiLengkap2', account_id)
+        })
     }
 
     function copyvitalSignLaporanAnesthesiLengkap2(data, key) {
@@ -1247,7 +1375,7 @@
         $("#ageyear-laporanAnesthesi-lengkap").val(dataExam.ageyear)
         $("#anamnase-laporanAnesthesi-lengkap").val(dataExam.anamnase)
         $("#bed_id-laporanAnesthesi-lengkap").val(dataExam.bed_id)
-        $("#body_id-laporanAnesthesi-lengkap").val(dataExam.body_id)
+        // $("#body_id-laporanAnesthesi-lengkap").val(dataExam.body_id)
         $("#class_room_id-laporanAnesthesi-lengkap").val(dataExam.class_room_id)
         $("#clinic_id-laporanAnesthesi-lengkap").val(dataExam.clinic_id)
         $("#description-laporanAnesthesi-lengkap").val(dataExam.description)
@@ -1332,26 +1460,34 @@
     }
 
     function getVitalSignLaporanAnesthesiLengkap2(container_id, account_id) { //bisma
+
         $.ajax({
             url: '<?php echo base_url(); ?>admin/PatientOperationRequest/getExaminfo',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
-                'nomor': nomor,
-                'account_id': account_id
+                'visit_id': `${visit.visit_id}`,
+                'nomor': `${nomor}`,
+                'account_id': `${account_id}`
             }),
             dataType: 'json',
             contentType: false,
             cache: false,
             processData: false,
             success: function(data) {
-                vitalsign = data.examInfo
-                $("#" + container_id).html("")
-                vitalsign.forEach((element, key) => {
-                    examselect = vitalsign[key];
-                    addRowVitalSigncatatanLaporanAnesthesiLengkap2(examselect, key, container_id,
-                        account_id, element)
-                });
+
+                if (data.examInfo.length > 0) {
+                    vitalsign = data.examInfo
+                    $("#" + container_id).html("")
+                    vitalsign.forEach((element, key) => {
+                        examselect = vitalsign[key];
+                        addRowVitalSigncatatanLaporanAnesthesiLengkap2(examselect, key, container_id,
+                            account_id, element)
+                    });
+                } else {
+                    $("#" + container_id).html("")
+
+                }
+
             },
             error: function() {
 

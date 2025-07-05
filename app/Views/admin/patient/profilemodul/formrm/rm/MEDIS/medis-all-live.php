@@ -136,7 +136,7 @@
                     <td class="p-1">
                         <b>DPJP</b>
                         <p class="m-0 mt-1 p-0">
-                            <?= isset($visit['fullname']) && $visit['fullname'] ? $visit['fullname'] : '-' ?>
+                            <?= isset(@$visit['fullname']) && @$visit['fullname'] ? @$visit['fullname'] : '-' ?>
                         </p>
                     </td>
                     <td class="p-1">

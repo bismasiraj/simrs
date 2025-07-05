@@ -2,17 +2,19 @@
 
 namespace App\Controllers;
 
+use App\Models\AntrianFarmasiModel;
 use App\Models\AntrianPendaftaranModel;
 use App\Models\BatchingBridgingModel;
 use App\Models\DoctorScheduleModel;
 use App\Models\PasienVisitationModel;
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 use LZCompressor\LZString;
 
 class AntrianBpjs extends \App\Controllers\BaseController
 {
-    // private $url = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs';
-    private $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanrs_dev/';
+    private $url = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs';
+    // private $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanrs_dev/';
 
     // function lzstring decompress https://github.com/nullpunkt/lz-string-php
 
@@ -51,35 +53,43 @@ class AntrianBpjs extends \App\Controllers\BaseController
         $bb = new BatchingBridgingModel();
 
         if (!isset($result['metadata']['code']) || $result['metadata']['code'] != '200') {
-            $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "'")->delete();
-            $bb->insert([
-                'no_registration' => $body['norm'],
-                'trans_id' => $body['kodebooking'],
-                'url' => $url,
-                'method' => 'POST',
-                'parameter' => json_encode($body),
-                'result' => json_encode($result),
-                // 'STATUS'=>$result['metadata']['code'],
-                'created_date' => Time::now(),
-                'modified_date' => Time::now(),
-                'tipe' => $type
-            ]);
-            $pv = new PasienVisitationModel();
-            $pv->where('trans_id', $body['kodebooking'])->set('statusantrean', $type)->update();
+            $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "' and status <> '200'")->delete();
+            try {
+                $bb->insert([
+                    'no_registration' => $body['norm'],
+                    'trans_id' => $body['kodebooking'],
+                    'url' => $url,
+                    'method' => 'POST',
+                    'parameter' => json_encode($body),
+                    'result' => json_encode($result),
+                    // 'STATUS'=>$result['metadata']['code'],
+                    'created_date' => Time::now(),
+                    'modified_date' => Time::now(),
+                    'tipe' => $type
+                ]);
+                $pv = new PasienVisitationModel();
+                $pv->where('trans_id', $body['kodebooking'])->set('statusantrean', $type)->update();
+            } catch (\Exception $e) {
+                //throw $th;
+            }
         } else {
             $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "'")->delete();
-            $bb->insert([
-                'no_registration' => $body['norm'],
-                'trans_id' => $body['kodebooking'],
-                'url' => $url,
-                'method' => 'POST',
-                'parameter' => json_encode($body),
-                'result' => json_encode($result),
-                'status' => $result['metadata']['code'],
-                'created_date' => Time::now(),
-                'modified_date' => Time::now(),
-                'tipe' => $type
-            ]);
+            try {
+                $bb->insert([
+                    'no_registration' => $body['norm'],
+                    'trans_id' => $body['kodebooking'],
+                    'url' => $url,
+                    'method' => 'POST',
+                    'parameter' => json_encode($body),
+                    'result' => json_encode($result),
+                    'status' => $result['metadata']['code'],
+                    'created_date' => Time::now(),
+                    'modified_date' => Time::now(),
+                    'tipe' => $type
+                ]);
+            } catch (\Exception $e) {
+                //throw $th;
+            }
         }
     }
 
@@ -153,8 +163,6 @@ class AntrianBpjs extends \App\Controllers\BaseController
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
-
-
 
         $url = $this->url . "/antrean/batal";
         $method = 'POST';
@@ -246,6 +254,151 @@ class AntrianBpjs extends \App\Controllers\BaseController
                           where tipe like '2" . $body['taskid'] . "' and trans_id = '" . $body['kodebooking'] . "';");
         }
 
+        return json_encode($result);
+    }
+    public function addAntreanFarmasi()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $visit_id['visit_id'] = $body['visit_id'];
+
+        $antrianModel = new AntrianFarmasiModel();
+        $nourut = $antrianModel->getNomorAntrian($visit_id);
+        $postdata['kodebooking'] = $body['kodebooking'];
+        $postdata['jenisresep'] = $body['jenisresep'];
+        $postdata['nomorantrean'] = $nourut;
+        $postdata['keterangan'] = $body['keterangan'];
+        $postdata['norm'] = $body['norm'];
+
+        // return json_encode($postdata);
+
+        $url = $this->url . "/antrean/farmasi/add";
+        // return json_encode($url);
+        $method = 'POST';
+
+        $postdata = json_encode($body);
+
+        unset($result);
+        $headers = $this->AuthBridging();
+        // return json_encode($headers);
+        // return json_encode($postdata);
+        array_push($headers, "Content-length: " . strlen($postdata));
+        $result = $this->SendBridging($url, $method, $postdata, $headers);
+
+        $this->checkResponse($result, $body, $url, 1);
+        return json_encode($result);
+    }
+
+    public function updateJadwalDokter()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $visit_id['visit_id'] = $body['visit_id'];
+
+        $antrianModel = new AntrianFarmasiModel();
+        $nourut = $antrianModel->getNomorAntrian($visit_id);
+        $postdata['kodebooking'] = $body['kodebooking'];
+        $postdata['jenisresep'] = $body['jenisresep'];
+        $postdata['nomorantrean'] = $nourut;
+        $postdata['keterangan'] = $body['keterangan'];
+        $postdata['norm'] = $body['norm'];
+
+        // return json_encode($postdata);
+
+        $url = $this->url . "/antrean/farmasi/add";
+        // return json_encode($url);
+        $method = 'POST';
+
+        $postdata = json_encode($body);
+
+        unset($result);
+        $headers = $this->AuthBridging();
+        // return json_encode($headers);
+        // return json_encode($postdata);
+        array_push($headers, "Content-length: " . strlen($postdata));
+        $result = $this->SendBridging($url, $method, $postdata, $headers);
+
+        $this->checkResponse($result, $body, $url, 1);
+        return json_encode($result);
+    }
+    public function getlisttaskid()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $url = $this->url . "/antrean/getlisttask";
+        // return json_encode($url);
+        $method = 'POST';
+
+        $postdata = json_encode($body);
+
+        unset($result);
+        $headers = $this->AuthBridging();
+        // return json_encode($headers);
+        // return json_encode($postdata);
+        array_push($headers, "Content-length: " . strlen($postdata));
+        $result = $this->SendBridging($url, $method, $postdata, $headers);
+        if (isset($result['response'])) {
+            $response = @$result['response'];
+        } else {
+            return json_encode($result);
+        }
+        foreach ($response as $key => $value) {
+            $bb = new BatchingBridgingModel();
+            if ($value['taskid'] == '99')
+                $type = '3';
+            else
+                $type = '2' . $value['taskid'];
+            $cek = $bb->select('trans_id')->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "' and isnull(status,0) = '200'")->first();
+            if (!isset($cek['trans_id'])) {
+                $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "'")->delete();
+                $bb->insert([
+                    'no_registration' => $body['norm'],
+                    'trans_id' => $body['kodebooking'],
+                    'url' => '',
+                    'method' => 'POST',
+                    'parameter' => json_encode($value),
+                    'result' => json_encode($value),
+                    'status' => 200,
+                    'created_date' => new RawSql("CONVERT(DATETIME, REPLACE('" . $value['wakturs'] . "', ' WIB', ''), 105)"),
+                    'modified_date' => Time::now(),
+                    'tipe' => '2' . $value['taskid'],
+                    'waktu' => new RawSql("CONVERT(DATETIME, REPLACE('" . $value['wakturs'] . "', ' WIB', ''), 105)"),
+                ]);
+                $pv = new PasienVisitationModel();
+                $pv->where('trans_id', $body['kodebooking'])->set('statusantrean', $type)->update();
+                try {
+                } catch (\PDOException $e) {
+                    //throw $th;
+                }
+            }
+        }
+
+        // $this->checkResponse($result, $body, $url, 1);
         return json_encode($result);
     }
     public function updateStatusAntraenPV()

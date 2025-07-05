@@ -3,11 +3,14 @@
         <div id="accordionCatatan" class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingThree1">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree1" aria-expanded="false" aria-controls="flush-collapseThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseThree1" aria-expanded="false"
+                        aria-controls="flush-collapseThree">
                         LAPORAN PEMBEDAHAN
                     </button>
                 </h2>
-                <div id="flush-collapseThree1" class="accordion-collapse collapse" aria-labelledby="flush-headingThree1" data-bs-parent="#accordionCatatan">
+                <div id="flush-collapseThree1" class="accordion-collapse collapse" aria-labelledby="flush-headingThree1"
+                    data-bs-parent="#accordionCatatan">
                     <div class="accordion-body" id="pembedahan-laporan">
 
                     </div>
@@ -50,7 +53,10 @@
             <button type="button" id="btn-print-laporan-pembedahan" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
             </button>
-            <button type="button" id="btn-save-laporan-pembedahan" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
+            <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+            <button type="button" id="btn-save-laporan-pembedahan" class="btn btn-primary btn-save-operasi"><i
+                    class="fas fa-save"></i> Simpan</button>
+            <?php } ?>
         </div>
     </form>
 </div>

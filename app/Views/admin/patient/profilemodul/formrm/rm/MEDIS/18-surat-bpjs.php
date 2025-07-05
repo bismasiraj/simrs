@@ -12,16 +12,16 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -166,7 +166,7 @@
                             <input type="text" class="form-control" id="examination_date" name="examination_date">
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td>
                             <b>Kelas</b>
                             <input type="text" class="form-control" id="kelas" name="kelas" value="<?= $val['kelas']; ?>">
@@ -179,16 +179,12 @@
                             <b>Bed</b>
                             <input type="text" class="form-control" id="no_tt" name="no_tt" value="<?= $val['no_tt']; ?>">
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
-            <div class="row mb-5">
-                <h3 class="text-center"><b><u>SURAT KONTROL PASIEN BPJS</u></b></h3><br>
-                <b class="text-center">No. Surat Kontrol: <?= $val['nosuratkontrol']; ?></b>
-            </div>
             <div class="row mb-1">
                 <div class="col">
-                    Yang bertanda tangan di bawah ini <?= $val['dpjp']; ?> <br> Menerangkan bahwa:
+                    Yang bertanda tangan di bawah ini <br> Menerangkan bahwa:
                 </div>
             </div>
             <div class="container px-5">
@@ -203,15 +199,19 @@
                     <label for="diagnosis" class="col-sm-3 col-form-label">Diagnosis</label>
                     <label for="diagnosis" class="col-sm-auto col-form-label">:</label>
                     <div class="col">
-                        <input type="text" class="form-control" id="diagnosis" name="diagnosis" value="<?= $val['diagnosis']; ?>">
+                        <input type="text" class="form-control" id="diagnosis" name="diagnosis" value="<?= $val['diagnosa_desc']; ?>">
                     </div>
                 </div>
                 <div class="row mb-1">
                     <label for="farmakologi" class="col-sm-3 col-form-label">Farmakoterapi</label>
                     <label for="farmakologi" class="col-sm-auto col-form-label">:</label>
                     <div class="col">
-                        <input type="text" class="form-control" id="farmakologi" name="farmakologi" value="<?= $val['farmakologi']; ?>">
+                        <!-- <input type="text" class="form-control" id="farmakologi" name="farmakologi" value="<?= $val['farmakologi']; ?>"> -->
+                        <p><?= $val['farmakologi']; ?></p>
                     </div>
+                    <script>
+                        $("#farmakologi").html(('<?= $val['farmakologi']; ?>').replace(/\n/g, "<br>"))
+                    </script>
                 </div>
                 <div class="row mb-1">
                     <label for="tgl_kontrol_selanjutnya" class="col-sm-3 col-form-label">Tanggal Kontrol Selanjutnya</label>
@@ -219,6 +219,7 @@
                     <div class="col">
                         <input type="text" class="form-control" id="tgl_kontrol_selanjutnya" name="tgl_kontrol_selanjutnya" value="<?= $val['tgl_kontrol_selanjutnya']; ?>">
                     </div>
+
                 </div>
                 <div class="row mb-1">
                     <label for="alasan_kontrol" class="col-sm-3 col-form-label">Alasan</label>
@@ -242,6 +243,7 @@
                     <div class="mb-1">
                         <div id="qrcode"></div>
                     </div>
+                    <div id="qrcode_name"></div>
                 </div>
             </div>
         </form>
@@ -253,34 +255,53 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
-<?php if (!is_null($val['valid_user'])) {
-?>
-    <script>
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: '<?= $val['valid_user'] . ': ' . $val['valid_date']; ?>',
-            width: 150,
-            height: 150,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
-    </script>
-<?php
-} ?>
+<script>
+    let val = <?= json_encode($val); ?>;
+    let sign = <?= json_encode($sign); ?>;
+
+    sign = JSON.parse(sign)
+</script>
+<script>
+    $.each(sign, function(key, value) {
+        console.log(value)
+        if (value.user_type == 1 && value.isvalid == 1) {
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
+        } else if (value.user_type == 2 && value.isvalid == 1) {
+            var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            // $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+        }
+    })
+</script>
 <script>
     $(document).ready(function() {
         $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
         $("#no_registration").val("<?= $visit['no_registration']; ?>")
         $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
+        $("#clinic_id").val("<?= $val['name_of_clinic']; ?>")
+        $("#patient_age").val("<?= substr($visit['tgl_lahir'], 0, 10); ?>")
         $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
         $("#in_date").val("<?= $visit['in_date']; ?>")
         $("#exit_date").val("<?= $visit['exit_date']; ?>")
         $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
         <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
         ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
+        $("#examination_date").val("<?= $visit['visit_date']; ?>")
+        $("#employee_id").val("<?= $val['fullname']; ?>")
         $("#description").val("<?= $visit['description']; ?>")
         $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
         $("#modified_by").val("<?= user()->username; ?>")
@@ -294,7 +315,7 @@
         $("#theid").val("<?= $visit['pasien_id']; ?>")
         $("#isrj").val("<?= $visit['isrj']; ?>")
         $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
+        $("#doctor").val("<?= $val['fullname']; ?>")
         $("#kal_id").val("<?= $visit['kal_id']; ?>")
         $("#petugas_id").val("<?= user()->username; ?>")
         $("#petugas").val("<?= user()->fullname; ?>")

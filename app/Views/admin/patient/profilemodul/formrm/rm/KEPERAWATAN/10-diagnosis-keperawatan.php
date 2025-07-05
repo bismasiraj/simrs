@@ -13,59 +13,59 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -133,7 +133,7 @@
                     <tr>
                         <td>
                             <b>DPJP</b>
-                            <div id="fullname" name="fullname"><?= @$visit['fullname']; ?></div>
+                            <div id="fullname" name="fullname"><?= @@$visit['fullname']; ?></div>
                         </td>
                         <td>
                             <b>Department</b>
@@ -163,22 +163,22 @@
                                         <div class="px-3">
                                             <?php $groupedPenyebab = [];
 
-                                                foreach ($data['sdki']['penyebab'] as $penyebab) {
-                                                    if (isset($penyebab['checked']) && $penyebab['checked'] == 1) {
-                                                        $groupedPenyebab[$penyebab['type_name']][] = $penyebab['diag_val_name'];
-                                                    }
+                                            foreach ($data['sdki']['penyebab'] as $penyebab) {
+                                                if (isset($penyebab['checked']) && $penyebab['checked'] == 1) {
+                                                    $groupedPenyebab[$penyebab['type_name']][] = $penyebab['diag_val_name'];
                                                 }
-                                                ?>
+                                            }
+                                            ?>
 
                                             <?php if (!empty($groupedPenyebab)): ?>
-                                            <?php foreach ($groupedPenyebab as $type_name => $penyebabs): ?>
-                                            <b><?= htmlspecialchars($type_name); ?>:</b>
-                                            <ul>
-                                                <?php foreach ($penyebabs as $penyebab_name): ?>
-                                                <li><?= htmlspecialchars($penyebab_name); ?></li>
+                                                <?php foreach ($groupedPenyebab as $type_name => $penyebabs): ?>
+                                                    <b><?= htmlspecialchars($type_name); ?>:</b>
+                                                    <ul>
+                                                        <?php foreach ($penyebabs as $penyebab_name): ?>
+                                                            <li><?= htmlspecialchars($penyebab_name); ?></li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
                                                 <?php endforeach; ?>
-                                            </ul>
-                                            <?php endforeach; ?>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -192,20 +192,20 @@
                                             <?php $groupedGejala = [];
 
                                             foreach ($data['sdki']['gejala'] as $gejala) {
-                                                if ($gejala['checked'] == 1) { 
+                                                if ($gejala['checked'] == 1) {
                                                     $groupedGejala[$gejala['type_name']][] = $gejala;
                                                 }
                                             }
 
                                             foreach ($groupedGejala as $type_name => $gejalaItems): ?>
-                                            <b><?= htmlspecialchars($type_name); ?></b>
-                                            <div class="px-3">
-                                                <ul>
-                                                    <?php foreach ($gejalaItems as $item): ?>
-                                                    <li><?= htmlspecialchars($item['diag_val_name']); ?></li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                            </div>
+                                                <b><?= htmlspecialchars($type_name); ?></b>
+                                                <div class="px-3">
+                                                    <ul>
+                                                        <?php foreach ($gejalaItems as $item): ?>
+                                                            <li><?= htmlspecialchars($item['diag_val_name']); ?></li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
+                                                </div>
                                             <?php endforeach; ?>
                                         </div>
                                     </div>
@@ -222,21 +222,21 @@
                                             <div class="px-2">
                                                 <?php $groupedSlki = [];
 
-                                            foreach ($data['slki']['data'] as $slki) {
-                                                if ($slki['checked'] == 1) { 
-                                                    $groupedSlki[$slki['type_name']][] = $slki;
+                                                foreach ($data['slki']['data'] as $slki) {
+                                                    if ($slki['checked'] == 1) {
+                                                        $groupedSlki[$slki['type_name']][] = $slki;
+                                                    }
                                                 }
-                                            }
 
-                                            foreach ($groupedSlki as $type_name => $slkiItems): ?>
-                                                <b><?= htmlspecialchars($type_name); ?></b>
-                                                <div class="px-3">
-                                                    <ul>
-                                                        <?php foreach ($slkiItems as $item): ?>
-                                                        <li><?= htmlspecialchars($item['diag_val_name']); ?></li>
-                                                        <?php endforeach; ?>
-                                                    </ul>
-                                                </div>
+                                                foreach ($groupedSlki as $type_name => $slkiItems): ?>
+                                                    <b><?= htmlspecialchars($type_name); ?></b>
+                                                    <div class="px-3">
+                                                        <ul>
+                                                            <?php foreach ($slkiItems as $item): ?>
+                                                                <li><?= htmlspecialchars($item['diag_val_name']); ?></li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    </div>
                                                 <?php endforeach; ?>
                                             </div>
                                         </div>
@@ -250,20 +250,20 @@
                                             <?php $groupedsiki = [];
 
                                             foreach ($data['siki']['data'] as $siki) {
-                                                if ($siki['checked'] == 1) { 
+                                                if ($siki['checked'] == 1) {
                                                     $groupedsiki[$siki['type_name']][] = $siki;
                                                 }
                                             }
 
                                             foreach ($groupedsiki as $type_name => $sikiItems): ?>
-                                            <b><?= htmlspecialchars($type_name); ?></b>
-                                            <div class="px-3">
-                                                <ul>
-                                                    <?php foreach ($slkiItems as $item): ?>
-                                                    <li><?= htmlspecialchars($item['diag_val_name']); ?></li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                            </div>
+                                                <b><?= htmlspecialchars($type_name); ?></b>
+                                                <div class="px-3">
+                                                    <ul>
+                                                        <?php foreach ($slkiItems as $item): ?>
+                                                            <li><?= htmlspecialchars($item['diag_val_name']); ?></li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
+                                                </div>
                                             <?php endforeach; ?>
                                         </div>
                                     </div>
@@ -407,85 +407,85 @@
 
 </body>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: 'a',
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: 'a',
+        width: 70,
+        height: 70,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
 </script>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode1"), {
-    text: 'a',
-    width: 70,
-    height: 70,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    var qrcode = new QRCode(document.getElementById("qrcode1"), {
+        text: 'a',
+        width: 70,
+        height: 70,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
 </script>
 <script>
-$(document).ready(function() {
-    $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-    $("#no_registration").val("<?= $visit['no_registration']; ?>")
-    $("#visit_id").val("<?= $visit['visit_id']; ?>")
-    $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-    $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-    $("#in_date").val("<?= $visit['in_date']; ?>")
-    $("#exit_date").val("<?= $visit['exit_date']; ?>")
-    $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-    <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
+    $(document).ready(function() {
+        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
+        $("#no_registration").val("<?= $visit['no_registration']; ?>")
+        $("#visit_id").val("<?= $visit['visit_id']; ?>")
+        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
+        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
+        $("#in_date").val("<?= $visit['in_date']; ?>")
+        $("#exit_date").val("<?= $visit['exit_date']; ?>")
+        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
+        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
         ?>
-    $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#employee_id").val("<?= $visit['employee_id']; ?>")
-    $("#description").val("<?= $visit['description']; ?>")
-    $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#modified_by").val("<?= user()->username; ?>")
-    $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-    $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-    $("#ageyear").val("<?= $visit['ageyear']; ?>")
-    $("#agemonth").val("<?= $visit['agemonth']; ?>")
-    $("#ageday").val("<?= $visit['ageday']; ?>")
-    $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-    $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-    $("#theid").val("<?= $visit['pasien_id']; ?>")
-    $("#isrj").val("<?= $visit['isrj']; ?>")
-    $("#gender").val("<?= $visit['gender']; ?>")
-    $("#doctor").val("<?= $visit['employee_id']; ?>")
-    $("#kal_id").val("<?= $visit['kal_id']; ?>")
-    $("#petugas_id").val("<?= user()->username; ?>")
-    $("#petugas").val("<?= user()->fullname; ?>")
-    $("#account_id").val("<?= $visit['account_id']; ?>")
-})
-$("#btnSimpan").on("click", function() {
-    saveSignatureData()
-    saveSignatureData1()
-    console.log($("#TTD").val())
-    $("#form").submit()
-})
-$("#btnEdit").on("click", function() {
-    $("input").prop("disabled", false);
-    $("textarea").prop("disabled", false);
+        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#employee_id").val("<?= $visit['employee_id']; ?>")
+        $("#description").val("<?= $visit['description']; ?>")
+        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#modified_by").val("<?= user()->username; ?>")
+        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
+        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
+        $("#ageyear").val("<?= $visit['ageyear']; ?>")
+        $("#agemonth").val("<?= $visit['agemonth']; ?>")
+        $("#ageday").val("<?= $visit['ageday']; ?>")
+        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
+        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
+        $("#theid").val("<?= $visit['pasien_id']; ?>")
+        $("#isrj").val("<?= $visit['isrj']; ?>")
+        $("#gender").val("<?= $visit['gender']; ?>")
+        $("#doctor").val("<?= $visit['employee_id']; ?>")
+        $("#kal_id").val("<?= $visit['kal_id']; ?>")
+        $("#petugas_id").val("<?= user()->username; ?>")
+        $("#petugas").val("<?= user()->fullname; ?>")
+        $("#account_id").val("<?= $visit['account_id']; ?>")
+    })
+    $("#btnSimpan").on("click", function() {
+        saveSignatureData()
+        saveSignatureData1()
+        console.log($("#TTD").val())
+        $("#form").submit()
+    })
+    $("#btnEdit").on("click", function() {
+        $("input").prop("disabled", false);
+        $("textarea").prop("disabled", false);
 
-})
+    })
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

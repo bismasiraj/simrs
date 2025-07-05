@@ -53,17 +53,7 @@ $permission = user()->getPermissions();
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-10">
-                                                <div class="form-group">
-                                                    <label for="">Pencarian Tarif</label>
-                                                    <div class="input-group">
-                                                        <select id="searchTarifKolaboratif" class="form-control" style="width: 80%; height: 100%;"></select>
-                                                        <button type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillChargePerawat("searchTarifKolaboratif", 1, 1, 0,"tindakanBodyPerawat")'>
-                                                            <i class="fa fa-plus"></i> Tambah
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
+
                                         </div>
                                         <!-- <div class="row">
                                                             <div class="col-md-8"><select id="searchTarifKolaboratif" class="form-control" style="width: 100%"></select></div>
@@ -111,7 +101,18 @@ $permission = user()->getPermissions();
                                                 <tbody id="tindakanBodyPerawatKolaborasi" class="table-group-divider">
                                                 </tbody>
                                             </table>
-                                            <div class="panel-footer text-end mb-4">
+                                            <div class="col-md-10 m-4">
+                                                <div class="form-group spppoli-to-hide">
+                                                    <label for="">Pemeriksaan/Tindakan</label>
+                                                    <div class="input-group">
+                                                        <select id="searchTarifKolaboratif" class="form-control" style="width: 80%; height: 100%;"></select>
+                                                        <button id="searchTarifKolaboratifBtn" type="button" class="btn btn-primary btn-sm addcharges align-items-end d-none" onclick='addBillChargePerawat("searchTarifKolaboratif", 1, 1, 0,"tindakanBodyPerawat")'>
+                                                            <i class="fa fa-plus"></i> Tambah
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-footer text-end mb-4 spppoli-to-hide">
                                                 <button type="button" id="formSaveTindPerawatBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                                 <!-- <button type="button" id="formEditBillPoliBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button> -->
                                                 <!-- <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button> -->
@@ -137,23 +138,3 @@ $permission = user()->getPermissions();
     </div><!--./row-->
 </div>
 <!-- -->
-
-<div class="modal fade" id="gcsModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div class="modal-body pt0 pb0">
-                <div id="agcsDocument" class="border-1 rounded-4 mb-4" style="">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

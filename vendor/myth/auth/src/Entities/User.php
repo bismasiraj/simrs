@@ -305,6 +305,7 @@ class User extends Entity
         }
         $permissions = $this->permissions;
         $haspermission = false;
+        // return $permissions;
         foreach ($permissions as $key => $value) {
             if (is_array($value) && isset($value['name']) && isset($value[$rule])) {
                 if (($value['name'] == $inpermission) && ($value[$rule] == 1)) {
@@ -319,10 +320,11 @@ class User extends Entity
 
     public function getFullname()
     {
+        // $model = model(EmployeeAllModel::class)->select('fullname')->findAll();
         $model = model(EmployeeAllModel::class)->select('fullname')->find(user()->employee_id);
-        // return user()->employee_id;
+        // return $model;
         if (isset($model['fullname'])) {
-            return $model['fullname'];
+            return str_replace("'", "", $model['fullname']);
         } else {
             return user()->username;
         }

@@ -58,7 +58,7 @@ if (! defined('TESTPATH')) {
     /**
      * @var Paths $paths
      */
-    define('TESTPATH', realpath(rtrim($paths->testsDirectory, '\\/ ')) . DIRECTORY_SEPARATOR);
+    define('TESTPATH', realpath(path: rtrim($paths->testsDirectory, '\\/ ')) . DIRECTORY_SEPARATOR);
 }
 
 /*

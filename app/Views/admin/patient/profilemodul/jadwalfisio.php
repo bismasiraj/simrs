@@ -4,25 +4,47 @@ $permission = user()->getPermissions();
 ?>
 
 <style>
-    .form-control.print-hidden-form:focus,
-    .input-group-text:focus {
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        border-color: #80bdff;
-        outline: none;
-    }
+    /* .form-control.print-hidden-form,
+.input-group-text {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #000;
+    font-size: 12px;
+    border-radius: 0;
+}
 
-    .form-control.print-hidden-form:disabled,
-    .form-control.print-hidden-form[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+.form-control.print-hidden-form:focus,
+.input-group-text:focus {
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.5);
+    border-bottom: 1px solid #80bdff;
+    outline: none;
+}
 
-    .form-control.print-hidden-form,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+.form-control.print-hidden-form:disabled,
+.form-control.print-hidden-form[readonly] {
+    background-color: transparent;
+    opacity: 1;
+} */
+
+    /* .form-control.print-hidden-form:focus,
+.input-group-text:focus {
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: #80bdff;
+    outline: none;
+}
+
+.form-control.print-hidden-form:disabled,
+.form-control.print-hidden-form[readonly] {
+    background-color: #FFF;
+    opacity: 1;
+}
+
+.form-control.print-hidden-form,
+.input-group-text {
+    background-color: #fff;
+    border: 1px solid #fff;
+    font-size: 12px;
+} */
 
     .tarif-fisio {
         width: 100% !important;
@@ -60,14 +82,14 @@ $permission = user()->getPermissions();
         <div id="load-content-jadwalFisio" class="col-12 center-spinner"></div>
         <div id="contentToHide-jadwalFisio" class="col-12">
             <div class="row">
-                <div class="col-lg-2 col-md-2 col-sm-12 border-r">
+                <div class="col-lg-2 col-md-12 col-sm-12 border-r">
                     <?php echo view('admin/patient/profilemodul/profilebiodata', [
                         'visit' => $visit,
                     ]);
                     ?>
                 </div>
                 <!--./col-lg-6-->
-                <div class="col-lg-10 col-md-10 col-xs-12">
+                <div class="col-lg-10 col-md-12 col-xs-12">
                     <div class="accordion mt-4">
                         <div id="JfisioDocument" class="card border-1 rounded-4 m-4 p-4" style="display: none;">
                             <div class="card-body">
@@ -87,6 +109,13 @@ $permission = user()->getPermissions();
                                         <a class="nav-link" href="#formulirRequestFisio" data-bs-toggle="tab">Protokol
                                             Fisioterapi</a>
                                     </li>
+                                    <?php if ($visit['isrj'] === "0"): ?>
+                                        <li class="nav-item text-center flex-fill">
+                                            <a class="nav-link" href="#programFisio" data-bs-toggle="tab">Program
+                                                Fisioterapi</a>
+                                        </li>
+                                    <?php endif; ?>
+
                                     <li class="nav-item text-center flex-fill">
                                         <a class="nav-link" href="#formulirUjiFisio" data-bs-toggle="tab">Formulir
                                             Uji Fungsi Medik</a>
@@ -121,7 +150,8 @@ $permission = user()->getPermissions();
                                                         style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;">
                                                     </div>
                                                     <div class="row">
-                                                        <h6 class="text-center pt-2"><?= @$title; ?></h6>
+                                                        <h3 class="text-center pt-2 fw-bold">Surat Pengantar Pemeriksaan
+                                                            Fisioterapi</h3>
                                                     </div>
                                                     <div class="row">
                                                         <h5 class="text-start">Informasi Pasien</h5>
@@ -208,8 +238,7 @@ $permission = user()->getPermissions();
                                                             placeholder="" type="hidden" class="form-control block" />
                                                         <input id="terlayani-fisio-val-coverfisio" name="terlayani"
                                                             placeholder="" type="hidden" class="form-control block" />
-                                                        <input id="employee_id-fisio-val-coverfisio" name="employee_id"
-                                                            placeholder="" type="hidden" class="form-control block" />
+
                                                         <input id="patient_category_id-fisio-val-coverfisio"
                                                             name="patient_category_id" placeholder="" type="hidden"
                                                             class="form-control block" />
@@ -238,8 +267,7 @@ $permission = user()->getPermissions();
                                                             class="form-control block" />
                                                         <input id="gender-fisio-val-coverfisio" name="gender"
                                                             placeholder="" type="hidden" class="form-control block" />
-                                                        <input id="doctor-fisio-val-coverfisio" name="doctor"
-                                                            placeholder="" type="hidden" class="form-control block" />
+
                                                         <input id="kal_id-fisio-val-coverfisio" name="kal_id"
                                                             placeholder="" type="hidden" class="form-control block" />
                                                         <input id="class_room_id-fisio-val-coverfisio"
@@ -317,7 +345,7 @@ $permission = user()->getPermissions();
                                                                         <input type="checkbox"
                                                                             id="ultrasound_checkbox-fisio-cover"
                                                                             name="ultrasound_checkbox"
-                                                                            class="form-check-input">
+                                                                            class="form-check-input print-hidden-form">
                                                                         <label for="ultrasound_checkbox-fisio-cover"
                                                                             class="form-check-label"
                                                                             style="width: 100px;">Ultrasound</label>
@@ -331,7 +359,7 @@ $permission = user()->getPermissions();
                                                                         <input type="checkbox"
                                                                             id="tens_checkbox-fisio-cover"
                                                                             name="tens_checkbox"
-                                                                            class="form-check-input">
+                                                                            class="form-check-input print-hidden-form">
                                                                         <label for="tens_checkbox-fisio-cover"
                                                                             class="form-check-label"
                                                                             style="width: 100px;">TENS</label>
@@ -345,7 +373,7 @@ $permission = user()->getPermissions();
                                                                         <input type="checkbox"
                                                                             id="exercise_checkbox-fisio-cover"
                                                                             name="exercise_checkbox"
-                                                                            class="form-check-input">
+                                                                            class="form-check-input print-hidden-form">
                                                                         <label for="exercise_checkbox-fisio-cover"
                                                                             class="form-check-label"
                                                                             style="width: 100px;">Exercise</label>
@@ -365,21 +393,92 @@ $permission = user()->getPermissions();
                                                                             style="width: 100px;">Infrared</label>
                                                                         <input type="text" id="infrared-fisio-cover"
                                                                             name="infrared"
-                                                                            class="form-control print-hidden-form">
+                                                                            class="form-control print-hidden-form ">
                                                                     </div>
+
+                                                                    <!-- =============================== -->
+                                                                    <div class="form-check"
+                                                                        style="display: flex; align-items: center;">
+                                                                        <input type="checkbox"
+                                                                            id="swd_checkbox-fisio-cover"
+                                                                            name="swd_checkbox"
+                                                                            class="form-check-input">
+                                                                        <label for="swd_checkbox-fisio-cover"
+                                                                            class="form-check-label"
+                                                                            style="width: 100px;">SWD</label>
+                                                                        <input type="text" id="swd-fisio-cover"
+                                                                            name="swd"
+                                                                            class="form-control print-hidden-form ">
+                                                                    </div>
+                                                                    <div class="form-check"
+                                                                        style="display: flex; align-items: center;">
+                                                                        <input type="checkbox"
+                                                                            id="mwd_checkbox-fisio-cover"
+                                                                            name="mwd_checkbox"
+                                                                            class="form-check-input">
+                                                                        <label for="mwd_checkbox-fisio-cover"
+                                                                            class="form-check-label"
+                                                                            style="width: 100px;">MWD</label>
+                                                                        <input type="text" id="mwd-fisio-cover"
+                                                                            name="mwd"
+                                                                            class="form-control print-hidden-form ">
+                                                                    </div>
+                                                                    <div class="form-check"
+                                                                        style="display: flex; align-items: center;">
+                                                                        <input type="checkbox"
+                                                                            id="eswt_checkbox-fisio-cover"
+                                                                            name="eswt_checkbox"
+                                                                            class="form-check-input">
+                                                                        <label for="eswt_checkbox-fisio-cover"
+                                                                            class="form-check-label"
+                                                                            style="width: 100px;">ESWT</label>
+                                                                        <input type="text" id="eswt-fisio-cover"
+                                                                            name="eswt"
+                                                                            class="form-control print-hidden-form ">
+                                                                    </div>
+                                                                    <div class="form-check"
+                                                                        style="display: flex; align-items: center;">
+                                                                        <input type="checkbox"
+                                                                            id="laser_checkbox-fisio-cover"
+                                                                            name="laser_checkbox"
+                                                                            class="form-check-input">
+                                                                        <label for="laser_checkbox-fisio-cover"
+                                                                            class="form-check-label"
+                                                                            style="width: 100px;">Laser</label>
+                                                                        <input type="text" id="laser-fisio-cover"
+                                                                            name="laser"
+                                                                            class="form-control print-hidden-form ">
+                                                                    </div>
+                                                                    <div class="form-check"
+                                                                        style="display: flex; align-items: center;">
+                                                                        <input type="checkbox"
+                                                                            id="elektrikal_stimulasi_checkbox-fisio-cover"
+                                                                            name="elektrikal_stimulasi_checkbox"
+                                                                            class="form-check-input">
+                                                                        <label
+                                                                            for="elektrikal_stimulasi_checkbox-fisio-cover"
+                                                                            class="form-check-label"
+                                                                            style="width: 100px;">ES ( elektrikal
+                                                                            stimulasi)</label>
+                                                                        <input type="text"
+                                                                            id="elektrikal_stimulasi-fisio-cover"
+                                                                            name="elektrikal_stimulasi"
+                                                                            class="form-control print-hidden-form ">
+                                                                    </div>
+
 
                                                                     <div class="form-check"
                                                                         style="display: flex; align-items: center;">
                                                                         <input type="checkbox"
                                                                             id="other_checkbox-fisio-cover"
                                                                             name="other_checkbox"
-                                                                            class="form-check-input">
+                                                                            class="form-check-input print-hidden-form">
                                                                         <label for="other_checkbox-fisio-cover"
                                                                             class="form-check-label"
                                                                             style="width: 100px;">Lain-lain:</label>
                                                                         <input type="text" id="other_desc-fisio-cover"
                                                                             name="other_desc"
-                                                                            class="form-control print-hidden-form">
+                                                                            class="form-control print-hidden-form ">
                                                                     </div>
 
 
@@ -393,6 +492,26 @@ $permission = user()->getPermissions();
                                                                         class="form-control print-hidden-form"
                                                                         name="description"
                                                                         id="description-val-coverfisio"></input>
+
+                                                                    <div class="row align-items-center">
+                                                                        <div class="col-12">
+                                                                            <label for="employedocTindakanFisio"
+                                                                                class="form-label">Doctor
+                                                                                Pengirim</label>
+                                                                        </div>
+                                                                        <div class="col">
+                                                                            <select class="form-select"
+                                                                                id="employedocTindakanFisio"
+                                                                                name="employee_id">
+                                                                            </select>
+
+                                                                            <input id="doctor-fisio-val-coverfisio"
+                                                                                name="doctor" placeholder=""
+                                                                                type="hidden"
+                                                                                class="form-control block" />
+                                                                        </div>
+                                                                    </div>
+
                                                                 </div>
                                                             </div>
 
@@ -417,7 +536,7 @@ $permission = user()->getPermissions();
                                                                 <div class="pt-2 pb-2" id="qrcode-fisio-conver-dokter">
                                                                 </div>
                                                             </div>
-                                                            <div id="validator-ttd"></div>
+                                                            <div id="qrcode-fisio-conver-dokter_name"></div>
                                                         </div>
                                                     </div>
 
@@ -468,8 +587,66 @@ $permission = user()->getPermissions();
                                                         style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;">
                                                     </div>
                                                     <div class="row">
-                                                        <h6 class="text-center pt-2"><?= @$title; ?></h6>
+                                                        <h3 class="text-center pt-2 fw-bold">Formulir Klaim Rawat Jalan
+                                                            KFR</h3>
                                                     </div>
+                                                    <div class="row">
+                                                        <h5 class="text-start">Informasi Pasien</h5>
+                                                    </div>
+                                                    <table class="table table-bordered">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <b>Nomor RM</b>
+                                                                    <div id="no_registration-val-coverfisio1"
+                                                                        name="no_registration">
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <b>Nama Pasien</b>
+                                                                    <div id="diantar_oleh-val-coverfisio1"
+                                                                        name="name_of_pasien" class="thename">
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <b>Jenis Kelamin</b>
+                                                                    <div name="gender" id="gender-val-coverfisio1">
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <b>Tanggal Lahir (Usia)</b>
+                                                                    <div id="age-val-coverfisio1" name="age"></div>
+                                                                </td>
+                                                                <td colspan="2">
+                                                                    <b>Alamat Pasien</b>
+                                                                    <div id="contact_address-val-coverfisio1"
+                                                                        name="contact_address" class="contact_address">
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <b>DPJP</b>
+                                                                    <div id="fullname-val-coverfisio1" name="fullname">
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <b>Department</b>
+                                                                    <div id="clinic_id-val-coverfisio1"
+                                                                        name="clinic_id">
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <b>Tanggal Masuk</b>
+                                                                    <div id="visit_date-val-coverfisio1"
+                                                                        name="visit_date">
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
                                                     <div class="p-3">
                                                         <div class="row">
                                                             <div class="col-6">
@@ -593,15 +770,18 @@ $permission = user()->getPermissions();
                                                                             <strong>Anamnesa</strong>
                                                                         </td>
                                                                         <td id="anamnase-output-fisio"
-                                                                            style="padding: 5px;"></td>
+                                                                            style="padding: 5px;">
+
+                                                                        </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <td style="padding: 5px;"><strong>Pemeriksaan
                                                                                 Fisik dan Uji</strong></td>
-                                                                        <td style="padding: 5px;">
-                                                                            <input type="text"
+                                                                        <td style="padding: 5px;"
+                                                                            id="diagnosis-fungsi-output-fisio">
+                                                                            <!-- <input type="text"
                                                                                 class="form-control print-hidden-form"
-                                                                                id="vas-fisio" name="vas">
+                                                                                id="vas-fisio" name="vas"> -->
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -623,8 +803,21 @@ $permission = user()->getPermissions();
                                                                     <tr>
                                                                         <td style="padding: 5px;"><strong>Diagnosis
                                                                                 Fungsi (ICD-10)</strong></td>
-                                                                        <td id="diagnosis-fungsi-output-fisio"
-                                                                            style="padding: 5px;"></td>
+                                                                        <td id="diagnosis-fungsi-output-fisios"
+                                                                            style="padding: 5px;">
+                                                                            <select id="diagnosa_fungsi"
+                                                                                name="diagnosa_fungsi"
+                                                                                class="form-control print-hidden-form">
+                                                                                <option value="" selected></option>
+                                                                                <option value="Gangguan Nyeri Kronis">
+                                                                                    Gangguan Nyeri Kronis</option>
+                                                                                <option value="Gangguan Nyeri Akut">
+                                                                                    Gangguan Nyeri Akut</option>
+                                                                                <option value="Gangguan Pola Jalan">
+                                                                                    Gangguan Pola Jalan</option>
+                                                                            </select>
+
+                                                                        </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <td colspan="2">
@@ -693,6 +886,71 @@ $permission = user()->getPermissions();
                                                                                     class="form-control print-hidden-form"
                                                                                     style="display:none;">
                                                                             </div>
+                                                                            <!-- ==================================== -->
+                                                                            <div class="form-check">
+                                                                                <input type="checkbox"
+                                                                                    id="swd_checkbox-fisio"
+                                                                                    name="swd_checkbox"
+                                                                                    class="form-check-input">
+                                                                                <label for="swd_checkbox-fisio"
+                                                                                    class="form-check-label">SWD</label>
+                                                                                <input type="text" id="swd-fisio"
+                                                                                    name="swd"
+                                                                                    class="form-control print-hidden-form"
+                                                                                    style="display:none;">
+                                                                            </div>
+                                                                            <div class="form-check">
+                                                                                <input type="checkbox"
+                                                                                    id="mwd_checkbox-fisio"
+                                                                                    name="mwd_checkbox"
+                                                                                    class="form-check-input">
+                                                                                <label for="mwd_checkbox-fisio"
+                                                                                    class="form-check-label">MWD</label>
+                                                                                <input type="text" id="mwd-fisio"
+                                                                                    name="mwd"
+                                                                                    class="form-control print-hidden-form"
+                                                                                    style="display:none;">
+                                                                            </div>
+                                                                            <div class="form-check">
+                                                                                <input type="checkbox"
+                                                                                    id="eswt_checkbox-fisio"
+                                                                                    name="eswt_checkbox"
+                                                                                    class="form-check-input">
+                                                                                <label for="eswt_checkbox-fisio"
+                                                                                    class="form-check-label">ESWT</label>
+                                                                                <input type="text" id="eswt-fisio"
+                                                                                    name="eswt"
+                                                                                    class="form-control print-hidden-form"
+                                                                                    style="display:none;">
+                                                                            </div>
+                                                                            <div class="form-check">
+                                                                                <input type="checkbox"
+                                                                                    id="laser_checkbox-fisio"
+                                                                                    name="laser_checkbox"
+                                                                                    class="form-check-input">
+                                                                                <label for="laser_checkbox-fisio"
+                                                                                    class="form-check-label">Laser</label>
+                                                                                <input type="text" id="laser-fisio"
+                                                                                    name="laser"
+                                                                                    class="form-control print-hidden-form"
+                                                                                    style="display:none;">
+                                                                            </div>
+                                                                            <div class="form-check">
+                                                                                <input type="checkbox"
+                                                                                    id="elektrikal_stimulasi_checkbox-fisio"
+                                                                                    name="elektrikal_stimulasi_checkbox"
+                                                                                    class="form-check-input">
+                                                                                <label
+                                                                                    for="elektrikal_stimulasi_checkbox-fisio"
+                                                                                    class="form-check-label">ES (
+                                                                                    elektrikal stimulasi)</label>
+                                                                                <input type="text"
+                                                                                    id="elektrikal_stimulasi-fisio"
+                                                                                    name="elektrikal_stimulasi"
+                                                                                    class="form-control print-hidden-form"
+                                                                                    style="display:none;">
+                                                                            </div>
+
                                                                             <div class="form-check">
                                                                                 <input type="checkbox"
                                                                                     id="other_checkbox-fisio"
@@ -776,7 +1034,7 @@ $permission = user()->getPermissions();
                                                             <div>
                                                                 <div id="qrcode-fisio-pasien"></div>
                                                             </div>
-
+                                                            <div id="qrcode-fisio-pasien_name"></div>
                                                         </div>
                                                         <div class="col"></div>
                                                         <div class="col-3" align="center">
@@ -787,7 +1045,7 @@ $permission = user()->getPermissions();
                                                             <div>
                                                                 <div class="pt-2 pb-2" id="qrcode-fisio-dokter"></div>
                                                             </div>
-                                                            <div id="validator-ttd"></div>
+                                                            <div id="qrcode-fisio-dokter_name"></div>
                                                         </div>
                                                     </div>
 
@@ -809,7 +1067,6 @@ $permission = user()->getPermissions();
 
                                         </div>
                                     </div>
-
 
                                     <div class="tab-pane fade" id="formulirRequestFisio">
                                         <div class="card-body">
@@ -858,7 +1115,7 @@ $permission = user()->getPermissions();
                                                             value="<?= @$visit['ageday']; ?>" />
                                                         <input name="doctor" placeholder="" type="hidden"
                                                             class="form-control block"
-                                                            value="<?= @$visit['fullname'] ?? @$visit['fullname_inap']; ?>" />
+                                                            value="<?= @@$visit['fullname'] ?? @$visit['fullname_inap']; ?>" />
                                                         <input name="class_room_id" placeholder="" type="hidden"
                                                             class="form-control block"
                                                             value="<?= @$visit['class_room_id']; ?>" />
@@ -900,20 +1157,87 @@ $permission = user()->getPermissions();
                                                             style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;">
                                                         </div>
 
+                                                        <div class="row">
+                                                            <h3 class="text-center pt-2 fw-bold">Permintaan Fisioterapi
+                                                            </h3>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <h5 class="text-start">Informasi Pasien</h5>
+                                                        </div>
+                                                        <table class="table table-bordered">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>Nomor RM</b>
+                                                                        <div id="no_registration-val-protokol"
+                                                                            name="no_registration">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <b>Nama Pasien</b>
+                                                                        <div id="diantar_oleh-val-protokol"
+                                                                            name="name_of_pasien" class="thename">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <b>Jenis Kelamin</b>
+                                                                        <div name="gender" id="gender-val-protokol">
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>Tanggal Lahir (Usia)</b>
+                                                                        <div id="age-val-protokol" name="age"></div>
+                                                                    </td>
+                                                                    <td colspan="2">
+                                                                        <b>Alamat Pasien</b>
+                                                                        <div id="contact_address-val-protokol"
+                                                                            name="contact_address"
+                                                                            class="contact_address">
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>DPJP</b>
+                                                                        <div id="fullname-val-protokol" name="fullname">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <b>Department</b>
+                                                                        <div id="clinic_id-val-protokol"
+                                                                            name="clinic_id">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <b>Tanggal Masuk</b>
+                                                                        <div id="visit_date-val-protokol"
+                                                                            name="visit_date">
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="row">
+                                                            <h4 class="text-center pt-2 fw-bold">Daftar Terapi
+                                                            </h4>
+                                                        </div>
                                                         <!-- Isi Tabel -->
                                                         <div class="py-3 px-0 mx-0">
                                                             <table class="table table-bordered" style="width:100%;">
                                                                 <thead>
                                                                     <tr>
                                                                         <td class="text-center fw-bold">DIAGNOSA</td>
-                                                                        <td colspan="7">:
-                                                                            <?= isset($dataTables) && !empty($dataTables) ? implode(', ', array_column($dataTables, 'description')) : '-' ?>
+                                                                        <td colspan="8" id="diagnosis-protokol">
+
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <td class="text-center fw-bold">Permintaan
                                                                             Terapi</td>
-                                                                        <td colspan="7">
+                                                                        <td colspan="8">
                                                                             <input type="text"
                                                                                 class="form-control print-hidden-form"
                                                                                 name="treatment"
@@ -923,6 +1247,9 @@ $permission = user()->getPermissions();
                                                                     <tr>
                                                                         <td class="text-center align-middle fw-bold"
                                                                             rowspan="2">PROGRAM
+                                                                        </td>
+                                                                        <td class="text-center align-middle fw-bold"
+                                                                            rowspan="2">Deskripsi
                                                                         </td>
                                                                         <td class="text-center align-middle fw-bold"
                                                                             rowspan="2">TANGGAL
@@ -967,6 +1294,235 @@ $permission = user()->getPermissions();
                                                                     class="btn btn-primary ms-auto"><i
                                                                         class="fas fa-save"></i> Simpan</button>
                                                                 <button type="button" id="print-jadwal-fisio"
+                                                                    data-loading-text="<?php echo lang('processing') ?>"
+                                                                    class="btn btn-success">
+                                                                    <i class="fas fa-print"></i> Print
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+                                                        <!-- Bagian Bawah -->
+                                                        <div class="row mb-2">
+                                                            <div class="col-3" align="center"></div>
+                                                            <div class="col"></div>
+                                                            <div class="col-3" align="center">
+                                                                <div>
+                                                                    <div id="datetime-now" class="datetime-now"></div>
+                                                                    <br>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="pt-2 pb-2" id="qrcode1"></div>
+                                                                </div>
+                                                                <div id="validator-ttd"></div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="programFisio">
+                                        <div class="card-body">
+                                            <div class="container-fluid mt-5">
+                                                <div class="row">
+                                                    <form action="" method="post" autocomplete="off"
+                                                        id="form-program-fisio">
+                                                        <input name="org_unit_code" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['org_unit_code']; ?>" />
+                                                        <input name="vactination_id" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['vactination_id']; ?>" />
+                                                        <input name="no_registration" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['no_registration']; ?>" />
+                                                        <input name="visit_id" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['visit_id']; ?>" />
+                                                        <input name="clinic_id" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['clinic_id']; ?>" />
+                                                        <input name="employee_id" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['employee_id']; ?>" />
+                                                        <input name="thename" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['thename']; ?>" />
+                                                        <input name="theaddress" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['theaddress']; ?>" />
+                                                        <input name="theid" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['theid']; ?>" />
+                                                        <input name="isrj" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['isrj']; ?>" />
+                                                        <input name="ageyear" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['ageyear']; ?>" />
+                                                        <input name="agemonth" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['agemonth']; ?>" />
+                                                        <input name="ageday" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['ageday']; ?>" />
+                                                        <input name="doctor" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @@$visit['fullname'] ?? @$visit['fullname_inap']; ?>" />
+                                                        <input name="class_room_id" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['class_room_id']; ?>" />
+                                                        <input name="bed_id" placeholder="" type="hidden"
+                                                            class="form-control block"
+                                                            value="<?= @$visit['bed_id']; ?>" />
+                                                        <input name="vactination_id" placeholder="" type="hidden"
+                                                            class="form-control block" value=""
+                                                            id="reqprogram_vactination_id" />
+                                                        <input name="evaluasi_qty" placeholder="" type="hidden"
+                                                            class="form-control block" value=""
+                                                            id="reqprogram_evaluasi_qty" />
+
+
+
+                                                        <!-- Header Organisasi -->
+                                                        <div class="row">
+                                                            <div class="col-auto" align="center">
+                                                                <img class="mt-2"
+                                                                    src="<?= base_url() ?>assets/img/logo.png"
+                                                                    width="70px">
+                                                            </div>
+                                                            <div class="col mt-2">
+                                                                <h3 class="kop-name text-center" id="kop-name">
+                                                                    <?= @$kop['name_of_org_unit'] ?>
+                                                                </h3>
+                                                                <p class="kop-address text-center" id="kop-address">
+                                                                    <?= @$kop['contact_address'] ?></p>
+                                                            </div>
+                                                            <div class="col-auto" align="center">
+                                                                <img class="mt-2"
+                                                                    src="<?= base_url() ?>assets/img/paripurna.png"
+                                                                    width="100px">
+
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <div
+                                                            style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;">
+                                                        </div>
+
+                                                        <!-- Isi Tabel -->
+                                                        <div class="py-3 px-0 mx-0">
+                                                            <h4 class="text-center">FISIOTERAPI</h4>
+                                                            <table class="table table-bordered">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b>Nomor RM</b>
+                                                                            <div id="no_registration-val-programFisio"
+                                                                                name="no_registration">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <b>Nama Pasien</b>
+                                                                            <div id="diantar_oleh-val-programFisio"
+                                                                                name="name_of_pasien" class="thename">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <b>Jenis Kelamin</b>
+                                                                            <div name="gender"
+                                                                                id="gender-val-programFisio">
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b>Tanggal Lahir (Usia)</b>
+                                                                            <div id="age-val-programFisio" name="age">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td colspan="2">
+                                                                            <b>Alamat Pasien</b>
+                                                                            <div id="contact_address-val-programFisio"
+                                                                                name="contact_address"
+                                                                                class="contact_address">
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b>Dokter</b>
+                                                                            <div id="fullname-val-programFisio"
+                                                                                name="fullname">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <b>Ruangan</b>
+                                                                            <div id="clinic_id-val-programFisio"
+                                                                                name="clinic_id">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <b>Fisioterapi</b>
+                                                                            <div id="input_treatment_jadwal_fisio_programFisio"
+                                                                                name="treatment">
+                                                                            </div>
+                                                                            <input type="hidden" class="form-control"
+                                                                                name="treatment"
+                                                                                id="input_treatment_fisio_programFisio">
+                                                                        </td>
+
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <table class="table table-bordered" style="width:100%;">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td class="text-center fw-bold">DIAGNOSA</td>
+                                                                        <td colspan="8" id="diagnosa-program">
+
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="text-center align-middle fw-bold">
+                                                                            Tgl
+                                                                        </td>
+                                                                        <td class="text-center align-middle fw-bold">
+                                                                            PROGRAM Fisioterapi
+                                                                        </td>
+                                                                        <td class="text-center align-middle fw-bold">
+                                                                            Tindakan Fisioterapi
+                                                                        </td>
+
+                                                                        <td class="text-center align-middle fw-bold">
+                                                                            Paraf
+                                                                        </td>
+                                                                        <td
+                                                                            class="text-center align-middle fw-bold row-to-hide">
+                                                                            <i class="fas fa-trash-alt"></i>
+                                                                        </td>
+                                                                    </tr>
+
+                                                                </thead>
+                                                                <tbody id="tbody-program-fisio">
+
+                                                                </tbody>
+
+                                                            </table>
+                                                            <div class="d-flex mt-3">
+                                                                <div class="col text-center">
+                                                                    <button type="button" id="addprogramFisio"
+                                                                        name="addprogramFisio" class="btn btn-primary">
+                                                                        <i class="fas fa-plus"></i> <span>Tambah</span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex mt-3 gap-3">
+                                                                <button type="button" id="btn-save-program-fisio"
+                                                                    class="btn btn-primary ms-auto"><i
+                                                                        class="fas fa-save"></i> Simpan</button>
+                                                                <button type="button" id="print-program-fisio"
                                                                     data-loading-text="<?php echo lang('processing') ?>"
                                                                     class="btn btn-success">
                                                                     <i class="fas fa-print"></i> Print
@@ -1024,6 +1580,66 @@ $permission = user()->getPermissions();
                                                     style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;">
                                                 </div>
                                                 <br>
+                                                <div class="row">
+                                                    <h3 class="text-center pt-2 fw-bold">Lembar Hasil Uji Fungsi KFR
+                                                    </h3>
+                                                </div>
+                                                <div class="row">
+                                                    <h5 class="text-start">Informasi Pasien</h5>
+                                                </div>
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <b>Nomor RM</b>
+                                                                <div id="no_registration-val-ujifungsimedic"
+                                                                    name="no_registration">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <b>Nama Pasien</b>
+                                                                <div id="diantar_oleh-val-ujifungsimedic"
+                                                                    name="name_of_pasien" class="thename">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <b>Jenis Kelamin</b>
+                                                                <div name="gender" id="gender-val-ujifungsimedic">
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <b>Tanggal Lahir (Usia)</b>
+                                                                <div id="age-val-ujifungsimedic" name="age"></div>
+                                                            </td>
+                                                            <td colspan="2">
+                                                                <b>Alamat Pasien</b>
+                                                                <div id="contact_address-val-ujifungsimedic"
+                                                                    name="contact_address" class="contact_address">
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <b>DPJP</b>
+                                                                <div id="fullname-val-ujifungsimedic" name="fullname">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <b>Department</b>
+                                                                <div id="clinic_id-val-ujifungsimedic" name="clinic_id">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <b>Tanggal Masuk</b>
+                                                                <div id="visit_date-val-ujifungsimedic"
+                                                                    name="visit_date">
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                                 <b>Lembar Hasil Tindakan Uji Fungsi / Prosedur KFR <span
                                                         id="val-detail-treatment-result"></span></b>
 
@@ -1039,7 +1655,7 @@ $permission = user()->getPermissions();
                                                                     class="form-control datetime-thems"
                                                                     placeholder="yyyy-mm-dd HH:mm ">
                                                                 <input
-                                                                    class="form-control datetimeflatpickr print-hidden-form"
+                                                                    class="form-control datetimeflatpickr datepicker-tanggal-fisio print-hidden-form"
                                                                     type="text" id="flatdate-detail-vactination_date">
 
 
@@ -1098,7 +1714,8 @@ $permission = user()->getPermissions();
                                                         <div class="mb-1">
                                                             <div id="qrcode-fisio-uji-pasien"></div>
                                                         </div>
-                                                        <?= isset($visit['fullname']) ? $visit['fullname'] : 'Nama Pasien'; ?>
+                                                        <div id="qrcode-fisio-uji-pasien_name"></div>
+
                                                     </div>
                                                 </div>
                                                 <br><br>
@@ -1130,14 +1747,14 @@ $permission = user()->getPermissions();
                                 </div>
                             </div>
                         </div>
-                        <div class="box-tab-tools text-center mt-4">
+                        <div class="box-tab-tools text-center mt-4 mt-md-2 mb-4 mb-md-2">
                             <a data-toggle="modal" id="add-new-doc-Jfisio" class="btn btn-primary btn-lg"
                                 style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                         </div>
                         <div class="panel-group" id="tabelsjadwalFisio">
                             <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"
                                 style="display: flex; justify-content: space-between; align-items: center;">
-                                Jadwal Fisioterapi
+                                Tindakan Fisioterapi
                             </h3>
                             <form>
                                 <table class="table table-bordered table-hover table-centered"
@@ -1147,6 +1764,7 @@ $permission = user()->getPermissions();
                                             <th scope="col">No</th>
                                             <th scope="col">Tanggal</th>
                                             <th scope="col">Dokter</th>
+                                            <th scope="col">Tindakan</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>

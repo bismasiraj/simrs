@@ -163,17 +163,17 @@ class SuratKeteranganLahir extends \App\Controllers\BaseController
             $kopprintData = $this->kopprint();
 
             $db = db_connect();
-            $visitation = $this->lowerKey($db->query("SELECT * FROM pasien_VISITATION WHERE visit_id = '" . $decoded_visit['visit_id'] . "'")->getResultArray());
+            $visitation = $this->lowerKey($db->query("SELECT * FROM PASIEN_VISITATION WHERE visit_id = '" . $decoded_visit['visit_id'] . "'")->getResultArray());
             $data = $this->lowerKey($db->query(
                 "
-                SELECT baby.thename, baby.gender, baby.inspection_date,baby.height, baby.weight, baby.baby_ke,baby.mothername,baby.fathername,baby.fatherno,baby.theaddress, pasien.job_id, pasien.date_of_birth as father_age, JOB_CATEGORY.NAME_OF_JOB AS JOB
+                SELECT baby.thename, baby.gender, baby.inspection_date,baby.height, baby.weight, baby.baby_ke,baby.mothername,baby.fathername,baby.fatherno,baby.theaddress, pasien.job_id, pasien.date_of_birth as father_age, JOB_CATEGORY.NAME_OF_JOB AS JOB, PASIEN.SPOUSE
                 FROM baby 
-                LEFT OUTER JOIN PASIEN ON BABY.FATHERNO = PASIEN.NO_REGISTRATION
+                LEFT OUTER JOIN PASIEN ON BABY.NO_REGISTRATION = PASIEN.NO_REGISTRATION
 				LEFT OUTER JOIN JOB_CATEGORY ON PASIEN.JOB_ID = JOB_CATEGORY.JOB_ID
                 WHERE BABY.visit_id = '" . $decoded_visit['visit_id'] . "' AND BABY.baby_id = '" . $decoded_visit['baby_id'] . "'
                 "
             )->getRow(0, 'array'));
-
+            // dd($data);
 
             return view("admin/patient/profilemodul/cetak-suratketeranganlahir.php", [
                 "visit" => $decoded_visit,

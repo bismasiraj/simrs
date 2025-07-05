@@ -1,7 +1,7 @@
 <script type='text/javascript'>
     // (function() {
     $(document).ready(function(e) {
-        initializeSearchTarif("searchTarifPatologi", 'PATOLOGI');
+        declareSearchTarifPatologi()
         initializeSearchTemplateExpertise("template_patologi", "modalPatologi");
         $('#template_patologi').on("select2:select", function(e) {
             const selectedData = e.params.data;
@@ -18,11 +18,23 @@
             });
         });
     })
-
+    const declareSearchTarifPatologi = () => {
+        initializeSearchTarif("searchTarifPatologi", 'PATOLOGI');
+        $("#searchTarifPatologi").on('select2:select', function(e) {
+            $("#searchTarifPatologiBtn").click();
+            $("#searchTarifPatologi").focus()
+            $('html,body').animate({
+                    scrollTop: $("#searchTarifPatologi").offset().top - 50
+                },
+                'slow', 'swing');
+            $("#searchTarifPatologi").click()
+            $("#searchTarifPatologi").select2('open')
+        });
+    }
     $("#patologiTab").on("click", function() {
         $('#notaNoPatologi').html(`<option value="%">Semua</option>`)
 
-        getTreatResultListPatologi(nomor, trans, visit)
+        getTreatResultListPatologi(nomor, trans, visit.visit_id)
         let data_bill = getBillPoli(nomor, ke, mulai, akhir, lunas, 'P023', rj, status, nota, trans)
     })
     $("#formSaveBillPatologiBtn").on("click", function() {
@@ -65,14 +77,14 @@
         }
     })
 
-    function getTreatResultListPatologi(nomor, trans, visit) {
+    function getTreatResultListPatologi(nomor, trans, visit_id) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/Patologi/getDataResult',
             type: "POST",
             data: JSON.stringify({
                 'no_registration': nomor,
                 'trans_id': trans,
-                'visit_id': visit
+                'visit_id': visit_id
             }),
             dataType: 'json',
             contentType: false,
@@ -107,7 +119,18 @@
 
 
     function addBillPatologi(container) {
+        let sesi = '<?= @$visit['session_id']; ?>';
+
+        // if (nota_no == '%') {
+        //     $("#notaNoPatologi").find(`option[value='${sesi}']`).remove()
+        //     nota_no = sesi
+        //     $("#notaNoPatologi").append($("<option>").val(nota_no).text(nota_no))
+        //     $("#notaNoPatologi").val(nota_no)
+        //     $("#patologiChargesBody").html("")
+        // }
+
         var nota_no = $("#notaNoPatologi").val();
+
         if (nota_no == '%') {
             nota_no = get_bodyid()
             $("#notaNoPatologi").append($("<option>").val(nota_no).text(nota_no))
@@ -122,18 +145,18 @@
         var key = 'patologi' + i
         $("#patologiChargesBody").append($("<tr id=\"" + key + "\">")
             .append($("<td>").html(String(i) + "."))
-            .append($("<td>").attr("id", "apatologidisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
+            .append($("<td>").attr("id", "apatologidisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= @@$visit['fullname']; ?>')))
             .append($("<td>").html('<select id="apatologiemployee_id' + key + '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'apatologi\',\'' + key + '\')">' +
                 chargesDropdownDoctor() +
                 `</select>` +
                 '<input id="apatologidoctor' + key + '" class="form-control" style="display: none" type="text" readonly>'
             ))
-            .append($("<td>").attr("id", "apatologidisplaytreat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
+            .append($("<td>").attr("id", "apatologidisplaytreat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= @$visit['name_of_clinic']; ?>')))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
             .append($("<td>").attr("id", "apatologidisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
             .append($("<td>")
                 .append('<input type="text" name="quantity[]" id="apatologiquantity' + key + '" placeholder="" value="0" class="form-control" readonly>')
-                .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
+                .append($("<p>").html('<?= @$visit['name_of_status_pasien']; ?>'))
             )
             .append($("<td>").attr("id", "apatologidisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
             .append($("<td>")
@@ -159,55 +182,56 @@
             .append('<input name="subsidi[]" id="apatologisubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
 
             .append('<input name="bill_id[]" id="apatologibill_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="trans_id[]" id="apatologitrans_id' + key + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="no_registration[]" id="apatologino_registration' + key + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="trans_id[]" id="apatologitrans_id' + key + '" type="hidden" value="<?= @$visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="no_registration[]" id="apatologino_registration' + key + '" type="hidden" value="<?= @$visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="theorder[]" id="apatologitheorder' + key + '" type="hidden" value="' + (billJson.length + 1) + '" class="form-control" />')
-            .append('<input name="visit_id[]" id="apatologivisit_id' + key + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="org_unit_code[]" id="apatologiorg_unit_code' + key + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="class_id[]" id="apatologiclass_id' + key + '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
-            .append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            .append('<input name="payor_id[]" id="apatologipayor_id' + key + '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="apatologikaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="theid[]" id="apatologitheid' + key + '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
-            .append('<input name="thename[]" id="apatologithename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
-            .append('<input name="theaddress[]" id="apatologitheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
-            .append('<input name="status_pasien_id[]" id="apatologistatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isrj[]" id="apatologiisrj' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
-            .append('<input name="gender[]" id="apatologigender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
-            .append('<input name="ageyear[]" id="apatologiageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
-            .append('<input name="agemonth[]" id="apatologiagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
-            .append('<input name="ageday[]" id="apatologiageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
-            .append('<input name="kal_id[]" id="apatologikal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="apatologikaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="class_room_id[]" id="apatologiclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
-            .append('<input name="bed_id[]" id="apatologibed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
+            .append('<input name="visit_id[]" id="apatologivisit_id' + key + '" type="hidden" value="<?= @$visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="org_unit_code[]" id="apatologiorg_unit_code' + key + '" type="hidden" value="<?= @$visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="class_id[]" id="apatologiclass_id' + key + '" type="hidden" value="<?= @$visit['class_id']; ?>" class="form-control" />')
+            .append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= @$visit['class_id_plafond']; ?>" class="form-control" />')
+            .append('<input name="payor_id[]" id="apatologipayor_id' + key + '" type="hidden" value="<?= @$visit['payor_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="apatologikaryawan' + key + '" type="hidden" value="<?= @$visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="theid[]" id="apatologitheid' + key + '" type="hidden" value="<?= @$visit['pasien_id']; ?>" class="form-control" />')
+            .append('<input name="thename[]" id="apatologithename' + key + '" type="hidden" value="<?= @$visit['diantar_oleh']; ?>" class="form-control" />')
+            .append('<input name="theaddress[]" id="apatologitheaddress' + key + '" type="hidden" value="<?= @$visit['visitor_address']; ?>" class="form-control" />')
+            .append('<input name="status_pasien_id[]" id="apatologistatus_pasien_id' + key + '" type="hidden" value="<?= @$visit['status_pasien_id']; ?>" class="form-control" />')
+            .append('<input name="isrj[]" id="apatologiisrj' + key + '" type="hidden" value="<?= @$visit['isrj']; ?>" class="form-control" />')
+            .append('<input name="gender[]" id="apatologigender' + key + '" type="hidden" value="<?= @$visit['gender']; ?>" class="form-control" />')
+            .append('<input name="ageyear[]" id="apatologiageyear' + key + '" type="hidden" value="<?= @$visit['ageyear']; ?>" class="form-control" />')
+            .append('<input name="agemonth[]" id="apatologiagemonth' + key + '" type="hidden" value="<?= @$visit['agemonth']; ?>" class="form-control" />')
+            .append('<input name="ageday[]" id="apatologiageday' + key + '" type="hidden" value="<?= @$visit['ageday']; ?>" class="form-control" />')
+            .append('<input name="kal_id[]" id="apatologikal_id' + key + '" type="hidden" value="<?= @$visit['kal_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="apatologikaryawan' + key + '" type="hidden" value="<?= @$visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="class_room_id[]" id="apatologiclass_room_id' + key + '" type="hidden" value="<?= @$visit['class_room_id']; ?>" class="form-control" />')
+            .append('<input name="bed_id[]" id="apatologibed_id' + key + '" type="hidden" value="<?= @$visit['bed_id']; ?>" class="form-control" />')
             .append('<input name="clinic_id[]" id="apatologiclinic_id' + key + '" type="hidden" value="P023" class="form-control" />')
-            .append('<input name="clinic_id_from[]" id="apatologiclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
+            .append('<input name="clinic_id_from[]" id="apatologiclinic_id_from' + key + '" type="hidden" value="<?= @$visit['clinic_id_from']; ?>" class="form-control" />')
             .append('<input name="exit_date[]" id="apatologiexit_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
             .append('<input name="cashier[]" id="apatologicashier' + key + '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
-            .append('<input name="modified_from[]" id="apatologimodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
+            .append('<input name="modified_from[]" id="apatologimodified_from' + key + '" type="hidden" value="<?= @$visit['clinic_id']; ?>" class="form-control" />')
             .append('<input name="islunas[]" id="apatologiislunas' + key + '" type="hidden" value="0" class="form-control" />')
             .append('<input name="measure_id[]" id="apatologimeasure_id' + key + '" type="hidden" value="" class="form-control" />')
             .append('<input name="tarif_id[]" id="apatologitarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+            .append('<input name="body_id[]" id="apatologibody_id' + key + '" type="hidden" value="' + sesi + '" class="form-control" />')
 
-        if ('<?= $visit['isrj']; ?>' == '0') {
-            $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
-            $("#abed_id" + key).val('<?= $visit['bed_id']; ?>');
+        if ('<?= @$visit['isrj']; ?>' == '0') {
+            $("#aclass_room_id" + key).val('<?= @$visit['class_room_id']; ?>');
+            $("#abed_id" + key).val('<?= @$visit['bed_id']; ?>');
             <?php
-            if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
+            if (!is_null(@$visit['employee_id_from']) && @$visit['employee_id_from'] != '') {
 
             ?>
                 $("#patologiChargesBody")
-                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= @$visit['employee_id_from']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= @$visit['fullname_from']; ?>" class="form-control" />')
 
             <?php
             } else {
 
             ?>
                 $("#patologiChargesBody")
-                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= @$visit['employee_inap']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= @$visit['fullname_inap']; ?>" class="form-control" />')
 
             <?php
             }
@@ -215,29 +239,33 @@
             ?>
         } else {
             <?php
-            if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
+            if (!is_null(@$visit['employee_id_from']) && @$visit['employee_id_from'] != '') {
 
             ?>
                 $("#patologiChargesBody")
-                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= @$visit['employee_id_from']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= @$visit['fullname_from']; ?>" class="form-control" />')
 
             <?php
             } else {
 
             ?>
                 $("#patologiChargesBody")
-                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apatologiemployee_id_from' + key + '" type="hidden" value="<?= @$visit['employee_id']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apatologidoctor_from' + key + '" type="hidden" value="<?= @@$visit['fullname']; ?>" class="form-control" />')
 
             <?php
             }
 
             ?>
         }
+        $("#arademployee_id_from" + key).val('<?= user()->employee_id; ?>')
+        $("#araddoctor_from" + key).val('<?= user()->getFullname(); ?>')
+        $("#arademployee_id" + key).val('<?= user()->employee_id; ?>')
+        $("#araddoctor" + key).val('<?= user()->getFullname(); ?>')
         $("#patologiChargesBody")
-            .append('<input name="employee_id[]" id="apatologiemployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-            .append('<input name="doctor[]" id="apatologidoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
+            .append('<input name="employee_id[]" id="apatologiemployee_id' + key + '" type="hidden" value="<?= @$visit['employee_id']; ?>" class="form-control" />')
+            .append('<input name="doctor[]" id="apatologidoctor' + key + '" type="hidden" value="<?= @@$visit['fullname']; ?>" class="form-control" />')
             .append('<input name="amount[]" id="apatologiamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
             .append('<input name="nota_no[]" id="apatologinota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />')
             .append('<input name="profesi[]" id="apatologiprofesi' + key + '" type="hidden" value="" class="form-control" />')
@@ -245,27 +273,27 @@
             .append('<input name="treatment_plafond[]" id="apatologitreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
             .append('<input name="tarif_type[]" id="apatologitarif_type' + key + '" type="hidden" value="' + tarifData.tarif_type + '" class="form-control" />')
 
-        if ('<?= $visit['class_id']; ?>' != '<?= $visit['class_id_plafond']; ?>') {
+        if ('<?= @$visit['class_id']; ?>' != '<?= @$visit['class_id_plafond']; ?>') {
 
-            var tarifKelas = getPlafond('<?= $visit['class_id_plafond']; ?>', tarifData.tarif_name, tarifData.isCito);
-            if (tarifKelas > 0 && '<?= $visit['payor_id']; ?>' != 0 && '<?= $visit['class_id_plafond']; ?>' != 99) {
+            var tarifKelas = getPlafond('<?= @$visit['class_id_plafond']; ?>', tarifData.tarif_name, tarifData.isCito);
+            if (tarifKelas > 0 && '<?= @$visit['payor_id']; ?>' != 0 && '<?= @$visit['class_id_plafond']; ?>' != 99) {
 
                 $("#patologiChargesBody").append('<input name="amount_plafond[]" id="apatologiamount_plafond' + key + '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
                 $("#patologiChargesBody").append('<input name="amount_paid_plafond[]" id="apatologiamount_paid_plafond' + key + '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
-                $("#patologiChargesBody").append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+                $("#patologiChargesBody").append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= @$visit['class_id_plafond']; ?>" class="form-control" />')
                 $("#patologiChargesBody").append('<input name="tarif_id_plafond[]" id="apatologitarif_id_plafond' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
             } else {
 
                 $("#patologiChargesBody").append('<input name="amount_plafond[]" id="apatologiamount_plafond' + key + '" type="hidden" value="0" class="form-control" />')
                 $("#patologiChargesBody").append('<input name="amount_paid_plafond[]" id="apatologiamount_paid_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-                $("#patologiChargesBody").append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+                $("#patologiChargesBody").append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= @$visit['class_id_plafond']; ?>" class="form-control" />')
                 $("#patologiChargesBody").append('<input name="tarif_id_plafond[]" id="apatologitarif_id_plafond' + key + '" type="hidden" value="" class="form-control" />')
             }
         } else {
 
             $("#patologiChargesBody").append('<input name="amount_plafond[]" id="apatologiamount_plafond' + key + '" type="hidden" value="0" class="form-control" />')
             $("#patologiChargesBody").append('<input name="amount_paid_plafond[]" id="apatologiamount_paid_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-            $("#patologiChargesBody").append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+            $("#patologiChargesBody").append('<input name="class_id_plafond[]" id="apatologiclass_id_plafond' + key + '" type="hidden" value="<?= @$visit['class_id_plafond']; ?>" class="form-control" />')
             $("#patologiChargesBody").append('<input name="tarif_id_plafond[]" id="apatologitarif_id_plafond' + key + '" type="hidden" value="" class="form-control" />')
         }
 
@@ -495,7 +523,7 @@
 
     const printPatologi = (props) => {
         $('#printPatologi').off().on('click', function(e) {
-            let visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
+            let visitEncoded = '<?= base64_encode(json_encode(@$visit)); ?>'
 
             // Construct the URL
             let url = '<?= base_url() . '/admin/cetak/patologi/'; ?>' + visitEncoded + '/' +

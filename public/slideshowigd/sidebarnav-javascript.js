@@ -1,0 +1,92 @@
+/* Set the width of the side navigation to 250px and the left margin of the page content to 250px and add a black background color to body */
+function openNav() {
+    document.getElementById("mySidenav").style.width = "300px";
+    document.getElementById("mySidenav").style.opacity="1";
+    document.body.style.opacity="1";
+    document.body.style.backgroundColor = "#ffffff";
+    document.getElementById("menu1").style.opacity="1";
+    document.getElementById("menu1").style.transition="2s";
+    document.getElementById("menu2").style.opacity="1";
+    document.getElementById("menu2").style.transition="2s";
+    document.getElementById("menu3").style.opacity="1";
+    document.getElementById("menu3").style.transition="2s";
+    document.getElementById("menu4").style.opacity="1";
+    document.getElementById("menu4").style.transition="2s";
+    document.getElementById("menu5").style.opacity="1";
+    document.getElementById("menu5").style.transition="2s";
+    document.getElementById("menu6").style.opacity="1";
+    document.getElementById("menu6").style.transition="2s";
+    document.getElementById("menu7").style.opacity="1";
+    document.getElementById("menu7").style.transition="2s";
+    document.getElementById("menu8").style.opacity="1";
+    document.getElementById("menu8").style.transition="2s";
+    document.getElementById("menu9").style.opacity="1";
+    document.getElementById("menu9").style.transition="2s";
+    document.getElementById("menu10").style.opacity="1";
+    document.getElementById("menu10").style.transition="2s";
+    document.getElementById("menu11").style.opacity="1";
+    document.getElementById("menu11").style.transition="2s";
+    document.getElementById("menu12").style.opacity="1";
+    document.getElementById("menu12").style.transition="2s";
+    document.getElementById("menu13").style.opacity="1";
+    document.getElementById("menu13").style.transition="2s";
+    document.getElementById("menu14").style.opacity="1";
+    document.getElementById("menu14").style.transition="2s";
+    document.getElementById("menu15").style.opacity="1";
+    document.getElementById("menu15").style.transition="2s";
+    document.getElementById("menu16").style.opacity="1";
+    document.getElementById("menu16").style.transition="2s";
+    document.getElementById("menu17").style.opacity="1";
+    document.getElementById("menu17").style.transition="2s";
+    document.getElementById("menu18").style.opacity="1";
+    document.getElementById("menu18").style.transition="2s";
+    document.getElementById("menubtn").style.opacity="0";
+    document.getElementById("menuclose").style.opacity="1";
+}
+
+/* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("mySidenav").style.opacity="0";
+    document.body.style.opacity="1";
+    document.body.style.backgroundColor = "white";
+    document.getElementById("menu1").style.opacity="0";
+    document.getElementById("menu1").style.transition="0s";
+    document.getElementById("menu2").style.opacity="0";
+    document.getElementById("menu2").style.transition="0s";
+    document.getElementById("menu3").style.opacity="0";
+    document.getElementById("menu3").style.transition="0s";
+    document.getElementById("menu4").style.opacity="0";
+    document.getElementById("menu4").style.transition="0s";
+    document.getElementById("menu5").style.opacity="0";
+    document.getElementById("menu5").style.transition="0s";
+    document.getElementById("menu6").style.opacity="0";
+    document.getElementById("menu6").style.transition="0s";
+    document.getElementById("menu7").style.opacity="0";
+    document.getElementById("menu7").style.transition="0s";
+    document.getElementById("menu8").style.opacity="0";
+    document.getElementById("menu8").style.transition="0s";
+    document.getElementById("menu9").style.opacity="0";
+    document.getElementById("menu9").style.transition="0s";
+    document.getElementById("menu10").style.opacity="0";
+    document.getElementById("menu10").style.transition="0s";
+    document.getElementById("menu11").style.opacity="0";
+    document.getElementById("menu11").style.transition="0s";
+    document.getElementById("menu12").style.opacity="0";
+    document.getElementById("menu12").style.transition="0s";
+    document.getElementById("menu13").style.opacity="0";
+    document.getElementById("menu13").style.transition="0s";
+    document.getElementById("menu14").style.opacity="0";
+    document.getElementById("menu14").style.transition="0s";
+    document.getElementById("menu15").style.opacity="0";
+    document.getElementById("menu15").style.transition="0s";
+    document.getElementById("menu16").style.opacity="0";
+    document.getElementById("menu16").style.transition="0s";
+    document.getElementById("menu17").style.opacity="0";
+    document.getElementById("menu17").style.transition="0s";
+    document.getElementById("menu18").style.opacity="0";
+    document.getElementById("menu18").style.transition="0s";
+    document.getElementById("menubtn").style.opacity="1";
+    document.getElementById("menuclose").style.opacity="0";
+
+}

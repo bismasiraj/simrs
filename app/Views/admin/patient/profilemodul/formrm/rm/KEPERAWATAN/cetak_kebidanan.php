@@ -17,15 +17,15 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
     <script src="<?= base_url('assets/libs/qrcode/qrcode.min.js') ?>"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -122,71 +122,84 @@
                 <tr>
                     <td class="p-1">
                         <b>Nama Lengkap</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['anamnesis']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['diantar_oleh']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Nama Lengkap</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_penyakit_sekarang']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$suami['fullname']; ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Tanggal Lahir</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_penyakit_dahulu']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= substr(@$visit['date_of_birth'], 0, 10); ?></p>
                     </td>
                     <td class="p-1">
                         <b>Tanggal Lahir</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_alergi_nonobat']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= substr(@$suami['date_of_birth'], 0, 10); ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Agama</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_penyakit_keluarga']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['nama_agama']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Agama</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_alergi_obat']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$suami['nama_agama']; ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Pendidikan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_penyakit_keluarga']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$istri['name_of_edu_type']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Pendidikan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_alergi_obat']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$suami['name_of_edu_type']; ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Pekerjaan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_penyakit_keluarga']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$istri['name_of_job']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Pekerjaan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_alergi_obat']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$suami['name_of_job']; ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Alamat</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_penyakit_keluarga']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visitor_address']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Alamat</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_alergi_obat']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['address']; ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Kawin</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_penyakit_keluarga']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['name_of_maritalstatus']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Lama Menikah</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['riwayat_alergi_obat']; ?></p>
+                        <p class="m-0 mt-1 p-0"></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <h5 class="text-start">Subyektif</h5>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td class="p-1" colspan="3">
+                        <b>Subyektif</b>
+                        <p class="m-0 mt-1 p-0"><?= @$val['anamnesis']; ?></p>
                     </td>
                 </tr>
             </tbody>
@@ -241,10 +254,9 @@
         <div class="row">
             <h5 class="text-start">Riwayat Kehamilan</h5>
         </div>
-        <table class="table table-bordered">
+        <table border="1" width="100%" cellspacing="0" cellpadding="5">
             <thead class="table-primary">
                 <tr>
-                    <th scope="row" class="w-auto text-nowrap">No.</th>
                     <th scope="row" class="w-auto text-nowrap">Tgl/Tahun Partus</th>
                     <th scope="row" class="w-auto text-nowrap">Tempat Partus</th>
                     <th scope="row" class="w-auto text-nowrap">Umur Hamil</th>
@@ -259,7 +271,6 @@
                 <?php foreach ($pregnancy as $key => $value) {
                 ?>
                     <tr>
-                        <td><?= $key; ?></td>
                         <td><?= substr($value['partus_date'], 0, 10); ?></td>
                         <td><?= $value['partus_location']; ?></td>
                         <td><?= $value['gestation']; ?></td>
@@ -270,7 +281,11 @@
                             ?>Laki-laki<?php
                                     } else if ($value['baby_sex'] == '2') {
                                         ?>Perempuan<?php
-                                                } ?></td>
+                                                } else if ($vakye['baby_sex'] == '3') {
+                                                    ?>Ambigu<?php
+                                                        } else {
+                                                            ?>-<?php
+                                                            } ?></td>
                         <td><?= $value['baby_condition']; ?></td>
                     </tr>
                 <?php
@@ -290,13 +305,13 @@
         <div class="row">
             <h5 class="text-start">Catatan Pemeriksaan Obsetric</h5>
         </div>
-        <table class="table table-bordered">
+        <table border="1" width="100%" cellspacing="0" cellpadding="5">
             <thead class="table-primary">
                 <tr>
                     <th scope="row" class="w-auto text-nowrap">Tgl</th>
-                    <th scope="row" class="w-auto text-nowrap">Tinggi Fundus Uteri</th>
-                    <th scope="row" class="w-auto text-nowrap">Letak Anak</th>
-                    <th scope="row" class="w-auto text-nowrap">Bunyi Jantung</th>
+                    <th scope="row" class="w-auto text-nowrap">TFU</th>
+                    <th scope="row" class="w-auto text-nowrap">Letak</th>
+                    <th scope="row" class="w-auto text-nowrap">Jantung</th>
                     <th scope="row" class="w-auto text-nowrap">Oedema</th>
                     <th scope="row" class="w-auto text-nowrap">Urine</th>
                     <th scope="row" class="w-auto text-nowrap">Tense</th>
@@ -309,7 +324,6 @@
                 <?php foreach ($detail as $key => $value) {
                 ?>
                     <tr>
-                        <td><?= $key; ?></td>
                         <td><?= substr($value['examination_date'], 0, 10); ?></td>
                         <td><?= $value['tfu']; ?></td>
                         <td><?= $value['child_position']; ?></td>
@@ -333,9 +347,9 @@
                 </tr> -->
             </tbody>
         </table>
-        <div class="row">
+        <!-- <div class="row">
             <h4 class="text-start">Planning (P)</h4>
-        </div>
+        </div> -->
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -385,14 +399,14 @@
             </tbody>
         </table>
         <div class="row">
-            <h5 class="text-start">Catatan Procedure</h5>
+            <h5 class="text-start">Catatan Planning</h5>
         </div>
         <table class="table table-bordered">
             <tbody>
                 <tr>
                     <td class="p-1">
-                        <b>Standing Order</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['standing_order']; ?></p>
+                        <b></b>
+                        <p class="m-0 mt-1 p-0"><?= @$val['instruction']; ?></p>
                     </td>
                 </tr>
             </tbody>
@@ -434,7 +448,7 @@
 
         <div class="row">
             <div class="col-auto" align="center">
-                <div>Sampangan, <?= tanggal_indo(date('Y-m-d')); ?></div>
+                <div>Sampangan, <?= tanggal_indo((substr($val['examination_date'], 0, 10))); ?></div>
                 <br>
                 <div>Perawat yang mengkaji</div>
                 <div class="mb-1">
@@ -470,27 +484,106 @@
 <script>
     $.each(sign, function(key, value) {
         if (value.user_type == 1 && value.isvalid == 1) {
-            var qrcode = new QRCode(document.getElementById("qrcode"), {
-                text: value.sign_path,
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
-            });
-            $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
+            $("#qrcode_name").html(`(${value.fullname})`)
+            $("#qrcode").html('<img class="mt-3" src="data:image/png;base64,' + value.sign_file +
+                '" width="400px">')
+
         } else if (value.user_type == 2 && value.isvalid == 1) {
-            var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
-                text: value.sign_path,
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
-            });
             $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+            const base64ttd_cetak_resumePulang_pasien1 = `data:image/gif;base64,${value.sign_file}`
+
+            if (base64ttd_cetak_resumePulang_pasien1) {
+
+                cropTransparentPNG(base64ttd_cetak_resumePulang_pasien1, (croppedImage) => {
+                    if (croppedImage) {
+                        $('#qrcode1').html(
+                            `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+                        );
+                    } else {
+                        $('#qrcode1').html('');
+                    }
+                });
+            } else {
+                $('#qrcode1').html('');
+            }
+
+            // $("#qrcode1").html('<img class="mt-3" src="data:image/gif;base64,' + value.sign_file +
+            //     '" width="400px">')
+
+        } else if (value.user_type == 3 && value.isvalid == 1) {
+
+            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+
+            const base64ttd_cetak_resumePulang_pasien2 = `data:image/gif;base64,${value.sign_file}`
+
+            if (base64ttd_cetak_resumePulang_pasien2) {
+                cropTransparentPNG(base64ttd_cetak_resumePulang_pasien2, (croppedImage) => {
+                    if (croppedImage) {
+                        $('#qrcode1').html(
+                            `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+                        );
+                    } else {
+                        $('#qrcode1').html('');
+                    }
+                });
+            } else {
+                $('#qrcode1').html('');
+            }
+
+            // $("#qrcode1").html('<img class="mt-3" src="data:image/gif;base64,' + value.sign_file +
+            //     '" width="400px">')
+
         }
     })
+    const cropTransparentPNG = (base64, callback) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            let top = null,
+                bottom = null,
+                left = null,
+                right = null;
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const index = (y * canvas.width + x) * 4;
+                    const alpha = data[index + 3];
+                    if (alpha > 0) {
+                        if (top === null || y < top) top = y;
+                        if (bottom === null || y > bottom) bottom = y;
+                        if (left === null || x < left) left = x;
+                        if (right === null || x > right) right = x;
+                    }
+                }
+            }
+
+            if (top === null) return callback(null); // tidak ada gambar
+
+            const width = right - left + 1;
+            const height = bottom - top + 1;
+
+            const croppedCanvas = document.createElement('canvas');
+            croppedCanvas.width = width;
+            croppedCanvas.height = height;
+
+            const croppedCtx = croppedCanvas.getContext('2d');
+            croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+            const croppedBase64 = croppedCanvas.toDataURL('image/png');
+            callback(croppedBase64);
+        };
+        img.src = base64;
+    };
 </script>
 
 <style>

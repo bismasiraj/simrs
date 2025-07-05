@@ -34,6 +34,7 @@
         postData({
             trans_id: trans_id
         }, 'admin/AssTbc/getData', (res) => {
+            koppSurat = res?.value?.kop
             if (res?.status === true) {
                 renderAssTbcInBiodata({
                     data: res?.value.data
@@ -117,10 +118,6 @@
             }
         ];
 
-        console.log(checkboxes);
-
-
-
         checkboxes.forEach(({
             name,
             value
@@ -182,6 +179,118 @@
 
         $(".data-render-assTbc").html(result);
         btnShowPopup()
+
+        $('#cetak-skringtbc').off().click(function(e) {
+            e.preventDefault();
+
+            let printElement = document.getElementById('skrining-tbc-view').cloneNode(true);
+
+            $(printElement).find('.modal-footer').remove();
+
+            $(printElement).find('input[type="checkbox"]').each(function() {
+                let isChecked = $(this).prop('checked') ? '✔' : '';
+                $(this).replaceWith(`<span class="print-checkbox">${isChecked}</span>`);
+            });
+
+
+            let kopSurat = `
+                            <div class="row">
+                                <div class="col-auto" align="center">
+                                    <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
+                                </div>
+                                <div class="col mt-2">
+                                    <h3 class="kop-name-lab text-center" id="kop-name-lab">${koppSurat?.name_of_org_unit || ''}
+                                    </h3>
+                                    <p class="kop-address-lab text-center" id="kop-address-lab">
+                                        ${koppSurat?.contact_address + ',' + koppSurat?.phone + ', Fax:' + koppSurat?.fax + ',' + koppSurat?.kota +
+                                            '<br>' + koppSurat?.sk}
+                                    </p>
+                                </div>
+                                <div class="col-auto" align="center">
+                                    <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="100px">
+
+                                </div>
+                            </div>
+                 `;
+
+            let printWindow = window.open('', '_blank', 'width=800,height=600');
+
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Preview</title>
+                    <link rel="stylesheet" href="<?= base_url() ?>assets/css/bootstrap.min.css">
+                    <style>
+                    @page { 
+                        size: A4 portrait; 
+                        margin: 1mm 10mm 10mm 10mm; 
+                    }
+                    body { font-family: Arial, sans-serif; background-color: white; margin: 0; padding: 0; }
+                    .print-container {
+                        width: 100%;
+                        max-width: 190mm;
+                        padding: 10mm;
+                        margin: auto;
+                        box-sizing: border-box;
+                    }
+                    .hb-container {
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: space-between;
+                        flex-wrap: nowrap;
+                        gap: 15px;
+                    }
+                    .hb-container .col-md-6 {
+                        width: 50%;
+                        white-space: nowrap;
+                        text-align: left;
+                    }
+                    .row {
+                        display: flex !important;
+                        flex-wrap: nowrap !important;
+                    }
+                    .col-md-6 {
+                        width: 50% !important;
+                        text-align: left !important;
+                    }
+                    .print-checkbox {
+                        font-size: 14px;
+                        font-weight: bold;
+                    }
+                    @media print {
+                        .print-container {
+                            page-break-before: auto;
+                            width: 100%;
+                            max-width: 190mm;
+                            padding: 0;
+                            margin-top: 0;
+                        }
+                        table { page-break-inside: avoid; }
+                        .hb-container { display: flex; flex-wrap: nowrap; }
+                        .hidden-show-ttd { display: block !important; }
+                    }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-container">
+                        ${kopSurat}
+                        ${printElement.outerHTML}
+                    </div>
+                </body>
+                </html>
+                `);
+
+            printWindow.document.close();
+
+            printWindow.onload = function() {
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                    $(".hidden-show-ttd").attr("hidden", true);
+                }, 500);
+            };
+        });
+
     }
 
 
@@ -203,6 +312,7 @@
             })
 
         })
+
 
     }
 

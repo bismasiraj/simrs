@@ -1,11 +1,11 @@
 <?php
-// dd($visit);
+// dd(@$visit);
 ?>
 
 <script type='text/javascript'>
     var mapAssessment = JSON.parse('<?= json_encode($mapAssessment); ?>')
     var canvasAssessment;
-    var specialistTypeId = '<?= $visit['specialist_type_id']; ?>'
+    var specialistTypeId = '<?= @$visit['specialist_type_id']; ?>'
     var assessmentMedisType = 0;
     var patientCategoryId = '<?= @$visit['patient_category_id']; ?>'
     let mappingOrder = [{
@@ -84,25 +84,50 @@
         }
     ]
 
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-    })
+    function getAssessmentMedis(diagCat) {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentMedis',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit.visit_id,
+                'nomor': nomor,
+                'diagCat': diagCat,
+                'norujukan': '<?= @$visit['norujukan']; ?>',
+                'isrj': '<?= @$visit['isrj']; ?>'
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function(e) {
+                getLoadingscreen("contentAssessmentMedis", "loadContentAssessmentMedis")
+            },
+            success: function(data) {
+                $("#assessmentMedisHistoryBody").html("")
+
+                pasienDiagnosa = []
+                pasienDiagnosaAll = data.pasienDiagnosa
+                riwayatAll = data.pasienHistory
+                diagnosasAll = data.pasienDiagnosas
+                proceduresAll = data.pasienProcedures
+                lokalisAll = data.lokalis
+
+                if (pasienDiagnosaAll.length > 0) {
+                    displayTableAssessmentMedis()
+                } else {
+                    initialAddArm()
+                }
+            },
+            error: function() {
+
+            }
+        });
+    }
     $("#assessmentmedisTab").on("click", function() {
         var accMedisName = "accordionAssessmentMedis"
         // Call each function to append respective accordion items
         $("#accordionAssessmentMedis").html("")
-        // if (<?= ($visit['clinic_id'] == 'P012' && is_null($visit['class_room_id'])) ? true : false; ?>  ) {
+        // if (<?= (@$visit['clinic_id'] == 'P012' && is_null(@$visit['class_room_id'])) ? true : false; ?>  ) {
         assessmentMedisType = 3
 
         // $("#formaddarmbtn").trigger("click")
@@ -124,23 +149,12 @@
 
         $("#accordionAssessmentMedis").html("")
         appendAnamnesisMedis(accMedisName);
-        // appendRiwayatMedis(accMedisName);
         appendVitalSignMedis(accMedisName);
-        // appendSirkulasi(accMedisName);
-        // appendGcsMedisAccordion(accMedisName);
         appendPemeriksaanFisikMedis(accMedisName);
-        // appendLokalisAccordion(accMedisName);
         appendDiagnosaAkhirAccordion(accMedisName);
-        appendProsedurAccordion(accMedisName);
+        appendProsedurResumeAccordion(accMedisName);
         appendPenunjangTerapi(accMedisName);
-        // appendMedisAccordion(accMedisName);
-        // generateLokalis()
-
-        // $("#formaddarmbtn").trigger("click")
-        // $("#armdiag_cat").val(1)
-        appendCetakMedis(accMedisName)
-
-        // appendRtlAccordion(accordionId)
+        appendCetakMedis(accMedisName);
     })
 </script>
 
@@ -148,7 +162,7 @@
     const generateLokalis = () => {
         var specialistLokalis = '';
         if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
-            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+            specialistLokalis = '<?= @$visit['specialist_type_id']; ?>'
         } else {
             specialistLokalis = pasienDiagnosa.specialist_type_id
         }
@@ -248,98 +262,6 @@
                 })
             }
         })
-        <?php foreach ($aParameter as $key => $value) {
-            if ($value['p_type'] == 'GEN0002')
-                foreach ($aValue as $key1 => $value1) {
-                    if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
-                        foreach ($mapAssessment as $key2 => $value2) {
-                            if ($value2['doc_id'] == $value1['value_id'] && $value2['specialist_type_id'] == $visit['specialist_type_id']) {
-
-        ?>
-                            // var canvas<?= $value1['value_id']; ?> = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            // const canvasDataInput<?= $value1['value_id']; ?> = document.getElementById('lokalis<?= $value1['value_id']; ?>');
-                            // var ctx<?= $value1['value_id']; ?> = canvas<?= $value1['value_id']; ?>.getContext('2d');
-                            // var drawing<?= $value1['value_id'] ?> = false;
-                            // var line<?= $value1['value_id'] ?> = []; // Store points for the current line being drawn
-                            // let drawingHistory<?= $value1['value_id'] ?> = [];
-
-                            // var img<?= $value1['value_id']; ?> = new Image();
-                            // img<?= $value1['value_id']; ?>.onload = function() {
-                            //     ctx<?= $value1['value_id']; ?>.drawImage(img<?= $value1['value_id']; ?>, 0, 0, canvas<?= $value1['value_id']; ?>.width, canvas<?= $value1['value_id']; ?>.height);
-                            // };
-                            // img<?= $value1['value_id']; ?>.src = '<?= base_url('assets/img/asesmen' . $value1['value_info']) ?>';
-
-                            // canvas<?= $value1['value_id'] ?>.addEventListener('mousedown', startDrawing<?= $value1['value_id'] ?>);
-                            // canvas<?= $value1['value_id'] ?>.addEventListener('mousemove', draw<?= $value1['value_id'] ?>);
-                            // canvas<?= $value1['value_id'] ?>.addEventListener('mouseup', stopDrawing<?= $value1['value_id'] ?>);
-                            // canvas<?= $value1['value_id'] ?>.addEventListener('mouseout', stopDrawing<?= $value1['value_id'] ?>);
-
-                            // function startDrawing<?= $value1['value_id'] ?>(e) {
-                            //     drawing<?= $value1['value_id'] ?> = true;
-                            //     draw<?= $value1['value_id'] ?>(e);
-                            //     line = []; // Clear the current line
-                            //     line.push({
-                            //         x: e.offsetX,
-                            //         y: e.offsetY
-                            //     }); // Add the starting point of the line
-                            // }
-
-                            // function draw<?= $value1['value_id'] ?>(e) {
-                            //     if (!drawing<?= $value1['value_id'] ?>) return;
-
-                            //     ctx<?= $value1['value_id'] ?>.lineWidth = 2;
-                            //     ctx<?= $value1['value_id'] ?>.lineCap = 'round';
-                            //     ctx<?= $value1['value_id'] ?>.strokeStyle = '#000';
-
-                            //     const x = e.offsetX;
-                            //     const y = e.offsetY;
-
-                            //     ctx<?= $value1['value_id'] ?>.lineTo(e.clientX - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().left, e.clientY - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().top);
-                            //     ctx<?= $value1['value_id'] ?>.stroke();
-                            //     ctx<?= $value1['value_id'] ?>.beginPath();
-                            //     ctx<?= $value1['value_id'] ?>.moveTo(e.clientX - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().left, e.clientY - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().top);
-                            //     line<?= $value1['value_id'] ?>.push({
-                            //         x,
-                            //         y
-                            //     }); // Add the current point to the line
-                            // }
-
-                            // function stopDrawing<?= $value1['value_id'] ?>() {
-                            //     drawing<?= $value1['value_id'] ?> = false;
-                            //     ctx<?= $value1['value_id'] ?>.beginPath();
-                            //     drawingHistory<?= $value1['value_id'] ?>.push(line<?= $value1['value_id'] ?>);
-                            // }
-                            // $("#clear<?= $value1['value_id'] ?>").on("click", function() {
-                            //     ctx<?= $value1['value_id'] ?>.clearRect(0, 0, canvas<?= $value1['value_id'] ?>.width, canvas<?= $value1['value_id'] ?>.height);
-                            //     drawingHistory<?= $value1['value_id'] ?> = []; // Clear the drawing history
-                            //     img<?= $value1['value_id']; ?>.onload = function() {
-                            //         ctx<?= $value1['value_id']; ?>.drawImage(img<?= $value1['value_id']; ?>, 0, 0, canvas<?= $value1['value_id']; ?>.width, canvas<?= $value1['value_id']; ?>.height);
-                            //     };
-                            //     img<?= $value1['value_id']; ?>.src = '<?= base_url('assets/img/asesmen' . $value1['value_info']) ?>';
-                            // })
-                            // $("#undo<?= $value1['value_id'] ?>").on("click", function() {
-                            //     if (drawingHistory<?= $value1['value_id'] ?>.length > 0) {
-                            //         // Remove the last line from the drawing history
-                            //         drawingHistory<?= $value1['value_id'] ?>.pop();
-                            //         // Clear the canvas
-                            //         ctx<?= $value1['value_id'] ?>.clearRect(0, 0, canvas<?= $value1['value_id'] ?>.width, canvas<?= $value1['value_id'] ?>.height);
-                            //         // Redraw the remaining lines
-                            //         drawingHistory<?= $value1['value_id'] ?>.forEach(line => {
-                            //             for (let i = 1; i < line<?= $value1['value_id'] ?>.length; i++) {
-                            //                 ctx<?= $value1['value_id'] ?>.beginPath();
-                            //                 ctx<?= $value1['value_id'] ?>.moveTo(line<?= $value1['value_id'] ?>[i - 1].x, line<?= $value1['value_id'] ?>[i - 1].y);
-                            //                 ctx<?= $value1['value_id'] ?>.lineTo(line<?= $value1['value_id'] ?>[i].x, line<?= $value1['value_id'] ?>[i].y);
-                            //                 ctx<?= $value1['value_id'] ?>.stroke();
-                            //             }
-                            //         });
-                            //     }
-                            // })
-        <?php
-                            }
-                        }
-                    }
-                }
-        } ?>
     }
 
 
@@ -363,6 +285,21 @@
     })
 
     const initialAddArm = async () => {
+        if (assessmentMedisType == 3)
+            var pasienDiagnosaId = '<?= @$visit['session_id']; ?>';
+        else
+            var pasienDiagnosaId = '<?= @$visit['session_id']; ?>' + assessmentMedisType.toString();
+
+        let isnew = false;
+        $.each(pasienDiagnosaAll, function(key, value) {
+            if (value?.pasien_diagnosa_id == pasienDiagnosaId) {
+                isnew = true;
+            }
+        })
+        if (isnew) {
+            return alert("Anda sudah pernah membuat dokumen Assessment Medis pada sesi " + pasienDiagnosaId + ". Silahkan membuat sesi yang baru.");
+        }
+        $("#armModal").modal("show")
 
         var accMedisName = "accordionAssessmentMedis";
         pasienDiagnosa = [];
@@ -372,90 +309,7 @@
         $("#formaddarm textarea").val(null)
         $("#accordionAssessmentMedis").html("")
 
-        if (assessmentMedisType == 1) {
-            $("#armTitle").html("Resume Medis")
 
-            $("#accordionAssessmentMedis").html("")
-            appendAnamnesisMedis(accMedisName);
-            // appendRiwayatMedis(accMedisName);
-            appendVitalSignMedis(accMedisName);
-            // appendSirkulasi(accMedisName);
-            // appendGcsMedisAccordion(accMedisName);
-            appendPemeriksaanFisikMedis(accMedisName);
-            // appendLokalisAccordion(accMedisName);
-            appendDiagnosaAkhirAccordion(accMedisName);
-            appendProsedurAccordion(accMedisName);
-            appendPenunjangTerapi(accMedisName);
-            // appendMedisAccordion(accMedisName);
-            // generateLokalis()
-
-            // $("#formaddarmbtn").trigger("click")
-            // $("#armdiag_cat").val(1)
-            appendCetakMedis(accMedisName)
-
-            // appendRtlAccordion(accordionId)
-        } else {
-            var titlerj = '';
-            if ('<?= @$visit['class_room_id']; ?>' != '' && '<?= @$visit['class_room_id']; ?>' != null) {
-                titlerj = ' RAWAT INAP'
-            } else {
-                titlerj = ' RAWAT JALAN'
-            }
-
-            const req = await libAsyncAwaitPost({
-                    specialist_type_id: "<?= @$visit['specialist_type_id']; ?>"
-                },
-                "admin/rm/assessment/getMapAssessment"
-            );
-            $("#accordionAssessmentMedis").html("")
-
-
-            let mappingContentMap = JSON.parse(req);
-            let updatedMappingContentMap = mappingContentMap
-
-            // const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
-            // const updatedMappingContentMap = mappingContentMap.map(item => {
-            //     const orderItem = mappingOrderMap.get(item.doc_id);
-            //     if (orderItem) {
-            //         return {
-            //             ...item,
-            //             theorder: orderItem.order
-            //         };
-            //     }
-            //     return item;
-            // });
-
-
-            const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
-            let val = avalue.filter(item => item.p_type == 'GEN0002')
-            $.each(sortedMappingContentMap, function(key, value) {
-                if (value.doc_type == 1) {
-                    window[value.doc_id](accMedisName)
-                    $("#armTitle").html("ASESMEN MEDIS " + value.specialist_type + titlerj)
-                }
-                // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
-            })
-            $.each(sortedMappingContentMap, function(key, value) {
-
-                if (value.doc_type == 3) {
-                    $.each(val, function(key1, value1) {
-                        if (value.doc_id == value1.value_id) {
-                            $("#appendPemeriksaanFisikMedisBody").append(
-                                `<div class="col-sm-6 col-xs-12">
-                                    <div class="mb-3">
-                                        <div class="form-group">
-                                            <label for="arm${value1.p_type+ value1.parameter_id+ value1.value_id}">${value1.value_desc}</label>
-                                            <textarea id="arm{value1.p_type+ value1.parameter_id+ value1.value_id}" name="fisik${value1.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
-                                        </div>
-                                    </div>
-                                </div>`
-                            )
-                        }
-                    })
-                }
-                // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
-            })
-        }
 
 
         <?php if (user()->checkPermission("assessmentmedis", "c") || user()->checkPermission("assessmentmedis", "u")) {
@@ -464,28 +318,229 @@
         <?php
         } ?>
         const date = new Date();
-        var pasienDiagnosaId = '<?= $visit['session_id']; ?>';
 
-        let isnew = false;
-        $.each(pasienDiagnosaAll, function(key, value) {
-            if (value.pasien_diagnosa_id == pasienDiagnosaId) {
-                isnew = true;
-            }
-        })
-        if (isnew) {
-            return alert("Anda sudah pernah membuat dokumen Assessment Medis pada sesi " + pasienDiagnosaId + ". Silahkan refresh halaman jika memang sudah berganti sesi.");
-        }
 
         // pasienDiagnosaId = date.toISOString().substring(0, 23);
         // pasienDiagnosaId = pasienDiagnosaId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
+        // copyLastArm()
 
+        if (assessmentMedisType == 1) {
+            renderViewResumeMedis(accMedisName, pasienDiagnosaId, 1)
+        } else {
+            renderViewAssessmentMedis(accMedisName, pasienDiagnosaId, visit?.specialist_type_id, 1)
+        }
+        if (typeof pasienDiagnosa?.description !== 'undefined') {
+            disableRM()
+            $("#formaddrmbtn").slideUp()
+            $("#formeditrm").slideDown()
+        }
+        fillRiwayat()
+
+
+
+
+        if (visit.isrj == '1') {
+            updateWaktu(4)
+        }
+    }
+
+    const renderViewResumeMedis = async (accMedisName, pasienDiagnosaId, flag = 1) => {
+        $("#armTitle").html("Resume Medis")
+
+        $("#accordionAssessmentMedis").html("")
+
+
+
+        const req = await libAsyncAwaitPost({
+                specialist_type_id: "1.00"
+            },
+            "admin/rm/assessment/getMapAssessment"
+        );
+        $("#accordionAssessmentMedis").html("")
+
+
+        let mappingContentMap = JSON.parse(req);
+        let updatedMappingContentMap = mappingContentMap
+
+        const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
+        let val = avalue?.filter(item => item.p_type == 'GEN0002')
+
+        appendAnamnesisMedis(accMedisName);
+        appendVitalSignMedis(accMedisName);
+        appendGcsMedisAccordion(accMedisName);
+        // if ("<?= @@$visit['specialist_type_id']; ?>" == '1.16') {
+        //     appendSarafAccordion(accMedisName)
+        // } else if ("<?= @@$visit['specialist_type_id']; ?>" == "1.12") {
+        //     appendDermatologiAccordion(accMedisName)
+        // } else if ("<?= @@$visit['specialist_type_id']; ?>" == "1.10") {
+        //     appendOculusAccordion(accMedisName)
+
+        // } else if ("<?= @@$visit['specialist_type_id']; ?>" == "1.02") {} else {
+        // }
+        appendPemeriksaanFisikMedis(accMedisName);
+        // let pf = avalue.filter(item => item.p_type == 'GEN0002' && item.value_score == 2)
+        // $.each(pf, function(key, value1) {
+        //     $("#appendPemeriksaanFisikMedisBody").append(
+        //         `<div class="col-sm-6 col-xs-12">
+        //                 <div class="mb-3">
+        //                     <div class="form-group">
+        //                         <label for="arm${value1?.p_type+ value1?.parameter_id+ value1?.value_id}">${value1?.value_desc}</label>
+        //                         <textarea id="arm${value1?.p_type+ value1?.parameter_id+ value1?.value_id}" name="fisik${value1?.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
+        //                     </div>
+        //                 </div>
+        //             </div>`
+        //     )
+        //     // if (value?.doc_type == 3) {
+        //     //     $.each(val, function(key1, value1) {
+        //     //         if (value?.doc_id == value1?.value_id) {
+        //     //         }
+        //     //     })
+        //     // }
+        // })
+        $.each(sortedMappingContentMap, function(key, value) {
+            if (value?.doc_type == 3) {
+                $.each(val, function(key1, value1) {
+                    if (value?.doc_id == value1?.value_id) {
+                        $("#appendPemeriksaanFisikMedisBody").append(
+                            `<div class="col-sm-6 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arm${value1?.p_type+ value1?.parameter_id+ value1?.value_id}">${value1?.value_desc}</label>
+                                            <textarea id="arm${value1?.p_type+ value1?.parameter_id+ value1?.value_id}" name="fisik${value1?.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                </div>`
+                        )
+                    }
+                })
+            }
+        })
+        appendDiagnosaAkhirAccordion(accMedisName);
+        appendProsedurResumeAccordion(accMedisName);
+        appendPenunjangTerapi(accMedisName);
+        // appendCetakMedis(accMedisName)
+
+        // appendRtlAccordion(accordionId)
+
+        fillViewAssessmentMedis(pasienDiagnosaId, flag)
+    }
+    const reqFill = (req, pasienDiagnosaId, flag) => {
+        let indikasi = req?.indikasi?.notes
+        $("#armmedical_problem").val(indikasi)
+
+        let procb = req.procbedah
+        let procnb = req.procnonbedah
+        $("#armprocedure_desc").html("")
+        $.each(procb, (key, value) => {
+            $("#armprocedure_desc").append(
+                $(`<li class="list-group-item">`).html(value.treatment)
+            )
+        })
+        $("#arminstruction").html("")
+        $.each(procnb, (key, value) => {
+            $("#arminstruction").append(
+                $(`<li class="list-group-item">`).html(value.treatment)
+            )
+        })
+        let lastDiag = req.lastDiag
+        $("#armdiagnosa_desc_discharge").val(req?.lastDiag)
+    }
+    const renderViewAssessmentMedis = async (accMedisName, pasienDiagnosaId, spec_type_id, flag = 1) => {
+        var titlerj = '';
+
+        if (flag == 0)
+            if (pasienDiagnosa?.class_room_id != '' && pasienDiagnosa?.class_room_id != null) {
+                titlerj = ' RAWAT INAP'
+            } else {
+                titlerj = ' RAWAT JALAN'
+            }
+        else {
+            if (visit?.class_room_id != '' && visit?.class_room_id != null) {
+                titlerj = ' RAWAT INAP'
+            } else {
+                titlerj = ' RAWAT JALAN'
+            }
+        }
+
+
+        if (spec_type_id == '1.04') {
+            if (parseInt(visit.ageday) <= 20 && parseInt(visit.agemonth) == 0 && parseInt(visit.ageyear) == 0) {
+                spec_type_id = '1.04.1'
+            }
+        }
+
+        const req = await libAsyncAwaitPost({
+                specialist_type_id: spec_type_id
+            },
+            "admin/rm/assessment/getMapAssessment"
+        );
+        $("#accordionAssessmentMedis").html("")
+
+        let mappingContentMap = JSON.parse(req);
+        let updatedMappingContentMap = mappingContentMap
+
+        // const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
+        // const updatedMappingContentMap = mappingContentMap.map(item => {
+        //     const orderItem = mappingOrderMap.get(item.doc_id);
+        //     if (orderItem) {
+        //         return {
+        //             ...item,
+        //             theorder: orderItem.order
+        //         };
+        //     }
+        //     return item;
+        // });
+
+        const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
+        let val = avalue?.filter(item => item.p_type == 'GEN0002')
+        $.each(sortedMappingContentMap, function(key, value) {
+            if (value?.doc_type == 1) {
+                window[value?.doc_id](accMedisName)
+                if (pasienDiagnosa?.clinic_id != 'P012' && visit?.clinic_id != 'P012') {
+                    $("#armTitle").html("ASESMEN MEDIS " + value?.specialist_type + titlerj)
+                    $("#armemergency_group").hide()
+                } else if (pasienDiagnosa?.clinic_id == 'P012' && flag == 0) {
+                    $("#armTitle").html("ASESMEN MEDIS IGD")
+                    $("#armemergency_group").show()
+                } else if (visit?.clinic_id == 'P012' && flag == 1) {
+                    $("#armTitle").html("ASESMEN MEDIS IGD")
+                    $("#armemergency_group").show()
+                }
+            }
+            // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
+        })
+        $.each(sortedMappingContentMap, function(key, value) {
+
+            if (value?.doc_type == 3) {
+                $.each(val, function(key1, value1) {
+                    if (value?.doc_id == value1?.value_id) {
+                        $("#appendPemeriksaanFisikMedisBody").append(
+                            `<div class="col-sm-6 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arm${value1?.p_type+ value1?.parameter_id+ value1?.value_id}">${value1?.value_desc}</label>
+                                            <textarea id="arm${value1?.p_type+ value1?.parameter_id+ value1?.value_id}" name="fisik${value1?.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                </div>`
+                        )
+                    }
+                })
+            }
+            // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
+        })
+        copyLastArm()
+        fillViewAssessmentMedis(pasienDiagnosaId, flag)
+    }
+    const fillViewAssessmentMedis = async (pasienDiagnosaId, flag = 1) => {
         $("#formaddarmqrcode1").html("")
 
-        flatpickrInstances["flatarmdate_of_diagnosa"].setDate(
-            moment().format("DD/MM/YYYY HH:mm")
-        );
-        $("#flatarmdate_of_diagnosa").trigger("change");
+        // flatpickrInstances["flatarmdate_of_diagnosa"].setDate(
+        //     moment().format("DD/MM/YYYY HH:mm")
+        // );
+        // $("#flatarmdate_of_diagnosa").trigger("change");
+        $("#armdate_of_diagnosa").trigger(get_date());
 
 
         $("#formaddarm").find("#armtotal_score").html("")
@@ -493,46 +548,10 @@
 
 
 
-        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
-        $("#armclinic_id").html($('<option></option>')
-            .val(clinicSelect[0].clinic_id)
-            .text(clinicSelect[0].name_of_clinic))
+        $("#armvalid_user").val("")
+        $("#armvalid_pasien").val("")
+        $("#armvalid_date").val("")
 
-
-        $('#armorg_unit_code').val('<?= $visit['org_unit_code']; ?>')
-        $('#armvisit_id').val('<?= $visit['visit_id']; ?>')
-
-        $('#armtrans_id').val('<?= $visit['trans_id']; ?>')
-        $('#armreport_date').val(get_date())
-        $('#armtheid').val('<?= $visit['pasien_id']; ?>')
-
-        $('#armtheaddress').val('<?= $visit['visitor_address']; ?>')
-        $('#armisrj').val('<?= $visit['isrj']; ?>')
-        $('#armkal_id').val('<?= $visit['kal_id']; ?>')
-        $('#armspesialistik').val(null)
-        $('#armdoctor').val('<?= $visit['fullname']; ?>')
-        $('#armclass_room_id').val('<?= $visit['class_room_id']; ?>')
-        $('#armbed_id').val('<?= $visit['bed_id']; ?>')
-        $('#armresult_id').val(null)
-        $('#armkeluar_id').val('<?= $visit['keluar_id']; ?>')
-        $('#armin_date').val('<?= $visit['in_date']; ?>')
-        $('#armexit_date').val('<?= $visit['exit_date']; ?>')
-        $('#armmodified_date').val(get_date())
-        $('#armmodified_by').val('<?= user()->username; ?>')
-        $('#armnokartu').val('<?= $visit['pasien_id']; ?>')
-        $('#armno_registration').val('<?= $visit['no_registration']; ?>')
-        $('#armthename').val('<?= $visit['diantar_oleh']; ?>')
-        $('#armstatus_pasien_id').val('<?= $visit['status_pasien_id']; ?>')
-        $('#armgender').val('<?= $visit['gender']; ?>')
-        $('#armageyear').val('<?= $visit['ageyear']; ?>')
-        $('#armagemonth').val('<?= $visit['agemonth']; ?>')
-        $('#armageday').val('<?= $visit['ageday']; ?>')
-        $('#armnosep').val('<?= $visit['no_skpinap'] ?? $visit['no_skp']; ?>')
-        $('#armtglsep').val('<?= $visit['visit_date']; ?>')
-        $('#armkddpjp').val('<?= $visit['kddpjp']; ?>')
-        $('#armstatusantrean').val('<?= $visit['statusantrean']; ?>')
-        $('#armspecialist_type_id').val('<?= $visit['specialist_type_id']; ?>')
-        $("#armdiag_cat").val(assessmentMedisType)
         <?php foreach ($aParameter as $key => $value) {
             if (true) {
                 if ($value['p_type'] == 'GEN0002')
@@ -546,235 +565,266 @@
             }
         } ?>
 
-        var initialexam = examForassessmentDetail[examForassessmentDetail.length - 1]
-        fillExaminationDetail(initialexam, 'arm')
-        $("#armclinic_id").val(clinicSelect[0].clinic_id)
-        $('#armbody_id').val(null)
-        $('#armpasien_diagnosa_id').val(pasienDiagnosaId)
 
-        $('#lainnyaListLink').append(
-            '<li class="list-group-item"></li>')
-        $("#armemployee_id").html('<option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>')
-        if (typeof pasienDiagnosa.description !== 'undefined') {
-            disableRM()
-            $("#formaddrmbtn").slideUp()
-            $("#formeditrm").slideDown()
-        }
-        generateLokalis()
 
-        if ($("#armclinic_id").val() == 'P012') {
-            $("#armemergency_group").show()
+        $("#armvalid_user").val("")
+        $("#armvalid_pasien").val("")
+        $("#armvalid_date").val("")
+
+
+        if (flag == 0) {
+            // console.log(pasienDiagnosa)
+            $.each(pasienDiagnosa, function(key, value) {
+                $("#arm" + key).val(value)
+            })
+            let examselectdetail = [];
+
+            let selected = examForassessmentDetail.filter(item => item.body_id == pasienDiagnosa?.pasien_diagnosa_id);
+
+            examselectdetail = selected[0]
+            fillExaminationDetail(examselectdetail, 'arm')
+
+            fillPemeriksaanFisik(pasienDiagnosa?.pasien_diagnosa_id)
+            fillRiwayat()
+            getSateliteMedis(pasienDiagnosa)
         } else {
-            $("#armemergency_group").hide()
+            let clinicSelect = clinics.filter(item => item?.clinic_id == '<?= @$visit['clinic_id']; ?>')
+            $("#armclinic_id").html($('<option></option>')
+                .val(clinicSelect[0]?.clinic_id)
+                .text(clinicSelect[0]?.name_of_clinic))
+
+            $('#armorg_unit_code').val('<?= @$visit['org_unit_code']; ?>')
+            $('#armvisit_id').val('<?= @$visit['visit_id']; ?>')
+            $("#armdate_of_diagnosa").val(get_date())
+            $('#armtrans_id').val('<?= @$visit['trans_id']; ?>')
+            $('#armreport_date').val(get_date())
+            $('#armtheid').val('<?= @$visit['pasien_id']; ?>')
+
+            $('#armtheaddress').val('<?= @$visit['visitor_address']; ?>')
+            $('#armisrj').val('<?= @$visit['isrj']; ?>')
+            $('#armkal_id').val('<?= @$visit['kal_id']; ?>')
+            $('#armspesialistik').val(null)
+            $('#armdoctor').val('<?= @@$visit['fullname']; ?>')
+            $('#armclass_room_id').val('<?= @$visit['class_room_id']; ?>')
+            $('#armbed_id').val('<?= @$visit['bed_id']; ?>')
+            $('#armresult_id').val(null)
+            // $('#armkeluar_id').val('<?= @$visit['keluar_id']; ?>')
+            $('#armin_date').val('<?= @$visit['in_date']; ?>')
+            $('#armexit_date').val('<?= @$visit['exit_date']; ?>')
+            $('#armmodified_date').val(get_date())
+            $('#armmodified_by').val('<?= user()->username; ?>')
+            $('#armnokartu').val('<?= @$visit['pasien_id']; ?>')
+            $('#armno_registration').val('<?= @$visit['no_registration']; ?>')
+            $('#armthename').val('<?= @$visit['diantar_oleh']; ?>')
+            $('#armstatus_pasien_id').val('<?= @$visit['status_pasien_id']; ?>')
+            $('#armgender').val('<?= @$visit['gender']; ?>')
+            $('#armageyear').val('<?= @$visit['ageyear']; ?>')
+            $('#armagemonth').val('<?= @$visit['agemonth']; ?>')
+            $('#armageday').val('<?= @$visit['ageday']; ?>')
+            $('#armnosep').val('<?= @$visit['no_skpinap'] ?? @$visit['no_skp']; ?>')
+            $('#armtglsep').val('<?= @$visit['visit_date']; ?>')
+            $('#armkddpjp').val('<?= @$visit['kddpjp']; ?>')
+            $('#armstatusantrean').val('<?= @$visit['statusantrean']; ?>')
+            $('#armspecialist_type_id').val('<?= @$visit['specialist_type_id']; ?>')
+            $("#armdiag_cat").val(assessmentMedisType)
+            $("#armclinic_id").val(clinicSelect[0]?.clinic_id)
+            console.warn($("#armclinic_id").val())
+            $('#armbody_id').val(null)
+            $('#armpasien_diagnosa_id').val(pasienDiagnosaId)
+            $("#armemployee_id").html('<option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>')
+            $("#armemployee_id").val('<?= user()->employee_id; ?>')
+            if (assessmentMedisType == 1) {
+                const reqfill = await libAsyncAwaitPost({
+                        visit_id: visit.visit_id,
+                        trans_id: visit.trans_id
+                    },
+                    "admin/rm/assessmentmedis/fillResumeMedis"
+                );
+                reqFill(reqfill, pasienDiagnosaId, flag)
+            }
+
+            copyLastArm()
         }
-
-        // $("#formaddarm").find('input, select, textarea').each(function() {
-        //     const key = $(this).attr('id'); // Use ID or placeholder as key
-
-        //     const savedValue = localStorage.getItem(key);
-        //     if (savedValue) {
-        //         $(this).val(savedValue);
-        //     }
-        // })
-
-        $("#armModal").modal("show")
     }
+
+
+
+
+    const copyLastArm = async () => {
+        if (assessmentMedisType == 1)
+            var filterexaxm = examForassessment.filter(item => (item?.petugas_type == '11' && item?.account_id == '1'));
+        else
+            var filterexaxm = examForassessment.filter(item => (item?.petugas_type == '11' || item?.petugas_type == '13'));
+        var initialexam = getLastObject(sortAscending(filterexaxm, 'examination_date'));
+        if (initialexam) {
+            fillExamination(initialexam, 'arm')
+            $("#armdiagnosa_desc_discharge").val(initialexam?.teraphy_desc);
+        }
+        if (pasienDiagnosaAll?.length > 0) {
+            let pasienDiagnosaLocal = getLastObject(sortAscending(pasienDiagnosaAll, 'date_of_diagnosa'));
+            if (pasienDiagnosaLocal) {
+                $("#armdescription").val(pasienDiagnosaLocal?.description)
+                $("#armanamnase").val(pasienDiagnosaLocal?.anamnase)
+                $("#armalloanamnase").val(pasienDiagnosaLocal?.alloanamnase)
+                // $("#armmedical_problem").val(pasienDiagnosaLocal?.medical_problem)
+                $("#armhurt").val(pasienDiagnosaLocal?.hurt)
+                $("#arminstruction").val(pasienDiagnosaLocal?.instruction)
+                $("#armdiagnosa_desc").val(pasienDiagnosaLocal?.diagnosa_desc)
+            }
+            // if (pasienDiagnosaLocal.specialist_type_id == '<?= @@$visit['specialist_type_id']; ?>')
+            fillPemeriksaanFisik(pasienDiagnosaLocal?.pasien_diagnosa_id)
+
+            var filterexaxmdetail = examForassessmentDetail.filter(item => item?.petugas_type == '11');
+            var initialexamdetail = getLastObject(sortAscending(filterexaxmdetail, 'examination_date'))
+            if (initialexamdetail)
+                fillExaminationDetail(initialexamdetail, 'arm')
+        }
+    }
+
 
     const fillDataProfileRM = (index) => {
         pasienDiagnosa = pasienDiagnosaAll[index]
 
         $.each(pasienDiagnosa, function(key, value) {
-            $(".rm" + key).html(value)
+            $("#arm" + key).val(value)
         })
     }
 
     const fillDataArm = async (index) => {
+        $("#armModal").modal("show")
 
         $("#formaddarmqrcode1").html("")
 
         pasienDiagnosa = pasienDiagnosaAll[index]
 
+        // console.log(pasienDiagnosa)
+
         var accMedisName = "accordionAssessmentMedis"
 
         var titlerj = '';
-        if (pasienDiagnosa.class_room_id != '' && pasienDiagnosa.class_room_id != null) {
+        if (pasienDiagnosa?.class_room_id != '' && pasienDiagnosa?.class_room_id != null) {
             titlerj = ' RAWAT INAP'
         } else {
             titlerj = ' RAWAT JALAN'
         }
         $("#accordionAssessmentMedis").html("")
 
-        const req = await libAsyncAwaitPost({
-                specialist_type_id: pasienDiagnosa.specialist_type_id
-            },
-            "admin/rm/assessment/getMapAssessment"
-        );
-        $("#accordionAssessmentMedis").html("")
-
-        let mappingContentMap = JSON.parse(req);
-        let updatedMappingContentMap = mappingContentMap
-        // Update `mappingContentMap` based on `mappingOrder`
-        // const updatedMappingContentMap = mappingContentMap.map(item => {
-        //     // Find the corresponding item in `mappingOrder` based on `doc_id`
-        //     const orderItem = mappingOrderMap.get(item.doc_id);
-        //     if (orderItem) {
-        //         return {
-        //             ...item,
-        //             theorder: orderItem.order
-        //         };
-        //     }
-        //     return item;
-        // });
-
-        const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
-        let val = avalue.filter(item => item.p_type == 'GEN0002')
-        $.each(sortedMappingContentMap, function(key, value) {
-            if (value.doc_type == 1) {
-                window[value.doc_id](accMedisName)
-                $("#armTitle").html("ASESMEN MEDIS " + value.specialist_type + titlerj)
-            }
-            // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
-        })
-
-        $.each(sortedMappingContentMap, function(key, value) {
-
-            if (value.doc_type == 3) {
-                $.each(val, function(key1, value1) {
-                    if (value.doc_id == value1.value_id) {
-                        $("#appendPemeriksaanFisikMedisBody").append(
-                            `<div class="col-sm-6 col-xs-12">
-                                    <div class="mb-3">
-                                        <div class="form-group">
-                                            <label for="arm${value1.p_type+ value1.parameter_id+ value1.value_id}">${value1.value_desc}</label>
-                                            <textarea id="arm${value1.p_type+ value1.parameter_id+ value1.value_id}" name="fisik${value1.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
-                                        </div>
-                                    </div>
-                                </div>`
-                        )
-                    }
-                })
-            }
-            // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
-        })
-
-
-        if (pasienDiagnosa.diag_cat == 1) {
-            $("#armTitle").html("RESUME MEDIS")
+        if (assessmentMedisType == 1) {
+            renderViewResumeMedis(accMedisName, pasienDiagnosa.pasien_diagnosa_id, 0)
+        } else {
+            renderViewAssessmentMedis(accMedisName, pasienDiagnosa?.pasien_diagnosa_id, pasienDiagnosa?.specialist_type_id, 0)
         }
-        if ('<?= $visit['clinic_id']; ?>' == 'P012') {
+
+
+        if (pasienDiagnosa?.diag_cat == 1) {
+            $("#armTitle").html("RESUME MEDIS")
+        } else if ('<?= @$visit['clinic_id']; ?>' == 'P012') {
             $("#armTitle").html("ASESMEN MEDIS INSTALASI GAWAT DARURAT")
         }
 
-        let examselect = [];
-        $.each(examForassessmentDetail, function(key, value) {
-            if (value.body_id == pasienDiagnosa.pasien_diagnosa_id) {
-                examselect = value
-                return false
-            }
-        })
+        // console.log(pasienDiagnosa)
 
-
-        $.each(pasienDiagnosa, function(key, value) {
-            $("#arm" + key).val(value)
-            // $("#arm" + key).prop("disabled", true)
-        })
-        $.each(examselect, function(key, value) {
-            $("#arm" + key).val(value)
-        })
-        if (pasienDiagnosa.clinic_id == 'P012') {
+        // $.each(pasienDiagnosa, function(key, value) {
+        //     $("#arm" + key).val(value)
+        // })
+        if (pasienDiagnosa?.clinic_id == 'P012') {
+            if (patientCategoryId === 'undefined')
+                patientCategoryId = 1
             $("#armemergency").val(patientCategoryId)
             $("#armemergency_group").show()
         } else {
             $("#armemergency_group").hide()
         }
-        $("#armdiagnosa_desc_pulang").val(pasienDiagnosa.diagnosa_desc)
+        $("#armemergency").val(pasienDiagnosa?.emergency)
+        $("#armdiagnosa_desc_discharge").val(pasienDiagnosa?.diagnosa_desc)
 
+        // console.log(pasienDiagnosa)
 
-        let formattedValue = moment(pasienDiagnosa.date_of_diagnosa).format('DD/MM/YYYY HH:mm');
+        // let formattedValue = moment(pasienDiagnosa?.date_of_diagnosa).format('DD/MM/YYYY HH:mm');
         $("#formaddarm").find("#armtotal_score").html("")
         $("#formaddarm").find("span.h6").html("")
-        $("#flatarmdate_of_diagnosa").val(formattedValue).trigger("change")
-        await checkSignSignature("formaddarm", "armpasien_diagnosa_id", "formsavearmbtn", 2)
+        $("#armdate_of_diagnosa").val(pasienDiagnosa?.date_of_diagnosa)
+        // $("#flatarmdate_of_diagnosa").val(formattedValue).trigger("change")
 
-        if (pasienDiagnosa.clinic_id == null || pasienDiagnosa.clinic_id == '') {
-            $("#armclinic_id").html('<option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>')
-            $("#armclinic_id").val('<?= $visit['clinic_id']; ?>')
+        if (pasienDiagnosa?.clinic_id == null || pasienDiagnosa?.clinic_id == '') {
+            $("#armclinic_id").html('<option value="<?= @$visit['clinic_id']; ?>"><?= @$visit['name_of_clinic']; ?></option>')
+            $("#armclinic_id").val('<?= @$visit['clinic_id']; ?>')
         } else {
-            $("#armclinic_id").html('<option value="' + pasienDiagnosa.clinic_id + '">' + pasienDiagnosa.name_of_clinic + '</option>')
-            $("#armclinic_id").val(pasienDiagnosa.clinic_id)
+            $("#armclinic_id").html('<option value="' + pasienDiagnosa?.clinic_id + '">' + pasienDiagnosa?.name_of_clinic + '</option>')
+            $("#armclinic_id").val(pasienDiagnosa?.clinic_id)
         }
 
-        if (pasienDiagnosa.employee_id == null || pasienDiagnosa.employee_id == '') {
-            <?php if ($visit['isrj'] == '0') {
+        if (pasienDiagnosa?.employee_id == null || pasienDiagnosa?.employee_id == '') {
+            <?php if (@$visit['isrj'] == '0') {
             ?>
-                $("#armemployee_id").html('<option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>')
+                $("#armemployee_id").html('<option value="<?= @$visit['employee_inap']; ?>"><?= @$visit['fullname_inap']; ?></option>')
             <?php
             } else {
             ?>
-                $("#armemployee_id").html('<option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>')
+                $("#armemployee_id").html('<option value="<?= @$visit['employee_id']; ?>"><?= @@$visit['fullname']; ?></option>')
             <?php
             } ?>
         } else {
-            $("#armemployee_id").html('<option value="' + pasienDiagnosa.employee_id + '">' + pasienDiagnosa.fullname + '</option>')
+            $("#armemployee_id").html('<option value="' + pasienDiagnosa?.employee_id + '">' + pasienDiagnosa?.fullname + '</option>')
         }
-        $("#armdiag_cat").val(pasienDiagnosa.diag_cat)
+        $("#armdiag_cat").val(pasienDiagnosa?.diag_cat)
 
 
         displayTableAssessmentMedis(index)
-        if (pasienDiagnosa.clinic_id == 'P012') {
-            getTriage(pasienDiagnosa.pasien_diagnosa_id, "bodyTriageMedis")
-        }
-        fillRiwayat()
-        // getSirkulasi(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
 
-        if (pasienDiagnosa.specialist_type_id == '1.12')
-            groupeActionInTabKulit()
-        if (pasienDiagnosa.specialist_type_id == '1.16')
-            groupeActionInTabSaraf()
-        // getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
-        // getFallRisk(pasienDiagnosa.pasien_diagnosa_id, "bodyFallRiskMedis")
-        // getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
-        // getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
-        // if (pasienDiagnosa.clinic_id == 'P012')
-        //     getApgar(pasienDiagnosa.pasien_diagnosa_id, "bodyApgarMedis")
-        // getEducationForm(pasienDiagnosa.pasien_diagnosa_id, "bodyEducationFormMedis")
-        getSateliteMedis(pasienDiagnosa)
-        fillPemeriksaanFisik(pasienDiagnosa.pasien_diagnosa_id)
-        // $("#formsavearmbtn").slideUp()
-        // $("#formeditarm").slideDown()
+        fillRiwayat()
+
 
         $("#armcollapseVitalSign").find("input, select").trigger("change")
-
-        disableARM()
-        if (typeof pasienDiagnosa.description !== 'undefined') {
+        setTimeout(function() {
+            disableARM()
+        }, 2000)
+        if (typeof pasienDiagnosa?.description !== 'undefined') {
             // $("#formaddrmbtn").slideUp()
             // $("#formeditrm").slideDown()
         }
-
-        $("#armModal").modal("show")
     }
-
+    const refreshPeriksaFisik = () => {
+        let examselectdetail = [];
+        let id = $("#armpasien_diagnosa_id").val()
+        $.each(examForassessmentDetail, function(key, value) {
+            if (value?.body_id == id) {
+                examselectdetail = value
+                fillExaminationDetail(examselectdetail, 'arm')
+                return false
+            }
+        })
+    }
     const getSateliteMedis = (pasienDiagnosa) => {
+
+        if (pasienDiagnosa?.specialist_type_id == '1.12')
+            groupeActionInTabKulit(pasienDiagnosa?.pasien_diagnosa_id)
+        if (pasienDiagnosa?.specialist_type_id == '1.16')
+            groupeActionInTabSaraf()
         postData({
-            pasien_diagnosa_id: pasienDiagnosa.pasien_diagnosa_id,
-            visit_id: pasienDiagnosa.visit_id,
-            specialist_type_id: pasienDiagnosa.specialist_type_id,
-            clinic_id: pasienDiagnosa.specialist_type_id
+            pasien_diagnosa_id: pasienDiagnosa?.pasien_diagnosa_id,
+            visit_id: pasienDiagnosa?.visit_id,
+            specialist_type_id: pasienDiagnosa?.specialist_type_id,
+            clinic_id: pasienDiagnosa?.specialist_type_id
         }, 'admin/rm/assessmentmedis/getSateliteMedis', (res) => {
-            if (res.gcs) {
-                gcsAll = res.gcs
+            if (res?.examDetail) {
+                let examselect = res?.examDetail
+                fillExaminationDetail(examselect, 'arm')
+            }
+            if (res?.gcs) {
+                gcsAll = res?.gcs
                 // gcsDetailAll = data.gcsDetail
 
                 $.each(gcsAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val()) {
+                    if (value?.document_id == $("#arpbody_id").val()) {
                         $("#bodyGcsPerawat").html("")
                         addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
                     }
-                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                    if (value?.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyGcsMedis").html()
                         addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis", false)
                     }
-                    if (value.document_id == $("#acpptbody_id").val()) {
+                    if (value?.document_id == $("#acpptbody_id").val()) {
                         addGcs(0, key, "acpptbody_id", container, false)
                     }
                 })
@@ -784,70 +834,83 @@
             // getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
             // getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
 
-            if (res.fallRisk) {
-                let data = res.fallRisk
-                fallRisk = data.fallRisk
-                fallRiskDetail = data.fallRiskDetail
+            if (res?.fallRisk) {
+                let data = res?.fallRisk
+                fallRisk = data?.fallRisk
+                fallRiskDetail = data?.fallRiskDetail
 
                 $.each(fallRisk, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val()) {
+                    if (value?.document_id == $("#arpbody_id").val()) {
                         $("#bodyFallRiskPerawat").html("")
                         addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
-                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                    } else if (value?.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyFallRiskMedis").html("")
                         addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis", false)
-                    } else if (value.document_id == $("#acpptbody_id").val()) {
+                    } else if (value?.document_id == $("#acpptbody_id").val()) {
                         addFallRisk(0, key, "acpptbody_id", container, false)
                     }
                 })
             }
 
-            if (res.painMonitoring) {
+            if (res?.painMonitoring) {
                 let container = "bodyPainMonitoringMedis"
-                let data = res.painMonitoring
-                painMonitoring = data.painMonitoring
-                painMonitoringDetil = data.painDetil
-                painIntervensi = data.painIntervensi
+                let data = res?.painMonitoring
+                painMonitoring = data?.painMonitoring
+                painMonitoringDetil = data?.painDetil
+                painIntervensi = data?.painIntervensi
 
                 $.each(painMonitoring, function(key, value) {
                     $("#" + container).html("")
-                    if (value.document_id == $("#arpbody_id").val()) {
+                    if (value?.document_id == $("#arpbody_id").val()) {
                         $("#bodyPainMonitoringPerawat").html("")
                         addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat")
-                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                    } else if (value?.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyPainMonitoringMedis").html("")
                         addPainMonitoring(0, key, 'armpasien_diagnosa_id', "bodyPainMonitoringMedis", false)
                     }
                 })
             }
 
-            if (res.pernapasan) {
+            if (res?.pernapasan) {
                 napas = res.pernapasan
                 // stabilitasDetail = data.stabilitasDetail
 
                 $.each(napas, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addPernapasan(0, key, "arpbody_id", "bodyPernapasan")
-                    else if (value.document_id == $("#armpasien_diagnosa_id").val())
+                    if (value?.document_id == $("#armpasien_diagnosa_id").val())
                         addPernapasan(0, key, "armpasien_diagnosa_id", "bodyPernapasanMedis")
                 })
             }
-            if (res.apgar) {
+            if (res?.educationForm) {
+                educationFormAll = res.educationForm
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(educationFormAll, function(key, value) {
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyEducationFormMedis").html("")
+                        addEducationForm(0, key, "armpasien_diagnosa_id", "bodyEducationFormMedis", false)
+                    }
+                })
+            }
+            if (res?.apgar) {
                 let container = "bodyApgarMedis"
-                let data = res.apgar
-                apgar = data.apgar
-                apgarDetil = data.apgarDetil
+                let data = res?.apgar
+                apgar = data?.apgar
+                apgarDetil = data?.apgarDetil
 
                 $.each(apgar, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val()) {
+                    if (value?.document_id == $("#arpbody_id").val()) {
                         $("#bodyApgarPerawat").html("")
                         addApgar(0, key, "arpbody_id", "bodyApgarPerawat")
-                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                    } else if (value?.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyApgarMedis").html("")
                     } else {
                         addApgar(0, key, "bayibaby_id", container, false)
                     }
                 })
+            }
+            if (pasienDiagnosa?.clinic_id == 'P012') {
+                getTriage(pasienDiagnosa?.pasien_diagnosa_id, "bodyTriageMedis")
+                // getTriageNew(pasienDiagnosa?.pasien_diagnosa_id, "bodyTriageMedis")
             }
         }, (beforesend) => {
             // getLoadingGlobalServices('bodydatapemeriksaanKulit')
@@ -856,43 +919,46 @@
 
     function fillRiwayat() {
         $.each(riwayatAll, function(key, value) {
-            if ($("#armGEN0009" + value.value_id).is(":checkbox")) {
-                $("#armGEN0009" + value.value_id).prop("checked", true)
-                $("#armGEN0009" + value.value_id).prop("disabled", true)
+            if ($("#armGEN0009" + value?.value_id).is(":checkbox")) {
+                $("#armGEN0009" + value?.value_id).prop("checked", true)
+                // $("#armGEN0009" + value?.value_id).prop("disabled", true)
             } else {
-                $("#armGEN0009" + value.value_id).val(value.histories)
-                $("#armGEN0009" + value.value_id).prop("disabled", true)
+                $("#armGEN0009" + value?.value_id).val(value?.histories)
+                // $("#armGEN0009" + value?.value_id).prop("disabled", true)
             }
         })
     }
 
     function fillPemeriksaanFisik(pasienDiagnosaId) {
         $.each(lokalisAll, function(key, value) {
-            if (value.body_id = pasienDiagnosaId) {
+            if (value.body_id == pasienDiagnosaId) {
                 if (value.value_score == 2 || value.value_score == 4 || value.value_score == 5) {
-                    $("#arm" + value.p_type + value.parameter_id + value.value_id).val(value.value_detail);
-                    $("#arm" + value.p_type + value.parameter_id + value.value_id).prop("disabled", true)
+                    $("#arm" + value?.p_type + value?.parameter_id + value?.value_id).val(value?.value_detail);
+                    // $("#arm" + value?.p_type + value?.parameter_id + value?.value_id).prop("disabled", true)
                 } else if (value.value_score == 3) {
-                    $("#lokalis" + value.value_id).val(value.value_detail);
-                    $("#lokalis" + value.value_id + "desc").val(value.value_desc);
-                    var canvas = document.getElementById('canvas' + value.p_type + value.parameter_id + value.value_id);
-                    const canvasDataInput = document.getElementById('lokalis' + value.value_id);
-                    var context = canvas?.getContext('2d');
-                    const img = new Image();
-                    img.onload = function() {
-                        context.drawImage(img, 0, 0, canvas?.width, canvas?.height);
-                    };
-                    img.src = "data:image/png;base64," + value.filedata64;
+                    if ($("#lokalis" + value?.value_id).length) {
+                        $("#lokalis" + value?.value_id).val(value?.value_detail);
+                        $("#lokalis" + value?.value_id + "desc").val(value?.value_desc);
+                        var canvas = document.getElementById('canvas' + value?.p_type + value?.parameter_id + value?.value_id);
+                        const canvasDataInput = document.getElementById('lokalis' + value?.value_id);
+                        var context = canvas?.getContext('2d');
+                        const img = new Image();
+                        img.onload = function() {
+                            context.drawImage(img, 0, 0, canvas?.width, canvas?.height);
+                        };
+                        img.src = "data:image/png;base64," + value?.filedata64;
+                    }
                 }
             }
         })
     }
 
 
-    function enableARM() {
+    const enableARM = async () => {
         $("#formsignarm").slideDown()
         $("#formsavearmbtn").slideDown()
         $("#formeditarm").slideUp()
+        $("#formdeletearm").slideDown()
         $("#formaddarm input").prop("disabled", false)
         $("#formaddarm textarea").prop("disabled", false)
         $("#formaddarm select").prop("disabled", false)
@@ -908,124 +974,100 @@
         })
     }
 
-    function disableARM() {
+    const disableARM = async () => {
         $("#formsavearmbtn").slideUp()
+        console.warn('4' + $("#armclinic_id").val())
 
         if ($("#armmodified_by").val() == '<?= user()->username; ?>' || <?= json_encode(user()->checkRoles(['superuser'])) ?>) {
             $("#formeditarm").slideDown()
         } else {
             $("#formeditarm").slideUp()
         }
+        console.warn('5' + $("#armclinic_id").val())
         $("#formaddarm input").prop("disabled", true)
         $("#formaddarm textarea").prop("disabled", true)
         $("#formaddarm select").prop("disabled", true)
-        $("#formaddarm option").prop("disabled", true)
+        // $("#formaddarm option").prop("disabled", true)
+        console.warn('6' + $("#armclinic_id").val())
 
         $("#formaddarm").find(".btn-to-hide").slideUp()
         if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
             $("#formeditarm").slideUp()
+            $("#formdeletearm").slideDown()
             $("#formsignarm").slideDown()
+            $("#formaddarp").find(".btn-edit").each(function() {
+                $(this).hide()
+            })
         } else {
             $("#formeditarm").slideDown()
+            $("#formdeletearm").slideDown()
             $("#formsignarm").slideDown()
         }
+        console.warn('7' + $("#armclinic_id").val())
         disableCanvasLokalis()
+        await checkSignSignature("formaddarm", "armpasien_diagnosa_id", "formsavearmbtn", 2)
     }
 
     function enableCanvasLokalis() {
         var specialistLokalis = '';
         if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
-            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+            specialistLokalis = '<?= @$visit['specialist_type_id']; ?>'
         } else {
-            specialistLokalis = pasienDiagnosa.specialist_type_id
+            specialistLokalis = pasienDiagnosa?.specialist_type_id
         }
         $.each(canvasAssessment, function(key, value1) {
-            var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+            var canvas = document.getElementById('canvas' + value1?.p_type + value1?.parameter_id + value1?.value_id);
             canvas.style.pointerEvents = 'auto';
         })
-        // $.each(aparameter, function(key, value) {
-        //     if (value.p_type == 'GEN0002') {
-        //         $.each(avalue, function(key1, value1) {
-        //             if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
-        //                 $.each(mapAssessment, function(key2, value2) {
-        //                     if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
-        //                         var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
-        //                         canvas.style.pointerEvents = 'auto';
-        //                     }
-        //                 })
-        //             }
-        //         })
-        //     }
-
-        // })
-        <?php foreach ($aParameter as $key => $value) {
-            if ($value['p_type'] == 'GEN0002')
-                foreach ($aValue as $key1 => $value1) {
-                    if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
-                        foreach ($mapAssessment as $key2 => $value2) {
-                            if ($value2['doc_id'] == $value1['value_id'] && $value2['specialist_type_id'] == $visit['specialist_type_id']) {
-
-
-        ?>
-
-                            // var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            // canvas.style.pointerEvents = 'auto';
-
-        <?php
-                            }
-                        }
-                    }
-                }
-        } ?>
     }
 
     function disableCanvasLokalis() {
         var specialistLokalis = '';
         if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
-            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+            specialistLokalis = '<?= @$visit['specialist_type_id']; ?>'
         } else {
-            specialistLokalis = pasienDiagnosa.specialist_type_id
+            specialistLokalis = pasienDiagnosa?.specialist_type_id
         }
         $.each(canvasAssessment, function(key, value1) {
-            var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+            var canvas = document.getElementById('canvas' + value1?.p_type + value1?.parameter_id + value1?.value_id);
             if (canvas) {
                 canvas.style.pointerEvents = 'none';
             } else {
-                console.error('Element not found:', 'canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+                console.error('Element not found:', 'canvas' + value1?.p_type + value1?.parameter_id + value1?.value_id);
             }
         })
 
     }
 
     function copyPeriksaFisik() {
-        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
+        <?php if (!is_null(@$visit['class_room_id']) && (@$visit['class_room_id'] != '')) {
         ?>
             $("#copyVitalSignModal").modal('show')
         <?php
         } else {
         ?>
             $.ajax({
-                url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaFisik/<?= $visit['visit_id']; ?>',
+                url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaFisik/<?= @$visit['visit_id']; ?>',
                 type: "GET",
                 dataType: 'json',
                 success: function(data) {
                     alert("berhasil ambil periksa fisik")
-                    $("#armbody_id").val(data.body_id)
-                    $("#armpemeriksaan").val(data.periksafisik)
-                    $("#armanamnase").val(data.anamnase)
-                    $("#armweight").val(data.weight)
-                    $("#armheight").val(data.height)
-                    $("#armtemperature").val(data.temperature)
-                    $("#armnadi").val(data.nadi)
-                    $("#armtension_upper").val(data.tension_upper)
-                    $("#armtension_below").val(data.tension_below)
-                    $("#armsaturasi").val(data.saturasi)
-                    $("#armnafas").val(data.nafas)
-                    $("#armsaturasi").val(data.saturasi)
-                    $("#armarm_diameter").val(data.arm_diameter)
-                    $("#armpemeriksaan").val(data.pemeriksaan)
-                    $("#armvs_status_id").val(data.vs_status_id)
-                    $("#armawareness").val(data.awareness)
+                    $("#armbody_id").val(data?.body_id)
+                    $("#armpemeriksaan").val(data?.periksafisik)
+                    $("#armanamnase").val(data?.anamnase)
+                    $("#armweight").val(data?.weight)
+                    $("#armheight").val(data?.height)
+                    $("#armtemperature").val(data?.temperature)
+                    $("#armnadi").val(data?.nadi)
+                    $("#armtension_upper").val(data?.tension_upper)
+                    $("#armtension_below").val(data?.tension_below)
+                    $("#armsaturasi").val(data?.saturasi)
+                    $("#armnafas").val(data?.nafas)
+                    $("#armsaturasi").val(data?.saturasi)
+                    $("#armarm_diameter").val(data?.arm_diameter)
+                    $("#armpemeriksaan").val(data?.pemeriksaan)
+                    $("#armvs_status_id").val(data?.vs_status_id)
+                    $("#armawareness").val(data?.awareness)
                 }
             })
         <?php
@@ -1034,7 +1076,7 @@
 
     function copyPeriksaLab() {
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaLab/<?= $visit['trans_id']; ?>',
+            url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaLab/<?= @$visit['trans_id']; ?>',
             type: "GET",
             dataType: 'json',
             success: function(data) {
@@ -1046,7 +1088,7 @@
 
     function copyPeriksaRad() {
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaRad/<?= $visit['trans_id']; ?>',
+            url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaRad/<?= @$visit['trans_id']; ?>',
             type: "GET",
             dataType: 'json',
             success: function(data) {
@@ -1058,7 +1100,7 @@
 
     function copyTerapi() {
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rekammedis/getTerapi/<?= $visit['visit_id']; ?>',
+            url: '<?php echo base_url(); ?>admin/rekammedis/getTerapi/<?= @$visit['visit_id']; ?>',
             type: "GET",
             dataType: 'json',
             success: function(data) {
@@ -1070,121 +1112,172 @@
 
     function displayTableAssessmentMedis(index) {
         $("#assessmentMedisHistoryBody").html("")
+        let session_id = visit.session_id
         $.each(pasienDiagnosaAll, function(key, value) {
             var pd = pasienDiagnosaAll[key]
-            var titlerj = '';
-            if (pd.class_room_id != '' && pd.class_room_id != null) {
-                titlerj = ' RAWAT INAP'
-            } else {
-                titlerj = ' RAWAT JALAN'
-            }
-            if (key == index) {
-                $("#assessmentMedisHistoryBody")
-                    .append($("<tr>").append($("<td colspan =\"5\">").html()))
-                    .append(`<tr>
-                                    <td rowspan="6"></td>
-                                    <td><b>${value.date_of_diagnosa}</b></td>
+
+            let rowColor = '';
+
+
+            if (pd.diag_cat == assessmentMedisType) {
+                var titlerj = '';
+                if (pd.class_room_id != '' && pd.class_room_id != null) {
+                    titlerj = ' RAWAT INAP'
+                } else {
+                    titlerj = ' RAWAT JALAN'
+                }
+                let linkcetak = '';
+                if (assessmentMedisType == 1) {
+                    titlerj = 'RESUME MEDIS' + titlerj
+                    linkcetak = 'resume_medis_post'
+                } else {
+                    linkcetak = 'rawat_jalan'
+                }
+                let examselectdetail = [];
+
+                $.each(examForassessmentDetail, function(key, value) {
+                    if (value?.body_id == pd?.pasien_diagnosa_id) {
+                        examselectdetail = value
+                        return false
+                    }
+                })
+
+                if (assessmentMedisType == 3)
+                    var pasienDiagnosaId = visit.session_id;
+                else
+                    var pasienDiagnosaId = visit.session_id + assessmentMedisType.toString();
+
+                if (pd.pasien_diagnosa_id == pasienDiagnosaId) {
+                    rowColor = 'table-warning'
+                } else {
+                    if (key % 2 !== 0) {
+                        rowColor = '';
+                    } else {
+                        rowColor = '';
+                    }
+                }
+                if (pd.pasien_diagnosa_id == pasienDiagnosaId) {
+                    $("#assessmentMedisHistoryBody")
+                        .append($(`<tr class="${rowColor}">`).append($("<td colspan =\"5\">").html()))
+                        .append(`<tr class="${rowColor}">
+                                    <td rowspan="6"><i class="fa fa-check"></i></td>
+                                    <td><b>${formatedDatetimeFlat(value?.date_of_diagnosa)}</b></td>
                                     <td class="text-end"><b>Anamnase: </b></td>
-                                    <td>${value.anamnase}</td>
+                                    <td>${value?.anamnase}</td>
                                     <td rowspan="6">
                                         <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
                                             <button type="button" class="btn btn-success" onclick="fillDataArm(${key})">Lihat</button>
-                                            <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>/${value.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
+                                            <button type="button" class="btn btn-light" onclick="openPopUpTabWithPost('<?= base_url() ?>admin/rm/medis/${linkcetak}/${value?.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
                                         </div>
                                     </td>
                                 </tr>
                             `)
-                    .append($("<tr>")
-                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                        .append($("<td class=\"text-end\">").html("<b>Aloanamnase: </b>"))
-                        .append($("<td>").html(value.alloanamnase))
-                    )
-                    .append($("<tr>")
-                        .append($("<td rowspan=\"4\">").append($("<b>").html(value.fullname)))
-                        .append($("<td class=\"text-end\">").html("<b>Vital Sign: </b>"))
-                        .append($("<td>").html(`BB: ${value.weight}; TB: ${value.height}; Suhu: ${value.temperature} (°C); Nadi: ${value.nadi}; T.Darah: ${value.tension_upper}/${value.tension_below}; Saturasi (SPO2%): ${value.saturasi}; Nafas/RR(/menit): ${value.nafas};`))
-                    )
-                    .append($("<tr>")
-                        .append($("<td class=\"text-end\">").html("<b>Diagnosa Klinis: </b>"))
-                        .append($("<td>").html(value.diagnosa_desc))
-                    )
-                    .append($("<tr>")
-                        // .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
-                        // .append($("<td>").html(value.standing_order))
-                    )
-                    .append($("<tr>")
-                        .append($("<td class=\"text-end\">").html("<b>Target/Sasaran Terapi: </b>"))
-                        .append($("<td>").html(value.instruction))
-                    )
-                // .append($("<tr>")
-                //     .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                //     .append($("<td>").append($("<b>").html(value.date_of_diagnosa)))
-                //     .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                //     .append($("<td>").html(value.alloanamnase))
-                //     .append($("<td>").html(value.alloanamnase))
-                //     .append($("<td>").html(value.pemeriksaan))
-                //     .append($("<td>").html(value.medical_problem))
-                //     .append($("<td>").html(value.teraphy_desc))
-                //     .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArm(' + key + ')">').html("Lihat")))
-                // )
-                $('html, body').animate({
-                    scrollTop: 0
-                }, 800);
-            } else {
-                $("#assessmentMedisHistoryBody")
-                    .append($("<tr>").append($("<td colspan =\"5\">").html()))
-                    .append(`<tr>
+                        .append($(`<tr class="${rowColor}">`)
+                            .append($("<td>").append($("<b>").html(value?.name_of_clinic)))
+                            .append($("<td class=\"text-end\">").html("<b>Aloanamnase: </b>"))
+                            .append($("<td>").html(value?.alloanamnase))
+                        )
+                        .append($(`<tr class="${rowColor}">`)
+                            .append($("<td rowspan=\"4\">").append($("<b>").html(value?.fullname)))
+                            .append($("<td class=\"text-end\">").html("<b>Vital Sign: </b>"))
+                            .append($("<td>").html(`BB: ${examselectdetail?.weight}; TB: ${examselectdetail?.height}; Suhu: ${examselectdetail?.temperature} (°C); Nadi: ${examselectdetail?.nadi}; T.Darah: ${examselectdetail?.tension_upper}/${examselectdetail?.tension_below}; Saturasi (SPO2%): ${examselectdetail?.saturasi}; Nafas/RR(/menit): ${examselectdetail?.nafas};`))
+                        )
+                        .append($(`<tr class="${rowColor}">`)
+                            .append($("<td class=\"text-end\">").html("<b>Diagnosa Klinis: </b>"))
+                            .append($("<td>").html(value?.diagnosa_desc))
+                        )
+
+
+                    $("#assessmentMedisHistoryBody")
+                        .append($(`<tr class="${rowColor}">`)
+                            .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
+                            .append($("<td>").html((value?.standing_order?.toString() ?? '').replace(/\n/g, "<br>")))
+                        )
+                        .append($(`<tr class="${rowColor}">`)
+                            .append($("<td class=\"text-end\">").html("<b>Target/Sasaran Terapi: </b>"))
+                            .append($("<td>").html((value?.instruction?.toString() ?? '').replace(/\n/g, "<br>")))
+                        )
+                    // if (value?.standing_order != null && value?.standing_order != '') {
+                    // } else {
+                    //     $("#assessmentMedisHistoryBody")
+                    //         .append($("<tr>")
+                    //             // .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
+                    //             // .append($("<td>").html(value?.standing_order))
+                    //         )
+                    //         .append($("<tr>")
+                    //             .append($("<td class=\"text-end\">").html("<b>Target/Sasaran Terapi: </b>"))
+                    //             .append($("<td>").html(value?.instruction))
+                    //         )
+                    // }
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 800);
+                } else {
+                    $("#assessmentMedisHistoryBody")
+                        .append($("<tr>").append($("<td colspan =\"5\">").html()))
+                        .append(`<tr>
                                     <td rowspan="6"></td>
-                                    <td><b>${value.date_of_diagnosa}</b></td>
+                                    <td><b>${formatedDatetimeFlat(value?.date_of_diagnosa)}</b></td>
                                     <td class="text-end"><b>Anamnase: </b></td>
-                                    <td>${value.anamnase}</td>
+                                    <td>${value?.anamnase}</td>
                                     <td rowspan="6">
                                         <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
                                             <button type="button" class="btn btn-success" onclick="fillDataArm(${key})">Lihat</button>
-                                            <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>/${value.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
+                                            <button type="button" class="btn btn-light" onclick="openPopUpTabWithPost('<?= base_url() ?>admin/rm/medis/${linkcetak}/visit/${value?.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
                                         </div>
                                     </td>
                                 </tr>
                             `)
-                    .append($("<tr>")
-                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                        .append($("<td class=\"text-end\">").html("<b>Aloanamnase: </b>"))
-                        .append($("<td>").html(value.alloanamnase))
-                    )
-                    .append($("<tr>")
-                        .append($("<td rowspan=\"4\">").append($("<b>").html(value.fullname)))
-                        .append($("<td class=\"text-end\">").html("<b>Vital Sign: </b>"))
-                        .append($("<td>").html(`BB: ${value.weight}; TB: ${value.height}; Suhu: ${value.temperature} (°C); Nadi: ${value.nadi}; T.Darah: ${value.tension_upper}/${value.tension_below}; Saturasi (SPO2%): ${value.saturasi}; Nafas/RR(/menit): ${value.nafas};`))
-                    )
-                    .append($("<tr>")
-                        .append($("<td class=\"text-end\">").html("<b>Diagnosa Klinis: </b>"))
-                        .append($("<td>").html(value.diagnosa_desc))
-                    )
-                    .append($("<tr>")
-                        // .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
-                        // .append($("<td>").html(value.standing_order))
-                    )
-                    .append($("<tr>")
-                        .append($("<td class=\"text-end\">").html("<b>Target/Sasaran Terapi: </b>"))
-                        .append($("<td>").html(value.instruction))
-                    )
+                        .append($("<tr>")
+                            .append($("<td>").append($("<b>").html(value?.name_of_clinic)))
+                            .append($("<td class=\"text-end\">").html("<b>Aloanamnase: </b>"))
+                            .append($("<td>").html(value?.alloanamnase))
+                        )
+                        .append($("<tr>")
+                            .append($("<td rowspan=\"4\">").append($("<b>").html(value?.fullname)))
+                            .append($("<td class=\"text-end\">").html("<b>Vital Sign: </b>"))
+                            .append($("<td>").html(`BB: ${value?.weight}; TB: ${value?.height}; Suhu: ${value?.temperature} (°C); Nadi: ${value?.nadi}; T.Darah: ${value?.tension_upper}/${value?.tension_below}; Saturasi (SPO2%): ${value?.saturasi}; Nafas/RR(/menit): ${value?.nafas};`))
+                        )
+                        .append($("<tr>")
+                            .append($("<td class=\"text-end\">").html("<b>Diagnosa Klinis: </b>"))
+                            .append($("<td>").html(value?.diagnosa_desc))
+                        )
+                        .append($("<tr>")
+                            .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
+                            .append($("<td>").html(value?.standing_order))
+                        )
+                        .append($("<tr>")
+                            .append($("<td class=\"text-end\">").html("<b>Target/Sasaran Terapi: </b>"))
+                            .append($("<td>").html(value?.instruction))
+                        )
+                }
             }
         })
     }
 </script>
 
 <script type="text/javascript">
-    $("#formsavearmbtn").on('click', (function(e) {
+    $("#formsavearmbtn").off().on('click', (function(e) {
         // alert("berhasil")
 
         saveCanvasData()
         // alert("berhasil1")
 
+        // if ($("#armweight").val() == '') {
+        //     alert("Berat Badan tidak boleh kosong!")
+        //     return false
+        // }
+        // if ($("#armheight").val() == '') {
+        //     alert("Tinggi Badan tidak boleh kosong!")
+        //     return false
+        // }
         if ($("#armbody_id").val() == '') {
-            if ($("#armweight").val() != '') {
-                $("#armbody_id").val('<?= $visit['session_id']; ?>')
-                // $("#armbody_id").val(get_bodyid())
-            }
+            if (assessmentMedisType == 3)
+                var pasienDiagnosaId = '<?= @$visit['session_id']; ?>';
+            else
+                var pasienDiagnosaId = '<?= @$visit['session_id']; ?>' + assessmentMedisType.toString();
+
+            $("#armbody_id").val(pasienDiagnosaId)
         }
         var data = [];
 
@@ -1235,15 +1328,15 @@
             success: function(data) {
                 $("#formsavearmbtn").html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
 
-                if (data.medis) {
-                    if (data.medis.status == "fail") {
+                if (data?.medis) {
+                    if (data?.medis?.status == "fail") {
                         var message = "";
-                        $.each(data.medis.error, function(index, value) {
+                        $.each(data?.medis?.error, function(index, value) {
                             message += value;
                         });
                         errorSwal(message);
                     } else {
-                        successSwal(data.medis.message);
+                        successSwal(data?.medis?.message);
 
                         // $("#formaddarm").find(".btn-save:visible").each(function() {
                         //     $(this).trigger("click")
@@ -1257,27 +1350,34 @@
 
                         var isNewDocument = 0
 
+
+
+                        let dataMedis = data?.medis?.data
+                        let dataExam = dataMedis?.exam
+
+                        delete dataMedis.exam
+
+
+
                         $.each(pasienDiagnosaAll, function(key, value) {
-                            if (value.pasien_diagnosa_id == data.medis.data.pasien_diagnosa_id) {
-                                pasienDiagnosaAll[key] = data.medis.data
+                            if (value?.pasien_diagnosa_id == dataMedis?.pasien_diagnosa_id) {
+                                pasienDiagnosaAll[key] = dataMedis
                                 isNewDocument = 1
                             }
                         })
-
-                        let dataExam = data.medis.data.exam
                         if (isNewDocument != 1)
-                            pasienDiagnosaAll.push(formDataObject)
-                        displayTableAssessmentMedis(pasienDiagnosaAll.length - 1)
+                            pasienDiagnosaAll.push(dataMedis)
 
                         $.each(examForassessmentDetail, function(key, value) {
-                            if (value.body_id == formDataObject.body_id) {
-                                examForassessmentDetail[key] = formDataObject
+                            if (value?.body_id == dataExam?.body_id) {
+                                examForassessmentDetail[key] = dataExam
                                 isNewDocument = 1
                             }
                         })
                         if (isNewDocument != 1)
-                            examForassessmentDetail.push(formDataObject)
+                            examForassessmentDetail.push(dataMedis)
 
+                        displayTableAssessmentMedis(pasienDiagnosaAll.length - 1)
                         // if (isNewDocument != 1) {
                         //     let examNew = Array();
                         //     examNew.push(formDataObject)
@@ -1287,12 +1387,15 @@
                         //     examForassessment = examNew
                         // }
 
-                        riwayatAll = data.medis.data.pasienHistory
+                        riwayatAll = data?.medis?.data?.pasienHistory
 
-                        lokalisAll = data.medis.data.lokalis
+                        lokalisAll = data?.medis?.data?.lokalis
 
-                        pasienVisitation['patientCategoryId'] = patientCategoryId;
-                        window.history.pushState({}, "", btoa(JSON.stringify(pasienVisitation)));
+                        // window.history.pushState({}, "", btoa(JSON.stringify(pasienVisitation)));
+                        if (visit.clinic_id == 'P012') {
+                            visit.employee_id = $("#armemployee_id").val()
+                            visit.patient_category_id = data?.medis?.data?.patient_category_id;
+                        }
                     }
                 }
                 if (data.gcs) {
@@ -1375,30 +1478,87 @@
             complete: function() {}
         });
     }));
-    $("#formeditarm").on("click", function() {
+    $("#formeditarm").off().on("click", function() {
         enableARM()
     })
-    $("#formaddarmbtn").on("click", function() {
+    $("#formdeletearm").off().on("click", function() {
+        // deleteById($("#armpasien_diagnosa_id").val(), 2, (res) => {
+        //     if (res.response) {
+        //         deleteById($("#armpasien_diagnosa_id").val(), 3, (res) => {
+        //             if (res.response) {} else {}
+        //             $("#armModal").modal("hide")
+        //             getAssessmentMedis()
+        //         })
+
+        //         successSwal('Data berhasil Dihapus.');
+        //     } else {
+        //         errorSwal("Gagal Di hapus")
+        //     }
+        // })
+        postData({
+                pasien_diagnosa_id: $("#armpasien_diagnosa_id").val(),
+            },
+            'admin/rm/assessmentmedis/duplicateAssessmentMedis', (res) => {
+                if (res?.response == 'sukses') {
+                    $("#armModal").modal("hide")
+                    getAssessmentMedis(assessmentMedisType)
+                } else
+                    errorSwal(res?.message)
+            })
+    })
+    $("#formdeleteonlyarm").off().on("click", function() {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success ms-2",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+            title: "Apa anda yakin?",
+            text: "Anda tidak akan dapat mengembalikannya!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, Hapus!",
+            cancelButtonText: "Batal!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                postData({
+                        pasien_diagnosa_id: $("#armpasien_diagnosa_id").val(),
+                    },
+                    'admin/rm/assessmentmedis/deleteAssessmentMedis', (res) => {
+                        if (res?.response == 'sukses') {
+                            $("#armModal").modal("hide")
+                            getAssessmentMedis(assessmentMedisType)
+                        } else
+                            errorSwal(res?.message)
+                    })
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                swalWithBootstrapButtons.fire({
+                    title: "Dibatalkan",
+                    text: "File Anda aman :)",
+                    icon: "error"
+                });
+            }
+        });
+    })
+    $("#formaddarmbtn").off().on("click", function() {
         initialAddArm()
     })
-    $("#formcetakarm").on("click", function() {
-        // var visit = <?= json_encode($visit); ?>;
-        // var encodedVisit = btoa(JSON.stringify(visit));
+    $("#formcetakarm").off().on("click", function() {
         var title = $("#armTitle").html()
         if ($("#armdiag_cat").val() == 1) {
-            var url = "<?= base_url('admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
+            var url = "<?= base_url('admin/rm/medis/resume_medis/' . base64_encode(json_encode(@$visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
         } else {
-            var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
+            var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode(@$visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
         }
-
-
-        openPopUpTab(url)
-
+        openPopUpTab(url, visit)
     })
 </script>
 <script type="text/javascript">
-    const signarm = () => {
-        addSignUser("formaddarm", "arm", "armpasien_diagnosa_id", "formsavearmbtn", 2, 1, 1, $("#armTitle").html())
+    const signarm = (user_type) => {
+        addSignUser("formaddarm", "arm", "armpasien_diagnosa_id", "formsavearmbtn", 2, user_type, 1, $("#armTitle").html(), 'valid_user')
     }
 
     function signRM() {
@@ -1482,6 +1642,33 @@
             $("#proc_namemedis" + index).val(diagname)
         }
     }
+
+    function copyGcsResume(flag, index, document_id, container, isaddbutton = true) {
+        $("#" + container).html("")
+        postData({
+            'visit_id': visit.visit_id,
+            'nomor': nomor,
+            'body_id': $("#" + document_id)?.val()
+        }, 'admin/rm/assessmentmedis/copyGcsResume', (res) => {
+            gcsAll = res.gcs
+            // gcsDetailAll = data.gcsDetail
+
+            $.each(gcsAll, function(key, value) {
+                if (value.document_id == $("#arpbody_id").val()) {
+                    $("#bodyGcsPerawat").html("")
+                    addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
+                }
+                if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                    $("#bodyGcsMedis").html("")
+                    addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis", false)
+                }
+                if (value.document_id == $("#acpptbody_id").val()) {
+                    $("#bodyGcsCppt").html("")
+                    addGcs(0, key, "acpptbody_id", "bodyGcsCppt", false)
+                }
+            })
+        })
+    }
 </script>
 
 
@@ -1521,69 +1708,108 @@
 </script>
 <script>
     function appendAnamnesisMedis(accordionId) {
-        $("#" + accordionId).append(
-            '<div class="accordion-item">' +
-            '<h2 class="accordion-header" id="headingSubyektif">' +
-            '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubyektif" aria-expanded="true" aria-controls="collapseSubyektif"><b>ANAMNESIS</b></button>' +
-            '</h2>' +
-            '<div id="collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="headingSubyektif" >' +
-            '<div class="accordion-body text-muted">' +
-            '<div class="row">' +
-            '<div class="col-sm-6 col-xs-12">' +
-            '<div class="mb-3">' +
-            '<div class="form-group">' +
-            '<label for="armanamnase">Autoanamnesis</label>' +
-            '<textarea id="armanamnase" name="anamnase" rows="2" class="form-control " autocomplete="off"></textarea>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div class="col-sm-6 col-xs-12">' +
-            '<div class="mb-3">' +
-            '<div class="form-group">' +
-            '<label for="armalloanamnase">Alloanamnesis</label>' +
-            '<textarea id="armalloanamnase" name="alloanamnase" rows="2" class="form-control " autocomplete="off"></textarea>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div class="col-sm-12 col-xs-12">' +
-            '<div class="mb-3">' +
-            '<div class="form-group">' +
-            '<label for="armdescription">Riwayat Penyakit Sekarang</label>' +
-            '<textarea id="armdescription" name="description" rows="4" class="form-control " autocomplete="off"></textarea>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
+        $("#" + accordionId).append(`
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSubyektif">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubyektif" aria-expanded="true" aria-controls="collapseSubyektif"><b>ANAMNESIS</b></button>
+                </h2>
+                <div id="collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="headingSubyektif">
+                    <div class="accordion-body text-muted">
+                        <div class="row">
+                            <h4>Anamnase</h4>
+                            <hr>
+                            <div class="col-sm-12 col-xs-12">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label for="armdescription">Keluhan Utama</label>
+                                        <textarea id="armdescription" name="description" rows="4" class="form-control " autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h4>Riwayat Penyakit Sekarang</h4>
+                            <hr>
+                            <div class="col-sm-6 col-xs-12">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label for="armanamnase">Autoanamnesis</label>
+                                        <textarea id="armanamnase" name="anamnase" rows="8" class="form-control " autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xs-12">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label for="armalloanamnase">Alloanamnesis</label>
+                                        <textarea id="armalloanamnase" name="alloanamnase" rows="8" class="form-control " autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4>Riwayat Penyakit Dahulu</h4>
+                            <hr>
+                            <?php foreach ($aValue as $key => $value): ?>
+                                <?php if ($value['p_type'] == 'GEN0009'): ?>
+                                    <?php if ($value['value_score'] == '4' && in_array($value['value_id'], ['G0090101', 'G0090102'])): ?>
+                                        <div class="col-sm-6 col-xs-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label for="arm<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
+                                                    <textarea id="arm<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control" autocomplete="off"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php elseif ($value['value_id'] == 'G0090202'): ?>
+                                        <div class="col-sm-12 col-xs-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label for="arm<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
+                                                    <textarea id="arm<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control" autocomplete="off"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
 
-            <?php foreach ($aValue as $key => $value) {
-                if ($value['p_type'] == 'GEN0009') {
-                    if ($value['value_score'] == '4' && in_array($value['value_id'], ['G0090101', 'G0090102'])) {
-            ?> '<div class="col-sm-6 col-xs-12">' +
-                        '<div class="mb-3">' +
-                        '<div class="form-group">' +
-                        '<label for="arm<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>' +
-                        '<textarea id="arm<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                    <?php
-                    } else if ($value['value_id'] == 'G0090202') {
-                    ?> '<div class="col-sm-12 col-xs-12">' +
-                        '<div class="mb-3">' +
-                        '<div class="form-group">' +
-                        '<label for="arm<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>' +
-                        '<textarea id="arm<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                    <?php
-                    }
-                    ?> <?php
-                    }
-                } ?> '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>'
-        )
+
+        // '<div class="accordion-item">' +
+        // '<h2 class="accordion-header" id="headingSubyektif">' +
+        // '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubyektif" aria-expanded="true" aria-controls="collapseSubyektif"><b>ANAMNESIS</b></button>' +
+        // '</h2>' +
+        // '<div id="collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="headingSubyektif" >' +
+        // '<div class="accordion-body text-muted">' +
+        // '<div class="row">' +
+        // '<div class="col-sm-6 col-xs-12">' +
+        // '<div class="mb-3">' +
+        // '<div class="form-group">' +
+        // '<label for="armanamnase">Autoanamnesis</label>' +
+        // '<textarea id="armanamnase" name="anamnase" rows="2" class="form-control " autocomplete="off"></textarea>' +
+        // '</div>' +
+        // '</div>' +
+        // '</div>' +
+        // '<div class="col-sm-6 col-xs-12">' +
+        // '<div class="mb-3">' +
+        // '<div class="form-group">' +
+        // '<label for="armalloanamnase">Alloanamnesis</label>' +
+        // '<textarea id="armalloanamnase" name="alloanamnase" rows="2" class="form-control " autocomplete="off"></textarea>' +
+        // '</div>' +
+        // '</div>' +
+        // '</div>' +
+        // '<div class="col-sm-12 col-xs-12">' +
+        // '<div class="mb-3">' +
+        // '<div class="form-group">' +
+        // '<label for="armdescription">Riwayat Penyakit Sekarang</label>' +
+        // '<textarea id="armdescription" name="description" rows="4" class="form-control " autocomplete="off"></textarea>' +
+        // '</div>' +
+        // '</div>' +
+        // '</div>' +
+        // )
     }
 
     function appendVitalSignMedis(accordionId) {
@@ -1594,7 +1820,7 @@
             '</h2>' +
             '<div id="armcollapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="armheadingVitalSign" >' +
             '<div class="accordion-body text-muted">' +
-            '<h5>Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></h5>' +
+            '<h5>Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyLastTTV(\'arm\')">(copy)</a></h5>' +
             `<div id="armVitalSignContent" class="row mb-4">
                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                     <div class="form-group">
@@ -1708,8 +1934,14 @@
                     </div>
                 </div>
                 <!--==endofnew -->
-                <div class="col-sm-12 mt-2">
-                    <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="armpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group"><label>Keadaan Umum</label>
+                        <select class="form-select" name="pemeriksaan" id="armpemeriksaan">
+                            <option value="0">Baik</option>
+                            <option value="1">Sedang</option>
+                            <option value="2">Buruk</option>
+                        </select>
+                    </div>
                 </div>
                 <!-- <div class="col-sm-12">
                     <div class="mb-4">
@@ -1724,9 +1956,9 @@
             '</div>'
         )
 
-        var ageYear = <?= $visit['ageyear']; ?>;
-        var ageMonth = <?= $visit['agemonth']; ?>;
-        var ageDay = <?= $visit['ageday']; ?>;
+        var ageYear = <?= @$visit['ageyear']; ?>;
+        var ageMonth = <?= @$visit['agemonth']; ?>;
+        var ageDay = <?= @$visit['ageday']; ?>;
 
         if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
             $("#armvs_status_id").prop("selectedIndex", 3);
@@ -1735,11 +1967,50 @@
         } else {
             $("#armvs_status_id").prop("selectedIndex", 2);
         }
-        <?php if ($visit['specialist_type_id'] == '1.05') {
+        <?php if (@$visit['specialist_type_id'] == '1.05') {
         ?>
             $("#armvs_status_id").prop("selectedIndex", 4)
         <?php
         } ?>
+        var initialexamdetail = getLastObject(sortAscending(examForassessmentDetail, 'examination_date'))
+        if (initialexamdetail)
+            fillExaminationDetail(initialexamdetail, 'arm')
+        $("#armdweight").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdheight").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdtemperature").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdnadi").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdtension_upper").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdtension_below").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdsaturasi").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdnafas").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#armdarm_diameter").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $.each(examForassessmentDetail, function(key, value) {
+            if (value?.body_id == pasienDiagnosa?.pasien_diagnosa_id) {
+                examselectdetail = value
+                setTimeout(() => {
+                    fillExaminationDetail(examselectdetail, 'arm')
+                }, 1000);
+                return false
+            }
+        })
     }
 
     function appendRiwayatMedis(accordionId) {
@@ -1800,9 +2071,9 @@
     }
 
     function appendPemeriksaanFisikMedis(accordionId) {
-        var ageYear = <?= $visit['ageyear']; ?>;
-        var ageMonth = <?= $visit['agemonth']; ?>;
-        var ageDay = <?= $visit['ageday']; ?>;
+        var ageYear = <?= @$visit['ageyear']; ?>;
+        var ageMonth = <?= @$visit['agemonth']; ?>;
+        var ageDay = <?= @$visit['ageday']; ?>;
 
         if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
             $("#avtvs_status_id").prop("selectedIndex", 3);
@@ -1910,15 +2181,11 @@
         // $("#" + accordionId).append(accordionContent);
     }
 
-    function appendAccordionItem(accordionId, accordionContent) {
-        $("#" + accordionId).append(accordionContent);
-    }
-
     var stringdiagnosa = `<div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="mb-4">
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
-                                        <table id="tablediagnosaMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                        <table id="tablediagnosaMedis" class="table" data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
                                                     <th class="text-center" style="width: 40%">Diagnosa</th>
@@ -1995,7 +2262,7 @@
                         <div class="col-sm-6 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armmedical_problem">Permasalahan Medis</label>
+                                    <label for="armmedical_problem">Indikasi Rawat Inap</label>
                                     <textarea id="armmedical_problem" name="medical_problem" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
@@ -2011,16 +2278,27 @@
                         <div class="col-sm-12 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armdiagnosa_desc">Diagnosa Klinis</label>
-                                    <textarea id="armdiagnosa_desc" name="" rows="2" class="form-control " autocomplete="off"></textarea>
+                                    <label for="armdiagnosa_desc">Diagnosa Masuk</label>
+                                    <textarea id="armdiagnosa_desc" name="diagnosa_desc" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armdiagnosa_desc_pulang">Diagnosa Pulang</label>
-                                    <textarea id="armdiagnosa_desc" name="diagnosa_desc" rows="2" class="form-control " autocomplete="off"></textarea>
+                                    <label for="armdiagnosa_desc_discharge">Diagnosa Pulang</label>
+                                    <textarea id="armdiagnosa_desc_discharge" name="diagnosa_desc_discharge" rows="2" class="form-control " autocomplete="off"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="mb-3">
+                                <div class="form-group">
+                                    <label for="armprocedure_desc">Tindakan Bedah</label>
+                                    <div>
+                                        <ul id="armprocedure_desc" class="list-group list-group-numbered">
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2034,41 +2312,199 @@
     }
 
     function appendProsedurAccordion(accordionId) {
-        var accordionContent = `
-        <div id="armProcedures_Group" class="accordion-item">
-            <h2 class="accordion-header" id="headingProsedur">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProsedur" aria-expanded="true" aria-controls="collapseProsedur">
-                    <b>PLANNING (P)</b>
-                </button>
-            </h2>
-            <div id="collapseProsedur" class="accordion-collapse collapse show" aria-labelledby="headingProsedur" >
-                <div class="accordion-body text-muted">
-                    <div class="row mb-2">
-                        <div class="col-sm-12 col-xs-12 d-none">
-                            <div class="mb-3">
-                                <div class="form-group">
-                                    <label for="armstanding_order" class="mb-4 badge bg-primary">Standing Order </label>
-                                    <textarea id="armstanding_order" name="standing_order" rows="8" class="form-control " autocomplete="off"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-xs-12">
-                            <div class="mb-3">
-                                <div class="form-group">
-                                    <label for="arminstruction" class="mb-4 badge bg-primary">Target/Sasaran Terapi </label>
-                                    <textarea id="arminstruction" name="instruction" rows="8" class="form-control " autocomplete="off"></textarea>
+        if (pasienDiagnosa?.isrj == 0 || visit?.isrj == 0 || visit?.clinic_id == 'P012') {
+            var accordionContent = `
+                    <div id="armProcedures_Group" class="accordion-item">
+                        <h2 class="accordion-header" id="headingProsedur">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProsedur" aria-expanded="true" aria-controls="collapseProsedur">
+                                <b>PLANNING (P)</b>
+                            </button>
+                        </h2>
+                        <div id="collapseProsedur" class="accordion-collapse collapse show" aria-labelledby="headingProsedur" >
+                            <div class="accordion-body text-muted">
+                                <div class="row mb-2">
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="armstanding_order" class="">Standing Order </label>
+                                                <textarea id="armstanding_order" name="standing_order" rows="8" class="form-control " autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="arminstruction" class="">Target/Sasaran Terapi </label>
+                                                <textarea id="arminstruction" name="instruction" rows="8" class="form-control " autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    `;
+                `;
+        } else {
+            var accordionContent = `
+                    <div id="armProcedures_Group" class="accordion-item">
+                        <h2 class="accordion-header" id="headingProsedur">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProsedur" aria-expanded="true" aria-controls="collapseProsedur">
+                                <b>PLANNING (P)</b>
+                            </button>
+                        </h2>
+                        <div id="collapseProsedur" class="accordion-collapse collapse show" aria-labelledby="headingProsedur" >
+                            <div class="accordion-body text-muted">
+                                <div class="row mb-2">
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="armstanding_order" class="">Standing Order </label>
+                                                <textarea id="armstanding_order" name="standing_order" rows="2" class="form-control " autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="arminstruction" class="">Target/Sasaran Terapi </label>
+                                                <textarea id="arminstruction" name="instruction" rows="8" class="form-control " autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
         appendAccordionItem(accordionId, accordionContent);
 
-        initializeQuillEditorsById("armstanding_order")
-        initializeQuillEditorsById("arminstruction")
+        // initializeQuillEditorsById("armstanding_order")
+        // initializeQuillEditorsById("arminstruction")
+    }
+
+    function appendProsedurResumeAccordion(accordionId) {
+        if (pasienDiagnosa?.isrj == 0 || visit?.isrj == 0 || visit?.clinic_id == 'P012') {
+            var accordionContent = `
+                    <div id="armProcedures_Group" class="accordion-item">
+                        <h2 class="accordion-header" id="headingProsedur">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProsedur" aria-expanded="true" aria-controls="collapseProsedur">
+                                <b></b>
+                            </button>
+                        </h2>
+                        <div id="collapseProsedur" class="accordion-collapse collapse show" aria-labelledby="headingProsedur" >
+                            <div class="accordion-body text-muted">
+                                <div class="row mb-2">
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="arminstruction" class="">Tindakan Non Bedah</label>
+                                                <div>
+                                                    <ul id="arminstruction" class="list-group list-group-numbered">
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="" class="">Laboratorium </label>
+                                                <div>
+                                                    <p><i>---Hasil Lab muncul pada saat cetak---</i></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="" class="">Radiologi </label>
+                                                <div>
+                                                    <p><i>---Hasil Radiologi muncul pada saat cetak---</i></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="" class="">Farmakoterapi </label>
+                                                <div>
+                                                    <p><i>---Farmakoterapi muncul pada saat cetak---</i></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                        <div class="form-group">
+                                            <label>Cara Pulang</label>
+                                            <select class="form-select" name="discharge_way" id="armdischarge_way">
+                                                <option value="1">Atas Persetujuan </option>
+                                                <option value="2">Atas Permintaan Sendiri</option>
+                                                <option value="3">Rujuk</option>
+                                                <option value="4">Rujuk Balik</option>
+                                                <option value="5">Melarikan Diri</option>
+                                                <option value="6">Meninggal Dunia</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                        <div class="form-group">
+                                            <label>Keadaan Pulang</label>
+                                            <select class="form-select" name="discharge_condition" id="armdischarge_condition">
+                                                <option value="1">Sembuh/Sehat</option>
+                                                <option value="2">Membaik</option>
+                                                <option value="3">Belum Sembuh</option>
+                                                <option value="4">MENINGGAL < 48 JAM</option>
+                                                <option value="4">MENINGGAL > 48 JAM</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                `;
+        } else {
+            var accordionContent = `
+                    <div id="armProcedures_Group" class="accordion-item">
+                        <h2 class="accordion-header" id="headingProsedur">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProsedur" aria-expanded="true" aria-controls="collapseProsedur">
+                                <b>PLANNING (P)</b>
+                            </button>
+                        </h2>
+                        <div id="collapseProsedur" class="accordion-collapse collapse show" aria-labelledby="headingProsedur" >
+                            <div class="accordion-body text-muted">
+                                <div class="row mb-2">
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="armstanding_order" class="">Standing Order </label>
+                                                <textarea id="armstanding_order" name="standing_order" rows="2" class="form-control " autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="arminstruction" class="">Target/Sasaran Terapi </label>
+                                                <textarea id="arminstruction" name="instruction" rows="8" class="form-control " autocomplete="off"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+        appendAccordionItem(accordionId, accordionContent);
+
+        // initializeQuillEditorsById("armstanding_order")
+        // initializeQuillEditorsById("arminstruction")
     }
 
 
@@ -2077,7 +2513,7 @@
         canvasAssessment = []
         var specialistLokalis = '';
         if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
-            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+            specialistLokalis = '<?= @$visit['specialist_type_id']; ?>'
         } else {
             specialistLokalis = pasienDiagnosa.specialist_type_id
         }
@@ -2092,6 +2528,7 @@
             <div id="collapseLokalis" class="accordion-collapse collapse show" aria-labelledby="headingLokalis" >
                 <div class="accordion-body text-muted">
                     <div class="row mb-2">`
+
         $.each(aparameter, function(key, value) {
             if (value.p_type == 'GEN0002') {
                 $.each(avalue, function(key1, value1) {
@@ -2130,15 +2567,6 @@
                                     canvas: `canvas` + value1.p_type + value1.parameter_id + value1.value_id,
                                     lokalis: 'lokalis' + value1.value_id
                                 })
-                                console.log({
-                                    p_type: value1.p_type,
-                                    parameter_id: value1.parameter_id,
-                                    value_id: value1.value_id,
-                                    value_info: value1.value_info,
-                                    canvas: `canvas` + value1.p_type + value1.parameter_id + value1.value_id,
-                                    lokalis: 'lokalis' + value1.value_id,
-                                    specialist_type_id: specialistLokalis
-                                })
                             }
                         })
                     }
@@ -2153,7 +2581,7 @@
         appendAccordionItem(accordionId, accordionContent);
 
         $("#armLokalis_Group").find("textarea").each(function() {
-            initializeQuillEditorsById($(this).attr("id"))
+            // initializeQuillEditorsById($(this).attr("id"))
         })
 
         generateLokalis()
@@ -2163,11 +2591,11 @@
         var accordionContent = `
         <div id="arpGcsMedis_Group" class="accordion-item">
             <h2 class="accordion-header" id="headingGcsMedis">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGcsMedis" aria-expanded="true" aria-controls="collapseGcs">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGcsMedis" aria-expanded="true" aria-controls="collapseGcs">
                     <b>GLASGOW COMA SCALE (GCS)</b>
                 </button>
             </h2>
-            <div id="collapseGcsMedis" class="accordion-collapse collapse" aria-labelledby="headingGcsMedis"  style="">
+            <div id="collapseGcsMedis" class="accordion-collapse collapse show" aria-labelledby="headingGcsMedis"  style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
@@ -2464,11 +2892,11 @@
         var accordionContent = `
             <div id="arpTriage_Group" class="accordion-item">
                 <h2 class="accordion-header" id="triaseMedis">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsetriaseMedis" aria-expanded="true" aria-controls="collapsetriaseMedis">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsetriaseMedis" aria-expanded="true" aria-controls="collapsetriaseMedis">
                         <b>TRIASE</b>
                     </button>
                 </h2>
-                <div id="collapsetriaseMedis" class="accordion-collapse collapse" aria-labelledby="triaseMedis"  style="">
+                <div id="collapsetriaseMedis" class="accordion-collapse collapse show" aria-labelledby="triaseMedis"  style="">
                     <div class="accordion-body text-muted">
                         <div class="row">
                             <div class="col-md-12">
@@ -2495,11 +2923,11 @@
         var accordionContent = `
             <div id="arpEdukasiForm_Group" class="accordion-item">
                 <h2 class="accordion-header" id="headingEducationForm">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="true" aria-controls="collapseEducationForm">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="true" aria-controls="collapseEducationForm">
                         <b>FORMULIR PEMBERIAN EDUKASI</b>
                     </button>
                 </h2>
-                <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm"  style="">
+                <div id="collapseEducationForm" class="accordion-collapse collapse show" aria-labelledby="headingEducationForm"  style="">
                     <div class="accordion-body text-muted">
                         <div class="row">
                             <div class="col-md-12">
@@ -2641,59 +3069,59 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020206" name="lokalisG0020206" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020206" name="lokalisG0020206" class="form-control" value=""></td>
                                                         <td><b>Visus</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020228" name="lokalisG0020228" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020228" name="lokalisG0020228" class="form-control" value=""></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020207" name="lokalisG0020207" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020207" name="lokalisG0020207" class="form-control" value=""></td>
                                                         <td><b>Koreksi</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020229" name="lokalisG0020229" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020229" name="lokalisG0020229" class="form-control" value=""></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020208" name="lokalisG0020208" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020208" name="lokalisG0020208" class="form-control" value="dbn"></td>
                                                         <td><b>Skiaskopi</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020230" name="lokalisG0020230" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020230" name="lokalisG0020230" class="form-control" value="dbn"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020209" name="lokalisG0020209" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020209" name="lokalisG0020209" class="form-control" value="gerak BM bebas ke segala arah"></td>
                                                         <td><b>Bulbus Oculi</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020231" name="lokalisG0020231" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020231" name="lokalisG0020231" class="form-control" value="gerak BM bebas ke segala arah"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020210" name="lokalisG0020210" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020210" name="lokalisG0020210" class="form-control" value="tdk ada"></td>
                                                         <td><b>Parese Paralyse</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020232" name="lokalisG0020232" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020232" name="lokalisG0020232" class="form-control" value="tdk ada"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020211" name="lokalisG0020211" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020211" name="lokalisG0020211" class="form-control" value="dbn"></td>
                                                         <td><b>Supercilia</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020233" name="lokalisG0020233" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020233" name="lokalisG0020233" class="form-control" value="dbn"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020212" name="lokalisG0020212" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020212" name="lokalisG0020212" class="form-control" value="dbn"></td>
                                                         <td><b>Palpebra Superior</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020234" name="lokalisG0020234" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020234" name="lokalisG0020234" class="form-control" value="dbn"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020213" name="lokalisG0020213" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020213" name="lokalisG0020213" class="form-control" value="dbn"></td>
                                                         <td><b>Palpebra Inferior</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020235" name="lokalisG0020235" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020235" name="lokalisG0020235" class="form-control" value="dbn"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020214" name="lokalisG0020214" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020214" name="lokalisG0020214" class="form-control" value="hiperemis-"></td>
                                                         <td><b>Conjunctiva Palpebralis</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020236" name="lokalisG0020236" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020236" name="lokalisG0020236" class="form-control" value="hiperemis-"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020215" name="lokalisG0020215" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020215" name="lokalisG0020215" class="form-control" value="hiperemis-"></td>
                                                         <td><b>Conjunctiva Fornices</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020237" name="lokalisG0020237" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020237" name="lokalisG0020237" class="form-control" value="hiperemis-"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020216" name="lokalisG0020216" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020216" name="lokalisG0020216" class="form-control" value="hiperemis-"></td>
                                                         <td><b>Conjunctiva Bulbi</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020238" name="lokalisG0020238" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020238" name="lokalisG0020238" class="form-control" value="hiperemis-"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -2709,59 +3137,59 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020217" name="lokalisG0020217" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020217" name="lokalisG0020217" class="form-control" value="dbn"></td>
                                                         <td><b>Sclera</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020239" name="lokalisG0020239" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020239" name="lokalisG0020239" class="form-control" value="dbn"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020218" name="lokalisG0020218" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020218" name="lokalisG0020218" class="form-control" value="jernih"></td>
                                                         <td><b>Cornea</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020240" name="lokalisG0020240" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020240" name="lokalisG0020240" class="form-control" value="jernih"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020219" name="lokalisG0020219" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020219" name="lokalisG0020219" class="form-control" value="cukup"></td>
                                                         <td><b>Camera Oculi Anterior</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020241" name="lokalisG0020241" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020241" name="lokalisG0020241" class="form-control" value="cukup"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020220" name="lokalisG0020220" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020220" name="lokalisG0020220" class="form-control" value="kripte+sinekia-"></td>
                                                         <td><b>Iris</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020242" name="lokalisG0020242" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020242" name="lokalisG0020242" class="form-control" value="kripte+sinekia-"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020221" name="lokalisG0020221" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020221" name="lokalisG0020221" class="form-control" value="b,c,r,3mm,RP+N"></td>
                                                         <td><b>Pupil</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020243" name="lokalisG0020243" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020243" name="lokalisG0020243" class="form-control" value="b,c,r,3mm,RP+N"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020222" name="lokalisG0020222" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020222" name="lokalisG0020222" class="form-control" value="jernih"></td>
                                                         <td><b>Lensa</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020244" name="lokalisG0020244" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020244" name="lokalisG0020244" class="form-control" value="jernih"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020223" name="lokalisG0020223" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020223" name="lokalisG0020223" class="form-control" value="dbn"></td>
                                                         <td><b>Corpus Vitreous</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020245" name="lokalisG0020245" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020245" name="lokalisG0020245" class="form-control" value="dbn"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020224" name="lokalisG0020224" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020224" name="lokalisG0020224" class="form-control" value="+cemerlang"></td>
                                                         <td><b>Fundus Reflek</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020246" name="lokalisG0020246" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020246" name="lokalisG0020246" class="form-control" value="+cemerlang"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020225" name="lokalisG0020225" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020225" name="lokalisG0020225" class="form-control" value="T(dig)N"></td>
                                                         <td><b>Tensio Oculi</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020247" name="lokalisG0020247" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020247" name="lokalisG0020247" class="form-control" value="T(dig)N"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020226" name="lokalisG0020226" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020226" name="lokalisG0020226" class="form-control" value="dbn"></td>
                                                         <td><b>Sistem Canalis Lacrimaris</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020248" name="lokalisG0020248" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020248" name="lokalisG0020248" class="form-control" value="dbn"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><input type="text" id="armGEN000202G0020227" name="lokalisG0020227" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020227" name="lokalisG0020227" class="form-control" value="-"></td>
                                                         <td><b>Lain-lain</b></td>
-                                                        <td><input type="text" id="armGEN000202G0020249" name="lokalisG0020249" class="form-control"></td>
+                                                        <td><input type="text" id="armGEN000202G0020249" name="lokalisG0020249" class="form-control" value="-"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -2783,11 +3211,11 @@
         var accordionContent = `
         <div id="arpPainMonitoring_Group" class="accordion-item">
             <h2 class="accordion-header" id="painMonitoringMedis">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsepainMonitoringMedis" aria-expanded="true" aria-controls="collapsepainMonitoringMedis">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsepainMonitoringMedis" aria-expanded="true" aria-controls="collapsepainMonitoringMedis">
                     <b>MONITORING SKALA NYERI</b>
                 </button>
             </h2>
-            <div id="collapsepainMonitoringMedis" class="accordion-collapse collapse" aria-labelledby="painMonitoringMedis"  style="">
+            <div id="collapsepainMonitoringMedis" class="accordion-collapse collapse show" aria-labelledby="painMonitoringMedis"  style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
@@ -2811,11 +3239,11 @@
         var accordionContent = `
         <div id="arpdermatologi_Group" class="accordion-item">
             <h2 class="accordion-header" id="dermatologiMedis">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedermatologiMedis" aria-expanded="true" aria-controls="collapsedermatologiMedis">
-                    <b>DERMATOVENEROLOGI</b>
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedermatologiMedis" aria-expanded="true" aria-controls="collapsedermatologiMedis">
+                    <b>PEMERIKSAAN FISIK DERMATOVENEROLOGI</b>
                 </button>
             </h2>
-            <div id="collapsedermatologiMedis" class="accordion-collapse collapse" aria-labelledby="dermatologiMedis"  style="">
+            <div id="collapsedermatologiMedis" class="accordion-collapse collapse show" aria-labelledby="dermatologiMedis"  style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
@@ -2823,11 +3251,11 @@
                                 <div id="contentAssessmen_Dermatovenerologi_Hide">
                                 </div>
                                 <div id="contentAssessmen_Dermatovenerologi_Show"></div>
-                                <div class="row">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                        id="close-pemeriksaanKulit-modal">Keluar</button>
-                                    <button type="button" class="btn btn-primary" id="btn-action-dermatovenerologi">Simpan</button>
+                                <div class="panel-footer text-end mb-4">
+                                    <button type="button" class="btn btn-primary btn-save" id="btn-action-dermatovenerologi" style="margin-right: 10px;">Simpan</button>
+                                    <button type="button" class="btn btn-secondary btn-edit"  id="close-pemeriksaanKulit-modal" style="margin-right: 10px">Edit</button>
                                 </div>
+                                
                             </form>
                         </div>
                     </div>
@@ -2836,7 +3264,6 @@
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
-        let visit = <?= json_encode($visit) ?>;
 
 
         templateDermatovenerologi({
@@ -2848,11 +3275,11 @@
         var accordionContent = `
         <div id="arpdermatologi_Group" class="accordion-item">
             <h2 class="accordion-header" id="dermatologiMedis">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedermatologiMedis" aria-expanded="true" aria-controls="collapsedermatologiMedis">
-                    <b>NEUROLOGI</b>
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedermatologiMedis" aria-expanded="true" aria-controls="collapsedermatologiMedis">
+                    <b>Pemeriksaan Fisik</b>
                 </button>
             </h2>
-            <div id="collapsedermatologiMedis" class="accordion-collapse collapse" aria-labelledby="dermatologiMedis"  style="">
+            <div id="collapsedermatologiMedis" class="accordion-collapse collapse show" aria-labelledby="dermatologiMedis"  style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
@@ -2861,9 +3288,9 @@
                                 </div>
                                 <div id="contentAssessmen_Neurologi_Show"></div>
                                 <div class="row">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                        id="close-pemeriksaanSaraf-modal">Keluar</button>
-                                    <button type="button" class="btn btn-primary" id="btn-action-neurologi">Simpan</button>
+                                <div class="panel-footer text-end mb-4">
+                                    <button type="button" class="btn btn-primary btn-save" id="btn-action-neurologi" style="margin-right: 10px;">Simpan</button>
+                                    <button type="button" class="btn btn-secondary btn-edit"  id="edit-pemeriksaanSaraf-modal" style="margin-right: 10px">Edit</button>
                                 </div>
                             </form>
                         </div>
@@ -2873,7 +3300,6 @@
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
-        let visit = <?= json_encode($visit) ?>;
 
         templateNeurologi({
             visit: visit
@@ -2886,7 +3312,19 @@
 
 <script>
     function cetakAssessmentMedis() {
-
+        var titlerj = '';
+        if ($("#armclass_room_id").val() != '' && $("#armclass_room_id").val() != null) {
+            titlerj = ' RAWAT INAP'
+        } else {
+            titlerj = ' RAWAT JALAN'
+        }
+        if (assessmentMedisType == 1) {
+            titlerj = 'RESUME MEDIS' + titlerj
+            linkcetak = 'resume_medis'
+        } else {
+            linkcetak = 'rawat_jalan'
+        }
+        openPopUpTab(`<?= base_url() ?>admin/rm/medis/${linkcetak}/<?= base64_encode(json_encode(@$visit)); ?>/${$("#armpasien_diagnosa_id").val()}/${titlerj}`)
     }
 
     function appendCetakMedis(accordionId) {

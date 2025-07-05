@@ -7,26 +7,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title><?= $title; ?></title>
 
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+        rel="stylesheet">
     <link href="<?= base_url('assets/css/jquery.min.css') ?>" rel="stylesheet">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
-    <script src="<?= base_url('assets/js/default.js') ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/js/jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets/js/default.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
 
     <style>
@@ -134,7 +139,8 @@
                 <!-- template kop -->
                 <div class="row mb-3 align-items-center">
                     <div class="col-2 d-flex">
-                        <img class="mt-2 mx-auto" src="<?= base_url('assets/img/logo.png') ?>" style="width: 90px; height: 90px;">
+                        <img class="mt-2 mx-auto" src="<?= base_url('assets/img/logo.png') ?>"
+                            style="width: 90px; height: 90px;">
                     </div>
                     <div class="col-10">
                         <h5><?= @$kop['name_of_org_unit'] ?></h5>
@@ -151,7 +157,8 @@
                     </tbody>
                 </table>
 
-                <b class="ps-2">*Saya telah membaca dan sepenuhnya setuju dengan setiap pernyataan yang terdapat pada formulir ini dan menandatangani tanpa paksaan dan dengan kesadaran penuh.</b>
+                <b class="ps-2">*Saya telah membaca dan sepenuhnya setuju dengan setiap pernyataan yang terdapat pada
+                    formulir ini dan menandatangani tanpa paksaan dan dengan kesadaran penuh.</b>
                 <br>
                 <table class="table table-borderless mt-3">
                     <tbody id="data-ttd-1_4">
@@ -514,7 +521,8 @@
                     <tbody>
                         <tr>
                             <td class="p-1">Nama</td>
-                            <td class="p-1">: <span id="p_name_of_pasien-E01" class="p_name_of_pasien-E01"><?= @$visit["name_of_pasien"] ?></span></td>
+                            <td class="p-1">: <span id="p_name_of_pasien-E01"
+                                    class="p_name_of_pasien-E01"><?= @$visit["name_of_pasien"] ?></span></td>
                         </tr>
                         <tr>
                             <td class="p-1">Tanggal Lahir</td>
@@ -675,7 +683,8 @@
 
                 <div>
                     <ol>
-                        <li>Alih Kelas : dari kelas <span id="contentInclass-E02"></span>. menjadi kelas <span id="contentToclass-E02"></span>.</li>
+                        <li>Alih Kelas : dari kelas <span id="contentInclass-E02"></span>. menjadi kelas <span
+                                id="contentToclass-E02"></span>.</li>
                         <li>Alih Kriteria :
                             <table>
                                 <tbody>
@@ -954,6 +963,7 @@
                         <td style="width: 123px;">
                             Tanda Tangan Dokter
                             <div id="qr-docter-E04"></div>
+                            <div id="qr-docter-E04_name"></div>
                         </td>
                     </tr>
                     <tr>
@@ -965,7 +975,9 @@
                         <td colspan="9" style="width: 699px;">
                             <div>
                                 <div class="mb-2">Yang bertandatangan dibawah ini saya,</div>
-                                <div class="mb-2">Nama:<span class="name-E04" id="name-E04"></span> Umur: <span class="age-E04" id="age-E04"></span> tahun, <span id="gender-E04" class="gender-E04"></span></div>
+                                <div class="mb-2">Nama:<span class="name-E04" id="name-E04"></span> Umur: <span
+                                        class="age-E04" id="age-E04"></span> tahun, <span id="gender-E04"
+                                        class="gender-E04"></span></div>
                                 <div class="mb-2">Alamat: <span class="address-E04" id="address-E04"></span></div>
                                 <div class="mb-2">Bahwa saya telah menerima informasi sebagaimana diatas, dengan ini
                                     menyatakan <span id="val-setuju-E04"></span></div>
@@ -973,9 +985,11 @@
                                 </div>
                                 <div class="mb-2">Terhadap saya / <span id="terhadap-E04"></span> saya*</div>
                                 <div class="mb-2">Nama: <span class="name-pasien-E04" id="name-pasien-E04"></span> Umur:
-                                    <span class="age-pasien-E04" id="age-pasien-E04"></span> tahun, <span id="gender-pasien-E04" class="gender-pasien-E04"></span>
+                                    <span class="age-pasien-E04" id="age-pasien-E04"></span> tahun, <span
+                                        id="gender-pasien-E04" class="gender-pasien-E04"></span>
                                 </div>
-                                <div class="mb-2">Alamat: <span class="address-pasien-E04" id="address-pasien-E04"></span></div>
+                                <div class="mb-2">Alamat: <span class="address-pasien-E04"
+                                        id="address-pasien-E04"></span></div>
                                 <div class="mb-2">Saya memahami perlunya dan manfaat rujuk tersebut sebagaimana telah
                                     dijelaskan seperti diatas kepada saya, termasuk resiko dan komplikasi yang mungkin
                                     timbul.</div>
@@ -991,7 +1005,7 @@
                                 <div class="text-center">
                                     <div align="center" id="qrcode-menyatakan-E04"></div>
                                 </div>
-                                <div class="text-center"><span class="name-E04" id="name-E04"></span></div>
+                                <div class="text-center"><span id="qrcode-menyatakan_name-E04"></span></div>
                             </div>
                         </td>
                         <td colspan="4" style="width: 233px;">
@@ -1001,7 +1015,7 @@
                                 <div class="text-center">
                                     <div align="center" id="qrcode-keluarga-E04"></div>
                                 </div>
-                                <div class="text-center"><span class="keluarga-E04" id="keluarga-E04"></div>
+                                <div class="text-center"><span id="qrcode-keluarga-E04_name"></div>
                             </div>
                         </td>
                         <td colspan="2" style="width: 233px;">
@@ -1011,7 +1025,7 @@
                                 <div class="text-center">
                                     <div align="center" id="qrcode-bidan-E04"></div>
                                 </div>
-                                <div class="text-center"><span class="bidan-E04" id="bidan-E04"></div>
+                                <div class="text-center"><span id="qrcode-bidan-E04_name"></div>
                             </div>
                         </td>
                     </tr>
@@ -1054,7 +1068,8 @@
                             <tr>
                                 <td class="w-50"><strong>Ruang</strong>: <span id="room-E05" class="room-E05"></span>
                                 </td>
-                                <td class="w-25"><strong>No. RM</strong>: <span id="register-E05" class="register-E05"></span></td>
+                                <td class="w-25"><strong>No. RM</strong>: <span id="register-E05"
+                                        class="register-E05"></span></td>
                             </tr>
                             <tr>
                                 <td class="w-50"><strong>Nama</strong>: <span id="name-E05" class="name-E05"></span>
@@ -1081,7 +1096,8 @@
                             <tr>
                                 <td>Umur</td>
                                 <td>:</td>
-                                <td><span id="content_val_2-E05"></span> tahun. Jenis Kelamin: <span id="content_val_3-E05"></span></td>
+                                <td><span id="content_val_2-E05"></span> tahun. Jenis Kelamin: <span
+                                        id="content_val_3-E05"></span></td>
                             </tr>
                             <tr>
                                 <td>Alamat</td>
@@ -1116,7 +1132,8 @@
                             <tr>
                                 <td>Umur</td>
                                 <td>:</td>
-                                <td><span id="age-E05" class="age-E05"></span> tahun. Jenis Kelamin: <span id="gender-E05" class="gender-E05"></span></td>
+                                <td><span id="age-E05" class="age-E05"></span> tahun. Jenis Kelamin: <span
+                                        id="gender-E05" class="gender-E05"></span></td>
                             </tr>
                             <tr>
                                 <td>Bukti diri / KTP</td>
@@ -1152,23 +1169,23 @@
                                     <p>
                                     <div align="center" id="qr-valid_other-E05"></div>
                                     </p>
-                                    <p>(<span id="valid_other_ttd-E05"></span>)</p>
+                                    <p>(<span id="qr-valid_other-E05_name"></span>)</p>
                                     <p>2. Perawat</p>
                                     <p>
                                     <div align="center" id="qr-valid_user-E05"></div>
                                     </p>
-                                    <p>(<span id="valid_user-ttd-E05"></span>)</p>
+                                    <p>(<span id="qr-valid_user-E05_name"></span>)</p>
 
                                 </td>
                                 <td class="text-center" width="33.33%">
                                     <p>Dokter</p>
                                     <div align="center" id="qr-doctor-E05"></div>
-                                    <p>(<span id="doctor-ttd-E05"></span>)</p>
+                                    <p>(<span id="qr-doctor-E05_name"></span>)</p>
                                 </td>
                                 <td class="text-center" width="33.33%">
                                     <p>Yang membuat pernyataan</p>
                                     <div align="center" id="qr-val-E05"></div>
-                                    <p>(<span id="val-ttd-E05"></span>)</p>
+                                    <p>(<span id="qr-val-E05_name"></span>)</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -1217,7 +1234,8 @@
                             <td>
                                 <div class="my-2">Yang bertandatangan di bawah ini, saya,</div>
                                 <div class="mb-2">Nama: <span id="val_content_1_E06"></span></div>
-                                <div class="mb-2">Umur: <span id="val_content_2_E06"></span> tahun, <span id="val_content_3_E06"></span>
+                                <div class="mb-2">Umur: <span id="val_content_2_E06"></span> tahun, <span
+                                        id="val_content_3_E06"></span>
                                 </div>
                                 <div class="mb-2">Alamat:
                                     <span id="val_content_4_E06"></span>
@@ -1230,7 +1248,8 @@
                                 <div class="mb-2">Nama:
                                     <span id="val_visit_name_E06"></span>
                                 </div>
-                                <div class="mb-2">Umur: <span id="val_visit_age_E06"></span> tahun, <span id="val_visit_gender_E06"></span>
+                                <div class="mb-2">Umur: <span id="val_visit_age_E06"></span> tahun, <span
+                                        id="val_visit_gender_E06"></span>
                                 </div>
                                 <div class="mb-2">Alamat:
                                     <span id="val_visit_address_E06"></span>
@@ -1262,15 +1281,15 @@
                                     <div class="col-4 text-center">
                                         <div id="qr_val_content_E06" align="center"></div>
 
-                                        <p>(<span id="text_val_content_E06"></span>)</p>
+                                        <p>(<span id="qr_val_content_E06_name"></span>)</p>
                                     </div>
                                     <div class="col-4 text-center">
                                         <div id="qr_valid_other_E06" align="center"></div>
-                                        <p> (<span id="text_valid_other_E06"></span>)</p>
+                                        <p> (<span id="qr_valid_other_E06_name"></span>)</p>
                                     </div>
                                     <div class="col-4 text-center">
                                         <div id="qr_valid_user_E06" align="center"></div>
-                                        <p> (<span id="text_valid_user_E06"></span>)</p>
+                                        <p> (<span id="qr_valid_user_E06_name"></span>)</p>
                                     </div>
                                 </div>
                             </td>
@@ -1385,14 +1404,14 @@
                                 <div>Mengetahui</div>
                                 <div>Dokter jaga</div>
                                 <div id="qr_docter_E07" align="center"></div>
-                                <div>(<span id="docter_E07"></span>)</div>
+                                <div>(<span id="qr_docter_E07_name"></span>)</div>
 
                             </td>
                             <td class="text-center" style="width: 50%;">
                                 <br>
                                 <div>Pasien/Keluarga Pasien</div>
                                 <div id="qr_val_E07" align="center"></div>
-                                <div>(<span id="val_E07"></span>)</div>
+                                <div>(<span id="qr_val_E07_name"></span>)</div>
                             </td>
                         </tr>
                     </tbody>
@@ -1498,7 +1517,8 @@
                 <div class="mb-3" id="content_deskripsi2-E08"></div>
 
                 <div class="text-start mb-3">
-                    <p>Surakarta, Tgl <span id="date-E08"></span> Bulan <span id="month-E08"></span> Tahun <span id="year-E08"></span></p>
+                    <p>Surakarta, Tgl <span id="date-E08"></span> Bulan <span id="month-E08"></span> Tahun <span
+                            id="year-E08"></span></p>
                 </div>
 
                 <table class="table">
@@ -1512,7 +1532,7 @@
                                     <div class="pt-2" id="qrcode-keluarga-E08" style="text-align: center;"></div>
                                     <!-- tambahkan style="text-align: center;" di sini -->
                                 </div>
-                                <p class="p-0 m-0 py-1" id="text-keluarga-E08">Ttd dan nama terang</p>
+                                <p class="p-0 m-0 py-1" id="qrcode-keluarga-E08_name">Ttd dan nama terang</p>
                                 <div></div>
                             </td>
                             <td class="text-center">
@@ -1522,7 +1542,7 @@
                                     <div class="pt-2" id="qrcode-pernyataan-E08" style="text-align: center;"></div>
                                     <!-- tambahkan style="text-align: center;" di sini -->
                                 </div>
-                                <p class="p-0 m-0 py-1" id="text-pernyataan-E08">Ttd dan nama terang</p>
+                                <p class="p-0 m-0 py-1" id="qrcode-pernyataan-E08_name">Ttd dan nama terang</p>
                             </td>
                         </tr>
                         <tr>
@@ -1533,7 +1553,7 @@
                                     <div class="pt-1" id="qrcode-Perawat-E08" style="text-align: center;"></div>
                                     <!-- tambahkan style="text-align: center;" di sini -->
                                 </div>
-                                <p class="p-0 m-0 py-1" id="text-Perawat-E08">Ttd dan nama terang</p>
+                                <p class="p-0 m-0 py-1" id="qrcode-Perawat-E08_name">Ttd dan nama terang</p>
                             </td>
                         </tr>
                     </tbody>
@@ -1615,13 +1635,13 @@
                                     <p>Saksi</p>
                                     <div id="qr_valid_1_E09" align="center"></div>
 
-                                    <div class="mt-4">(<span class="valid_E09"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_valid_1_E09_name"></span>)</div>
                                 </td>
                                 <td class="text-center">
                                     <p>Yang Menyatakan,</p>
                                     <div id="qr_val_1_E09" align="center"></div>
 
-                                    <div class="mt-4">(<span class="val_E09"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_val_1_E09_name"></span>)</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1687,7 +1707,8 @@
                         </tbody>
                     </table>
 
-                    <p>Menyatakan menolak untuk diberikan Vaksinasi : <span id="content_val_6_E10" class="content_val_6_E10"></span></p>
+                    <p>Menyatakan menolak untuk diberikan Vaksinasi : <span id="content_val_6_E10"
+                            class="content_val_6_E10"></span></p>
 
                     <table class="table table-borderless">
                         <tbody>
@@ -1715,13 +1736,13 @@
                                 <td class="text-center">
                                     <p>Saksi</p>
                                     <div id="qr_valid_1_E10" align="center"></div>
-                                    <div class="mt-4">(<span class="valid_E10"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_valid_1_E10_name"></span>)</div>
                                 </td>
                                 <td class="text-center">
                                     <p>Yang Menyatakan,</p>
                                     <div id="qr_val_1_E10" align="center"></div>
 
-                                    <div class="mt-4">(<span class="val_E10"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_val_1_E10_name"></span>)</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1817,13 +1838,13 @@
                                 <td class="text-center">
                                     <p>Saksi</p>
                                     <div id="qr_valid_1_E11" align="center"></div>
-                                    <div class="mt-4">(<span class="valid_E11"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_valid_1_E11_name"></span>)</div>
                                 </td>
                                 <td class="text-center">
                                     <p>Yang Menyatakan,</p>
                                     <div id="qr_val_1_E11" align="center"></div>
 
-                                    <div class="mt-4">(<span class="val_E11"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_val_1_E11_name"></span>)</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1919,13 +1940,13 @@
                                 <td class="text-center">
                                     <p>Saksi</p>
                                     <div id="qr_valid_1_E12" align="center"></div>
-                                    <div class="mt-4">(<span class="valid_E12"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_valid_1_E12_name"></span>)</div>
                                 </td>
                                 <td class="text-center">
                                     <p>Yang Menyatakan,</p>
                                     <div id="qr_val_1_E12" align="center"></div>
 
-                                    <div class="mt-4">(<span class="val_E12"></span>)</div>
+                                    <div class="mt-4">(<span id="qr_val_1_E12_name"></span>)</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1947,6 +1968,24 @@
 
                 <!-- template table -->
                 <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' => '', 'tindakan' => false, 'id' => 'F01']); ?>
+                <!-- endof template table -->
+            </div>
+        </div>
+
+    </body>
+</div>
+
+<div id="RM10_6-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+                <!-- template kop -->
+                <?= view("admin/patient/profilemodul/template/template-kop.php"); ?>
+                <!-- endof template kop -->
+
+                <!-- template table -->
+                <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' => '', 'tindakan' => false, 'id' => 'RM10_6']); ?>
                 <!-- endof template table -->
             </div>
         </div>
@@ -2910,6 +2949,28 @@
 
                 <!-- template table -->
                 <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' => 'ADENOIDEKTOMI', 'tindakan' => false, 'id' => 'F31']); ?>
+                <!-- endof template table -->
+
+
+            </div>
+        </div>
+    </body>
+</div>
+<div id="8_1_6-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+
+
+                <!-- template kop -->
+                <?= view("admin/patient/profilemodul/template/template-kop.php"); ?>
+                <!-- endof template kop -->
+
+
+                <!-- template table -->
+                <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' => 'ADENOIDEKTOMI', 'tindakan' => false, 'id' => '8_1_6']); ?>
                 <!-- endof template table -->
 
 
@@ -4122,7 +4183,7 @@
 
                     </tbody>
                 </table>
-                <p class="">*) <em>Coret yang tidak dipilih</em></p>
+                <p class="">(*) <em>Coret yang tidak dipilih</em></p>
 
 
             </div>
@@ -4717,7 +4778,10 @@
             // }
 
             if (typeof param === 'string') {
-                if (param.startsWith('RM_9_')) {
+                if (param === 'RM_10_6') {
+                    // Khusus untuk RM_10_6,
+                    lastPart = "RM10_6"
+                } else if (param.startsWith('RM_9_')) {
                     // Remove 'RM_9_' and return the rest
                     lastPart = param.slice(5); // 'RM_9_'.length = 5
                 } else if (param.includes('_')) {
@@ -4733,8 +4797,6 @@
                 console.error('Parameter ID is not valid or undefined.');
             }
 
-
-
             if (lastPart !== undefined) {
                 $(`#${lastPart}-content`).removeAttr("hidden");
             } else {
@@ -4745,13 +4807,14 @@
         }
 
         postData({
-            body_id: data1?.body_id,
+            body_id: String(data1?.body_id || ''),
             visit_id: data1?.visit_id,
             parameter_id: data1?.parameter_id
         }, 'admin/InformedConsent/getDetail', (res) => {
             let hasil = {
-                data: res
+                data: res?.data
             };
+            window.sign = res?.sign
             contentData(hasil);
         });
 
@@ -4761,6 +4824,16 @@
         let visitation = <?= json_encode($visitation[0]) ?>;
         let visit = <?= json_encode($visit['visit']) ?>;
         let resultDataLine = [];
+
+        let signInfFill = result?.data?.filter(e => e.value_score === 1 || e.value_score === "1")
+
+        if (signInfFill.length > 0) {
+            signInfFill
+        } else {
+            signInfFill = result?.data?.filter(e => e.value_score === 0 || e.value_score === "0")
+        }
+        let resultDataSign = signInfFill[0]
+
 
         function trimQuotesAndSpaces(str) {
             return str.trim().replace(/^"+|"+$/g, '').replace(/^\\+"|\\+"$/g, '').replace(/<p>|<\/p>/g, '');
@@ -4814,14 +4887,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
-                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
-                    </tr>
-                    <tr>
-                        <td class="py-0 text-center">nama jelas</td>
-                        <td class="py-0 text-center">nama jelas</td>
-                    </tr>
+                    
                     `;
 
 
@@ -4832,10 +4898,10 @@
             let element1 = document.getElementById(`ttd-pasien-1_4`);
 
             if (element) {
-                generateQRCode(`ttd-pendaftar-1_4`, visit.fullname, 100, 100);
+                generateQRCode(`ttd-pendaftar-1_4`, resultDataSign?.valid_user ?? "", 100, 100);
             }
             if (element1) {
-                generateQRCode(`ttd-pasien-1_4`, visit.diantar_oleh, 100, 100);
+                generateQRCode(`ttd-pasien-1_4`, resultDataSign?.valid_pasien ?? "", 100, 100);
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B01") {
@@ -4989,22 +5055,17 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pendaftar"></span>
+                            <span id="ttd-pendaftar_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pasien"></span>
+                            <span id="ttd-pasien_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${result?.data[2].modified_by})</td>
-                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
-                    </tr>
-                    <tr>
-                        <td class="py-0 text-center">nama jelas</td>
-                        <td class="py-0 text-center">nama jelas</td>
-                    </tr>
+                    
                     `;
 
             $("#data-informasi-B01").html(dataInformasi);
@@ -5015,10 +5076,24 @@
             let element1 = document.getElementById(`ttd-pasien`);
 
             if (element) {
-                generateQRCode(`ttd-pendaftar`, result?.data[2].modified_by, 100, 100);
+                // generateQRCode(`ttd-pendaftar`, resultDataSign?.valid_user ?? "", 100, 100);
+                if (resultDataSign?.valid_user) {
+                    generateQRCode(`ttd-pendaftar`, resultDataSign?.valid_user ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                    $(`#ttd-pendaftar_name`).html(namaPasien);
+                }
             }
             if (element1) {
-                generateQRCode(`ttd-pasien`, result?.data[2].value_info, 100, 100);
+                // generateQRCode(`ttd-pasien`, resultDataSign?.valid_pasien ?? "", 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pasien`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pasien_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B02") {
@@ -5109,12 +5184,12 @@
                         <td class="py-0" colspan="2">
                             <div class="d-flex justify-content-center">
                                 <span id="ttd-pernyataan-B02"></span>
+                                <span id="ttd-pernyataan-B02_name"></span>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td width="50%"></td>
-                        <td class="py-0 text-center" colspan="2">${result.data[1].value_info}</td>
                     </tr>
             `;
 
@@ -5125,7 +5200,14 @@
             let element = document.getElementById(`ttd-pernyataan-B02`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B02`, result.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-B02`, resultDataSign?.valid_pasien ?? "", 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-B02`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-B02_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B03") {
@@ -5243,18 +5325,17 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-dokter-B03"></span>
+                            <span id="ttd-dokter-B03_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pernyataan-B03"></span>
+                            <span id="ttd-pernyataan-B03_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
-                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
-                    </tr>
+                    
                     <tr>
                         <td class="py-2"></td>
                         <td class="py-2"></td>
@@ -5268,18 +5349,17 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-medis-B03"></span>
+                            <span id="ttd-medis-B03_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-saksi-B03"></span>
+                            <span id="ttd-saksi-B03_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${result?.data[1].modified_by})</td>
-                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
-                    </tr>
+                    
             `;
 
 
@@ -5293,16 +5373,44 @@
             let element3 = document.getElementById(`ttd-saksi-B03`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B03`, result?.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-B03`, resultDataSign?.valid_pasien ?? "", 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-B03`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-B03_name`).html(namaPasien);
+                }
             }
             if (element1) {
-                generateQRCode(`ttd-dokter-B03`, visit.fullname, 100, 100);
+                // generateQRCode(`ttd-dokter-B03`, resultDataSign?.valid_user ?? "", 100, 100);
+                if (resultDataSign?.valid_user) {
+                    generateQRCode(`ttd-dokter-B03`, resultDataSign?.valid_user ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                    $(`#ttd-dokter-B03_name`).html(namaPasien);
+                }
             }
             if (element2) {
-                generateQRCode(`ttd-medis-B03`, result?.data[1].modified_by, 100, 100);
+                // generateQRCode(`ttd-medis-B03`, resultDataSign?.valid_other ?? "", 100, 100);
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`ttd-medis-B03`, resultDataSign?.valid_other ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                    $(`#ttd-medis-B03_name`).html(namaPasien);
+                }
             }
             if (element3) {
-                generateQRCode(`ttd-saksi-B03`, result.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-saksi-B03`, resultDataSign?.valid_other1 ?? "", 100, 100);
+                if (resultDataSign?.valid_other1) {
+                    generateQRCode(`ttd-saksi-B03`, resultDataSign?.valid_other1 ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_other1?.split(':')[0]?.trim();
+
+                    $(`#ttd-saksi-B03_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B04") {
@@ -5407,18 +5515,17 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-dokter-B04"></span>
+                            <span id="ttd-dokter-B04_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pernyataan-B04"></span>
+                            <span id="ttd-pernyataan-B04_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
-                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
-                    </tr>
+                   
                     <tr>
                         <td class="py-2"></td>
                         <td class="py-2"></td>
@@ -5432,18 +5539,16 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-medis-B04"></span>
+                            <span id="ttd-medis-B04_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
-                            <span id="ttd-saksi-B04"></span>
+                            <span id="ttd-saksi-B04_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${result?.data[1].modified_by})</td>
-                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
-                    </tr>
+                   
             `;
 
 
@@ -5457,16 +5562,44 @@
             let element3 = document.getElementById(`ttd-saksi-B04`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B04`, result.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-B04`, result.data[1].value_info, 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-B04`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-B04_name`).html(namaPasien);
+                }
             }
             if (element1) {
-                generateQRCode(`ttd-dokter-B04`, visit.fullname, 100, 100);
+                // generateQRCode(`ttd-dokter-B04`, visit.fullname, 100, 100);
+                if (resultDataSign?.valid_user) {
+                    generateQRCode(`ttd-dokter-B04`, resultDataSign?.valid_user ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                    $(`#ttd-dokter-B04_name`).html(namaPasien);
+                }
             }
             if (element2) {
-                generateQRCode(`ttd-medis-B04`, result?.data[1].modified_by, 100, 100);
+                // generateQRCode(`ttd-medis-B04`, result?.data[1].modified_by, 100, 100);
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`ttd-medis-B04`, resultDataSign?.valid_other ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                    $(`#ttd-medis-B04_name`).html(namaPasien);
+                }
             }
             if (element3) {
-                generateQRCode(`ttd-saksi-B04`, result.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-saksi-B04`, result.data[1].value_info, 100, 100);
+                if (resultDataSign?.valid_other1) {
+                    generateQRCode(`ttd-saksi-B04`, resultDataSign?.valid_other1 ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_other1?.split(':')[0]?.trim();
+
+                    $(`#ttd-saksi-B04_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B05") {
@@ -5559,13 +5692,11 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pernyataan-B05"></span>
+                            <span id="ttd-pernyataan-B05_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center" width="50%"></td>
-                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
-                    </tr>
+                   
 
             `;
 
@@ -5577,7 +5708,14 @@
             let element = document.getElementById(`ttd-pernyataan-B05`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B05`, result.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-B05`, result.data[1].value_info, 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-B05`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-B05_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B06") {
@@ -5665,13 +5803,11 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pernyataan-B06"></span>
+                            <span id="ttd-pernyataan-B06_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center" width="50%"></td>
-                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
-                    </tr>
+                    
             `;
 
 
@@ -5682,7 +5818,14 @@
             let element = document.getElementById(`ttd-pernyataan-B06`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B06`, result.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-B06`, result.data[1].value_info, 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-B06`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-B06_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_C01") {
@@ -5795,18 +5938,17 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-dokter-C01"></span>
+                            <span id="ttd-dokter-C01_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pernyataan-C01"></span>
+                            <span id="ttd-pernyataan-C01_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
-                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
-                    </tr>
+                   
                     <tr>
                         <td class="py-2"></td>
                         <td class="py-2"></td>
@@ -5825,13 +5967,11 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-saksi-C01"></span>
+                            <span id="ttd-saksi-C01_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center"></td>
-                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
-                    </tr>
+                    
             `;
 
 
@@ -5844,13 +5984,34 @@
             let element2 = document.getElementById(`ttd-saksi-C01`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-C01`, result.data[1].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-C01`, result.data[1].value_info, 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-C01`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-C01_name`).html(namaPasien);
+                }
             }
             if (element1) {
-                generateQRCode(`ttd-dokter-C01`, visit.fullname, 100, 100);
+                // generateQRCode(`ttd-dokter-C01`, visit.fullname, 100, 100);
+                if (resultDataSign?.valid_user) {
+                    generateQRCode(`ttd-dokter-C01`, resultDataSign?.valid_user ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                    $(`#ttd-dokter-C01_name`).html(namaPasien);
+                }
             }
             if (element2) {
-                generateQRCode(`ttd-saksi-C01`, result.data[2].value_info, 100, 100);
+                // generateQRCode(`ttd-saksi-C01`, result.data[2].value_info, 100, 100);
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`ttd-saksi-C01`, resultDataSign?.valid_other ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                    $(`#ttd-saksi-C01_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_C02") {
@@ -5956,18 +6117,17 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-saksi-C02"></span>
+                            <span id="ttd-saksi-C02_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pernyataan-C02"></span>
+                            <span id="ttd-pernyataan-C02_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${result.data[2].modified_by})</td>
-                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
-                    </tr>
+                    
                     <tr>
                         <td class="py-2"></td>
                         <td class="py-2"></td>
@@ -5986,13 +6146,11 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-dokter-C02"></span>
+                            <span id="ttd-dokter-C02_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center"></td>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
-                    </tr>
+                   
             `;
 
 
@@ -6005,13 +6163,34 @@
             let element2 = document.getElementById(`ttd-saksi-C02`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-C02`, result.data[2].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-C02`, result.data[2].value_info, 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-C02`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-C02_name`).html(namaPasien);
+                }
             }
             if (element1) {
-                generateQRCode(`ttd-dokter-C02`, visit.fullname, 100, 100);
+                // generateQRCode(`ttd-dokter-C02`, visit.fullname, 100, 100);
+                if (resultDataSign?.valid_user) {
+                    generateQRCode(`ttd-dokter-C02`, resultDataSign?.valid_user ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                    $(`#ttd-dokter-C02_name`).html(namaPasien);
+                }
             }
             if (element2) {
-                generateQRCode(`ttd-saksi-C02`, result.data[2].modified_by, 100, 100);
+                // generateQRCode(`ttd-saksi-C02`, result.data[2].modified_by, 100, 100);
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`ttd-saksi-C02`, resultDataSign?.valid_other ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                    $(`#ttd-saksi-C02_name`).html(namaPasien);
+                }
             }
 
         } else if (result.data[0].parameter_id === "RM_9_C03") {
@@ -6117,18 +6296,17 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-saksi-C03"></span>
+                            <span id="ttd-saksi-C03_name"></span>
                             </div>
                         </td>
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-pernyataan-C03"></span>
+                            <span id="ttd-pernyataan-C03_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center">(${result.data[2].modified_by})</td>
-                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
-                    </tr>
+                   
                     <tr>
                         <td class="py-2"></td>
                         <td class="py-2"></td>
@@ -6147,13 +6325,11 @@
                         <td class="py-0">
                             <div class="d-flex justify-content-center">
                             <span id="ttd-dokter-C03"></span>
+                            <span id="ttd-dokter-C03_name"></span>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="py-0 text-center"></td>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
-                    </tr>
+                  
             `;
 
 
@@ -6165,16 +6341,37 @@
             let element1 = document.getElementById(`ttd-dokter-C03`);
             let element2 = document.getElementById(`ttd-saksi-C03`);
 
+
             if (element) {
-                generateQRCode(`ttd-pernyataan-C03`, result.data[2].value_info, 100, 100);
+                // generateQRCode(`ttd-pernyataan-C03`, result.data[2].value_info, 100, 100);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`ttd-pernyataan-C03`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#ttd-pernyataan-C03_name`).html(namaPasien);
+                }
             }
             if (element1) {
-                generateQRCode(`ttd-dokter-C03`, visit.fullname, 100, 100);
+                // generateQRCode(`ttd-dokter-C03`, visit.fullname, 100, 100);
+                if (resultDataSign?.valid_user) {
+                    generateQRCode(`ttd-dokter-C03`, resultDataSign?.valid_user ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                    $(`#ttd-dokter-C03_name`).html(namaPasien);
+                }
             }
             if (element2) {
-                generateQRCode(`ttd-saksi-C03`, result.data[2].modified_by, 100, 100);
-            }
+                // generateQRCode(`ttd-saksi-C03`, result.data[2].modified_by, 100, 100);
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`ttd-saksi-C03`, resultDataSign?.valid_other ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
 
+                    $(`#ttd-saksi-C03_name`).html(namaPasien);
+                }
+            }
         } else if (result.data[0].parameter_id === "RM_9_E01") {
 
             const startId = "G017E0117";
@@ -6189,7 +6386,8 @@
                 const itemIdNum = parseInt(item.value_id.slice(-2));
                 let trimmedValueDesc = trimQuotesAndSpaces(item.value_desc);
                 if (trimmedValueDesc !== "" && itemIdNum >= startNum && itemIdNum <= endNum) {
-                    resultDataLine += `<tr><td>${rowIndex}. <b>${trimmedValueDesc}</b>. ${hasival_info}</td></tr>`;
+                    resultDataLine +=
+                        `<tr><td>${rowIndex}. <b>${trimmedValueDesc}</b>. ${hasival_info}</td></tr>`;
                     rowIndex++;
                 }
             });
@@ -6214,36 +6412,37 @@
 
             $("#hasil-Avalue-desc").html(hasil);
 
+
             // ttd
-            let petugas = new QRCode(document.getElementById(`qrcode-petugas-E01`), {
-                text: result.data[0]?.valid_user ?? result.data[0]?.modified_by,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            $("#text-petugas-E01").html(``);
 
-            let pasien = new QRCode(document.getElementById(`qrcode-pasien-E01`), {
-                text: result?.data[9]?.value_info || "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qrcode-petugas-E01`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
 
-            $("#text-petugas-E01").html(`(${result.data[0]?.valid_user ?? result.data[0]?.modified_by})`);
-            $("#text-pasien-E01").html(`(${result?.data[9]?.value_info || "-"})`);
+                $(`#text-petugas-E01`).html(namaPasien);
+            }
+
+
+            $("#text-pasien-E01").html(``);
+
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qrcode-pasien-E01`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#text-pasien-E01`).html(namaPasien);
+            }
 
             // content
             $("#code-E01").html(result.data[0].parameter_id.replace(/_/g, ' '));
             // pasien
 
-            $(".name_of_pasien-E01").html(visit.name_of_pasien);
-            $(".date_of_birth-E01").html(moment(visit.date_of_birth).format("DD-MM-YYYY"));
+            $(".name_of_pasien-E01").html(visit.diantar_oleh);
+            $(".date_of_birth-E01").html(moment(visit.tgl_lahir).format("DD-MM-YYYY"));
             $(".name_of_gender-E01").html(visit.name_of_gender);
-            $(".contact_address-E01").html(visit.contact_address);
+            $(".contact_address-E01").html(visit.visitor_address);
             $(".no_registration-E01").html(visit.no_registration);
             $(".noTlp-E01").html(visit.phone_number || "-");
 
@@ -6265,7 +6464,14 @@
             // $(".selaku-E01").html(result.data[14].value_info)
             // $(".p_name_of_gender-E01").html(result?.data[11]?.value_info);
             $(".p_name_of_pasien-E01").html(result?.data[9]?.value_info || "-");
-            $(".p_date_of_birth-E01").html(!result?.data[10]?.value_info ? "-" : moment(result?.data[10]?.value_info).format("DD-MM-YYYY"));
+
+
+            $(".p_date_of_birth-E01").html(
+                !result?.data[10]?.value_info ?
+                "-" :
+                moment(result?.data[10]?.value_info, "MMM DD YYYY h:mmA").format("DD-MM-YYYY")
+            );
+
             $(".p_contact_address-E01").html(result?.data[12]?.value_info || "-");
             $(".p_noTlp-E01").html(result?.data[13]?.value_info || "-");
 
@@ -6278,7 +6484,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1)
             // content
             aValueTabels.map((item, index) => {
                 return $(`#content-${index+1}-E02`).html(item.value_info)
@@ -6371,35 +6578,39 @@
                 }
             }
 
-            new QRCode(document.getElementById(`qr-doctor-E02`), {
-                text: visit?.visit?.sspractitioner_name,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr-menyatakan-E02`), {
-                text: value[0]?.value_info,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr-saksi-E02`), {
-                text: !value[0]?.valid_other ? result.data[0]?.modified_by : value[0]?.valid_other,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qr-doctor-E02`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                $(`#doctor-E02`).html(namaPasien);
+            }
 
 
-            $("#saksi-E02").html(!value[0]?.valid_other ? result.data[0]?.modified_by : value[0]?.valid_other)
-            $("#menyatakan-E02").html(value[0]?.value_info)
-            $("#doctor-E02").html(visit?.visit?.sspractitioner_name)
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr-menyatakan-E02`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#menyatakan-E02`).html(namaPasien);
+            }
+
+
+
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr-saksi-E02`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                $(`#saksi-E02`).html(namaPasien);
+            }
+
+
+
+            // $("#saksi-E02").html(!value[0]?.valid_other ? result.data[0]?.modified_by : value[0]?.valid_other)
+            // $("#menyatakan-E02").html(value[0]?.value_info)
+            // $("#doctor-E02").html(visit?.visit?.sspractitioner_name)
             $("#date-E02").html(moment(new Date()).format("DD-MMM-YYYY"))
         } else if (result.data[0].parameter_id === "RM_9_E03") {
             let avalue = <?= json_encode($AValue) ?>;
@@ -6408,7 +6619,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1)
             $(".contentIsi-E03").html(`${value[4].value_desc} : ${value[4].value_info}`)
 
             $(".name_of_pasien-E03").html(visit?.visit.name_of_pasien)
@@ -6464,22 +6676,23 @@
                 }
             }
 
-            new QRCode(document.getElementById(`qr-saksi-1-E03`), {
-                text: value[0]?.valid_other ?? result.data[0]?.modified_by,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr-menyarakan-1-E03`), {
-                text: value[0]?.value_info,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr-saksi-1-E03`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                $(`#saksi-E03`).html(namaPasien);
+            }
+
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr-menyarakan-1-E03`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#menyatakan-E03`).html(namaPasien);
+            }
+
+
 
         } else if (result.data[0].parameter_id === "RM_9_E04") {
             // render tables
@@ -6497,12 +6710,13 @@
                                 <td class="text-left p-2 fit">${rowIndex}</td>
                                 <td class="text-left p-2 fit">${trimmedValueDesc}</td>
                                 <td class="text-left p-2 fit isi-informasi">${item.value_info}</td>
-                                <td class="text-left p-2 fit tanda"><div id="qrcode-${item.value_id}-E04"></div></td>
+                                <td class="text-left p-2 fit tanda"><div id="1qrcode-${item.value_id}-E04"></div></td>
                             </tr>`;
                     rowIndex++;
                 }
             });
             $("#data_js-E04").html(resultDataLine);
+
 
             result?.data?.forEach(e => {
                 let element = document.getElementById(`qrcode-${e.value_id}-E04`);
@@ -6519,41 +6733,41 @@
             });
 
             // ttd
-            new QRCode(document.getElementById(`qr-docter-E04`), {
-                text: visit?.sspractitioner_name,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
 
-            new QRCode(document.getElementById(`qrcode-menyatakan-E04`), {
-                text: result?.data[16].value_info.replace(/<p>|<\/p>/g, ''),
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qr-docter-E04`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
 
-            new QRCode(document.getElementById(`qrcode-keluarga-E04`), {
-                text: result?.data[0].valid_other ?? result.data[0]?.modified_by,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+                $(`#qr-docter-E04_name`).html(namaPasien);
+            }
 
-            new QRCode(document.getElementById(`qrcode-bidan-E04`), {
-                text: result?.data[0].valid_user ?? result.data[0]?.modified_by,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qrcode-menyatakan-E04`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#qrcode-menyatakan-E04_name`).html(namaPasien);
+            }
+
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qrcode-keluarga-E04`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                $(`#qrcode-keluarga-E04_name`).html(namaPasien);
+            }
+
+            if (resultDataSign?.valid_other2) {
+                generateQRCode(`qrcode-bidan-E04`, resultDataSign?.valid_other2 ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other2?.split(':')[0]?.trim();
+
+                $(`#qrcode-bidan-E04_name`).html(namaPasien);
+            }
+
+
 
             // PEMBERIAN INFORMASI
             let data2 = <?= json_encode($AValue) ?>;
@@ -6578,16 +6792,16 @@
             })
 
             // $(".gender-E04").html(genderText);
-            $("#val-setuju-E04").html(result?.data[14].value_info.replace(/<p>|<\/p>/g, ''));
-            $("#terhadap-E04").html(result?.data[21].value_info.replace(/<p>|<\/p>/g, ''));
-            $("#rujuk-E04").html(result?.data[20].value_info.replace(/<p>|<\/p>/g, ''));
-            $("#keluarga-E04").html(result?.data[0].valid_other);
-            $("#bidan-E04").html(result?.data[0].valid_user);
+            // $("#val-setuju-E04").html(result?.data[14].value_info.replace(/<p>|<\/p>/g, ''));
+            // $("#terhadap-E04").html(result?.data[21].value_info.replace(/<p>|<\/p>/g, ''));
+            // $("#rujuk-E04").html(result?.data[20].value_info.replace(/<p>|<\/p>/g, ''));
+            // $("#keluarga-E04").html(result?.data[0].valid_other);
+            // $("#bidan-E04").html(result?.data[0].valid_user);
 
             // pasien
-            $("#name-pasien-E04").html(visit?.name_of_pasien);
+            $("#name-pasien-E04").html(visit?.diantar_oleh);
             $("#age-pasien-E04").html(visit?.ageyear);
-            $("#address-pasien-E04").html(visit?.contact_address);
+            $("#address-pasien-E04").html(visit?.visitor_address);
             $("#gender-pasien-E04").html(visit?.gendername);
             $("#date-E04").html(moment(new Date).format("DD/MMM/YYYY"));
             $("#time-E04").html(moment(new Date).format("HH:mm"));
@@ -6599,7 +6813,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1 || item.value_score === 4)
             $(".contentIsi-E03").html(`${value[4].value_desc} : ${value[4].value_info}`)
 
             $(".name-E05").html(visit?.visit.diantar_oleh)
@@ -6610,10 +6825,10 @@
             $(".register-E05").html(visit?.visit.no_registration)
 
             $(".date-E05").html(moment(new Date()).format("DD-MMM-YYYY"))
-            $("#valid_other_ttd-E05").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
-            $("#valid_user-ttd-E05").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
-            $("#val-ttd-E05").html(value[0]?.value_info)
-            $("#doctor-ttd-E05").html(!visit?.visit?.fullname ? "-" : visit?.visit?.fullname)
+            $("#valid_other_ttd-E05").html("")
+            $("#valid_user-ttd-E05").html("")
+            $("#val-ttd-E05").html("")
+            $("#doctor-ttd-E05").html("")
 
 
             //tabels content
@@ -6646,39 +6861,42 @@
             }
 
 
-            new QRCode(document.getElementById(`qr-val-E05`), {
-                text: !value[0]?.value_info ? "-" : value[0]?.value_info,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr-valid_other-E05`), {
-                text: !value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr-valid_user-E05`), {
-                text: !value[0]?.valid_user ? value[0]?.modified_by : value[0]?.valid_user,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr-val-E05`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
 
-            new QRCode(document.getElementById(`qr-doctor-E05`), {
-                text: !visit?.visit?.fullname ? "-" : visit?.visit?.fullname,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+                $(`#qr-val-E05_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr-valid_other-E05`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                $(`#qr-valid_other-E05_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_other2) {
+                generateQRCode(`qr-valid_user-E05`, resultDataSign?.valid_other2 ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other2?.split(':')[0]?.trim();
+
+                $(`#qr-valid_user-E05_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qr-doctor-E05`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                $(`#qr-doctor-E05_name`).html(namaPasien);
+            }
+
+
 
         } else if (result.data[0].parameter_id === "RM_9_E06") {
             let avalue = <?= json_encode($AValue) ?>;
@@ -6687,7 +6905,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1 || item.value_score === 4)
             $("#val_visit_name_E06").html(visit?.visit.diantar_oleh)
             $("#val_visit_age_E06").html(visit?.visit.age)
             $("#val_visit_gender_E06").html(visit?.visit.name_of_gender)
@@ -6695,9 +6914,9 @@
 
 
             $("#date_E06").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $("#text_valid_other_E06").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
-            $("#text_valid_user_E06").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
-            $("#text_val_content_E06").html(value[0]?.value_info)
+            $("#text_valid_other_E06").html("")
+            $("#text_valid_user_E06").html("")
+            $("#text_val_content_E06").html("")
 
 
 
@@ -6731,31 +6950,31 @@
             }
 
 
-            new QRCode(document.getElementById(`qr_val_content_E06`), {
-                text: !value[0]?.value_info ? "-" : value[0]?.value_info,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_valid_other_E06`), {
-                text: !value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_valid_user_E06`), {
-                text: !value[0]?.valid_user ? value[0]?.modified_by : value[0]?.valid_user,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr_val_content_E06`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
 
+                $(`#qr_val_content_E06_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr_valid_other_E06`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                $(`#qr_valid_other_E06_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qr_valid_user_E06`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                $(`#qr_valid_user_E06_name`).html(namaPasien);
+            }
 
 
         } else if (result.data[0].parameter_id === "RM_9_E07") {
@@ -6765,15 +6984,16 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1 || item.value_score === 4)
 
             $("#content_visit_name_E07").html(visit?.visit.diantar_oleh)
             $("#content_visit_register_E07").html(visit?.visit.no_registration)
 
 
             $("#date_E07").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $("#docter_E07").html(visit?.visit.fullname)
-            $("#val_E07").html(value[0]?.value_info)
+            $("#docter_E07").html("")
+            $("#val_E07").html("")
 
 
 
@@ -6807,23 +7027,21 @@
             }
 
 
-            new QRCode(document.getElementById(`qr_val_E07`), {
-                text: !value[0]?.value_info ? "-" : value[0]?.value_info,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_docter_E07`), {
-                text: visit?.visit.fullname,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr_val_E07`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
 
+                $(`#qr_val_E07_name`).html(namaPasien);
+            }
+
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qr_docter_E07`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                $(`#qr_docter_E07_name`).html(namaPasien);
+            }
 
 
         } else if (result.data[0].parameter_id === "RM_9_E08") {
@@ -6855,42 +7073,45 @@
             $("#year-E08").html(moment(new Date).format("YYYY"));
 
             // pasien
-            $(".name-E08").html(visit.name_of_pasien);
+            $(".name-E08").html(visit.diantar_oleh);
             $(".age-E08").html(visit.ageyear);
-            $(".adress-E08").html(visit.contact_address);
+            $(".adress-E08").html(visit.visitor_address);
             $(".room-E08").html(visit.name_of_clinic);
             $(".noregister-E08").html(visit.no_registration);
 
             // ttd
-            new QRCode(document.getElementById(`qrcode-keluarga-E08`), {
-                text: !result.data[0].valid_other ? result.data[0]?.modified_by : result.data[0].valid_other,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qrcode-pernyataan-E08`), {
-                text: !result.data[1].value_info ? "-" : result.data[1].value_info.replace(/<p>|<\/p>/g, ''),
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qrcode-Perawat-E08`), {
-                text: !result.data[0].valid_user ? result.data[0]?.modified_by : result.data[0].valid_user,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qrcode-keluarga-E08`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                $(`#qrcode-keluarga-E08_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qrcode-pernyataan-E08`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#qrcode-pernyataan-E08_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qrcode-Perawat-E08`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                $(`#qrcode-Perawat-E08_name`).html(namaPasien);
+            }
+
+
 
             // text ttd
-            $("#text-keluarga-E08").html(!result.data[0].valid_other ? result.data[0]?.modified_by : result.data[0].valid_other)
-            $("#text-pernyataan-E08").html(!result.data[1].value_info ? "-" : result.data[1].value_info.replace(/<p>|<\/p>/g, ''))
-            $("#text-Perawat-E08").html(!result.data[0].valid_user ? result.data[0]?.modified_by : result.data[0].valid_user)
+            $("#text-keluarga-E08").html("")
+            $("#text-pernyataan-E08").html("")
+            $("#text-Perawat-E08").html("")
 
 
         } else if (result.data[0].parameter_id === "RM_9_E09") {
@@ -6900,7 +7121,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1 || item.value_score === 4)
 
             $(".content_visit_room_E09").html(visit?.visit.class_room_id ?? "-")
             $(".content_visit_register_E09").html(visit?.visit.no_registration ?? "-")
@@ -6910,8 +7132,8 @@
 
 
             $(".date_E09").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E09").html(value[0]?.valid_other ?? value[0]?.modified_by)
-            $(".val_E09").html(value[0]?.value_info ?? value[0]?.modified_by)
+            $(".valid_E09").html("")
+            $(".val_E09").html("")
 
 
             //tabels content
@@ -6943,23 +7165,22 @@
                 }
             }
 
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr_valid_1_E09`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
 
-            new QRCode(document.getElementById(`qr_valid_1_E09`), {
-                text: value[0]?.valid_other ?? '-',
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_1_E09`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+                $(`#qr_valid_1_E09_name`).html(namaPasien);
+            }
+
+            if (resultDataSign?.valid_user) {
+                generateQRCode(`qr_val_1_E09`, resultDataSign?.valid_user ??
+                    "");
+                const namaPasien = resultDataSign?.valid_user?.split(':')[0]?.trim();
+
+                $(`#qr_val_1_E09_name`).html(namaPasien);
+            }
+
 
 
 
@@ -6971,7 +7192,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1 || item.value_score === 4)
 
             $(".visit_name_E10").html(visit?.visit.diantar_oleh)
             $(".visit_gender_E10").html(visit?.visit.gendername)
@@ -6979,8 +7201,8 @@
 
 
             $(".date_E10").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E10").html(value[0]?.valid_other ?? value[0]?.modified_by)
-            $(".val_E10").html(value[0]?.value_info ?? "-")
+            $(".valid_E10").html("")
+            $(".val_E10").html("")
 
 
 
@@ -7014,22 +7236,25 @@
             }
 
 
-            new QRCode(document.getElementById(`qr_valid_1_E10`), {
-                text: value[0]?.valid_other ?? value[0]?.modified_by,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_1_E10`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr_valid_1_E10`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                $(`#qr_valid_1_E10_name`).html(namaPasien);
+            }
+
+
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr_val_1_E10`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#qr_val_1_E10_name`).html(namaPasien);
+            }
+
+
+
 
 
 
@@ -7041,7 +7266,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1 || item.value_score === 4)
 
             $(".visit_name_E11").html(visit?.visit.diantar_oleh)
             $(".visit_gender_E11").html(visit?.visit.gendername)
@@ -7049,8 +7275,8 @@
 
 
             $(".date_E11").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E11").html(value[0]?.valid_other ?? value[0]?.modified_by)
-            $(".val_E11").html(value[0]?.value_info ?? "-")
+            $(".valid_E11").html("")
+            $(".val_E11").html("")
 
 
 
@@ -7083,24 +7309,21 @@
                 }
             }
 
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr_valid_1_E11`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
 
-            new QRCode(document.getElementById(`qr_valid_1_E11`), {
-                text: value[0]?.valid_other ?? value[0]?.modified_by,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_1_E11`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+                $(`#qr_valid_1_E11_name`).html(namaPasien);
+            }
 
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr_val_1_E11`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#qr_val_1_E11_name`).html(namaPasien);
+            }
 
 
         } else if (result.data[0].parameter_id === "RM_9_E12") {
@@ -7110,7 +7333,8 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
+                .value_score === 1 || item.value_score === 4)
 
             $(".visit_name_E12").html(visit?.visit.diantar_oleh)
             $(".visit_gender_E12").html(visit?.visit.gendername)
@@ -7118,8 +7342,8 @@
 
 
             $(".date_E12").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E12").html(value[0]?.valid_other ?? value[0]?.modified_by)
-            $(".val_E12").html(value[0]?.value_info ?? "-")
+            $(".valid_E12").html("")
+            $(".val_E12").html("")
 
 
 
@@ -7152,24 +7376,21 @@
                 }
             }
 
+            if (resultDataSign?.valid_other) {
+                generateQRCode(`qr_valid_1_E12`, resultDataSign?.valid_other ??
+                    "");
+                const namaPasien = resultDataSign?.valid_other?.split(':')[0]?.trim();
 
-            new QRCode(document.getElementById(`qr_valid_1_E12`), {
-                text: value[0]?.valid_other ?? value[0]?.modified_by,
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_1_E12`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+                $(`#qr_valid_1_E12_name`).html(namaPasien);
+            }
 
+            if (resultDataSign?.valid_pasien) {
+                generateQRCode(`qr_val_1_E12`, resultDataSign?.valid_pasien ??
+                    "");
+                const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                $(`#qr_val_1_E12_name`).html(namaPasien);
+            }
 
 
 
@@ -7178,6 +7399,15 @@
                 result: result,
                 visit: visit,
                 code: 'F01'
+            });
+
+
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_10_6") {
+
+            renderDynamicContent({
+                result: result,
+                visit: visit,
+                code: 'RM10_6'
             });
 
 
@@ -7455,6 +7685,14 @@
                 result: result,
                 visit: visit,
                 code: 'F31'
+            });
+
+
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_8_1_6") {
+            renderDynamicContent2({
+                result: result,
+                visit: visit,
+                code: '8_1_6'
             });
 
 
@@ -7775,7 +8013,7 @@
                 `
                 <tr class="px-3">
                     <td>
-                        <p class="mb-0">${<?= json_encode($kop['kota']); ?>+',' +moment(visit.date_of_birth).format("DD-MMM-YYYY")}</p>
+                        <p class="mb-0">${<?= json_encode($kop['kota']); ?>+',' +moment(visit.tgl_lahir).format("DD-MMM-YYYY")}</p>
                     </td>
                 </tr>;
             `;
@@ -7793,14 +8031,7 @@
                     <td width="50%" id="ttd-saksi"></td>
                     <td width="50%" id="ttd-menyatakan"></td>
                 </tr>;
-                <tr class="px-3">
-                    <td width="50%">
-                        <p class="mb-0">(${result.data[2].value_info})</p>
-                    </td>
-                    <td width="50%">
-                        <p class="mb-0">(${visit.name_of_pasien})</p>
-                    </td>
-                </tr>;
+               
                 <tr class="px-3">
                     <td width="50%">
                         <p class="mb-0">Petugas</p>
@@ -7817,14 +8048,7 @@
                         <p class="mb-0"></p>
                     </td>
                 </tr>;
-                <tr class="px-3">
-                    <td width="50%">
-                        <p class="mb-0">(${visit.fullname})</p>
-                    </td>
-                    <td width="50%">
-                        <p class="mb-0"></p>
-                    </td>
-                </tr>;
+               
             `;
             $("#data-informasi-F63").html(dataInformasi);
             $("#data-table-F63").html(dataContent);
@@ -7835,13 +8059,13 @@
             let element2 = document.getElementById(`ttd-petugas`);
 
             if (element) {
-                generateQRCode(`ttd-saksi`, result?.data[2].value_info, 100, 100);
+                generateQRCode(`ttd-saksi`, resultDataSign?.valid_other ?? "", 100, 100);
             }
             if (element1) {
-                generateQRCode(`ttd-menyatakan`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-menyatakan`, resultDataSign?.valid_pasien ?? "", 100, 100);
             }
             if (element2) {
-                generateQRCode(`ttd-petugas`, visit.fullname, 100, 100);
+                generateQRCode(`ttd-petugas`, resultDataSign?.valid_user ?? "", 100, 100);
             }
 
 
@@ -7905,7 +8129,7 @@
                         </td>
                     </tr>
                 </table>
-               
+
                 <table class="table table-bordered mt-3">
                     <tr class="px-3">
                         <td colspan="3">
@@ -8018,10 +8242,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr class="px-3">
-                            <td class="text-center">${visit.name_of_pasien}</td>
-                            <td class="text-center">${visit.fullname}</td>
-                        </tr>
+                       
                     </table>
             `;
 
@@ -8032,17 +8253,18 @@
             let element2 = document.getElementById(`ttd-penolakan-1`);
             let element3 = document.getElementById(`ttd-penolakan-2`);
 
+
             if (element) {
-                generateQRCode(`ttd-klien`, visit.fullname, 100, 100);
+                generateQRCode(`ttd-klien`, resultDataSign?.valid_user ?? "", 100, 100);
             }
             if (element1) {
-                generateQRCode(`ttd-konselor`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-konselor`, resultDataSign?.valid_other ?? "", 100, 100);
             }
             if (element2) {
-                generateQRCode(`ttd-penolakan-1`, visit.name_of_pasien, 80, 80);
+                generateQRCode(`ttd-penolakan-1`, resultDataSign?.valid_other ?? "", 80, 80);
             }
             if (element3) {
-                generateQRCode(`ttd-penolakan-2`, visit.name_of_pasien, 80, 80);
+                generateQRCode(`ttd-penolakan-2`, resultDataSign?.valid_user ?? "", 80, 80);
             }
 
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F69") {
@@ -8107,7 +8329,16 @@
 
     const renderDynamicContent = (props) => {
 
+
         let result = props.result;
+        let signInfFill = result?.data?.filter(e => e.value_score === 1 || e.value_score === "1")
+
+        if (signInfFill.length > 0) {
+            signInfFill
+        } else {
+            signInfFill = result?.data.filter(e => e.value_score === 0 || e.value_score === "0")
+        }
+        let resultDataSign = signInfFill[0]
         let resultDataLine = '';
         let hasil = '';
         let dataInformasi = '';
@@ -8116,7 +8347,8 @@
         result.data.forEach((item, index) => {
             let hasival_info = item.value_info;
             if (item.value_desc !== "") {
-                resultDataLine += `<tr><td>${index + 1}. <b>${item.value_desc}</b>. ${hasival_info.replace(/<p>|<\/p>/g, '')}</td></tr>`;
+                resultDataLine +=
+                    `<tr><td>${index + 1}. <b>${item.value_desc}</b>. ${hasival_info.replace(/<p>|<\/p>/g, '')}</td></tr>`;
             }
         });
         let data2 = <?= json_encode($AValue) ?>;
@@ -8124,8 +8356,9 @@
         aValue.forEach(item => {
             hasil += `<p id="${item?.value_id}">${item?.value_info}</p> `;
         });
-        if (props.code === 'F01') {
+        if (props.code === 'F01' || props?.code === 'RM10_6') {
             result.data.slice(0, 6).forEach((element, index) => {
+
                 if (index < 2) {
                     if (index === 0) {
                         dataInformasi +=
@@ -8135,7 +8368,7 @@
                     } else {
                         dataInformasi +=
                             `<tr>
-                            <th colspan="3" class="text-center">${element.value_desc}</th>
+                            <th colspan="3" class="text-center">${element.value_desc} ${element.value_info}</th>
                         </tr>`;
                     }
 
@@ -8176,6 +8409,7 @@
                         </td>
                     </tr>`;
             });
+
             let avalueIndex = 1;
             result.data.slice(17, 20).forEach((element, index) => {
                 if (index == 2) {
@@ -8192,7 +8426,7 @@
                             <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
                         </td>
                         <td valign="top" width="162">
-                            <p class="" align="center">Tanda tangan</p>
+                            <p class="" align="center">Tanda tangan 1</p>
                             <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
                         </td>
                     </tr>`;
@@ -8201,45 +8435,54 @@
                 avalueIndex++;
             });
 
+
+
             $("#data-" + props.code).html(resultDataLine);
             $("#hasil-Avalue-desc").html(hasil);
             $("#data-informasi-" + props.code).html(dataInformasi);
             $("#data-table-" + props.code).html(dataTable);
             $("#data-table2-" + props.code).html(dataTable2);
 
+            // console.log(1, resultDataSign);
+            console.log(2, resultDataSign);
+
+
             result?.data?.slice(6, 17).forEach(e => {
                 let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
-                if (element) {
-                    new QRCode(element, {
-                        text: result?.data[4].value_info.replace(/<p>|<\/p>/g, ''),
-                        width: 50,
-                        height: 50,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
+
+                if (resultDataSign?.valid_user) {
+                    generateQRCode(`qrcode-${e.value_id}-${props.code}`, resultDataSign?.valid_user);
+                    const nama = resultDataSign
+                        ?.valid_user
+                        ?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-medis_name-${props.code}`).html(nama);
                 }
+
             });
             result?.data?.slice(17, 19).forEach(e => {
                 let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
-                if (element) {
-                    new QRCode(element, {
-                        text: result?.data[3].value_info.replace(/<p>|<\/p>/g, ''),
-                        width: 50,
-                        height: 50,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
+
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`qrcode-${e.value_id}-${props.code}`, resultDataSign?.valid_pasien);
+                    const nama = resultDataSign
+                        ?.valid_pasien
+                        ?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-medis_name-${props.code}`).html(nama);
                 }
+
+
             });
         } else {
-            const result2 = result.filter(item => item.value_desc.toLowerCase().includes("menolak"));
+            // console.log(result);
+            // const result2 = result.filter(item => item.value_desc.toLowerCase().includes("menolak"));
+
+
 
             // Extract the value_info from the found object(s)
-            const valueInfo = result2.map(item => item.value_info);
+            // const valueInfo = result2.map(item => item.value_info);
 
-            console.log(valueInfo);
             result.data.slice(0, 4).forEach((element, index) => {
                 if (index < 1) {
                     dataInformasi +=
@@ -8282,7 +8525,7 @@
                             <p class="mb-1">${element.value_info}</p>
                         </td>
                         <td valign="top" width="162">
-                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                            <div class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></div>
                         </td>
                     </tr>`;
             });
@@ -8318,7 +8561,11 @@
             $("#data-table-" + props.code).html(dataTable);
             $("#data-table2-" + props.code).html(dataTable2);
 
+
+
+
             result?.data?.slice(4, 15).forEach(e => {
+
                 let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
                 if (element) {
                     new QRCode(element, {
@@ -8329,9 +8576,11 @@
                         colorLight: "#ffffff",
                         correctLevel: QRCode.CorrectLevel.H
                     });
+
                 }
             });
             result?.data?.slice(15, 17).forEach(e => {
+
                 let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
                 if (element) {
                     new QRCode(element, {
@@ -8344,24 +8593,34 @@
                     });
                 }
             });
+
         }
 
 
 
 
-        $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
-        $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
+        $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]
+            ?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
+        $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]
+            ?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
         $("#code-" + props.code).html(result.data[0].parameter_id.replaceAll(' ', '').replace(/_/g, ' '));
 
 
         $(".name_of_pasien-" + props.code).html(props.visit.name_of_pasien);
-        $(".date_of_birth-" + props.code).html(moment(props.visit.date_of_birth).format("DD-MM-YYYY"));
+        $(".date_of_birth-" + props.code).html(moment(props.visit.tgl_lahir).format("DD-MM-YYYY"));
         $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
     }
 
     const renderDynamicContent2 = (props) => {
-
         let result = props.result;
+        let signInfFill = result?.data?.filter(e => e.value_score === 1 || e.value_score === "1")
+
+        if (signInfFill.length > 0) {
+            signInfFill
+        } else {
+            signInfFill = result?.data.filter(e => e.value_score === 0 || e.value_score === "0")
+        }
+        let resultDataSign = signInfFill[0]
         let resultDataLine = '';
         let hasil = '';
         let dataInformasi = '';
@@ -8370,7 +8629,6 @@
 
         let formSetuju = document.querySelector('#form-setuju-' + props.code);
         let formMenolak = document.querySelector('#form-menolak-' + props.code);
-        console.log(result.data);
         if (result.data.length > 40) {
             const result2 = result.data.filter(item => item.value_desc.toLowerCase().includes("menolak"));
             const valueInfo2 = result2.map(item => item.value_info);
@@ -8428,13 +8686,14 @@
 
                 } else {
                     if (index === 1) {
+
                         let dokter = <?= json_encode($visit["visit"]["fullname"]) ?>;
                         dataInformasi +=
                             `<tr>
-                                <td style="width: 250px;">Dokter Pelaksana Tindakan</td>
-                                <td width="1%">:</td>
-                                <td>${dokter}</td>
-                            </tr>`;
+                    <td style="width: 250px;">Dokter Pelaksana Tindakan</td>
+                    <td width="1%">:</td>
+                    <td>${dokter ?? "-"}</td>
+                    </tr>`;
                     } else {
                         let hasival_info = element.value_info;
                         let dateTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
@@ -8449,7 +8708,7 @@
 
                         dataInformasi +=
                             `<tr>
-                                <td style="width: 250px;">${element.value_desc}</td>
+                                <td style="width: 250px;">${element?.value_desc ?? "-" }</td>
                                 <td width="1%">:</td>
                                 <td>${hasival_info}</td>
                             </tr>`;
@@ -8457,6 +8716,7 @@
                 }
             });
             result.data.slice(5, 16).forEach((element, index) => {
+
                 dataTable +=
                     `<tr>
                         <td valign="top" width="37">
@@ -8469,7 +8729,7 @@
                             <p class="mb-1">${element.value_info}</p>
                         </td>
                         <td valign="top" width="162">
-                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                            <p class="mb-1" align="center" id="1qrcode-${element.value_id}-${props.code}"></p>
                         </td>
                     </tr>`;
             });
@@ -8519,11 +8779,12 @@
                     });
                 }
             });
-            result?.data?.slice(17, 19).forEach(e => {
+            result?.data?.slice(17, 19).forEach((e, index) => {
                 let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
                 if (element) {
                     new QRCode(element, {
-                        text: result?.data[2].value_info.replace(/<p>|<\/p>/g, ''),
+                        text: index === 0 ?
+                            resultDataSign?.valid_user ?? "" : resultDataSign?.valid_pasien ?? "",
                         width: 50,
                         height: 50,
                         colorDark: "#000000",
@@ -8537,68 +8798,138 @@
 
 
 
+
             $("#nama-tindakan-setuju-" + props.code).html((result.data[21].value_info));
             $("#umur-tindakan-setuju-" + props.code).html((result.data[22].value_info));
             $("#alamat-tindakan-setuju-" + props.code).html((result.data[23].value_info));
+
 
             $("#nama-tindakan-menolak-" + props.code).html((result.data[34].value_info));
             $("#umur-tindakan-menolak-" + props.code).html((result.data[35].value_info));
             $("#alamat-tindakan-menolak-" + props.code).html((result.data[36].value_info));
 
-            $("#pihak-menyatakan-" + props.code).html((result.data[21].value_info));
-            $("#pihak-keluarga-" + props.code).html((result.data[21].value_info));
-            $("#pihak-medis-" + props.code).html((props.visit['fullname']));
 
-            $("#pihak-menyatakan2-" + props.code).html((result.data[34].value_info));
-            $("#pihak-keluarga2-" + props.code).html((result.data[34].value_info));
-            $("#pihak-medis2-" + props.code).html((props.visit['fullname']));
 
-            let element = document.getElementById(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`);
-            let element1 = document.getElementById(`qrcode-tandatangan-pihak-keluarga-${ props.code}`);
-            let element2 = document.getElementById(`qrcode-tandatangan-pihak-medis-${ props.code}`);
+            // $("#pihak-menyatakan-" + props.code).html((result.data[21].value_info));
+            // $("#pihak-keluarga-" + props.code).html((result.data[21].value_info));
+            // $("#pihak-medis-" + props.code).html((props.visit['fullname']));
+
+            // $("#pihak-menyatakan2-" + props.code).html((result.data[34].value_info));
+            // $("#pihak-keluarga2-" + props.code).html((result.data[34].value_info));
+            // $("#pihak-medis2-" + props.code).html((props.visit['fullname']));
+
+            let element = document.getElementById(`qrcode-tandatangan-pihak-menyatakan-${props.code}`);
+            let element1 = document.getElementById(`qrcode-tandatangan-pihak-keluarga-${props.code}`);
+            let element2 = document.getElementById(`qrcode-tandatangan-pihak-medis-${props.code}`);
 
             let element3 = document.getElementById(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`);
             let element4 = document.getElementById(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`);
             let element5 = document.getElementById(`qrcode-tandatangan-pihak-medis2-${ props.code}`);
 
+
+
+
             if (element) {
-                generateQRCode(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`, result?.data[21].value_info);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`qrcode-tandatangan-pihak-menyatakan-${props.code}`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-menyatakan_name-${props.code}`).html(namaPasien);
+
+                }
             }
             if (element1) {
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`qrcode-tandatangan-pihak-keluarga-${ props.code}`, resultDataSign?.valid_other ??
+                        "");
+                    const nama = resultDataSign?.valid_other?.split(':')[0]?.trim();
 
-                generateQRCode(`qrcode-tandatangan-pihak-keluarga-${ props.code}`, result?.data[21].value_info);
+                    $(`#qrcode-tandatangan-pihak-keluarga_name-${props.code}`).html(nama);
+                }
             }
             if (element2) {
-                generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, result?.data[21].value_info);
+                if (resultDataSign?.valid_other2 || resultDataSign?.valid_user) {
+                    generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, resultDataSign?.valid_other2 ??
+                        resultDataSign?.valid_user);
+                    const nama = resultDataSign?.valid_other2?.split(':')[0]?.trim() || resultDataSign?.valid_user
+                        ?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-medis_name-${props.code}`).html(nama);
+                }
             }
             if (element3) {
-                generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, result?.data[34].value_info);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, resultDataSign
+                        ?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-menyatakan2_name-${props.code}`).html(namaPasien);
+
+
+                }
             }
             if (element4) {
-                generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, result?.data[34].value_info);
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, resultDataSign?.valid_other ??
+                        "");
+
+                    const nama = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-keluarga2_name-${props.code}`).html(nama);
+                }
             }
             if (element5) {
-                generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, props.visit['fullname']);
+                if (resultDataSign?.valid_other2 || resultDataSign?.valid_user) {
+                    generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, resultDataSign?.valid_other2 ??
+                        resultDataSign?.valid_user
+                    );
+                    const nama = resultDataSign?.valid_other2?.split(':')[0]?.trim() || resultDataSign?.valid_user
+                        ?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-medis2_name-${props.code}`).html(nama);
+                }
             }
 
-            $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['diantar_oleh']));
             $("#umur-tindakan-setuju-2-" + props.code).html((props.visit['age']));
-            $("#alamat-tindakan-setuju-2-" + props.code).html((props.visit['contact_address']));
-            $("#kelamin-tindakan-setuju-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+            $("#alamat-tindakan-setuju-2-" + props.code).html((props.visit['visitor_address']));
+            $("#kelamin-tindakan-setuju-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' :
+                'Laki-Laki');
 
-            $("#nama-tindakan-menolak-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#nama-tindakan-menolak-2-" + props.code).html((props.visit['diantar_oleh']));
             $("#umur-tindakan-menolak-2-" + props.code).html((props.visit['age']));
-            $("#alamat-tindakan-menolak-2-" + props.code).html((props.visit['contact_address']));
-            $("#kelamin-tindakan-menolak-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+            $("#alamat-tindakan-menolak-2-" + props.code).html((props.visit['visitor_address']));
+            $("#kelamin-tindakan-menolak-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' :
+                'Laki-Laki');
 
-            $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
-            $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
+            $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]
+                ?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
+            $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]
+                ?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
             $("#code-" + props.code).html(result.data[0].parameter_id.replaceAll(' ', '').replace(/_/g, ' '));
 
 
-            $(".name_of_pasien-" + props.code).html(props.visit.name_of_pasien);
-            $(".date_of_birth-" + props.code).html(moment(props.visit.date_of_birth).format("DD-MM-YYYY"));
+            $(".name_of_pasien-" + props.code).html(props.visit.diantar_oleh);
+            $(".date_of_birth-" + props.code).html(moment(props.visit.tgl_lahir).format("DD-MM-YYYY"));
             $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
+
+            $(`#setuju-tindakan-${props?.code}`).attr("hidden", false);
+            $(`#menolak-tindakan-${props?.code}`).attr("hidden", false);
+            if (result?.data[25].value_info) {
+                $(`#setuju-tindakan-${props?.code}`).attr("hidden", false);
+                $(`#menolak-tindakan-${props?.code}`).attr("hidden", true);
+
+
+            } else if (result.data[38].value_info) {
+                $(`#setuju-tindakan-${props?.code}`).attr("hidden", true);
+                $(`#menolak-tindakan-${props?.code}`).attr("hidden", false);
+
+            } else {
+                $(`#setuju-tindakan-${props?.code}`).attr("hidden", false);
+                $(`#menolak-tindakan-${props?.code}`).attr("hidden", false);
+            }
 
         } else {
             const result2 = result.data.filter(item => item.value_desc.toLowerCase().includes("menolak"));
@@ -8736,32 +9067,51 @@
             result?.data?.slice(4, 10).forEach(e => {
                 let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
                 if (element) {
-                    new QRCode(element, {
-                        text: result?.data[3].value_info.replace(/<p>|<\/p>/g, ''),
-                        width: 50,
-                        height: 50,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
+                    if (resultDataSign?.valid_pasien) {
+                        generateQRCode(`qrcode-${e.value_id}-${props.code}`, resultDataSign
+                            ?.valid_pasien ??
+                            "");
+                        const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                        // $(`#qrcode-tandatangan-pihak-menyatakan_name-${props.code}`).html(namaPasien);
+
+                    }
                 }
+                // if (element) {
+                //     new QRCode(element, {
+                //         text: result?.data[3].value_info.replace(/<p>|<\/p>/g, ''),
+                //         width: 50,
+                //         height: 50,
+                //         colorDark: "#000000",
+                //         colorLight: "#ffffff",
+                //         correctLevel: QRCode.CorrectLevel.H
+                //     });
+                // }
             });
             result?.data?.slice(10, 12).forEach(e => {
                 let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
                 if (element) {
-                    new QRCode(element, {
-                        text: result?.data[2].value_info.replace(/<p>|<\/p>/g, ''),
-                        width: 50,
-                        height: 50,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
+                    if (resultDataSign?.valid_other2 || resultDataSign?.valid_user) {
+                        generateQRCode(`qrcode-${e.value_id}-${props.code}`, resultDataSign?.valid_other2 ||
+                            resultDataSign?.valid_user);
+                        const namaPasien = resultDataSign?.valid_other2 || resultDataSign?.valid_user?.split(
+                            ':')[0]?.trim();
+
+                        // $(`#qrcode-tandatangan-pihak-menyatakan_name-${props.code}`).html(namaPasien);
+
+                    }
+
+
+                    // new QRCode(element, {
+                    //     text: result?.data[2].value_info.replace(/<p>|<\/p>/g, ''),
+                    //     width: 50,
+                    //     height: 50,
+                    //     colorDark: "#000000",
+                    //     colorLight: "#ffffff",
+                    //     correctLevel: QRCode.CorrectLevel.H
+                    // });
                 }
             });
-
-
-
 
 
             $("#nama-tindakan-setuju-" + props.code).html((result.data[15].value_info));
@@ -8786,45 +9136,108 @@
             let element4 = document.getElementById(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`);
             let element5 = document.getElementById(`qrcode-tandatangan-pihak-medis2-${ props.code}`);
 
+
             if (element) {
-                generateQRCode(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`, result?.data[15].value_info);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`qrcode-tandatangan-pihak-menyatakan-${props.code}`, resultDataSign?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-menyatakan_name-${props.code}`).html(namaPasien);
+
+                }
             }
             if (element1) {
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`qrcode-tandatangan-pihak-keluarga-${ props.code}`, resultDataSign?.valid_other ??
+                        "");
+                    const nama = resultDataSign?.valid_other?.split(':')[0]?.trim();
 
-                generateQRCode(`qrcode-tandatangan-pihak-keluarga-${ props.code}`, result?.data[15].value_info);
+                    $(`#qrcode-tandatangan-pihak-keluarga_name-${props.code}`).html(nama);
+                }
             }
             if (element2) {
-                generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, result?.data[1].value_info);
+                if (resultDataSign?.valid_other2 || resultDataSign?.valid_user) {
+                    generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, resultDataSign?.valid_other2 ??
+                        resultDataSign?.valid_user);
+                    const nama = resultDataSign?.valid_other2?.split(':')[0]?.trim() || resultDataSign?.valid_user
+                        ?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-medis_name-${props.code}`).html(nama);
+                }
             }
             if (element3) {
-                generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, result?.data[15].value_info);
+                if (resultDataSign?.valid_pasien) {
+                    generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, resultDataSign
+                        ?.valid_pasien ??
+                        "");
+                    const namaPasien = resultDataSign?.valid_pasien?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-menyatakan2_name-${props.code}`).html(namaPasien);
+
+
+                }
             }
             if (element4) {
+                if (resultDataSign?.valid_other) {
+                    generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, resultDataSign?.valid_other ??
+                        "");
 
-                generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, result?.data[15].value_info);
+                    const nama = resultDataSign?.valid_other?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-keluarga2_name-${props.code}`).html(nama);
+                }
             }
             if (element5) {
-                generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, result?.data[1].value_info);
+                if (resultDataSign?.valid_other2 || resultDataSign?.valid_user) {
+                    generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, resultDataSign?.valid_other2 ??
+                        resultDataSign?.valid_user
+                    );
+                    const nama = resultDataSign?.valid_other2?.split(':')[0]?.trim() || resultDataSign?.valid_user
+                        ?.split(':')[0]?.trim();
+
+                    $(`#qrcode-tandatangan-pihak-medis2_name-${props.code}`).html(nama);
+                }
             }
 
-            $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['diantar_oleh']));
             $("#umur-tindakan-setuju-2-" + props.code).html((props.visit['age']));
-            $("#alamat-tindakan-setuju-2-" + props.code).html((props.visit['contact_address']));
-            $("#kelamin-tindakan-setuju-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+            $("#alamat-tindakan-setuju-2-" + props.code).html((props.visit['visitor_address']));
+            $("#kelamin-tindakan-setuju-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' :
+                'Laki-Laki');
 
-            $("#nama-tindakan-menolak-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#nama-tindakan-menolak-2-" + props.code).html((props.visit['diantar_oleh']));
             $("#umur-tindakan-menolak-2-" + props.code).html((props.visit['age']));
-            $("#alamat-tindakan-menolak-2-" + props.code).html((props.visit['contact_address']));
-            $("#kelamin-tindakan-menolak-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+            $("#alamat-tindakan-menolak-2-" + props.code).html((props.visit['visitor_address']));
+            $("#kelamin-tindakan-menolak-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' :
+                'Laki-Laki');
 
-            $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
-            $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
+            $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]
+                ?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
+            $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]
+                ?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
             $("#code-" + props.code).html(result.data[0].parameter_id.replaceAll(' ', '').replace(/_/g, ' '));
 
 
-            $(".name_of_pasien-" + props.code).html(props.visit.name_of_pasien);
-            $(".date_of_birth-" + props.code).html(moment(props.visit.date_of_birth).format("DD-MM-YYYY"));
+            $(".name_of_pasien-" + props.code).html(props.visit.diantar_oleh);
+            $(".date_of_birth-" + props.code).html(moment(props.visit.tgl_lahir).format("DD-MM-YYYY"));
             $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
+
+            $(`#setuju-tindakan-${props?.code}`).attr("hidden", false);
+            $(`#menolak-tindakan-${props?.code}`).attr("hidden", false);
+            if (result?.data[19].value_info) {
+                $(`#setuju-tindakan-${props?.code}`).attr("hidden", false);
+                $(`#menolak-tindakan-${props?.code}`).attr("hidden", true);
+
+
+            } else if (result.data[32].value_info) {
+                $(`#setuju-tindakan-${props?.code}`).attr("hidden", true);
+                $(`#menolak-tindakan-${props?.code}`).attr("hidden", false);
+
+            } else {
+                $(`#setuju-tindakan-${props?.code}`).attr("hidden", false);
+                $(`#menolak-tindakan-${props?.code}`).attr("hidden", false);
+            }
 
         }
 
@@ -8834,9 +9247,11 @@
     //new
     const getDataIdTables = (props) => {
         let data2 = <?= json_encode($AValue) ?>;
+
         let aValueTabels = data2.filter(item => item.value_score === 3 || item.value_score === 7);
 
         let matchedItem = aValueTabels.find(item => item.value_id === props.vId);
+
         if (matchedItem) {
             postData({
                 nameTables: matchedItem.value_info,
@@ -8852,7 +9267,8 @@
 
         const renderData = (data, item, props) => {
             if (data && data.length > 0) {
-                let matchedItem = data.find(resItem => resItem.score === item.value_score && resItem.id == props.id && resItem.vId == props.vId);
+                let matchedItem = data.find(resItem => resItem.score === item.value_score && resItem.id == props
+                    .id && resItem.vId == props.vId);
 
                 if (matchedItem && matchedItem.val !== undefined) {
                     $(props.element).html(matchedItem.val);
@@ -8886,19 +9302,86 @@
         });
     }
 
-    const generateQRCode = (elementId, text, width = 50, height = 50) => {
-        let element = document.getElementById(elementId);
-        if (element) {
-            new QRCode(element, {
-                text: text.replace(/<p>|<\/p>/g, ''),
-                width: width,
-                height: height,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+    const generateQRCode = (elementId, text) => {
+        const filter = window.sign.filter(e => e.sign_path === text);
+        const base64_ttd_labkron = filter[0]?.ttd_sign;
+
+        if (base64_ttd_labkron) {
+            if (filter[0]?.user_type === 1) {
+                if (base64_ttd_labkron) {
+                    $(`#${elementId}`).html(
+                        `<img src="${base64_ttd_labkron}" alt="QR Code" style="width: 100%; max-width: 190px; height: auto;">`
+                    );
+                } else {
+                    $(`#${elementId}`).html('');
+                }
+            } else {
+                cropTransparentPNG(base64_ttd_labkron, (croppedImage) => {
+                    if (croppedImage) {
+                        $(`#${elementId}`).html(
+                            `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+                        );
+                    } else {
+                        $(`#${elementId}`).html('');
+                    }
+                });
+            }
+        } else {
+            $(`#${elementId}`).html('');
         }
     };
+
+
+    const cropTransparentPNG = (base64, callback) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            let top = null,
+                bottom = null,
+                left = null,
+                right = null;
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const index = (y * canvas.width + x) * 4;
+                    const alpha = data[index + 3];
+                    if (alpha > 0) {
+                        if (top === null || y < top) top = y;
+                        if (bottom === null || y > bottom) bottom = y;
+                        if (left === null || x < left) left = x;
+                        if (right === null || x > right) right = x;
+                    }
+                }
+            }
+
+            if (top === null) return callback(null); // tidak ada gambar
+
+            const width = right - left + 1;
+            const height = bottom - top + 1;
+
+            const croppedCanvas = document.createElement('canvas');
+            croppedCanvas.width = width;
+            croppedCanvas.height = height;
+
+            const croppedCtx = croppedCanvas.getContext('2d');
+            croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+            const croppedBase64 = croppedCanvas.toDataURL('image/png');
+            callback(croppedBase64);
+        };
+        img.src = base64;
+    };
+
 
     function generateSlug(input) {
         return input

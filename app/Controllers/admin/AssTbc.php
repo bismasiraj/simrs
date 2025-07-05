@@ -14,6 +14,7 @@ class AssTbc extends \App\Controllers\BaseController
     {
         $request = service('request');
         $formData = $request->getJSON(true);
+        $db = db_connect();
 
         $model = new AssTbcModel();
         $data = $this->lowerKey(
@@ -23,9 +24,11 @@ class AssTbc extends \App\Controllers\BaseController
         );
         $success = !empty($data);
 
+        $kop = $this->lowerKey($db->query("select * from ORGANIZATIONUNIT")->getRowArray());
+
         return $this->response->setStatusCode(200)->setJSON([
             'status' => $success,
-            'value'   => ['data' => $data],
+            'value'   => ['data' => $data, 'kop' => $kop],
 
         ]);
     }

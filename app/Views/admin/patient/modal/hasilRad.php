@@ -1,4 +1,4 @@
-<div class="modal fade" id="hasilRad" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="hasilRad" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
@@ -127,7 +127,7 @@
             type: "POST",
             data: JSON.stringify({
                 'nomor': nomor,
-                'visit': visit,
+                'visit': visit.visit_id,
                 'tarif_id': tarif_id,
             }),
             dataType: 'json',

@@ -12,15 +12,15 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
     <script src="<?= base_url('/assets/js/default.js') ?>"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <style>
         .form-control:disabled,
@@ -75,7 +75,7 @@
             </div>
             <div class="col mt-2">
                 <h3><?= $organization['name_of_org_unit']; ?></h3>
-                <p><?= $organization['contact_address']; ?></p>
+                <p><?= @$organization['contact_address']; ?></p>
             </div>
             <div class="col-auto" align="center">
                 <img class="mt-2" src="<?= base_url('assets/img/kemenkes.png') ?>" width="70px">
@@ -106,7 +106,7 @@
             <tr>
                 <td width="20%">Alamat</td>
                 <td width="1%">:</td>
-                <td colspan="2"><?= $visit['contact_address']; ?></td>
+                <td colspan="2"><?= $visit['visitor_address']; ?></td>
                 <td width="20%">Dokter Pengirim</td>
                 <td width="1%">:</td>
                 <td><?= @$val['doctor']; ?></td>

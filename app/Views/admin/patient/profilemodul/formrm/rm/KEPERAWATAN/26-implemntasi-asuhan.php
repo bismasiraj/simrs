@@ -13,62 +13,62 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -121,11 +121,11 @@
                         <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
                             <?php if (!empty($visit['date_of_birth'])) : ?>
-                            <p class="m-0 mt-1 p-0">
-                                <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
-                            </p>
+                                <p class="m-0 mt-1 p-0">
+                                    <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
+                                </p>
                             <?php else : ?>
-                            <p class="m-0 mt-1 p-0">-</p>
+                                <p class="m-0 mt-1 p-0">-</p>
                             <?php endif; ?>
                         </td>
                         <td class="p-1" colspan="2">
@@ -198,14 +198,14 @@
 
 
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+    $(document).ready(function() {
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
 
-    dataRender()
-})
+        dataRender()
+    })
 
-const dataRender = () => {
-    let tabelsHandover = `<table class="table table-bordered text-center">
+    const dataRender = () => {
+        let tabelsHandover = `<table class="table table-bordered text-center">
                                     <thead>
                                         <tr>
                                             <th colspan="2" ">HANDOVER</th>
@@ -231,65 +231,65 @@ const dataRender = () => {
 
 
 
-    <?php $dataJson = json_encode($data); ?>
-    let dataResult = []
-    let data = <?php echo $dataJson; ?>;
-    // console.log(data.lenght);
-    // if(data.leng)
-    data.map((e) => {
-        if (e.respons === "mashookkkk") {
-            dataResult += `<tr>
+        <?php $dataJson = json_encode($data); ?>
+        let dataResult = []
+        let data = <?php echo $dataJson; ?>;
+        // console.log(data.lenght);
+        // if(data.leng)
+        data.map((e) => {
+            if (e.respons === "mashookkkk") {
+                dataResult += `<tr>
                                         <td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
                                         <td colspan="2">${tabelsHandover}</td>
                                         <td></td>
                                     </tr>`;
-        } else {
-            dataResult += `<tr><td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
+            } else {
+                dataResult += `<tr><td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
                                 <td>${e?.tindakan}</td>
                                 <td>${e?.respons}</td>
                                 <td>${e?.nama}</td>
                             </tr>`;
-        }
+            }
 
-    });
+        });
 
-    $("#daftar-implemntasi-tabels").html(dataResult)
+        $("#daftar-implemntasi-tabels").html(dataResult)
 
-    let qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    let qrcode1 = new QRCode(document.getElementById("qrcode2"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+        let qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: 'a',
+            width: 85,
+            height: 85,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+        let qrcode1 = new QRCode(document.getElementById("qrcode2"), {
+            text: 'a',
+            width: 85,
+            height: 85,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
 
-}
+    }
+    window.print();
 </script>
 
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
 </script>
 
 </html>

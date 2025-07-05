@@ -664,6 +664,10 @@ $currency_symbol = "Rp. ";
         // dom: '<"mb-3"B>rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
         dom: '<"mb-3"B>rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"l><"datatablesjmlshow">>',
         lengthChange: true,
+        pageLength: <?= !empty($filterlenght) ? $filterlenght : 10 ?>,
+        responsive: true,
+
+
         buttons: ['copy', {
             text: 'Exel',
             action: function(e, dt, node, config) {
@@ -866,6 +870,7 @@ $currency_symbol = "Rp. ";
                     var fileTitle = $("#custom").text()
                     var newDataTableVar = $('#reportDataTable').DataTable({
                         dom: '<"mb-3"B>rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"l><"datatablesjmlshow">>',
+                        responsive: true,
                         // dom: '<"mb-3"B>rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
                         lengthChange: true,
                         buttons: ['copy', {
@@ -906,11 +911,11 @@ $currency_symbol = "Rp. ";
                 }
                 data.body.forEach((element, key) => {
                     // console.log(element)
-                    // �['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00', 'Pcs', `<button type="button" onclick="rinciObatAlkes('247�ff"><i class="fa fa-search"></i> Rincian</button>`]
+                    //  ['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00', 'Pcs', `<button type="button" onclick="rinciObatAlkes('247…ff"><i class="fa fa-search"></i> Rincian</button>`]
                     // ['UMUM', 126, 576, 169, 283, 124, 293, 114, 576, 0]
                     var arhasil = ['2023-08-05', 'BHP1196', 'Cystofix set FR10,8cm', '1.00',
                         'Pcs',
-                        `<button type="button" onclick="rinciObatAlkes('247�ff"><i class="fa fa-search"></i> Rincian</button>`,
+                        `<button type="button" onclick="rinciObatAlkes('247…ff"><i class="fa fa-search"></i> Rincian</button>`,
                         '2023-08-05', '2023-08-05', '2023-08-05', '2023-08-05'
                     ];
                     newDataTableVar.row.add(element).draw()

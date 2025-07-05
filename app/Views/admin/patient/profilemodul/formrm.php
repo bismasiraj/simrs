@@ -157,9 +157,9 @@ $permission = user()->getPermissions();
     let baseUrl = '<?= base_url() ?>';
     let url = baseUrl + '/admin/rm/keperawatan/transfer_internal/' + base64Data + '/' + $("#arpbody_id").val();
 
-    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis</a></li>')
+    // $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis</a></li>')
     $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/profile/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Profile Ringkas Medis Rawat Jalan</a></li>')
-    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/reklaim/CetakReklaim/cetakAllGrouping/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '?result=RJF&type=SKD" target="_blank">Surat Keterangan Diagnosis</a></li>')
     // $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/reconsialisasi/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Reconsialisasi Obat</a></li>')
     // $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
     // $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Kontrol Pasien BPJS</a></li>')

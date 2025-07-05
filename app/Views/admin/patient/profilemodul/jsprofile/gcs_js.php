@@ -9,20 +9,6 @@
     var lastOrder = 0;
     var gcsjson = [];
     gcsjson = <?= json_encode($exam); ?>;
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-    })
     $("#gcsTab").on("click", function() {
         $("#gcsBody").html('')
         getGcsAll()
@@ -189,7 +175,7 @@
             url: '<?php echo base_url(); ?>admin/rm/assessment/getGcs',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': ''
             }),

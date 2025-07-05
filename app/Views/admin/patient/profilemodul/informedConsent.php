@@ -25,23 +25,25 @@ table.table-fit tfoot td {
         <div id="load-content-inf" class="col-12 center-spinner"></div>
         <div id="contentToHide" class="col-12">
             <div class="row">
-                <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+                <div class="col-lg-2 col-md-12 col-sm-12 border-r">
                     <?php echo view('admin/patient/profilemodul/profilebiodata', [
             'visit' => $visit,
           ]); ?>
                 </div>
-                <div class="col-lg-9 col-md-9 col-xs-12">
+                <div class="col-lg-10 col-md-12 col-xs-12">
                     <div class="accordion mt-4">
                         <center>
                             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
                                 data-target="#create-modal" id="btn-create">+ Tambah Dokumen</button>
                         </center>
+
                         <div class="panel-group" id="tableInfCon">
                             <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Informed Consent</h3>
                             <table class="table table-bordered table-hover table-centered" style="text-align: center">
                                 <thead class="table-primary">
                                     <tr>
                                         <th scope="row" style="width: 1%;">No</th>
+                                        <th scope="col">Tgl</th>
                                         <th scope="col">Dokumen</th>
                                         <th scope="col"></th>
                                     </tr>
@@ -49,22 +51,25 @@ table.table-fit tfoot td {
                                 <tbody id="bodydata" class="table-group-divider">
 
                                     <tr>
-                                        <td colspan="3">Data Kosong</td>
+                                        <td colspan="20">Data Kosong</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
+
 <!-- Modal Create -->
 <div class="modal fade modal-xl" id="create-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-scrollable" role="document">
+    aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog  modal-dialog-scrollable modal-fullscreen-lg-down" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="title">Informed Consent</h5>
@@ -83,11 +88,38 @@ table.table-fit tfoot td {
                     <div id="content-param"></div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" id="formsignInf" name="signInf" data-sign-ke="1"
-                    data-button-id="btn-save-inf-modal" class="btn btn-warning">
-                    <i class="fa fa-signature"></i> <span>Sign</span>
-                </button>
+            <div class="modal-footer modal-footer py-0 px-3">
+                <div id="formsignInf" class="mb-4">
+                    <p class="text-danger mb-0 p-0 small">*Perhatian: Jika berwarna merah, berarti proses tanda tangan
+                        sudah selesai.
+                    </p>
+
+                    <button type="button" id="formsignInfvalid_user" name="signInf" data-filed="valid_user" da
+                        data-sign-ke="1" data-user-type="1" data-button-id="btn-save-inf-modal"
+                        class="btn btn-outline-warning">
+                        <i class="fa fa-signature"></i> <span>Sign Petugas</span>
+                    </button>
+                    <button type="button" id="formsignInfvalid_pasien" name="signInf" data-filed="valid_pasien"
+                        data-sign-ke="2" data-user-type="2" data-button-id="btn-save-inf-modal"
+                        class="btn btn-outline-warning">
+                        <i class="fa fa-signature"></i> <span>Sign Pasien / Keluarga</span>
+                    </button>
+                    <button type="button" id="formsignInfvalid_other" name="signInf" data-filed="valid_other"
+                        data-sign-ke="3" data-user-type="3" data-button-id="btn-save-inf-modal"
+                        class="btn btn-outline-warning">
+                        <i class="fa fa-signature"></i> <span>Sign Saksi 1</span>
+                    </button>
+                    <button type="button" id="formsignInfvalid_other2" name="signInf" data-filed="valid_other2"
+                        data-sign-ke="4" data-user-type="3" data-button-id="btn-save-inf-modal"
+                        class="btn btn-outline-warning">
+                        <i class="fa fa-signature"></i> <span>Sign Saksi 2</span>
+                    </button>
+                    <button type="button" id="formsignInfvalid_other3" name="signInf" data-filed="valid_other3"
+                        data-sign-ke="5" data-user-type="3" data-button-id="btn-save-inf-modal"
+                        class="btn btn-outline-warning">
+                        <i class="fa fa-signature"></i> <span>Sign Saksi 3</span>
+                    </button>
+                </div>
 
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                     id="close-create-modal">Keluar</button>
@@ -115,13 +147,3 @@ table.table-fit tfoot td {
         </div>
     </div>
 </div>
-
-
-<?php echo view('admin/patient/profilemodul/jsprofile/informedConsent_js', [
-  'title' => 'Test',
-  'visit' => $visit,
-  'aParent' => $aParent,
-  'aType' => $aType,
-  'aParameter' => $aParameter,
-  'aValue' => $aValue,
-]) ?>

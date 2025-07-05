@@ -13,97 +13,97 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
-
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
-
-    @page {
-        size: A4;
-    }
-
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
-
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
-
-    @media print {
-        .row {
-            display: flex;
-            flex-wrap: nowrap;
-            /* Mencegah elemen stack ke bawah saat print */
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
         }
 
-        .col-md-4,
-        .col-md-3,
-        .col-md-5 {
-            flex: 1;
-            max-width: none;
-            /* Atur agar kolom tetap lebar sesuai proporsi */
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
         }
 
-        .container,
-        .row {
-            width: 100%;
-            max-width: 210mm;
-            /* Lebar kertas A4 */
-            margin: 0 auto;
+        @page {
+            size: A4;
         }
 
-        /* Pastikan margin dan padding tidak membuat tampilan overflow */
-        body,
-        .container {
+        body {
+            width: 21cm;
+            height: 29.7cm;
             margin: 0;
-            padding: 0;
+            font-size: 12px;
         }
 
-        h5 {
-            margin-bottom: 10px;
-            /* Mengurangi jarak antar heading saat print */
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
         }
-    }
+
+        @media print {
+            .row {
+                display: flex;
+                flex-wrap: nowrap;
+                /* Mencegah elemen stack ke bawah saat print */
+            }
+
+            .col-md-4,
+            .col-md-3,
+            .col-md-5 {
+                flex: 1;
+                max-width: none;
+                /* Atur agar kolom tetap lebar sesuai proporsi */
+            }
+
+            .container,
+            .row {
+                width: 100%;
+                max-width: 210mm;
+                /* Lebar kertas A4 */
+                margin: 0 auto;
+            }
+
+            /* Pastikan margin dan padding tidak membuat tampilan overflow */
+            body,
+            .container {
+                margin: 0;
+                padding: 0;
+            }
+
+            h5 {
+                margin-bottom: 10px;
+                /* Mengurangi jarak antar heading saat print */
+            }
+        }
     </style>
 </head>
 
@@ -134,7 +134,7 @@
             </div>
             <div class="row mb-4">
                 <div class="col text-center">
-                    <h4><?= $title?></h4>
+                    <h4><?= $title ?></h4>
                 </div>
             </div>
             <div class="row mb-4">
@@ -207,761 +207,761 @@
 
 </body>
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+    $(document).ready(function() {
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
 
-    renderTables()
-    data = [{
-            "org_unit_code": "3372238",
-            "vactination_id": "099FA664-A07A-46F3-849C-D818EC85D41A",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020004",
-            "bill_id": "20240716162117745",
-            "treat_date": "2024-07-19 11:00:00.000",
-            "allocated_date": null,
-            "brand_id": "3888",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Ambroxol Tablet",
-            "dose_presc": ".00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "",
-            "numer": "9",
-            "iter": 1,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "30.00",
-            "resep_ke": 2,
-            "iter_ke": 1,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 16:21:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 16:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "M",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "1"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "B7E34E25-07E3-42EE-87FA-115A853AFC5E",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020004",
-            "bill_id": "20240716162117745",
-            "treat_date": "2024-07-19 11:00:00.000",
-            "allocated_date": null,
-            "brand_id": "3888",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Ambroxol Tablet",
-            "dose_presc": ".00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "",
-            "numer": "9",
-            "iter": 1,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "30.00",
-            "resep_ke": 2,
-            "iter_ke": 2,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 16:21:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 17:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "T",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "2"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "52A66447-B814-4E0D-9F3E-3AAB0C46DD19",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020004",
-            "bill_id": "20240716162117745",
-            "treat_date": "2024-07-19 11:00:00.000",
-            "allocated_date": null,
-            "brand_id": "3888",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Ambroxol Tablet",
-            "dose_presc": ".00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "",
-            "numer": "9",
-            "iter": 1,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "30.00",
-            "resep_ke": 2,
-            "iter_ke": 3,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 16:21:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 18:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "T",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "3"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "BF493765-0CB9-45ED-9B90-28D5C3E3A0FC",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020004",
-            "bill_id": "20240716162117745",
-            "treat_date": "2024-07-20 11:00:00.000",
-            "allocated_date": null,
-            "brand_id": "3888",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Ambroxol Tablet",
-            "dose_presc": ".00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "",
-            "numer": "9",
-            "iter": 2,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "30.00",
-            "resep_ke": 2,
-            "iter_ke": 1,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 16:21:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 19:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "4"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "AA1E0121-431E-4454-9AB5-C7111FA46BAD",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020004",
-            "bill_id": "20240716162117745",
-            "treat_date": "2024-07-20 11:00:00.000",
-            "allocated_date": null,
-            "brand_id": "3888",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Ambroxol Tablet",
-            "dose_presc": ".00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "",
-            "numer": "9",
-            "iter": 2,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "30.00",
-            "resep_ke": 2,
-            "iter_ke": 2,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 16:21:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 20:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "5"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "366CDCE2-AF80-4D2A-BEAD-56F23F7481BC",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020004",
-            "bill_id": "20240716162117745",
-            "treat_date": "2024-07-20 11:00:00.000",
-            "allocated_date": null,
-            "brand_id": "3888",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Ambroxol Tablet",
-            "dose_presc": ".00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "",
-            "numer": "9",
-            "iter": 2,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "30.00",
-            "resep_ke": 2,
-            "iter_ke": 3,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 16:21:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 21:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "6"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "FC316C24-37B6-4ADC-BBE1-9C2F5E112076",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020003",
-            "bill_id": "20240716141809608",
-            "treat_date": "2024-07-18 15:00:00.000",
-            "allocated_date": null,
-            "brand_id": "4087",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Sanmol",
-            "dose_presc": "12.00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "3 x sehari 2 Kapsul    ",
-            "numer": "9",
-            "iter": 1,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "500.00",
-            "resep_ke": 1,
-            "iter_ke": 1,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 14:18:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 23:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "1"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "78F936A1-0DF1-4BD0-9F9F-8E1CF2267678",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020003",
-            "bill_id": "20240716141809608",
-            "treat_date": "2024-07-18 15:00:00.000",
-            "allocated_date": null,
-            "brand_id": "4087",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Sanmol",
-            "dose_presc": "12.00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "3 x sehari 2 Kapsul    ",
-            "numer": "9",
-            "iter": 1,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "500.00",
-            "resep_ke": 1,
-            "iter_ke": 2,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 14:18:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 16:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "2"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "B7D9FCEB-4BBD-4E51-822E-2D4A4ACF553D",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020003",
-            "bill_id": "20240716141809608",
-            "treat_date": "2024-07-18 15:00:00.000",
-            "allocated_date": null,
-            "brand_id": "4087",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Sanmol",
-            "dose_presc": "12.00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "3 x sehari 2 Kapsul    ",
-            "numer": "9",
-            "iter": 1,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "500.00",
-            "resep_ke": 1,
-            "iter_ke": 3,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 14:18:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 17:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "3"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "91C38EC0-D7CB-45D5-873A-A480D698A111",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020003",
-            "bill_id": "20240716141809608",
-            "treat_date": "2024-07-19 15:00:00.000",
-            "allocated_date": null,
-            "brand_id": "4087",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Sanmol",
-            "dose_presc": "12.00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "3 x sehari 2 Kapsul    ",
-            "numer": "9",
-            "iter": 2,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "500.00",
-            "resep_ke": 1,
-            "iter_ke": 1,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 14:18:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-16 18:21:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "4"
-        },
-        {
-            "org_unit_code": "3372238",
-            "vactination_id": "133BBF93-EFDF-435B-AFDC-07934108E975",
-            "no_registration": "021732",
-            "visit_id": "202406231817490203553",
-            "trans_id": "021732202406231817490200",
-            "resep_no": "RIE240716B020003",
-            "bill_id": "20240716141809608",
-            "treat_date": "2024-07-19 15:00:00.000",
-            "allocated_date": null,
-            "brand_id": "4087",
-            "employee_id": "41",
-            "doctor": "",
-            "quantity": "1.00",
-            "quantity_detail": ".00",
-            "measure_id": 3,
-            "description": "Sanmol",
-            "dose_presc": "12.00",
-            "sold_status": 7,
-            "racikan": 0,
-            "description2": "3 x sehari 2 Kapsul    ",
-            "numer": "9",
-            "iter": 2,
-            "package_id": null,
-            "module_id": "",
-            "dose": "1.00",
-            "jml_bks": 0,
-            "orig_dose": "500.00",
-            "resep_ke": 1,
-            "iter_ke": 2,
-            "aturanminum2": null,
-            "modified_date": "2024-07-16 14:18:00.000",
-            "modified_by": null,
-            "modified_from": "B020",
-            "valid_date": null,
-            "valid_user": null,
-            "valid_user_2": null,
-            "received_date": "2024-07-17 17:22:00.000",
-            "signa_1": null,
-            "signa_2": null,
-            "signa_3": null,
-            "signa_4": null,
-            "signa_5": null,
-            "clinic_id_from": null,
-            "tagihan": null,
-            "thename": null,
-            "theaddress": null,
-            "serial_nb": null,
-            "isrj": null,
-            "theid": null,
-            "status_pasien_id": null,
-            "status_obat": "V",
-            "class_room_id": null,
-            "bed_id": null,
-            "rn": "5"
-        },
+        renderTables()
+        data = [{
+                "org_unit_code": "3372238",
+                "vactination_id": "099FA664-A07A-46F3-849C-D818EC85D41A",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020004",
+                "bill_id": "20240716162117745",
+                "treat_date": "2024-07-19 11:00:00.000",
+                "allocated_date": null,
+                "brand_id": "3888",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Ambroxol Tablet",
+                "dose_presc": ".00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "",
+                "numer": "9",
+                "iter": 1,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "30.00",
+                "resep_ke": 2,
+                "iter_ke": 1,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 16:21:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 16:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "M",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "1"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "B7E34E25-07E3-42EE-87FA-115A853AFC5E",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020004",
+                "bill_id": "20240716162117745",
+                "treat_date": "2024-07-19 11:00:00.000",
+                "allocated_date": null,
+                "brand_id": "3888",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Ambroxol Tablet",
+                "dose_presc": ".00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "",
+                "numer": "9",
+                "iter": 1,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "30.00",
+                "resep_ke": 2,
+                "iter_ke": 2,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 16:21:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 17:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "T",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "2"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "52A66447-B814-4E0D-9F3E-3AAB0C46DD19",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020004",
+                "bill_id": "20240716162117745",
+                "treat_date": "2024-07-19 11:00:00.000",
+                "allocated_date": null,
+                "brand_id": "3888",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Ambroxol Tablet",
+                "dose_presc": ".00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "",
+                "numer": "9",
+                "iter": 1,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "30.00",
+                "resep_ke": 2,
+                "iter_ke": 3,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 16:21:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 18:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "T",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "3"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "BF493765-0CB9-45ED-9B90-28D5C3E3A0FC",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020004",
+                "bill_id": "20240716162117745",
+                "treat_date": "2024-07-20 11:00:00.000",
+                "allocated_date": null,
+                "brand_id": "3888",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Ambroxol Tablet",
+                "dose_presc": ".00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "",
+                "numer": "9",
+                "iter": 2,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "30.00",
+                "resep_ke": 2,
+                "iter_ke": 1,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 16:21:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 19:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "4"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "AA1E0121-431E-4454-9AB5-C7111FA46BAD",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020004",
+                "bill_id": "20240716162117745",
+                "treat_date": "2024-07-20 11:00:00.000",
+                "allocated_date": null,
+                "brand_id": "3888",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Ambroxol Tablet",
+                "dose_presc": ".00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "",
+                "numer": "9",
+                "iter": 2,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "30.00",
+                "resep_ke": 2,
+                "iter_ke": 2,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 16:21:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 20:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "5"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "366CDCE2-AF80-4D2A-BEAD-56F23F7481BC",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020004",
+                "bill_id": "20240716162117745",
+                "treat_date": "2024-07-20 11:00:00.000",
+                "allocated_date": null,
+                "brand_id": "3888",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Ambroxol Tablet",
+                "dose_presc": ".00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "",
+                "numer": "9",
+                "iter": 2,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "30.00",
+                "resep_ke": 2,
+                "iter_ke": 3,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 16:21:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 21:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "6"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "FC316C24-37B6-4ADC-BBE1-9C2F5E112076",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020003",
+                "bill_id": "20240716141809608",
+                "treat_date": "2024-07-18 15:00:00.000",
+                "allocated_date": null,
+                "brand_id": "4087",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Sanmol",
+                "dose_presc": "12.00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "3 x sehari 2 Kapsul    ",
+                "numer": "9",
+                "iter": 1,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "500.00",
+                "resep_ke": 1,
+                "iter_ke": 1,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 14:18:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 23:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "1"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "78F936A1-0DF1-4BD0-9F9F-8E1CF2267678",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020003",
+                "bill_id": "20240716141809608",
+                "treat_date": "2024-07-18 15:00:00.000",
+                "allocated_date": null,
+                "brand_id": "4087",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Sanmol",
+                "dose_presc": "12.00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "3 x sehari 2 Kapsul    ",
+                "numer": "9",
+                "iter": 1,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "500.00",
+                "resep_ke": 1,
+                "iter_ke": 2,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 14:18:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 16:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "2"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "B7D9FCEB-4BBD-4E51-822E-2D4A4ACF553D",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020003",
+                "bill_id": "20240716141809608",
+                "treat_date": "2024-07-18 15:00:00.000",
+                "allocated_date": null,
+                "brand_id": "4087",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Sanmol",
+                "dose_presc": "12.00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "3 x sehari 2 Kapsul    ",
+                "numer": "9",
+                "iter": 1,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "500.00",
+                "resep_ke": 1,
+                "iter_ke": 3,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 14:18:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 17:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "3"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "91C38EC0-D7CB-45D5-873A-A480D698A111",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020003",
+                "bill_id": "20240716141809608",
+                "treat_date": "2024-07-19 15:00:00.000",
+                "allocated_date": null,
+                "brand_id": "4087",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Sanmol",
+                "dose_presc": "12.00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "3 x sehari 2 Kapsul    ",
+                "numer": "9",
+                "iter": 2,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "500.00",
+                "resep_ke": 1,
+                "iter_ke": 1,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 14:18:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-16 18:21:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "4"
+            },
+            {
+                "org_unit_code": "3372238",
+                "vactination_id": "133BBF93-EFDF-435B-AFDC-07934108E975",
+                "no_registration": "021732",
+                "visit_id": "202406231817490203553",
+                "trans_id": "021732202406231817490200",
+                "resep_no": "RIE240716B020003",
+                "bill_id": "20240716141809608",
+                "treat_date": "2024-07-19 15:00:00.000",
+                "allocated_date": null,
+                "brand_id": "4087",
+                "employee_id": "41",
+                "doctor": "",
+                "quantity": "1.00",
+                "quantity_detail": ".00",
+                "measure_id": 3,
+                "description": "Sanmol",
+                "dose_presc": "12.00",
+                "sold_status": 7,
+                "racikan": 0,
+                "description2": "3 x sehari 2 Kapsul    ",
+                "numer": "9",
+                "iter": 2,
+                "package_id": null,
+                "module_id": "",
+                "dose": "1.00",
+                "jml_bks": 0,
+                "orig_dose": "500.00",
+                "resep_ke": 1,
+                "iter_ke": 2,
+                "aturanminum2": null,
+                "modified_date": "2024-07-16 14:18:00.000",
+                "modified_by": null,
+                "modified_from": "B020",
+                "valid_date": null,
+                "valid_user": null,
+                "valid_user_2": null,
+                "received_date": "2024-07-17 17:22:00.000",
+                "signa_1": null,
+                "signa_2": null,
+                "signa_3": null,
+                "signa_4": null,
+                "signa_5": null,
+                "clinic_id_from": null,
+                "tagihan": null,
+                "thename": null,
+                "theaddress": null,
+                "serial_nb": null,
+                "isrj": null,
+                "theid": null,
+                "status_pasien_id": null,
+                "status_obat": "V",
+                "class_room_id": null,
+                "bed_id": null,
+                "rn": "5"
+            },
 
-    ]
-
-
+        ]
 
 
-})
-const renderTables = () => {
-    <?php $dataJson = json_encode($data); ?>
-    let dataResult = '';
-    let data = <?php echo $dataJson; ?>;
 
 
-    let groupedData = {};
-    let uniqueDates = new Set();
-
-    data.forEach((e) => {
-        let brandKey = e.brand_id;
-        let dateKey = !e?.received_date ? "" : moment(e?.received_date).format("YYYY-MM-DD");
-        uniqueDates.add(dateKey);
-
-        if (!groupedData[brandKey]) {
-            groupedData[brandKey] = {};
-        }
-
-        if (!groupedData[brandKey][dateKey]) {
-            groupedData[brandKey][dateKey] = {
-                nama_obat: e.description,
-                aturan_pakai: e.description2,
-                quantity: 0,
-                signa: e.signa_4,
-                status_obat: [],
-                times: [],
-            };
-        }
-
-        if (e?.received_date) {
-            groupedData[brandKey][dateKey].times.push(moment(e.received_date).format("HH:mm"));
-            groupedData[brandKey][dateKey].status_obat.push(e.status_obat);
-        }
-
-        groupedData[brandKey][dateKey].quantity += parseFloat(e.quantity_detail) || 0;
-    });
-
-    const uniqueDatesCount = uniqueDates.size;
-    const allDates = new Set();
-    for (let brandKey in groupedData) {
-        for (let dateKey in groupedData[brandKey]) {
-            allDates.add(dateKey);
-        }
-    }
-
-    const sortedDates = Array.from(allDates).sort();
-
-    let colsResult = uniqueDatesCount * 6;
-    $("#jam-beri").attr("colspan", colsResult);
-
-    let dateHeaderRow = '';
-    sortedDates?.forEach(date => {
-
-        dateHeaderRow +=
-            `<td style="text-align:center;" colspan="6">${!date?"": moment(date).format("DD-MM-YYYY")}</td>`;
-    });
-    $("#date-header-row").html(dateHeaderRow);
-
-    let index = 1;
-    for (let brandKey in groupedData) {
-        const group = groupedData[brandKey];
-
-        dataResult += `<tr>`;
-        dataResult += `<td rowspan="2" class="align-middle text-center">${index++}</td>`;
-        dataResult +=
-            `<td rowspan="2" class="align-middle text-center">${group[Object.keys(group)[0]].nama_obat}</td>`;
-        dataResult +=
-            `<td rowspan="2" class="align-middle text-center">${group[Object.keys(group)[0]].aturan_pakai || '-'}</td>`;
-        dataResult +=
-            `<td rowspan="2" class="align-middle text-center">${group[Object.keys(group)[0]].signa || '-'}</td>`;
-        dataResult += `<td rowspan="2" class="align-middle text-center">-</td>`;
+    })
+    const renderTables = () => {
+        <?php $dataJson = json_encode($data); ?>
+        let dataResult = '';
+        let data = <?php echo $dataJson; ?>;
 
 
-        sortedDates.forEach(date => {
-            const timesRow = group[date] ? group[date].times : [];
-            const timesCount = timesRow.length;
+        let groupedData = {};
+        let uniqueDates = new Set();
 
+        data.forEach((e) => {
+            let brandKey = e.brand_id;
+            let dateKey = !e?.received_date ? "" : moment(e?.received_date).format("YYYY-MM-DD");
+            uniqueDates.add(dateKey);
 
-            for (let i = 0; i < 6; i++) {
-                if (i < timesCount) {
-                    dataResult += `<td class="text-center">${timesRow[i]}</td>`;
-                } else {
-                    dataResult += `<td class="text-center"></td>`;
-                }
+            if (!groupedData[brandKey]) {
+                groupedData[brandKey] = {};
             }
+
+            if (!groupedData[brandKey][dateKey]) {
+                groupedData[brandKey][dateKey] = {
+                    nama_obat: e.description,
+                    aturan_pakai: e.description2,
+                    quantity: 0,
+                    signa: e.signa_4,
+                    status_obat: [],
+                    times: [],
+                };
+            }
+
+            if (e?.received_date) {
+                groupedData[brandKey][dateKey].times.push(moment(e.received_date).format("HH:mm"));
+                groupedData[brandKey][dateKey].status_obat.push(e.status_obat);
+            }
+
+            groupedData[brandKey][dateKey].quantity += parseFloat(e.quantity_detail) || 0;
         });
 
-        dataResult += `<td rowspan="2" class="align-middle text-center"></td>`;
-        dataResult += `</tr>`;
-
-        dataResult += `<tr>`;
-        sortedDates.forEach(date => {
-            const statusRow = group[date] ? group[date].status_obat === "V" ? "v" : group[date]
-                .status_obat : [];
-
-            const statusCount = statusRow.length;
-
-
-            for (let i = 0; i < 6; i++) {
-                if (i < statusCount) {
-                    dataResult += `<td class="text-center">${statusRow[i]=== "V" ? "v":statusRow[i]}</td>`;
-                } else {
-                    dataResult += `<td class="text-center"></td>`;
-                }
+        const uniqueDatesCount = uniqueDates.size;
+        const allDates = new Set();
+        for (let brandKey in groupedData) {
+            for (let dateKey in groupedData[brandKey]) {
+                allDates.add(dateKey);
             }
+        }
+
+        const sortedDates = Array.from(allDates).sort();
+
+        let colsResult = uniqueDatesCount * 6;
+        $("#jam-beri").attr("colspan", colsResult);
+
+        let dateHeaderRow = '';
+        sortedDates?.forEach(date => {
+
+            dateHeaderRow +=
+                `<td style="text-align:center;" colspan="6">${!date?"": moment(date).format("DD-MM-YYYY")}</td>`;
         });
+        $("#date-header-row").html(dateHeaderRow);
 
-        dataResult += `</tr>`;
-    }
+        let index = 1;
+        for (let brandKey in groupedData) {
+            const group = groupedData[brandKey];
 
-    if (data.length === 0) {
-        dataResult = `<tr style="height: 200px;">
+            dataResult += `<tr>`;
+            dataResult += `<td rowspan="2" class="align-middle text-center">${index++}</td>`;
+            dataResult +=
+                `<td rowspan="2" class="align-middle text-center">${group[Object.keys(group)[0]].nama_obat}</td>`;
+            dataResult +=
+                `<td rowspan="2" class="align-middle text-center">${group[Object.keys(group)[0]].aturan_pakai || '-'}</td>`;
+            dataResult +=
+                `<td rowspan="2" class="align-middle text-center">${group[Object.keys(group)[0]].signa || '-'}</td>`;
+            dataResult += `<td rowspan="2" class="align-middle text-center">-</td>`;
+
+
+            sortedDates.forEach(date => {
+                const timesRow = group[date] ? group[date].times : [];
+                const timesCount = timesRow.length;
+
+
+                for (let i = 0; i < 6; i++) {
+                    if (i < timesCount) {
+                        dataResult += `<td class="text-center">${timesRow[i]}</td>`;
+                    } else {
+                        dataResult += `<td class="text-center"></td>`;
+                    }
+                }
+            });
+
+            dataResult += `<td rowspan="2" class="align-middle text-center"></td>`;
+            dataResult += `</tr>`;
+
+            dataResult += `<tr>`;
+            sortedDates.forEach(date => {
+                const statusRow = group[date] ? group[date].status_obat === "V" ? "v" : group[date]
+                    .status_obat : [];
+
+                const statusCount = statusRow.length;
+
+
+                for (let i = 0; i < 6; i++) {
+                    if (i < statusCount) {
+                        dataResult += `<td class="text-center">${statusRow[i]=== "V" ? "v":statusRow[i]}</td>`;
+                    } else {
+                        dataResult += `<td class="text-center"></td>`;
+                    }
+                }
+            });
+
+            dataResult += `</tr>`;
+        }
+
+        if (data.length === 0) {
+            dataResult = `<tr style="height: 200px;">
                         <td colspan="100">
                            <center> 
                                <h3>Data Kosong</h3>
                            </center>
                         </td>
                     </tr>`;
-    }
+        }
 
-    $("#data-tables").html(dataResult);
-};
+        $("#data-tables").html(dataResult);
+    };
 </script>
 <style>
 
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

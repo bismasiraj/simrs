@@ -25,7 +25,7 @@ class Patologi extends \App\Controllers\BaseController
         $kopprint = $this->lowerKey($db->query("SELECT * from ORGANIZATIONUNIT")->getRowArray() ?? []);
 
         if (!empty($data['treat_image'])) {
-            $filePath = WRITEPATH . $data['treat_image'];
+            $filePath = $this->imageloc . $data['treat_image'];
 
             if (file_exists($filePath)) {
                 $fileType = mime_content_type($filePath);
@@ -212,7 +212,7 @@ class Patologi extends \App\Controllers\BaseController
                     if (!in_array($fileMimeType, $allowedMimeTypes)) {
                         throw new Exception('Gagal Upload File, Format tidak mendukung.');
                     }
-                    $uploadPath = WRITEPATH . 'uploads/patologi/' . $formData['visit_id'] . '/';
+                    $uploadPath = $this->imageloc . 'uploads/patologi/' . $formData['visit_id'] . '/';
                     $pathInfo = pathinfo($formFile->getClientName());
                     $extension = $pathInfo['extension'];
 
@@ -377,7 +377,7 @@ class Patologi extends \App\Controllers\BaseController
                     if (!in_array($fileMimeType, $allowedMimeTypes)) {
                         throw new Exception('Gagal Upload File, Format tidak mendukung.');
                     }
-                    $uploadPath = WRITEPATH . 'uploads/patologi/' . $formData['visit_id'] . '/';
+                    $uploadPath = $this->imageloc . 'uploads/patologi/' . $formData['visit_id'] . '/';
                     $pathInfo = pathinfo($formFile->getClientName());
                     $extension = $pathInfo['extension'];
 

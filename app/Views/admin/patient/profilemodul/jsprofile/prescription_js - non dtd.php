@@ -99,7 +99,7 @@
             url: '<?php echo base_url(); ?>admin/patient/getResep',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'sold_status': $("#jenisresep").val()
             }),
@@ -400,7 +400,7 @@
             var doctor = doctor
             var employeeId = '<?= $visit['employee_id']; ?>'
             var employeeIdFrom = '<?= $visit['employee_id']; ?>'
-            var doctorFrom = '<?= $visit['fullname']; ?>'
+            var doctorFrom = '<?= @$visit['fullname']; ?>'
             var statusObat = toItem.status_pasien_id
             var tarifId = "1201008"
             var treatment = "PEMBELIAN OBAT RACIKAN"
@@ -803,10 +803,10 @@
             var brandId = '00000';
             var measureId = '';
             var measudeId2 = '';
-            var doctor = '<?= $visit['fullname']; ?>'
+            var doctor = '<?= @$visit['fullname']; ?>'
             var employeeId = '<?= $visit['employee_id']; ?>'
             var employeeIdFrom = '<?= $visit['employee_id']; ?>'
-            var doctorFrom = '<?= $visit['fullname']; ?>'
+            var doctorFrom = '<?= @$visit['fullname']; ?>'
             var statusObat = '';
             var tarifId = '';
             var treatment = "PEMBELIAN OBAT RACIKAN"

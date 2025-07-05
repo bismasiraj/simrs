@@ -1,16 +1,29 @@
 <script>
     $(document).ready(function() {
-        initializeSearchTarifPerawat("searchTarifKolaboratif", '<?= $visit['clinic_id']; ?>')
-        // initializeSearchTarif("searchTarifPerawatMandiriSelf", '<?= $visit['clinic_id']; ?>')
+        declareSearchTarifPerawat()
     })
     $("#tindakanPerawatTab").on("click", function() {
         getTindakanPerawat()
     })
     $("#formSaveTindPerawatBtn").on("click", function() {
-        $("#tindakanBodyPerawatKolaborasi").find("button.simpanbill:not([disabled])").trigger("click")
+        // $("#tindakanBodyPerawatKolaborasi").find("button.simpanbill:not([disabled])").trigger("click")
+        $("#tindakanBodyPerawatKolaborasi").find("button.simpanbill:visible").trigger("click")
     })
 </script>
 <script>
+    const declareSearchTarifPerawat = () => {
+        initializeSearchTarifPerawat("searchTarifKolaboratif", '<?= $visit['clinic_id']; ?>')
+        $("#searchTarifKolaboratif").on('select2:select', function(e) {
+            $("#searchTarifKolaboratifBtn").click();
+            $('html,body').animate({
+                    scrollTop: $("#searchTarifKolaboratif").offset().top - 50
+                },
+                'slow', 'swing');
+            $("#searchTarifKolaboratif").click()
+            $("#searchTarifKolaboratif").select2('open')
+        });
+    }
+
     function addBillChargePerawat(container, type, flag = 1, index, tableId) {
         if (flag == 1) {
             tarifDataJson = $("#" + container).val();
@@ -22,8 +35,8 @@
             var key = parseInt(billPerawatJson.length)
             billPerawatJson[key] = [];
         } else {
-            var key = index;
             var billPerawat = billPerawatJson[index]
+            var key = index + billPerawat?.bill_id;
             console.log(billPerawat)
         }
 
@@ -115,12 +128,17 @@
                 }
                 $("#perawatTindakan" + key)
                     .append($("<td>").attr("id", "treatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= user()->getFullname(); ?>')))
-                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
-                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                    .append($("<td>")
+                        // .append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
+                        .append(`<input id="atptreat_date${key}" type="datetime-local" class="form-control flatpickr-input" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
                         .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
                     )
+                    // .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
+                    //     .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                    //     .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
+                    // )
                     .append($("<td colspan=\"3\">")
-                        .append('<input type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" >')
+                        .append('<textarea name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" rows="4"></textarea>')
                         .append('<input type="hidden" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control" >')
                     )
                     // .append($("<td>").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
@@ -128,9 +146,9 @@
                     //     .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     // )
                     // .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill spppoli-to-hide" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical spppoli-to-hide" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light spppoli-to-hide" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger spppoli-to-hide" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
-                datetimepickerbyidinitial(`flatatptreat_date${key}`)
+                // datetimepickerbyidinitial(`flatatptreat_date${key}`)
 
             } else {
                 if (type == 1) {
@@ -145,20 +163,25 @@
                 }
                 $("#perawatTindakan" + key)
                     .append($("<td>").attr("id", "treatment" + key).html(tarifData.tarif_name).append($("<p>").html(tarifData.modified_by)))
-                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
-                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                    .append($("<td>")
+                        // .append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
+                        .append(`<input id="atptreat_date${key}" type="datetime-local" class="form-control flatpickr-input" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
                         .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
                     )
+                    // .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
+                    //     .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                    //     .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
+                    // )
                     .append($("<td class=\"text-center\">").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
                     .append($("<td>")
                         .append('<input type="text" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control text-center" >')
                         // .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     )
                     .append($("<td class=\"text-center\">").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-                    .append($("<td rowspan=\"1\">").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td rowspan=\"1\">").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill spppoli-to-hide" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical spppoli-to-hide" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
                 // datetimepickerbyid(`flatatptreat_date${key}`)
-                datetimepickerbyidinitial(`flatatptreat_date${key}`)
+                // datetimepickerbyidinitial(`flatatptreat_date${key}`)
 
 
                 // $("#" + tableId + "Kolaborasi").append($("<tr id=\"perawatTindakan" + key + "desc\" class=\"perawatTindakan" + key + "\">")
@@ -190,12 +213,13 @@
                 }
                 $("#perawatTindakan" + key)
                     .append($("<td>").attr("id", "treatment" + key).html(billPerawat.treatment).append($("<p>").html(billPerawat.modified_by)))
-                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
-                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                    .append($("<td>")
+                        // .append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment(billPerawat.treat_date).format("DD/MM/YYYY HH:mm")}">`)
+                        .append(`<input id="atptreat_date${key}" type="datetime-local" class="form-control flatpickr-input" value="${moment(billPerawat.treat_date).format("YYYY-MM-DD HH:mm")}">`)
                         .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
                     )
                     .append($("<td colspan=\"3\">")
-                        .append('<input type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" value="' + billPerawat.description + '" >')
+                        .append('<textarea name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" rows="4"></textarea>')
                         .append('<input type="hidden" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control  text-center" >')
                     )
                     // .append($("<td>").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
@@ -203,9 +227,10 @@
                     //     .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     // )
                     // .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill spppoli-to-hide" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical spppoli-to-hide" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
-                datetimepickerbyidinitial(`flatatptreat_date${key}`)
+                // datetimepickerbyidinitial(`flatatptreat_date${key}`, moment(billPerawat.treat_date).format("DD/MM/YYYY HH:mm"))
+
 
 
             } else {
@@ -221,8 +246,9 @@
                 }
                 $("#perawatTindakan" + key)
                     .append($("<td>").attr("id", "treatment" + key).html(billPerawat.treatment).append($("<p>").html(billPerawat.modified_by)))
-                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active">`)
-                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                    .append($("<td>")
+                        // .append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active">`)
+                        .append(`<input id="atptreat_date${key}" type="datetime-local" class="form-control flatpickr-input" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
                         .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
                     )
                     .append($("<td class\"text-center\">").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(billPerawat.amount))).append($("<p>").html("")))
@@ -231,9 +257,9 @@
                         // .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     )
                     .append($("<td class=\"text-center\">").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(billPerawat.amount_paid))))
-                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill spppoli-to-hide" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical spppoli-to-hide" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
-                datetimepickerbyidinitial(`flatatptreat_date${key}`, moment().format("DD/MM/YYYY HH:mm"))
+                // datetimepickerbyidinitial(`flatatptreat_date${key}`, moment(billPerawat.treat_date).format("DD/MM/YYYY HH:mm"))
             }
         }
 
@@ -592,7 +618,7 @@
                 } else {
                 ?>
                     $("#atpemployee_id_from" + key).val('<?= $visit['employee_id']; ?>')
-                    $("#atpdoctor_from" + key).val('<?= $visit['fullname']; ?>')
+                    $("#atpdoctor_from" + key).val('<?= @$visit['fullname']; ?>')
                 <?php
                 }
                 ?>
@@ -664,6 +690,7 @@
             $("#atpislunas" + key).val(billPerawat.islunas)
             $("#atpduedate_angsuran" + key).val(billPerawat.duedate_angsuran)
             $("#atpdescription" + key).val(billPerawat.description)
+            // console.log(billPerawat.description)
             $("#atpkuitansi_id" + key).val(billPerawat.kuitansi_id)
             $("#atpnota_no" + key).val(billPerawat.nota_no)
             $("#atpiscetak" + key).val(billPerawat.iscetak)

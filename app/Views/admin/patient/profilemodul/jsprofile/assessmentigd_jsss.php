@@ -400,7 +400,7 @@
         $("#arptheid").val('<?= $visit['pasien_id']; ?>')
         $("#arpisrj").val('<?= is_null($visit['class_room_id']) ? 1 : 0; ?>')
         $("#arpgender").val('<?= $visit['gender']; ?>')
-        $("#arpdoctor").val('<?= $visit['fullname']; ?>')
+        $("#arpdoctor").val('<?= @$visit['fullname']; ?>')
         $("#arpkal_id").val('<?= $visit['kal_id']; ?>')
         $("#arppetugas_id").val('<?= user()->username; ?>')
         $("#arppetugas").val('<?= user()->getFullname(); ?>')

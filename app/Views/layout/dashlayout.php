@@ -51,44 +51,19 @@
 
 <?php echo view('layout/partials/vendor-scripts.php'); ?>
 
-<!-- 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Daftar script yang akan dimuat secara dinamis
-        var scripts = [
-            '<?php echo base_url(); ?>assets/libs/morris.js/morris.min.js',
-            '<?php echo base_url(); ?>assets/libs/raphael/raphael.min.js',
-            '<?php echo base_url(); ?>assets/js/pages/dashboard.init.js',
-            '<?php echo base_url(); ?>assets/js/app.js',
-        ];
-
-        // Memuat beberapa script secara berurutan
-        loadMultipleScripts(scripts, function() {
-            console.log('Semua library telah dimuat!');
-
-            // Setelah semua script dimuat, Anda bisa mulai menggunakan library tersebut
-            $(document).ready(function() {
-                console.log('jQuery telah dimuat, sekarang bisa digunakan!');
-
-                // Gunakan axios untuk contoh penggunaan
-                axios.get('https://jsonplaceholder.typicode.com/posts')
-                    .then(response => {
-                        console.log(response.data);
-                    })
-                    .catch(error => {
-                        console.log('Error:', error);
-                    });
-            });
-        });
-    });
-</script> -->
 <!--Morris Chart-->
+<link href="<?php echo base_url(); ?>assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+<script src="<?php echo base_url(); ?>assets/libs/sweetalert2/sweetalert2.all.min.js"></script>
+
+<script src="<?= base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
+
 <script src="<?php echo base_url(); ?>assets/libs/morris.js/morris.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/libs/raphael/raphael.min.js"></script>
 
 <script src="<?php echo base_url(); ?>assets/js/pages/dashboard.init.js"></script>
 
 <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
+<script src="<?php echo base_url(); ?>assets/js/default.js"></script>
 
 <?php $this->renderSection('jsContent'); ?>
 

@@ -8,8 +8,7 @@ use CodeIgniter\Model;
 class PasienPenunjangModel extends Model
 {
     protected $table      = 'pasien_penunjang';
-    protected $primaryKey = 'body_id';
-
+    protected $primaryKey = 'nota_no';
     protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
@@ -28,6 +27,7 @@ class PasienPenunjangModel extends Model
         'terlayani',
         'iscito',
         'employee_id',
+        'file_image',
         'patient_category_id',
         'treat_date',
         'diagnosa_desc',
@@ -54,6 +54,9 @@ class PasienPenunjangModel extends Model
         'valid_date',
         'valid_user',
         'valid_pasien',
+        'nota_no',
+        'clinic_id_from',
+        'employee_id_from',
     ];
 
     // Dates

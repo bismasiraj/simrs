@@ -37,6 +37,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                         <input name="no_registration" id="prslno_registration" type="hidden" />
                                         <input name="valid_date" id="prslvalid_date" type="hidden" />
                                         <input name="valid_user" id="prslvalid_user" type="hidden" />
+                                        <input name="valid_doctor" id="prslvalid_doctor" type="hidden" />
                                         <input name="valid_pasien" id="prslvalid_pasien" type="hidden" />
                                         <?php csrf_field(); ?>
                                         <div class="row row-eq">
@@ -280,7 +281,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                                     <tbody id="prslBayiBody"></tbody>
                                                                 </table>
                                                                 <div class="col-md-12">
-                                                                    <div class="box-tab-tools text-center btn-to-hide"><a onclick="addWaktuLahir()" class="btn btn-info btn-sm btn-to-hide" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>
+                                                                    <div id="addBayiBtn" class="box-tab-tools text-center btn-to-hide"><a onclick="addWaktuLahir()" class="btn btn-info btn-sm btn-to-hide" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -298,7 +299,8 @@ $persalinanv = array_filter($aValue, function ($value) {
                                             <button type="button" id="formPersalinanAddBtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right d-none"><i class="fa fa-plus"></i> <span>Tambah</span></button>
                                             <button type="submit" id="formPersalinanSaveBtn" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formPersalinanEditBtn" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                                            <button type="button" id="formPersalinanSignBtn" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                            <button type="button" id="formPersalinanSignDoctorBtn" name="signrm" onclick="signPersalinanDokter()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign Dokter</span></button>
+                                            <button type="button" id="formPersalinanSignPerawatBtn" name="signrm" onclick="signPersalinaPerawat()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign Perawat</span></button>
                                             <button type="button" id="formPersalinanCetakBtn" name="" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fas fa-file"></i> <span>Cetak</span></button>
                                         </div>
                                     </div><!--./col-md-4-->
@@ -312,7 +314,7 @@ $persalinanv = array_filter($aValue, function ($value) {
     </div>
 </div><!--./row-->
 
-<div class="modal fade" id="persalinanModal" role="dialog" aria-labelledby="">
+<div class="modal fade" id="persalinanModal" role="dialog" aria-labelledby="" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -355,10 +357,19 @@ $persalinanv = array_filter($aValue, function ($value) {
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
                                 <div class="form-group">
+                                    <label>DPJP Anak</label>
+                                    <div class="position-relative">
+                                        <select class="form-select" name="employee_id" id="bayiemployee_id">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                <div class="form-group">
                                     <label>Waktu Lahir</label>
                                     <div class="position-relative">
-                                        <input id="flatbayidate_of_birth" type="text" class="form-control datetimeflatpickr" value="">
-                                        <input name="date_of_birth" id="bayidate_of_birth" type="hidden" class="form-control">
+                                        <!-- <input id="flatbayidate_of_birth" type="text" class="form-control datetimeflatpickr" value=""> -->
+                                        <input name="date_of_birth" id="bayidate_of_birth" type="datetime-local" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -392,7 +403,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                 <label class="form-check-label" for="bayibirth1">Hidup</label>
                                             </div>
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input" type="radio" name="birth" id="bayibirth0" value="0">
+                                                <input class="form-check-input" type="radio" name="birth_con" id="bayibirth0" value="0">
                                                 <label class="form-check-label" for="bayibirth0">Mati</label>
                                             </div>
                                         </div>
@@ -409,12 +420,16 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                 <label class="form-check-label" for="bayigender1">Laki-laki</label>
                                             </div>
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input" type="radio" name="gender" id="bayigender0" value="0">
+                                                <input class="form-check-input" type="radio" name="gender" id="bayigender2" value="2">
                                                 <label class="form-check-label" for="bayigender0">Perempuan</label>
                                             </div>
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input" type="radio" name="gender" id="bayigender2" value="2">
+                                                <input class="form-check-input" type="radio" name="gender" id="bayigender3" value="3">
                                                 <label class="form-check-label" for="bayigender0">Ambigu</label>
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="radio" name="gender" id="bayigender0" value="0">
+                                                <label class="form-check-label" for="bayigender0">-</label>
                                             </div>
                                         </div>
                                     </div>
@@ -662,7 +677,8 @@ $persalinanv = array_filter($aValue, function ($value) {
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="formBayiRegisterBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-success pull-right"><i class="fa fa-plus"></i> <span>Daftarkan Bayi</span></button>
+                <button type="button" id="formBayiRegisterRMBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-success pull-right"><i class="fa fa-plus"></i> <span>Daftarkan RM Bayi</span></button>
+                <button type="button" id="formBayiRegisterBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-success pull-right"><i class="fa fa-plus"></i> <span>Daftarkan Kunjungan Bayi</span></button>
                 <button type="submit" id="formBayiSaveBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                 <button type="button" id="formBayiEditBtn" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
                 <button type="button" id="formBayiSignBtn" name="sign" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>

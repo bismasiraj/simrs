@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;;
 
 use App\Controllers\BaseController;
+use App\Models\ExaminationModel;
 use App\Models\InformedConsentModel;
 use CodeIgniter\Controller;
 
@@ -15,40 +16,13 @@ class InformedConsent extends \App\Controllers\BaseController
         $this->model = new InformedConsentModel();
     }
 
-    // public function getData()
-    // {
-    //     $request = service('request');
-    //     $formData = $request->getJSON(true);
-
-    //     $model = new InformedConsentModel();
-    //     // $data = $this->lowerKey($model->where('visit_id', $formData['visit_id'])->findAll());
-    //     $data = $this->lowerKey($model->query(
-    //         "
-    //         SELECT DISTINCT PARAMETER_ID, BODY_ID, VISIT_ID
-    //         FROM ASSESSMENT_INFORMED_CONCENT WHERE VISIT_ID = '" . $formData['visit_id'] . "'
-    //         "
-    //     )->getResultArray());
-
-    //     return $this->response->setJSON($data);
-    // }
-
-    // public function getDataAssesment()
-    // {
-    //     $db = db_connect();
-    //     $aParam = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER where P_type = 'GEN0017'")->getResultArray());
-    //     $aValue = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER_VALUE where P_type = 'GEN0017'")->getResultArray());
-
-    //     $data = [
-    //         'aPram' => $aParam,
-    //         'aValue' => $aValue,
-    //     ];
-
-    //     return $this->response->setJSON($data);
-    // }
     public function getDataAssesment($id = null)
     {
         $db = db_connect();
-        $aParam = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER where P_type = 'GEN0017'")->getResultArray());
+        $aParam = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER where P_type = 'GEN0017' ORDER BY 
+                                                TRY_CAST(PARSENAME(REPLACE(PARAMETER_ID, '_', '.'), 3) AS INT) DESC,
+                                                TRY_CAST(PARSENAME(REPLACE(PARAMETER_ID, '_', '.'), 2) AS INT) DESC,
+                                                TRY_CAST(PARSENAME(REPLACE(PARAMETER_ID, '_', '.'), 1) AS INT) DESC;")->getResultArray());
         $aValue = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER_VALUE where P_type = 'GEN0017'")->getResultArray());
         $queryAssessment = "SELECT 'sex' AS category, gender AS id, name_of_gender AS name FROM SEX
                             UNION
@@ -67,19 +41,45 @@ class InformedConsent extends \App\Controllers\BaseController
                         ";
         $options = $db->query($queryAssessment)->getResultArray();
 
-        $visit = $this->lowerKey($db->query("SELECT no_registration, class_id, class_id_plafond, status_pasien_id from PASIEN_VISITATION where VISIT_ID ='$id'")->getRowArray());
+        $visit = $this->lowerKey($db->query("SELECT no_registration, class_id, class_id_plafond, status_pasien_id,isrj from PASIEN_VISITATION where VISIT_ID ='$id'")->getRowArray());
 
         $no_regis = $visit['no_registration'];
+        $isrj = $visit['isrj'];
+
 
 
         $family = $this->lowerKey($db->query("SELECT * from FAMILY where NO_REGISTRATION ='$no_regis' and ISRESPONSIBLE = 1")->getRowArray());
+        $diag = [];
+        $model = new ExaminationModel();
+        if ($isrj == '0') {
+            $diag = $model->select("teraphy_desc as diagnosa_desc")->where("visit_id = '" . $id . "' and petugas_type = '11' and account_id <> 7")->orderBy("examination_date desc")->first();
+        } else {
+            $diag = $model->select("teraphy_desc as diagnosa_desc")->where("no_registration = '" . $no_regis . "' and petugas_type = '11' ")->orderBy("examination_date desc")->first();
+        };
+
+        // $diag = $this->lowerKey($db->query("SELECT 
+        //                                         pd.NO_REGISTRATION, 
+        //                                         pds.*
+        //                                     FROM PASIEN_DIAGNOSA pd
+        //                                     JOIN PASIEN_DIAGNOSAS pds 
+        //                                         ON pd.PASIEN_DIAGNOSA_ID = pds.PASIEN_DIAGNOSA_ID
+        //                                     WHERE 
+        //                                         pd.NO_REGISTRATION = '$no_regis'
+        //                                         AND pd.DIAGNOSA_ID IS NOT NULL
+        //                                     ORDER BY 
+        //                                         pd.DATE_OF_DIAGNOSA DESC;
+        //                                     ")->getRowArray());
+
+        $employeeAll = $this->lowerKey($db->query("SELECT FULLNAME FROM EMPLOYEE_ALL")->getResultArray());
 
         $data = [
             'aPram' => $aParam,
             'aValue' => $aValue,
             'options' => $options,
             'family' => $family,
-            'visit' => $visit
+            'visit' => $visit,
+            'diag' => $diag,
+            'employeeAll' => $employeeAll
         ];
 
         return $this->response->setJSON($data);
@@ -92,27 +92,34 @@ class InformedConsent extends \App\Controllers\BaseController
 
         $model = new InformedConsentModel();
 
-        $data = $model->select('visit_id, parameter_id, body_id, MIN(modified_date) as modified_date, VALID_USER')
+        $data = $model->select('parameter_id, body_id, MIN(modified_date) AS modified_date,
+                                    MAX(visit_id) AS visit_id,
+                                    MAX(VALID_USER) AS VALID_USER,
+                                    MAX(valid_pasien) AS valid_pasien,
+                                    MAX(valid_other) AS valid_other,
+                                    MAX(valid_other2) AS valid_other2,
+                                    MAX(valid_other3) AS valid_other3')
             ->where('visit_id', $formData['visit_id'])
             ->where('p_type', 'GEN0017')
-            ->groupBy(['visit_id', 'parameter_id', 'body_id', 'VALID_USER'])
-            ->orderBy('modified_date', 'ASC')
+            ->groupBy(['body_id', 'parameter_id'])
+            ->orderBy('MIN(modified_date)', 'ASC')
             ->findAll();
+
 
         $data = $this->lowerKey($data);
 
         return $this->response->setJSON($data);
     }
 
+
     public function getDetail()
     {
-
         $json = $this->request->getJSON();
+        $db = db_connect();
 
         $visit_id = $json->visit_id;
         $body_id = $json->body_id;
         $parameter_id = $json->parameter_id;
-
 
         $model = new InformedConsentModel();
 
@@ -121,8 +128,105 @@ class InformedConsent extends \App\Controllers\BaseController
             ->where('parameter_id', $parameter_id)
             ->findAll());
 
-        return $this->response->setJSON($data);
+        $noRegVisit = $this->lowerKey($db->query(
+            'SELECT NO_REGISTRATION FROM PASIEN_VISITATION WHERE VISIT_ID = ?',
+            [$visit_id]
+        )->getRowArray());
+
+        $signs = $this->lowerKey($db->query(
+            'SELECT * FROM DOCS_SIGNED WHERE DOCS_TYPE = 13 AND sign_id = ?',
+            [$body_id]
+        )->getResultArray());
+
+        $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        $signsWithTtd = [];
+
+        foreach ($signs as $sign) {
+            $ttdBase64 = null;
+
+            if ($sign['user_type'] == 1) {
+                $signPath = $sign['sign_path'] ?? '';
+                $namaDokter = trim(explode(':', $signPath)[0]);
+
+                $employeeQuery = $db->query(
+                    'SELECT employee_id FROM EMPLOYEE_ALL WHERE NONACTIVE = 0 AND FULLNAME LIKE ?',
+                    ['%' . $namaDokter . '%']
+                )->getRowArray();
+
+
+                if ($employeeQuery) {
+                    $employeeId = $employeeQuery['employee_id'];
+                    $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+
+                    foreach ($allowedExtensions as $ext) {
+                        $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                        $files = glob($pattern);
+                        if (!empty($files)) {
+                            $filePath = $files[0];
+                            if (file_exists($filePath)) {
+                                $fileData = file_get_contents($filePath);
+                                $mimeType = mime_content_type($filePath);
+                                $ttdBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else  if ($sign['user_type'] == 2) {
+                $noReg = $noRegVisit['no_registration'] ?? '';
+                if (!empty($noReg)) {
+                    $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+
+                    foreach ($allowedExtensions as $ext) {
+                        $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                        $files = glob($pattern);
+                        if (!empty($files)) {
+                            $filePath = $files[0];
+                            if (file_exists($filePath)) {
+                                $fileData = file_get_contents($filePath);
+                                $mimeType = mime_content_type($filePath);
+                                $ttdBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                $noReg = $noRegVisit['no_registration'] ?? '';
+                if (!empty($noReg) && isset($sign['sign_path'])) {
+                    $pos = strpos($sign['sign_path'], ':');
+                    $filename = $noReg . '-' . substr($sign['sign_path'], 0, $pos);
+                    $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+
+                    foreach ($allowedExtensions as $ext) {
+                        $pattern = $ttdPasienDir . '*' . $filename . '*.' . $ext;
+                        $files = glob($pattern);
+                        if (!empty($files)) {
+                            $filePath = $files[0];
+                            if (file_exists($filePath)) {
+                                $fileData = file_get_contents($filePath);
+                                $mimeType = mime_content_type($filePath);
+                                $ttdBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $sign['ttd_sign'] = $ttdBase64;
+            $signsWithTtd[] = $sign;
+        }
+
+        $result = [
+            'data' => $data,
+            'sign' => $signsWithTtd
+        ];
+
+        return $this->response->setJSON($result);
     }
+
+
 
     public function insertData()
     {
@@ -171,6 +275,7 @@ class InformedConsent extends \App\Controllers\BaseController
                 $data['value_info'] = '';
             }
 
+
             $insertData[] = $data;
         }
 
@@ -187,35 +292,29 @@ class InformedConsent extends \App\Controllers\BaseController
         $request = service('request');
         $formData = $request->getJSON(true);
 
-        if (!isset($formData['body_id'])) {
-            return $this->response->setStatusCode(400)->setJSON(['error' => 'Missing body_id in request data']);
-        }
-
-        if (!isset($formData['parameter_id'])) {
-            return $this->response->setStatusCode(400)->setJSON(['error' => 'Missing parameter_id in request data']);
+        if (!isset($formData['body_id']) || !isset($formData['parameter_id'])) {
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'Missing required parameters']);
         }
 
         $bodyId = $formData['body_id'];
         $parameterId = $formData['parameter_id'];
-
         $db = db_connect();
 
-        $query = $db->query("SELECT * FROM assessment_parameter_value WHERE p_type='" . $formData['p_type'] . "' AND parameter_id = '" . $parameterId . "'")->getResultArray();
+        $query = $db->query("SELECT * FROM assessment_parameter_value WHERE p_type = ? AND parameter_id = ?", [$formData['p_type'], $parameterId])->getResultArray();
 
         if (!$query) {
             return $this->response->setStatusCode(404)->setJSON(['error' => 'No data found for given parameters']);
         }
 
         $query = $this->lowerKey($query);
-
         $updateData = [];
 
         foreach ($query as $key) {
             $valueId = $key['value_id'];
             $data = [
-                'org_unit_code' => $formData['org_unit_code'],
-                'visit_id' => $formData['visit_id'],
-                'trans_id' => $formData['trans_id'],
+                'org_unit_code' => $formData['org_unit_code'] ?? null,
+                'visit_id' => $formData['visit_id'] ?? null,
+                'trans_id' => $formData['trans_id'] ?? null,
                 'body_id' => $bodyId,
                 'p_type' => $formData['p_type'],
                 'parameter_id' => $key['parameter_id'],
@@ -223,25 +322,9 @@ class InformedConsent extends \App\Controllers\BaseController
                 'modified_by' => user()->username,
             ];
 
-            $valueScoreKey = 'value_score-' . $valueId;
-            if (isset($formData[$valueScoreKey])) {
-                $data['value_score'] = $formData[$valueScoreKey];
-            } else {
-                $data['value_score'] = 0;
-            }
-
-            $valueDescKey = 'value_desc-' . $valueId;
-            if (isset($formData[$valueDescKey])) {
-                $data['value_desc'] = $formData[$valueDescKey];
-            } else {
-                $data['value_desc'] = '';
-            }
-
-            $valueInfoKey = 'value_info-' . $valueId;
-            if (isset($formData[$valueInfoKey])) {
-                $data['value_info'] = $formData[$valueInfoKey];
-            } else {
-                $data['value_info'] = '';
+            foreach (['value_score', 'value_desc', 'value_info'] as $field) {
+                $fieldKey = "{$field}-{$valueId}";
+                $data[$field] = $formData[$fieldKey] ?? ($field === 'value_score' ? 0 : '');
             }
 
             $updateData[] = $data;
@@ -275,6 +358,7 @@ class InformedConsent extends \App\Controllers\BaseController
         $deleted;
         return $this->response->setJSON(['message' => 'Data delete successfully.', 'respon' => true]);
     }
+
     public function cetakData($visit, $vactination = null)
     {
         if ($this->request->is('get')) {
@@ -282,16 +366,18 @@ class InformedConsent extends \App\Controllers\BaseController
             $decoded_visit = json_decode($decoded_visit, true);
             $kopprintData = $this->kopprint();
 
+
+            // echo json_encode($decoded_visit);
+            // exit();
             // print_r($kopprintData);
             // exit();
             $db = db_connect();
             $query = $this->lowerKey($db->query("SELECT * FROM assessment_parameter_value WHERE p_type='GEN0017' AND parameter_id = '" . $decoded_visit['parameter_id'] . "'")->getResultArray());
             $visitation = $this->lowerKey($db->query("SELECT * FROM pasien_VISITATION WHERE visit_id = '" . $decoded_visit['visit_id'] . "'")->getResultArray());
 
-
             return view("admin/patient/profilemodul/cetak-informedConsent.php", [
                 "visit" => $decoded_visit,
-                "title" => "Informed Consent - Seksio Sesarea - MOW",
+                "title" => "",
                 "title2" => "Persetujuan Tindakan Kedokteran",
                 'kop' => !empty($kopprintData) ? $kopprintData[0] : "",
                 'AValue' => $query,

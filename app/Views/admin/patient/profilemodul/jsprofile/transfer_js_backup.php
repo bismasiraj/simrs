@@ -276,8 +276,7 @@
             url: '<?php echo base_url(); ?>admin/rm/assessment/getTransfer',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
-                'nomor': nomor
+                'visit_id': visit.visit_id 'nomor': nomor
             }),
             dataType: 'json',
             contentType: false,
@@ -475,7 +474,7 @@
         $("#atransfer1no_registration").val('<?= $visit['no_registration']; ?>')
         $("#atransfer1visit_id").val('<?= $visit['visit_id']; ?>')
         $("#atransfer1org_unit_code").val('<?= $visit['org_unit_code']; ?>')
-        $("#atransfer1doctor").val('<?= $visit['fullname']; ?>')
+        $("#atransfer1doctor").val('<?= @$visit['fullname']; ?>')
         $("#atransfer1kal_id").val('<?= $visit['kal_id']; ?>')
         $("#atransfer1theid").val('<?= $visit['pasien_id']; ?>')
         $("#atransfer1thename").val('<?= $visit['diantar_oleh']; ?>')
@@ -509,7 +508,7 @@
         $("#atransfer2no_registration").val('<?= $visit['no_registration']; ?>')
         $("#atransfer2visit_id").val('<?= $visit['visit_id']; ?>')
         $("#atransfer2org_unit_code").val('<?= $visit['org_unit_code']; ?>')
-        $("#atransfer2doctor").val('<?= $visit['fullname']; ?>')
+        $("#atransfer2doctor").val('<?= @$visit['fullname']; ?>')
         $("#atransfer2kal_id").val('<?= $visit['kal_id']; ?>')
         $("#atransfer2theid").val('<?= $visit['pasien_id']; ?>')
         $("#atransfer2thename").val('<?= $visit['diantar_oleh']; ?>')
@@ -1768,12 +1767,12 @@
         })
     }
 
-    function getAkomodasi(visit) {
+    function getAkomodasi() {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/pendaftaran/getSinglePV',
             type: "POST",
             data: JSON.stringify({
-                'visit': visit
+                'visit': visit.visit_id
             }),
             dataType: 'json',
             contentType: false,

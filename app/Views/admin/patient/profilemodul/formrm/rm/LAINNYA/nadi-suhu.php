@@ -15,62 +15,62 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -137,7 +137,7 @@
                     <tr>
                         <td>
                             <b>DPJP</b>
-                            <div id="fullname" name="fullname"><?= @$visit['fullname']; ?></div>
+                            <div id="fullname" name="fullname"><?= @@$visit['fullname']; ?></div>
                         </td>
                         <td>
                             <b>Department</b>
@@ -170,21 +170,21 @@
                 </thead>
                 <tbody>
                     <?php foreach ($data as $item): ?>
-                    <tr>
-                        <td><?= isset($item['examination_date']) ? date('Y-m-d', strtotime($item['examination_date'])) : '-'; ?>
-                        </td>
-                        <td>
-                            <?= isset($item['tension_upper']) && isset($item['tension_below']) 
-                                ? $item['tension_upper'] . ' / ' . $item['tension_below'] 
-                                : '-'; ?>
-                        </td>
+                        <tr>
+                            <td><?= isset($item['examination_date']) ? date('Y-m-d', strtotime($item['examination_date'])) : '-'; ?>
+                            </td>
+                            <td>
+                                <?= isset($item['tension_upper']) && isset($item['tension_below'])
+                                    ? $item['tension_upper'] . ' / ' . $item['tension_below']
+                                    : '-'; ?>
+                            </td>
 
-                        <td><?= @$item['nadi'] ?></td>
-                        <td><?= @$item['temperature'] ?></td>
-                        <td><?= @$item['description'] ?></td>
-                        <td><?= @$item['petugas'] ?></td>
+                            <td><?= @$item['nadi'] ?></td>
+                            <td><?= @$item['temperature'] ?></td>
+                            <td><?= @$item['description'] ?></td>
+                            <td><?= @$item['petugas'] ?></td>
 
-                    </tr>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
 
@@ -201,226 +201,226 @@
 
 </body>
 <script>
-$(document).ready(function() {
-    let data = <?= json_encode($data); ?>;
+    $(document).ready(function() {
+        let data = <?= json_encode($data); ?>;
 
-    ChartMonitoringDurante({
-        data: data
+        ChartMonitoringDurante({
+            data: data
+        })
     })
-})
 
 
-const ChartMonitoringDurante = (props) => {
-    let rawData = props?.data || [];
-    let dataRendersTables = '';
+    const ChartMonitoringDurante = (props) => {
+        let rawData = props?.data || [];
+        let dataRendersTables = '';
 
-    let groupedData = {};
+        let groupedData = {};
 
-    rawData.forEach(item => {
-        let dateTime = item?.examination_date ? moment(item?.examination_date).format('DD MMM YYYY HH:mm') :
-            null;
-        if (dateTime) {
-            let dateOnly = moment(item?.examination_date).format('DD MMM YYYY');
-            if (!groupedData[dateOnly]) {
-                groupedData[dateOnly] = {
-                    times: [],
-                    nadi: [],
-                    temperature: [],
-                    saturasi: [],
-                    tension_upper: [],
-                    tension_below: []
-                };
-            }
-            groupedData[dateOnly].times.push(moment(item?.examination_date).format('HH:mm'));
-            groupedData[dateOnly].nadi.push(parseInt(item?.nadi ?? 0));
-            groupedData[dateOnly].temperature.push(parseInt(item?.temperature ?? 0));
-            groupedData[dateOnly].saturasi.push(parseInt(item?.saturasi ?? 10));
-            groupedData[dateOnly].tension_upper.push(parseInt(item?.tension_upper ?? 0));
-            groupedData[dateOnly].tension_below.push(parseInt(item?.tension_below ?? 0));
-        }
-    });
-    let datasets = [{
-            label: 'Nadi',
-            backgroundColor: 'rgba(235, 125, 52, 0.2)',
-            borderColor: '#eb7d34',
-            fill: true,
-            tension: 0.2,
-            yAxisID: 'yNadi',
-        },
-        {
-            label: 'Suhu',
-            backgroundColor: 'rgba(52, 101, 235, 0.2)',
-            borderColor: '#3465eb',
-            fill: true,
-            tension: 0.2,
-            yAxisID: 'yTemperature',
-        },
-        {
-            label: 'SPO2',
-            backgroundColor: 'rgba(18, 41, 105, 0.2)',
-            borderColor: '#122969',
-            fill: true,
-            tension: 0.2,
-            yAxisID: 'ySaturasi',
-        },
-        {
-            label: 'Sistole',
-            backgroundColor: 'rgba(61, 235, 52, 0.2)',
-            borderColor: '#3deb34',
-            fill: true,
-            tension: 0.2,
-            yAxisID: 'yTension',
-        },
-        {
-            label: 'Diastole',
-            backgroundColor: 'rgba(61, 235, 52, 0.2)',
-            borderColor: '#3deb34',
-            fill: true,
-            tension: 0.2,
-            yAxisID: 'yTension',
-        },
-        {
-            label: 'Respirasi',
-            backgroundColor: 'rgba(230, 242, 5, 0.2)',
-            borderColor: '#e6f205',
-            fill: true,
-            tension: 0.2,
-            yAxisID: 'yRespirasi',
-        },
-    ];
-
-    // Untuk tiap tanggal, render dataset secara terpisah untuk setiap jam
-    let labels = [];
-    Object.keys(groupedData).forEach(date => {
-        let dateData = groupedData[date];
-        dateData.times.forEach(time => {
-            labels.push(`${date} ${time}`);
-        });
-
-        datasets.forEach((dataset, index) => {
-            switch (dataset.label) {
-                case 'Nadi':
-                    dataset.data = dataset.data || [];
-                    dataset.data.push(...dateData.nadi);
-                    break;
-                case 'Suhu':
-                    dataset.data = dataset.data || [];
-                    dataset.data.push(...dateData.temperature);
-                    break;
-                case 'SPO2':
-                    dataset.data = dataset.data || [];
-                    dataset.data.push(...dateData.saturasi);
-                    break;
-                case 'Sistole':
-                    dataset.data = dataset.data || [];
-                    dataset.data.push(...dateData.tension_upper);
-                    break;
-                case 'Diastole':
-                    dataset.data = dataset.data || [];
-                    dataset.data.push(...dateData.tension_below);
-                    break;
-                case 'Respirasi':
-                    dataset.data = dataset.data || [];
-                    dataset.data.push(...dateData.nadi); // Assuming respirasi is mapped to nadi
-                    break;
+        rawData.forEach(item => {
+            let dateTime = item?.examination_date ? moment(item?.examination_date).format('DD MMM YYYY HH:mm') :
+                null;
+            if (dateTime) {
+                let dateOnly = moment(item?.examination_date).format('DD MMM YYYY');
+                if (!groupedData[dateOnly]) {
+                    groupedData[dateOnly] = {
+                        times: [],
+                        nadi: [],
+                        temperature: [],
+                        saturasi: [],
+                        tension_upper: [],
+                        tension_below: []
+                    };
+                }
+                groupedData[dateOnly].times.push(moment(item?.examination_date).format('HH:mm'));
+                groupedData[dateOnly].nadi.push(parseInt(item?.nadi ?? 0));
+                groupedData[dateOnly].temperature.push(parseInt(item?.temperature ?? 0));
+                groupedData[dateOnly].saturasi.push(parseInt(item?.saturasi ?? 10));
+                groupedData[dateOnly].tension_upper.push(parseInt(item?.tension_upper ?? 0));
+                groupedData[dateOnly].tension_below.push(parseInt(item?.tension_below ?? 0));
             }
         });
-    });
+        let datasets = [{
+                label: 'Nadi',
+                backgroundColor: 'rgba(235, 125, 52, 0.2)',
+                borderColor: '#eb7d34',
+                fill: true,
+                tension: 0.2,
+                yAxisID: 'yNadi',
+            },
+            {
+                label: 'Suhu',
+                backgroundColor: 'rgba(52, 101, 235, 0.2)',
+                borderColor: '#3465eb',
+                fill: true,
+                tension: 0.2,
+                yAxisID: 'yTemperature',
+            },
+            {
+                label: 'SPO2',
+                backgroundColor: 'rgba(18, 41, 105, 0.2)',
+                borderColor: '#122969',
+                fill: true,
+                tension: 0.2,
+                yAxisID: 'ySaturasi',
+            },
+            {
+                label: 'Sistole',
+                backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                borderColor: '#3deb34',
+                fill: true,
+                tension: 0.2,
+                yAxisID: 'yTension',
+            },
+            {
+                label: 'Diastole',
+                backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                borderColor: '#3deb34',
+                fill: true,
+                tension: 0.2,
+                yAxisID: 'yTension',
+            },
+            {
+                label: 'Respirasi',
+                backgroundColor: 'rgba(230, 242, 5, 0.2)',
+                borderColor: '#e6f205',
+                fill: true,
+                tension: 0.2,
+                yAxisID: 'yRespirasi',
+            },
+        ];
 
-    const ctxChart = document.getElementById(`myChartRecoveryRoom`).getContext('2d');
-    new Chart(ctxChart, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
-            plugins: {
-                datalabels: false
-            },
-            scales: {
-                yNadi: {
-                    type: 'linear',
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Nadi'
-                    }
-                },
-                yTemperature: {
-                    type: 'linear',
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Suhu'
-                    },
-                    grid: {
-                        drawOnChartArea: false
-                    }
-                },
-                ySaturasi: {
-                    type: 'linear',
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'SPO2'
-                    },
-                    grid: {
-                        drawOnChartArea: false
-                    }
-                },
-                yTension: {
-                    type: 'linear',
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Tekanan Darah'
-                    },
-                    grid: {
-                        drawOnChartArea: false
-                    }
-                },
-                yRespirasi: {
-                    type: 'linear',
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Respirasi'
-                    },
-                    grid: {
-                        drawOnChartArea: false
-                    }
+        // Untuk tiap tanggal, render dataset secara terpisah untuk setiap jam
+        let labels = [];
+        Object.keys(groupedData).forEach(date => {
+            let dateData = groupedData[date];
+            dateData.times.forEach(time => {
+                labels.push(`${date} ${time}`);
+            });
+
+            datasets.forEach((dataset, index) => {
+                switch (dataset.label) {
+                    case 'Nadi':
+                        dataset.data = dataset.data || [];
+                        dataset.data.push(...dateData.nadi);
+                        break;
+                    case 'Suhu':
+                        dataset.data = dataset.data || [];
+                        dataset.data.push(...dateData.temperature);
+                        break;
+                    case 'SPO2':
+                        dataset.data = dataset.data || [];
+                        dataset.data.push(...dateData.saturasi);
+                        break;
+                    case 'Sistole':
+                        dataset.data = dataset.data || [];
+                        dataset.data.push(...dateData.tension_upper);
+                        break;
+                    case 'Diastole':
+                        dataset.data = dataset.data || [];
+                        dataset.data.push(...dateData.tension_below);
+                        break;
+                    case 'Respirasi':
+                        dataset.data = dataset.data || [];
+                        dataset.data.push(...dateData.nadi); // Assuming respirasi is mapped to nadi
+                        break;
                 }
+            });
+        });
+
+        const ctxChart = document.getElementById(`myChartRecoveryRoom`).getContext('2d');
+        new Chart(ctxChart, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets
             },
-            layout: {
-                padding: {
-                    left: 10,
-                    right: 10,
-                    top: 10,
-                    bottom: 10
+            options: {
+                plugins: {
+                    datalabels: false
+                },
+                scales: {
+                    yNadi: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Nadi'
+                        }
+                    },
+                    yTemperature: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Suhu'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    },
+                    ySaturasi: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'SPO2'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    },
+                    yTension: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Tekanan Darah'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    },
+                    yRespirasi: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Respirasi'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                        bottom: 10
+                    }
                 }
             }
-        }
-    });
-};
+        });
+    };
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-setTimeout(() => {
-    window.print();
-}, 200);
+    setTimeout(() => {
+        window.print();
+    }, 200);
 </script>
 
 </html>

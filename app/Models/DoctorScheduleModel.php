@@ -42,8 +42,8 @@ class DoctorScheduleModel extends Model
             ->join('clinic c', 'c.clinic_id = doctor_schedule.clinic_id')
             ->select("replace(fullname,'''','') as FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, DAY_ID, ea.dpjp, ea.specialist_type_id")
             ->where('day_id is not null')
-            ->where('start_time > dateadd(day,-1,getdate())')
-            ->where('START_TIME < GETDATE()')
+            // ->where('start_time > dateadd(day,-1,getdate())')
+            // ->where('START_TIME < GETDATE()')
             ->groupBy('FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, DAY_ID, ea.dpjp, ea.specialist_type_id')
             ->orderBy('day_id');
         return $builder->findAll();

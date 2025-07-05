@@ -8,7 +8,7 @@ class InasisKontrolModel
 extends Model
 {
     protected $table      = 'inasis_kontrol';
-    protected $primaryKey = 'nosuratkontrol';
+    protected $primaryKey = 'noskdp_rs';
 
     protected $useAutoIncrement = false;
 
@@ -33,7 +33,8 @@ extends Model
         'no_registration',
         'valid_date',
         'valid_user',
-        'valid_pasien'
+        'valid_pasien',
+        'noskdp_rs'
     ];
 
     // Dates

@@ -40,7 +40,7 @@
 </div>
 <!-- -->
 
-<div class="modal fade" id="painModal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="painModal" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">

@@ -26,7 +26,7 @@
                         <input type="hidden" name="no_registration" value="<?= @$visit['no_registration']; ?>">
                         <input type="hidden" name="diagnosa_id" value="<?= @$visit['diagnosa']; ?>">
                         <input type="hidden" name="mothername" value="<?= @$visit['diantar_oleh']; ?>">
-                        <input type="hidden" name="doctor" value="<?= @$visit['fullname']; ?>">
+                        <input type="hidden" name="doctor" value="<?= @@$visit['fullname']; ?>">
                         <input type="hidden" name="class_room_id" value="<?= @$visit['class_room_id']; ?>">
                         <input type="hidden" name="bed_id" value="<?= @$visit['bed_id']; ?>">
 
@@ -43,7 +43,7 @@
                                         <td class="col-2">ID (KTP)</td>
                                         <td class="col-4"></td>
                                         <td class="col-2">Dokter DPJP</td>
-                                        <td class="col-4"><?= @$visit['fullname']; ?></td>
+                                        <td class="col-4"><?= @@$visit['fullname']; ?></td>
                                     </tr>
                                     <tr>
                                         <td class="col-2">Jenis Kelamin</td>
@@ -53,7 +53,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-2">Tanggal Lahir</td>
-                                        <td class="col-4"><?= tanggal_indo(date_format(date_create($visit['date_of_birth']), 'Y-m-d')); ?></td>
+                                        <td class="col-4"><?= tanggal_indo(date_format(date_create($visit['tgl_lahir']), 'Y-m-d')); ?></td>
                                         <td class="col-2">Bed</td>
                                         <td class="col-4"><?= @$visit['bed_id']; ?></td>
                                     </tr>

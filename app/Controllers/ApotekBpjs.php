@@ -11,8 +11,8 @@ use LZCompressor\LZString;
 
 class ApotekBpjs extends \App\Controllers\BaseController
 {
-    // private $url = 'https://apijkn.bpjs-kesehatan.go.id/apotek-rest';
-    private $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/apotek-rest-dev';
+    private $url = 'https://apijkn.bpjs-kesehatan.go.id/apotek-rest';
+    // private $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/apotek-rest-dev';
 
 
     // function lzstring decompress https://github.com/nullpunkt/lz-string-php
@@ -22,10 +22,12 @@ class ApotekBpjs extends \App\Controllers\BaseController
         $pdo = db_connect();
 
         // Sampangan
-        $consId = '17221';
-        $consSecret = '3tK71AEF7D';
-        $userKey = 'eb3699cf2c74d04e8872608623d3dd6d';
-
+        // $consId = '17221';
+        // $consSecret = '3tK71AEF7D';
+        // $userKey = 'eb3699cf2c74d04e8872608623d3dd6d';
+        $consId = '25558';
+        $consSecret = '1hQ5EFD3B5';
+        $userKey = '6e6af96c3aa5329ffba264db0fc4347d';
 
 
         $current_timestamp = Time::now()->timestamp;

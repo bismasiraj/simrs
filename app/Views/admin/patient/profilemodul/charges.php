@@ -46,18 +46,18 @@ $permissions = user()->getPermissions();
                     <input type="hidden" name="ci_csrf_token" value="">
                     <div class="col-sm-12 col-md-12 mb-4">
                         <div class="row">
-                            <div class="col-md-2 d-none">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="flatstartDateCharge">Start Date</label>
-                                    <input type="text" id="flatstartDateCharge" class="form-control dateflatpickr">
-                                    <input type="hidden" id="startDateCharge">
+                                    <!-- <input type="text" id="flatstartDateCharge" class="form-control dateflatpickr"> -->
+                                    <input type="datetime-local" id="startDateCharge" class="form-control" value="<?= $visit['visit_date']; ?>">
                                 </div>
                             </div>
-                            <div class="col-md-2 d-none">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="flatendDateCharge">End Date</label>
-                                    <input type="text" id="flatendDateCharge" class="form-control dateflatpickr">
-                                    <input type="hidden" id="endDateCharge">
+                                    <!-- <input type="text" id="flatendDateCharge" class="form-control dateflatpickr"> -->
+                                    <input type="datetime-local" id="endDateCharge" class="form-control" value="<?= $visit['isrj'] == '0' ? @$visit['exit_date'] : @$visit['visit_date']; ?>">
                                 </div>
                             </div>
                             <div class="col-md-2">

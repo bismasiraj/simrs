@@ -23,11 +23,14 @@ class BloodRequest extends \App\Controllers\BaseController
         and NO_REGISTRATION = '" . $formData->no_registration . "' 
         and (TRANSFUSION_START is null OR TRANSFUSION_END is null)
         ")->getResultArray() ?? []);
+        $hisHb =$this->lowerKey($db->query("SELECT * from SHARELIS.dbo.hasilLIS where norm ='" . $formData->no_registration . "'  and ( parameter_name like '%Hemoglobin%' or parameter_id = 'HEM003')
+        ")->getRowArray() ?? []);
 
         return $this->response->setJSON([
             'message' => 'Data saved successfully.',
             'respon' => true,
-            'data' => $data
+            'data' => $data,
+            'his_hb'=>$hisHb
         ]);
     }
     public function getDataFromLab()
@@ -84,59 +87,47 @@ class BloodRequest extends \App\Controllers\BaseController
         $request = service('request');
         $db->transBegin();
         $formData = $request->getJSON();
-
+    
         $data = [];
-
+    
         foreach ($formData as $key => $value) {
             if ($value !== null && $value !== '') {
                 $data[$key] = $value;
             }
         }
-
         try {
-
-
             $model = new BloodRequestModel();
-
+    
             $dataBloodRequest = [];
             if (isset($formData->blood) && !empty($formData->blood)) {
-
-                $bloodBeforeDelete = $this->lowerKey($db->query("
-                select * from blood_request 
-                where VISIT_ID = '" . $formData->blood[0]->visit_id . "' 
-                and CLINIC_ID = '" . $formData->blood[0]->clinic_id . "' 
-                and NO_REGISTRATION = '" . $formData->blood[0]->no_registration . "' 
-                and (TRANSFUSION_START is null OR TRANSFUSION_END is null)
+    
+                $bloodBeforeUpdate = $this->lowerKey($db->query("
+                    SELECT * FROM blood_request
+                    WHERE VISIT_ID = '" . $formData->blood[0]->visit_id . "'
+                    AND CLINIC_ID = '" . $formData->blood[0]->clinic_id . "'
+                    AND NO_REGISTRATION = '" . $formData->blood[0]->no_registration . "'
+                    AND (TRANSFUSION_START IS NULL OR TRANSFUSION_END IS NULL)
                 ")->getResultArray() ?? []);
-
-                $delete =  $model->where('visit_id', $formData->blood[0]->visit_id)
-                    ->where('no_registration', $formData->blood[0]->no_registration)
-                    ->where('clinic_id', $formData->blood[0]->clinic_id)
-                    ->groupStart()
-                    ->where('TRANSFUSION_START', NULL)
-                    ->orWhere('TRANSFUSION_END', NULL)
-                    ->groupEnd()
-                    ->delete();
-
+    
                 foreach ($formData->blood as $blood) {
-                    $existData = array_filter($bloodBeforeDelete, function ($item) use ($blood) {
+                    $existData = array_filter($bloodBeforeUpdate, function ($item) use ($blood) {
                         return isset($item['blood_request']) && $item['blood_request'] === $blood->blood_request;
                     });
-
-
+    
+                    $firstExistData = !empty($existData) ? array_values($existData)[0] : null;
+    
                     $dataBlood = [
                         'org_unit_code' => $blood->org_unit_code,
                         'blood_request' => !empty($blood->blood_request) ? $blood->blood_request : $this->get_bodyid(),
                         'no_registration' => $blood->no_registration,
                         'visit_id' => $blood->visit_id,
                         'trans_id' => $blood->trans_id,
-                        'document_id' => null,
+                        'document_id' => $blood->document_id,
                         'clinic_id' => $blood->clinic_id,
-
-                        'calf_number' => !empty($existData[0]['calf_number']) ? $existData[0]['calf_number'] : null,
-                        'delivery_time' => !empty($existData[0]['delivery_time']) ? $existData[0]['delivery_time'] : null,
-                        'terlayani' => !empty($existData[0]['terlayani']) ? $existData[0]['terlayani'] : null,
-
+                        'doctor' => $blood->doctor,
+                        'calf_number' => !empty($firstExistData['calf_number']) ? $firstExistData['calf_number'] : null,
+                        'delivery_time' => !empty($firstExistData['delivery_time']) ? $firstExistData['delivery_time'] : null,
+                        'terlayani' => !empty($firstExistData['terlayani']) ? $firstExistData['terlayani'] : null,
                         'request_date' => $blood->request_date,
                         'blood_type_id' => $blood->blood_type_id,
                         'using_time' => $blood->using_time,
@@ -144,24 +135,34 @@ class BloodRequest extends \App\Controllers\BaseController
                         'blood_quantity' => $blood->blood_quantity,
                         'measure_id' => $blood->measure_id,
                         'descriptions' => $blood->descriptions,
-
                         'transfusion_start' => !empty($blood->transfusion_start) ? $blood->transfusion_start : null,
                         'transfusion_end' => !empty($blood->transfusion_end) ? $blood->transfusion_end : null,
                         'reaction_desc' => !empty($blood->reaction_desc) ? $blood->reaction_desc : null,
                     ];
-                    $dataBloodRequest[] = $dataBlood;
-
-                    $insert = $model->insert($dataBlood);
-                    if (!$insert) {
-                        $error = $db->error();
-                        throw new \Exception('Update failed: ' . $error['message']);
+    
+                    if ($firstExistData) {
+                        // Update jika data ada
+                        $update = $model->update($firstExistData['blood_request'], $dataBlood);  
+                        if (!$update) {
+                            $error = $db->error();
+                            throw new \Exception('Update failed: ' . $error['message']);
+                        }
+                    } else {
+                        // Insert jika data tidak ada
+                        $insert = $model->insert($dataBlood);
+                        if (!$insert) {
+                            $error = $db->error();
+                            throw new \Exception('Insert failed: ' . $error['message']);
+                        }
                     }
+    
+                    $dataBloodRequest[] = $dataBlood;
                 }
             }
             $db->transCommit();
-
+    
             return $this->response->setJSON([
-                'message' => 'File insert successfully.',
+                'message' => 'Data processed successfully.',
                 'respon' => true,
                 'data' => $dataBloodRequest
             ]);
@@ -170,7 +171,8 @@ class BloodRequest extends \App\Controllers\BaseController
             return $this->response->setJSON(['message' => 'Failed to process data: ' . $e->getMessage(), 'respon' => false]);
         }
     }
-
+    
+    
     public function updateFromLab()
     {
         $db = db_connect();
@@ -205,5 +207,55 @@ class BloodRequest extends \App\Controllers\BaseController
             $db->transRollback();
             return $this->response->setJSON(['message' => 'Failed to process data: ' . $e->getMessage(), 'respon' => false]);
         }
+    }
+
+    public function getDataAll(){
+        $formData = $this->request->getJSON();
+        $db = db_connect();
+
+        $start = isset($formData->startDate) ? $formData->startDate : date('Y-m-01 00:00:00');
+        $end = isset($formData->endDate) ? $formData->endDate : date('Y-m-d 23:59:59');
+        $no = isset($formData->noRegis) ? $formData->noRegis : ''; 
+
+        $start = $db->escapeString($start);
+        $end = $db->escapeString($end);
+        
+        $kopprint = $this->lowerKey($db->query("SELECT * from ORGANIZATIONUNIT")->getRowArray());
+        $specialist = $this->lowerKey($db->query("SELECT * FROm SPECIALIST_TYPE")->getResultArray());
+        $doctor = $this->lowerKey($db->query("SELECT FULLNAME, EMPLOYEE_ID FROM EMPLOYEE_ALL where OBJECT_CATEGORY_ID = 20 and NONACTIVE =0")->getResultArray());
+
+
+         
+        $responseData = [
+            'kop' => $kopprint,
+            'specialist'=>$specialist,
+            'doctor'=>$doctor
+        ];
+    
+        $formattedResponseData = $this->lowerKey($responseData);
+        return $this->response->setStatusCode(200)->setJSON([
+            'value' => $formattedResponseData,
+          
+        ]);
+    }
+
+    public function deleteData()
+    {
+        $request = service('request');
+        $formData = $request->getJSON(true);
+
+        if (!$formData['visit_id'] || !$formData['id']) {
+            return ['success' => false, 'message' => 'Missing visit_id or body_id'];
+        }
+
+        $model = new BloodRequestModel();
+
+        $deleted = $model->where('blood_request', $formData['id'])
+            ->where('visit_id', $formData['visit_id'])
+            ->delete();
+
+
+        $deleted;
+        return $this->response->setJSON(['message' => 'Data delete successfully.', 'respon' => true]);
     }
 }

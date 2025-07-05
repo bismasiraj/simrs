@@ -12,11 +12,11 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
     <style>
         .form-control:disabled,
@@ -76,7 +76,7 @@
                 <tr>
                     <td style="width: 50%;">
                         <b>No. RM / Nama Pasien / Jenis Kelamin</b>
-                        <p class="p-1"><?= @$info['no_rm'] . ' / ' . @$info['nama'] . ' / ' . @$info['jeniskel']  ?></p>
+                        <p class="p-1"><?= @$info['no_registration'] . ' / ' . @$info['diantar_oleh'] . ' / ' . @$info['name_of_gender']  ?></p>
                     </td>
                     <td style="width: 50%;">
                         <b>Tanggal Masuk</b>
@@ -86,21 +86,21 @@
                 <tr>
                     <td style="width: 50%;">
                         <b>Tanggal Lahir (Umur)</b>
-                        <p class="p-1"><?= tanggal_indo(@$info['date_of_birth']) . ' (' . @$info['umur'] . ')'; ?></p>
+                        <p class="p-1"><?= tanggal_indo(@$info['date_of_birth']) . ' (' . @$info['age'] . ')'; ?></p>
                     </td>
                     <td style="width: 50%;">
-                        <b>No. Episode</b>
-                        <p class="p-1"><?= @$info['no_episode']; ?></p>
+                        <b>Alamat</b>
+                        <p class="p-1"><?= @$info['visitor_address']; ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td style="width: 50%;">
-                        <b>Alamat</b>
-                        <p class="p-1"><?= @$info['alamat']; ?></p>
+                        <b>DPJP</b>
+                        <p class="p-1"><?= @$info['fullname']; ?></p>
                     </td>
                     <td style="width: 50%;">
-                        <b>DPJP / Department</b>
-                        <p class="p-1"><?= @$info['departmen']; ?></p>
+                        <b>Department</b>
+                        <p class="p-1"><?= @$info['name_of_clinic']; ?></p>
                     </td>
                 </tr>
             </tbody>
@@ -125,6 +125,7 @@
                         <?php if ($value['kode_ppa'] == 'D') : ?>
                             <td colspan="2">
                                 <p>
+                                    <b><?= $value['dokumen']; ?></b> <br>
                                     S : <?= $value['subyectif']; ?> <br>
                                     O : <?= $value['obyektif']; ?> <br>
                                     A : <?= $value['asesmen']; ?> <br>
@@ -135,6 +136,7 @@
                             <td width="1%">-</td>
                             <td>
                                 <p>
+                                    <b><?= $value['dokumen']; ?></b><br>
                                     S : <?= $value['subyectif']; ?> <br>
                                     O : <?= $value['obyektif']; ?> <br>
                                     A : <?= $value['asesmen']; ?> <br>

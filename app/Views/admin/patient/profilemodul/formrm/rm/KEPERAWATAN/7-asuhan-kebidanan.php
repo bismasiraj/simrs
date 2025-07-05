@@ -13,58 +13,58 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css"
         rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -111,9 +111,9 @@
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3><?= @$kop['name_of_org_unit']?></h3>
+                    <h3><?= @$kop['name_of_org_unit'] ?></h3>
                     <!-- <h3>Surakarta</h3> -->
-                    <p><?= @$kop['contact_address']?></p>
+                    <p><?= @$kop['contact_address'] ?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -145,11 +145,11 @@
                         <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
                             <?php if (!empty($visit['date_of_birth'])) : ?>
-                            <p class="m-0 mt-1 p-0">
-                                <?=date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
-                            </p>
+                                <p class="m-0 mt-1 p-0">
+                                    <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
+                                </p>
                             <?php else : ?>
-                            <p class="m-0 mt-1 p-0">-</p>
+                                <p class="m-0 mt-1 p-0">-</p>
                             <?php endif; ?>
                         </td>
                         <td class="p-1" colspan="2">
@@ -168,7 +168,7 @@
                         </td>
                         <td class="p-1">
                             <b>Tanggal Masuk</b>
-                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime( @$visit['visit_datetime'])) ?></p>
+                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime(@$visit['visit_datetime'])) ?></p>
                         </td>
                     </tr>
                     <tr>
@@ -182,7 +182,7 @@
                         </td>
                         <td class="p-1">
                             <b>Bed</b>
-                            <div><?= @$visit['bed_id'] === 0 ? "":@$visit['bed_id']; ?></div>
+                            <div><?= @$visit['bed_id'] === 0 ? "" : @$visit['bed_id']; ?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -217,14 +217,14 @@
 </body>
 
 <script>
-$(document).ready(function() {
-    $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
-    dataRender();
+    $(document).ready(function() {
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+        dataRender();
 
-})
+    })
 
-const dataRender = () => {
-    let tabelsHandover = `<table class="table table-bordered text-center">
+    const dataRender = () => {
+        let tabelsHandover = `<table class="table table-bordered text-center">
                                     <thead>
                                         <tr>
                                             <th colspan="2" ">HANDOVER</th>
@@ -248,88 +248,88 @@ const dataRender = () => {
                                     </tbody>
                                 </table>`
 
-    <?php $dataJson = json_encode($data); ?>
-    let dataResult = []
-    let data = <?php echo $dataJson; ?>;
-    data?.map((e, index) => {
-        if (e?.respons === "mashookkkk") {
-            dataResult += `<tr>
+        <?php $dataJson = json_encode($data); ?>
+        let dataResult = []
+        let data = <?php echo $dataJson; ?>;
+        data?.map((e, index) => {
+            if (e?.respons === "mashookkkk") {
+                dataResult += `<tr>
                                         <td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
                                         <td colspan="2">${tabelsHandover}</td>
                                         <td></td>
                                     </tr>`;
-        } else {
-            dataResult += `<tr><td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
+            } else {
+                dataResult += `<tr><td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
                                 <td>${e?.tindakan}</td>
                                 <td>${e?.nama}</td>
                                 <td>
                                     <div id="qrcode-${index + 1}" style="display: flex; justify-content: center;"></div>
                                 </td>
                             </tr>`;
-        }
-    });
+            }
+        });
 
-    $("#data-asuhan-bidan-tabels").html(dataResult)
+        $("#data-asuhan-bidan-tabels").html(dataResult)
 
-    let qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    let qrcode1 = new QRCode(document.getElementById("qrcode2"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-
-    data?.forEach((e, index) => {
-        let qrcodeName = new QRCode(document.getElementById(`qrcode-${index + 1}`), {
-            text: !e?.nama ? "" : e?.nama,
-            width: 50,
-            height: 50,
+        let qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: 'a',
+            width: 85,
+            height: 85,
             colorDark: "#000000",
             colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // Tingkat koreksi tinggi
+            correctLevel: QRCode.CorrectLevel.H // High error correction
         });
-    });
-}
+        let qrcode1 = new QRCode(document.getElementById("qrcode2"), {
+            text: 'a',
+            width: 85,
+            height: 85,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
+
+        data?.forEach((e, index) => {
+            let qrcodeName = new QRCode(document.getElementById(`qrcode-${index + 1}`), {
+                text: !e?.nama ? "" : e?.nama,
+                width: 50,
+                height: 50,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // Tingkat koreksi tinggi
+            });
+        });
+    }
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-        size: A4 landscape;
-        width: auto;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+            size: A4 landscape;
+            width: auto;
+        }
 
-    body {
-        width: auto;
-        /* Memastikan konten mencakup seluruh lebar kertas A4 */
-        height: auto;
-        /* Mengatur tinggi halaman otomatis sesuai dengan konten */
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: auto;
+            /* Memastikan konten mencakup seluruh lebar kertas A4 */
+            height: auto;
+            /* Mengatur tinggi halaman otomatis sesuai dengan konten */
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .logo-ci4 {
-        display: none;
-    }
+        .logo-ci4 {
+            display: none;
+        }
 
-    .container {
-        width: 100%;
-        margin: 0 auto;
+        .container {
+            width: 100%;
+            margin: 0 auto;
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>

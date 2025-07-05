@@ -1,8 +1,24 @@
 <?php
 $db = db_connect();
-$exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EXAMINATION_DETAIL WHERE VISIT_ID = '" . $visit['visit_id'] . "' ORDER BY EXAMINATION_DATE DESC")->getRowArray();
 
+$exam_info = $db->query("SELECT TOP 1 weight, height, vs_status_id, temperature, nadi, tension_upper, tension_below, saturasi, nafas 
+    FROM EXAMINATION_DETAIL 
+    WHERE VISIT_ID = ? 
+    ORDER BY EXAMINATION_DATE DESC", [@$visit['visit_id']])->getRowArray();
+
+$exam_info = [
+    'weight' => $exam_info['weight'] ?? 0,
+    'height' => $exam_info['height'] ?? 0,
+    'vs_status_id' => $exam_info['vs_status_id'] ?? null,
+    'temperature' => $exam_info['temperature'] ?? null,
+    'nadi' => $exam_info['nadi'] ?? null,
+    'tension_upper' => $exam_info['tension_upper'] ?? null,
+    'tension_below' => $exam_info['tension_below'] ?? null,
+    'saturasi' => $exam_info['saturasi'] ?? null,
+    'nafas' => $exam_info['nafas'] ?? null,
+];
 ?>
+
 <div class="tab-pane fade" id="catatan-keperawatan">
     <form action="" id="form-catatan-keperawatan">
         <div id="accordionCatatan" class="accordion">
@@ -24,60 +40,60 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                     <div class="modal-body pt0 pb0">
                                         <input id="clinic_id-catatanKeperawatan" name="clinic_id" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= $visit['clinic_id']; ?>" />
+                                            value="<?= @$visit['clinic_id']; ?>" />
                                         <input id="class_room_id-catatanKeperawatan" name="class_room_id" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= $visit['class_room_id']; ?>" />
+                                            value="<?= @$visit['class_room_id']; ?>" />
                                         <input id="bed_id-catatanKeperawatan" name="bed_id" placeholder="" type="hidden"
-                                            class="form-control block" value="<?= $visit['bed_id']; ?>" />
+                                            class="form-control block" value="<?= @$visit['bed_id']; ?>" />
                                         <input id="keluar_id-catatanKeperawatan" name="keluar_id" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= $visit['keluar_id']; ?>" />
+                                            value="<?= @$visit['keluar_id']; ?>" />
                                         <input id="employee_id-catatanKeperawatan" name="employee_id" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= $visit['employee_id']; ?>" />
+                                            value="<?= @$visit['employee_id']; ?>" />
                                         <input id="no_registration-catatanKeperawatan" name="no_registration"
                                             placeholder="" type="hidden" class="form-control block"
-                                            value="<?= $visit['no_registration']; ?>" />
+                                            value="<?= @$visit['no_registration']; ?>" />
                                         <input id="visit_id-catatanKeperawatan" name="visit_id" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= $visit['visit_id']; ?>" />
+                                            value="<?= @$visit['visit_id']; ?>" />
                                         <input id="org_unit_code-catatanKeperawatan" name="org_unit_code" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= $visit['org_unit_code']; ?>" />
+                                            value="<?= @$visit['org_unit_code']; ?>" />
                                         <input id="doctor-catatanKeperawatan" name="doctor" placeholder="" type="hidden"
                                             class="form-control block"
-                                            value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
+                                            value="<?= @@$visit['doctor'] ?? @@@$visit['fullname']; ?>" />
                                         <input id="kal_id-catatanKeperawatan" name="kal_id" placeholder="" type="hidden"
-                                            class="form-control block" value="<?= @$visit['kal_id']; ?>" />
+                                            class="form-control block" value="<?= @@$visit['kal_id']; ?>" />
                                         <input id="theid-catatanKeperawatan" name="theid" placeholder="" type="hidden"
-                                            class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                            class="form-control block" value="<?= @@$visit['theid']; ?>" />
                                         <input id="thename-catatanKeperawatan" name="thename" placeholder=""
-                                            type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                            type="hidden" class="form-control block" value="<?= @@$visit['theid']; ?>" />
                                         <input id="theaddress-catatanKeperawatan" name="theaddress" placeholder=""
-                                            type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+                                            type="hidden" class="form-control block" value="<?= @@$visit['theid']; ?>" />
                                         <input id="status_pasien_id-catatanKeperawatan" name="status_pasien_id"
                                             placeholder="" type="hidden" class="form-control block"
-                                            value="<?= @$visit['status_pasien_id']; ?>" />
+                                            value="<?= @@$visit['status_pasien_id']; ?>" />
                                         <input id="isrj-catatanKeperawatan" name="isrj" placeholder="" type="hidden"
-                                            class="form-control block" value="<?= @$visit['isrj']; ?>" />
+                                            class="form-control block" value="<?= @@$visit['isrj']; ?>" />
                                         <input id="gender-catatanKeperawatan" name="gender" placeholder="" type="hidden"
-                                            class="form-control block" value="<?= @$visit['gender']; ?>" />
+                                            class="form-control block" value="<?= @@$visit['gender']; ?>" />
                                         <input id="ageyear-catatanKeperawatan" name="ageyear" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= @$visit['ageyear']; ?>" />
+                                            value="<?= @@$visit['ageyear']; ?>" />
                                         <input id="agemonth-catatanKeperawatan" name="agemonth" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= @$visit['agemonth']; ?>" />
+                                            value="<?= @@$visit['agemonth']; ?>" />
                                         <input id="ageday-catatanKeperawatan" name="ageday" placeholder="" type="hidden"
-                                            class="form-control block" value="<?= @$visit['ageday']; ?>" />
+                                            class="form-control block" value="<?= @@$visit['ageday']; ?>" />
                                         <input id="body_id-catatanKeperawatan" name="body_id_vt" placeholder=""
                                             type="hidden" class="form-control block" value="" />
                                         <input id="modified_by-catatanKeperawatan" name="modified_by" placeholder=""
                                             type="hidden" class="form-control block" value="<?= user()->username ?>" />
                                         <input id="trans_id-catatanKeperawatan" name="trans_id" placeholder=""
                                             type="hidden" class="form-control block"
-                                            value="<?= @$visit['trans_id']; ?>" />
+                                            value="<?= @@$visit['trans_id']; ?>" />
                                         <div class="row">
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-sm-12">
@@ -306,6 +322,12 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+
+                                                        <button type="button" id="btn-save-vitalSignAcKeperawatan"
+                                                            class="btn btn-primary"><i class="fas fa-save"></i>
+                                                            Simpan</button>
+                                                    <?php } ?>
                                                 </div>
                                                 <!--./col-lg-7-->
                                             </div>
@@ -329,10 +351,12 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                             </div>
                         </div>
 
-                        <div class="box-tab-tools text-center mt-4">
-                            <a data-toggle="modal" onclick="setDataVitalSignKeperawatan()"
+                        <div class="box-tab-tools text-center mt-4" id="setDataVitalSignKeperawatanBtn">
+                            <a data-toggle="modal" onclick="setDataVitalSignKeperawatan()" id="tambahVtKeperawatanShow"
                                 class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
                                 Vitalsign</a>
+                            <a data-toggle="modal" id="sembunyikanVtKeperawatanShow" class="btn btn-primary btn-lg"
+                                style="width: 300px"><i class=" fa fa-plus"></i> Sembunyikan Form</a>
                         </div>
                         <h3>Histori Vital Sign</h3>
                         <div class="table-responsive">
@@ -444,8 +468,12 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             <button type="button" id="btn-print-catatan-keperawatan" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
             </button>
-            <button type="button" id="btn-save-catatan-keperawatan" class="btn btn-primary btn-save-operasi"><i
-                    class="fas fa-save"></i> Simpan</button>
+
+            <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+                <button type="button" id="btn-save-catatan-keperawatan" class="btn btn-primary btn-save-operasi"><i
+                        class="fas fa-save"></i> Simpan</button>
+            <?php } ?>
+
         </div>
     </form>
 </div>
@@ -454,25 +482,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
     var mrJson;
     var lastOrder = 0;
     var vitalsign = <?= json_encode($exam); ?>;
-    var visit = '<?= $visit['visit_id']; ?>'
-    var nomor = '<?= $visit['no_registration']; ?>';
 
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-        $("#examination_date").val(get_date())
-        // setDataVitalSignKeperawatan()
-    })
 
     $("#flush-headingThree").on("click", function() {
         getVitalSignKeperawatan()
@@ -563,7 +573,23 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         });
     }));
 
+
+    $("#sembunyikanVtKeperawatanShow").off().on("click", function() {
+        $("#tambahVtKeperawatanShow").show()
+        $("#vitalSignKeperawatan").slideUp()
+        $("#vitalSignKeperawatan").hide()
+        $("#sembunyikanVtKeperawatanShow").hide()
+    })
+
+
+
+
     function setDataVitalSignKeperawatan() {
+        const vitalSignKeperawatan = $("#vitalSignKeperawatan");
+
+        if (vitalSignKeperawatan.is(":hidden")) {
+            vitalSignKeperawatan.show();
+        }
         $("#vitalSignKeperawatan").find("input, textarea").val(null)
         $("#vitalSignKeperawatan").find("#total_score-catatanKeperawatan").html("")
         $("#vitalSignKeperawatan").find("span.h6").html("")
@@ -574,33 +600,33 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         $("#body_id-catatanKeperawatan").val(bodyId)
-        $("#clinic_id-catatanKeperawatan").val('<?= $visit['clinic_id']; ?>')
-        $("#trans_id-catatanKeperawatan").val('<?= $visit['trans_id']; ?>')
-        $("#class_room_id-catatanKeperawatan").val('<?= $visit['class_room_id']; ?>')
+        $("#clinic_id-catatanKeperawatan").val('<?= @$visit['clinic_id']; ?>')
+        $("#trans_id-catatanKeperawatan").val('<?= @$visit['trans_id']; ?>')
+        $("#class_room_id-catatanKeperawatan").val('<?= @$visit['class_room_id']; ?>')
         $("#bed_id-catatanKeperawatan").val()
-        $("#keluar_id-catatanKeperawatan").val('<?= $visit['keluar_id']; ?>')
-        $("#employee_id-catatanKeperawatan").val('<?= $visit['employee_id']; ?>')
-        $("#no_registration-catatanKeperawatan").val('<?= $visit['no_registration']; ?>')
-        $("#visit_id-catatanKeperawatan").val('<?= $visit['visit_id']; ?>')
-        $("#org_unit_code-catatanKeperawatan").val('<?= $visit['org_unit_code']; ?>')
-        $("#doctor-catatanKeperawatan").val('<?= $visit['fullname']; ?>')
-        $("#kal_id-catatanKeperawatan").val('<?= $visit['kal_id']; ?>')
-        $("#theid-catatanKeperawatan").val('<?= $visit['pasien_id']; ?>')
-        $("#thename-catatanKeperawatan").val('<?= $visit['diantar_oleh']; ?>')
-        $("#theaddress-catatanKeperawatan").val('<?= $visit['visitor_address']; ?>')
-        $("#status_pasien_id-catatanKeperawatan").val('<?= $visit['status_pasien_id']; ?>')
-        $("#isrj-catatanKeperawatan").val('<?= $visit['isrj']; ?>')
-        $("#gender-catatanKeperawatan").val('<?= $visit['gender']; ?>')
-        $("#ageyear-catatanKeperawatan").val('<?= $visit['ageyear']; ?>')
-        $("#agemonth-catatanKeperawatan").val('<?= $visit['agemonth']; ?>')
-        $("#ageday-catatanKeperawatan").val('<?= $visit['ageday']; ?>')
+        $("#keluar_id-catatanKeperawatan").val('<?= @$visit['keluar_id']; ?>')
+        $("#employee_id-catatanKeperawatan").val('<?= @$visit['employee_id']; ?>')
+        $("#no_registration-catatanKeperawatan").val('<?= @$visit['no_registration']; ?>')
+        $("#visit_id-catatanKeperawatan").val('<?= @$visit['visit_id']; ?>')
+        $("#org_unit_code-catatanKeperawatan").val('<?= @$visit['org_unit_code']; ?>')
+        $("#doctor-catatanKeperawatan").val('<?= @@@$visit['fullname']; ?>')
+        $("#kal_id-catatanKeperawatan").val('<?= @$visit['kal_id']; ?>')
+        $("#theid-catatanKeperawatan").val('<?= @$visit['pasien_id']; ?>')
+        $("#thename-catatanKeperawatan").val('<?= @$visit['diantar_oleh']; ?>')
+        $("#theaddress-catatanKeperawatan").val('<?= @$visit['visitor_address']; ?>')
+        $("#status_pasien_id-catatanKeperawatan").val('<?= @$visit['status_pasien_id']; ?>')
+        $("#isrj-catatanKeperawatan").val('<?= @$visit['isrj']; ?>')
+        $("#gender-catatanKeperawatan").val('<?= @$visit['gender']; ?>')
+        $("#ageyear-catatanKeperawatan").val('<?= @$visit['ageyear']; ?>')
+        $("#agemonth-catatanKeperawatan").val('<?= @$visit['agemonth']; ?>')
+        $("#ageday-catatanKeperawatan").val('<?= @$visit['ageday']; ?>')
         $("#examination_date-catatanKeperawatan").val(get_date())
+        $("#flatexamination_date-catatanKeperawatan").val(moment(get_date()).format("DD/MM/YYYY HH:mm"))
 
 
-
-        // var ageYear = <?= $visit['ageyear']; ?>;
-        // var ageMonth = <?= $visit['agemonth']; ?>;
-        // var ageDay = <?= $visit['ageday']; ?>;
+        // var ageYear = <?= @$visit['ageyear']; ?>;
+        // var ageMonth = <?= @$visit['agemonth']; ?>;
+        // var ageDay = <?= @$visit['ageday']; ?>;
 
         // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
         //     $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 3);
@@ -611,23 +637,28 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         // }
         enableVitalSignKeperawatan()
         $("#vitalSignKeperawatan").slideDown()
-    }
+        $("#sembunyikanVtKeperawatanShow").show()
+        $("#tambahVtKeperawatanShow").hide()
 
+    }
 
     const addRowVitalSigncatatanKeperawatan = (examselect, key) => {
         $("#vitalSignBodyKeperawatan").append($("<tr>")
-                .append($("<td rowspan='2'>").append((examselect.examination_date).substring(0, 16)))
-                .append($("<td rowspan='2'>").html(examselect.petugas))
+                .append($("<td rowspan='2'>").append(
+                    examselect.examination_date ? examselect.examination_date.substring(0, 16) : ""
+                )).append($("<td rowspan='2'>").html(examselect.petugas))
                 .append($("<td>").html(''))
                 .append($("<td>").html('<b>Tekanan Darah</b>'))
                 .append($("<td>").html('<b>Nadi</b>'))
                 .append($("<td>").html('<b>Nafas/RR</b>'))
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
-                .append($("<td rowspan='2'>").html('<button type="button" onclick="copyVitalSignKeperawatan(' + key +
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="copyVitalSignKeperawatan(' +
+                    key +
                     ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>'
                 ))
-                .append($("<td rowspan='2'>").html('<button type="button" onclick="removeRacik(\'' + examselect
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="removeCatatanKeperawatan(\'' +
+                    examselect
                     .body_id +
                     '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'
                 ))
@@ -641,6 +672,15 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                 .append($("<td>").html(examselect.saturasi + '/SpO2%'))
             )
 
+    }
+
+    function removeCatatanKeperawatan(id) {
+        postData({
+            body_id: id
+        }, 'admin/PatientOperationRequest/deleteExamDetail', (res) => {
+            successSwal('berhasil.');
+            getVitalSignKeperawatan()
+        })
     }
 
     function vitalsignInputcatatanKeperawatan(prop) {
@@ -801,9 +841,26 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         $("#ageday-catatanKeperawatan").prop("disabled", false)
         $("#instruction-catatanKeperawatan").prop("disabled", false)
 
-        let exam_info = <?= json_encode($exam_info) ?>;
-        $('#weight-catatanKeperawatan').val(exam_info ? exam_info['weight'] : 0)
-        $('#height-catatanKeperawatan').val(exam_info ? exam_info['height'] : 0)
+        postData({
+                visit_id: '<?= @$visit['visit_id']; ?>',
+                account_id: '10'
+            }, 'admin/PatientOperationRequest/getExaminfoTop',
+            (res) => {
+                let exam_info = res.examInfo || {};
+                $("#vs_status_id-catatanKeperawatan").val(exam_info?.vs_status_id ?? "")
+                $('#weight-catatanKeperawatan').val(exam_info?.weight || 0);
+                $('#height-catatanKeperawatan').val(exam_info?.height || 0);
+                $('#temperature-catatanKeperawatan').val(exam_info?.temperature || 0);
+                $('#nadi-catatanKeperawatan').val(exam_info?.nadi || 0);
+                $('#tension_upper-catatanKeperawatan').val(exam_info?.tension_upper || 0);
+                $('#tension_below-catatanKeperawatan').val(exam_info?.tension_below || 0);
+                $('#saturasi-catatanKeperawatan').val(exam_info?.saturasi || 0);
+                $('#nafas-catatanKeperawatan').val(exam_info?.nafas || 0);
+            }
+        );
+
+
+
 
         $("#formvitalsignsubmit-catatanKeperawatan").show()
         $("#formvitalsignedit").hide()
@@ -813,7 +870,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         var examselect = vitalsign[key];
 
         var bodyId = ''
-        const nowtime = moment(examselect.examination_date).format("DD/MM/YYYY HH:mm");
+        const nowtime = moment(examselect?.examination_date).format("DD/MM/YYYY HH:mm");
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
@@ -913,7 +970,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
 
 
-    vitalsign.forEach((element, key) => {
+    vitalsign?.forEach((element, key) => {
         examselect = vitalsign[key];
         addRowVitalSigncatatanKeperawatan(examselect, key)
     });
@@ -921,7 +978,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
     vitalsign.forEach((element, key) => {
         examselect = vitalsign[key];
 
-        if (examselect.visit_id == '<?= $visit['visit_id']; ?>') {
+        if (examselect.visit_id == '<?= @$visit['visit_id']; ?>') {
 
             disableVitalSignKeperawatan()
             $("#formvitalsignsubmit-catatanKeperawatan").hide()
@@ -989,26 +1046,26 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
         if (typeof $("#body_id-catatanKeperawatan").val() !== 'undefined' || $(
                 "#body_id-catatanKeperawatan")
             .val() == "-catatanKeperawatan") {
-            $("#clinic_id-catatanKeperawatan").val('<?= $visit['clinic_id']; ?>')
-            $("#trans_id-catatanKeperawatan").val('<?= $visit['trans_id']; ?>') //==new
-            $("#class_room_id-catatanKeperawatan").val('<?= $visit['class_room_id']; ?>')
+            $("#clinic_id-catatanKeperawatan").val('<?= @$visit['clinic_id']; ?>')
+            $("#trans_id-catatanKeperawatan").val('<?= @$visit['trans_id']; ?>') //==new
+            $("#class_room_id-catatanKeperawatan").val('<?= @$visit['class_room_id']; ?>')
             $("#bed_id-catatanKeperawatan").val()
-            $("#keluar_id-catatanKeperawatan").val('<?= $visit['keluar_id']; ?>')
-            $("#employee_id-catatanKeperawatan").val('<?= $visit['employee_id']; ?>')
-            $("#no_registration-catatanKeperawatan").val('<?= $visit['no_registration']; ?>')
-            $("#visit_id-catatanKeperawatan").val('<?= $visit['visit_id']; ?>')
-            $("#org_unit_code-catatanKeperawatan").val('<?= $visit['org_unit_code']; ?>')
-            $("#doctor-catatanKeperawatan").val('<?= $visit['fullname']; ?>')
-            $("#kal_id-catatanKeperawatan").val('<?= $visit['kal_id']; ?>')
-            $("#theid-catatanKeperawatan").val('<?= $visit['pasien_id']; ?>')
-            $("#thename-catatanKeperawatan").val('<?= $visit['diantar_oleh']; ?>')
-            $("#theaddress-catatanKeperawatan").val('<?= $visit['visitor_address']; ?>')
-            $("#status_pasien_id-catatanKeperawatan").val('<?= $visit['status_pasien_id']; ?>')
-            $("#isrj-catatanKeperawatan").val('<?= $visit['isrj']; ?>')
-            $("#gender-catatanKeperawatan").val('<?= $visit['gender']; ?>')
-            $("#ageyear-catatanKeperawatan").val('<?= $visit['ageyear']; ?>')
-            $("#agemonth-catatanKeperawatan").val('<?= $visit['agemonth']; ?>')
-            $("#ageday-catatanKeperawatan").val('<?= $visit['ageday']; ?>')
+            $("#keluar_id-catatanKeperawatan").val('<?= @$visit['keluar_id']; ?>')
+            $("#employee_id-catatanKeperawatan").val('<?= @$visit['employee_id']; ?>')
+            $("#no_registration-catatanKeperawatan").val('<?= @$visit['no_registration']; ?>')
+            $("#visit_id-catatanKeperawatan").val('<?= @$visit['visit_id']; ?>')
+            $("#org_unit_code-catatanKeperawatan").val('<?= @$visit['org_unit_code']; ?>')
+            $("#doctor-catatanKeperawatan").val('<?= @@$visit['fullname']; ?>')
+            $("#kal_id-catatanKeperawatan").val('<?= @$visit['kal_id']; ?>')
+            $("#theid-catatanKeperawatan").val('<?= @$visit['pasien_id']; ?>')
+            $("#thename-catatanKeperawatan").val('<?= @$visit['diantar_oleh']; ?>')
+            $("#theaddress-catatanKeperawatan").val('<?= @$visit['visitor_address']; ?>')
+            $("#status_pasien_id-catatanKeperawatan").val('<?= @$visit['status_pasien_id']; ?>')
+            $("#isrj-catatanKeperawatan").val('<?= @$visit['isrj']; ?>')
+            $("#gender-catatanKeperawatan").val('<?= @$visit['gender']; ?>')
+            $("#ageyear-catatanKeperawatan").val('<?= @$visit['ageyear']; ?>')
+            $("#agemonth-catatanKeperawatan").val('<?= @$visit['agemonth']; ?>')
+            $("#ageday-catatanKeperawatan").val('<?= @$visit['ageday']; ?>')
 
 
         }
@@ -1019,7 +1076,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             url: '<?php echo base_url(); ?>admin/PatientOperationRequest/getExaminfo',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'account_id': '10'
             }),
@@ -1028,12 +1085,20 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             cache: false,
             processData: false,
             success: function(data) {
-                vitalsign = data.examInfo
-                $("#vitalSignBodyKeperawatan").html("")
-                vitalsign.forEach((element, key) => {
-                    examselect = vitalsign[key];
-                    addRowVitalSigncatatanKeperawatan(examselect, key)
-                });
+
+                if (data.examInfo.length > 0) {
+                    vitalsign = data.examInfo
+                    $("#vitalSignBodyKeperawatan").html("")
+                    vitalsign.forEach((element, key) => {
+                        examselect = vitalsign[key];
+                        addRowVitalSigncatatanKeperawatan(examselect, key)
+                    });
+                } else {
+                    $("#vitalSignBodyKeperawatan").html("")
+
+                }
+
+
             },
             error: function() {
 

@@ -93,7 +93,11 @@ $currency_symbol = 'Rp. ';
                                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#operasi" type="button" role="tab" aria-controls="operasi" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Jadwal Operasi</button>
                                     </li>
                                 <?php } ?>
-
+                                <?php if ($giTipe == 7) { ?>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Pencarian Kunjungan</button>
+                                    </li>
+                                <?php } ?>
                             </ul>
                             <div class="tab-content">
                                 <?php
@@ -152,6 +156,42 @@ $currency_symbol = 'Rp. ';
                                 ?>
                                 <?php if (in_array($giTipe, $rajalTipe)) {
                                     echo view('admin/patient/modul/search_rajal', [
+                                        'giTipe' => $giTipe,
+                                        'rajalTipe' => $rajalTipe,
+                                        'title' => '',
+                                        'orgunit' => $orgunit,
+                                        'img_time' => $img_time,
+                                        'clinic' => $clinic,
+                                        'dokter' => $dokter,
+                                        'coverage' => $coverage,
+                                        'status' => $status,
+                                        'jenis' => $jenis,
+                                        'kelas' => $kelas,
+                                        'kalurahan' => $kalurahan,
+                                        'kecamatan' => $kecamatan,
+                                        'kota' => $kota,
+                                        'prov' => $prov,
+                                        'statusPasien' => $statusPasien,
+                                        'payor' => $payor,
+                                        'education' => $education,
+                                        'marital' => $marital,
+                                        'agama' => $agama,
+                                        'job' => $job,
+                                        'blood' => $blood,
+                                        'family' => $family,
+                                        'gender' => $gender,
+                                        'way' => $way,
+                                        'reason' => $reason,
+                                        'isattended' => $isattended,
+                                        'inasisPoli' => $inasisPoli,
+                                        'inasisFaskes' => $inasisFaskes,
+                                        // 'diagnosa' => $diagnosa,
+                                        'dpjp' => $dpjp
+                                    ]);
+                                }
+                                ?>
+                                <?php if ($giTipe == 7) {
+                                    echo view('admin/patient/modul/search_casemix', [
                                         'giTipe' => $giTipe,
                                         'rajalTipe' => $rajalTipe,
                                         'title' => '',
@@ -262,6 +302,7 @@ if (in_array($giTipe, $ranapTipe)) {
     var skunj = new Array();
     var dpjp = new Array();
     var ssdpjp = new Array();
+    var userRoles = <?= json_encode(user()->getRoles()); ?>;
 
     gender = [
         <?php foreach ($gender as $key => $value) { ?>[
@@ -360,11 +401,17 @@ if (in_array($giTipe, $ranapTipe)) {
                 <?php } ?>],
         <?php } ?>
     ];
-    <?php foreach ($dpjp as $key => $value) {
-        foreach ($value as $key1 => $value1) { ?>
-            dpjp['<?= $key; ?>'] = '<?= $key1; ?>';
-            ssdpjp['<?= $key; ?>'] = '<?= $value1; ?>'
+    <?php
+    if (is_array($dpjp)) {
+
+        foreach (@$dpjp as $key => $value) {
+            if (is_array($value)) {
+                foreach (@$value as $key1 => $value1) { ?>
+                    dpjp['<?= $key; ?>'] = '<?= $key1; ?>';
+                    ssdpjp['<?= $key; ?>'] = '<?= $value1; ?>'
     <?php }
+            }
+        }
     } ?>
 </script>
 <script type="text/javascript">
@@ -715,6 +762,42 @@ if ($giTipe == 0 || $giTipe == '5') {
 ?>
 <?php if (in_array($giTipe, $rajalTipe)) {
     echo view('admin/patient/modul/search_rajal_js', [
+        'giTipe' => $giTipe,
+        'rajalTipe' => $rajalTipe,
+        'title' => '',
+        'orgunit' => $orgunit,
+        'img_time' => $img_time,
+        'clinic' => $clinic,
+        'dokter' => $dokter,
+        'coverage' => $coverage,
+        'status' => $status,
+        'jenis' => $jenis,
+        'kelas' => $kelas,
+        'kalurahan' => $kalurahan,
+        'kecamatan' => $kecamatan,
+        'kota' => $kota,
+        'prov' => $prov,
+        'statusPasien' => $statusPasien,
+        'payor' => $payor,
+        'education' => $education,
+        'marital' => $marital,
+        'agama' => $agama,
+        'job' => $job,
+        'blood' => $blood,
+        'family' => $family,
+        'gender' => $gender,
+        'way' => $way,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        // 'diagnosa' => $diagnosa,
+        'dpjp' => $dpjp
+    ]);
+}
+?>
+<?php if ($giTipe == '7') {
+    echo view('admin/patient/modul/search_casemix_js', [
         'giTipe' => $giTipe,
         'rajalTipe' => $rajalTipe,
         'title' => '',

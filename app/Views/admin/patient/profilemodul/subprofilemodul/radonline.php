@@ -7,9 +7,9 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <title>Radiologi Online</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <style>
         .kbw-signature {
             width: 150px;
@@ -19,8 +19,8 @@
     <!--[if IE]>
     <script src="excanvas.js"></script>
     <![endif]-->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="js/jquery.signature.js"></script>
     <script>
         // $(function() {
@@ -129,7 +129,7 @@
                 </div>
                 <div class="col">
                     <select name="employee_id" id="employee_id" class="form-control">
-                        <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
+                        <option value="<?= $visit['employee_id']; ?>"><?= @$visit['fullname']; ?></option>
                     </select>
                     <!-- <input type="text" name="employee_id" id="employee_id" style="width: 300px;" readonly> -->
                 </div>
@@ -467,7 +467,7 @@
                     <div class="row mb-3">
                         <div class="col">
                             <div id="sig"></div><br>
-                            ( <input type="text" name="doctor" id="doctor" style="width: 90%;" value="<?= $visit['fullname']; ?>"> )
+                            ( <input type="text" name="doctor" id="doctor" style="width: 90%;" value="<?= @$visit['fullname']; ?>"> )
                         </div>
                     </div>
                 </div>

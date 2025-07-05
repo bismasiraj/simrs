@@ -12,16 +12,16 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -125,7 +125,7 @@
 </body>
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: '<?= @$visit['fullname']; ?>',
+        text: '<?= @@$visit['fullname']; ?>',
         width: 150,
         height: 150,
         colorDark: "#000000",
@@ -145,7 +145,7 @@
 </script>
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode2"), {
-        text: '<?= @$visit['fullname']; ?>',
+        text: '<?= @@$visit['fullname']; ?>',
         width: 40,
         height: 40,
         colorDark: "#000000",

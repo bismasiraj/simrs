@@ -34,6 +34,54 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                 ->orderBy('vactination_date', 'DESC')
                 ->findAll()
         );
+
+        $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        $ttdDir = $this->imageloc . "uploads/dokter/";
+        $ttdDirPasien = $this->imageloc . "uploads/signatures/";
+
+        foreach ($data as &$pasien1) {
+            $ttdBase64 = null;
+            $ttdBase64Pasien = null;
+
+            $employeeId = $pasien1['employee_id'] ?? null;
+            $no_rmId = $pasien1['no_registration'] ?? null;
+
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $filePath = $ttdDir . $employeeId . '.' . $ext;
+                    if (file_exists($filePath)) {
+                        $fileData = file_get_contents($filePath);
+                        $mimeType = mime_content_type($filePath);
+                        $ttdBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                        break;
+                    }
+                }
+            }
+
+            if (!empty($no_rmId)) {
+                foreach ($allowedExtensions as $extPasien) {
+                    $pattern = $ttdDirPasien . $no_rmId . '*.' . $extPasien;
+                    $files = glob($pattern);
+
+                    if (!empty($files)) {
+                        $filePathPasien = $files[0];
+                        if (file_exists($filePathPasien)) {
+                            $fileDataPasien = file_get_contents($filePathPasien);
+                            $mimeTypePasien = mime_content_type($filePathPasien);
+                            $ttdBase64Pasien = 'data:' . $mimeTypePasien . ';base64,' . base64_encode($fileDataPasien);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $pasien1['ttd_dok'] = $ttdBase64;
+            $pasien1['ttd_pasien'] = $ttdBase64Pasien;
+        }
+        unset($pasien1);
+
+
+
         $dataSchedule = [];
         foreach ($data as $key => $row) {
             $dataSchedule[$row['vactination_id']] = $this->lowerKey($modelSchedule
@@ -50,12 +98,37 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                 ->findAll()
         );
 
-        $diagnosa = $this->lowerKey($db->query("SELECT * FROM PASIEN_DIAGNOSA WHERE diag_cat IN ('1', '17') AND visit_id = '" . $formData['visit_id'] . "'
-            ORDER BY date_of_diagnosa DESC
+        $diagnosa = $this->lowerKey($db->query("SELECT 
+                                         pd.VISIT_ID, 
+                                            pd.ANAMNASE,
+                                            pds.DIAG_CAT, 
+                                            d.NAME_OF_DIAGNOSA as diagnosa_name
+                                    FROM PASIEN_DIAGNOSA pd
+                                    LEFT JOIN PASIEN_DIAGNOSAS pds 
+                                        ON pd.PASIEN_DIAGNOSA_ID = pds.PASIEN_DIAGNOSA_ID
+                                    LEFT JOIN DIAGNOSA d
+                                        ON pds.diagnosa_id = d.diagnosa_id
+                                    WHERE     pds.diag_cat IN ('1', '17') 
+                                        AND d.diagnosa_id = pds.DIAGNOSA_ID
+                                    AND pd.visit_id = '" . $formData['visit_id'] . "'
+                                ORDER BY pd.date_of_diagnosa DESC;
             ")->getResultArray());
 
+        $clinic = $this->lowerKey($db->query("SELECT 
+                                                c.NAME_OF_CLINIC, 
+                                                pv.VISIT_ID,
+                                                pv.clinic_id
+                                            FROM CLINIC c
+                                            JOIN PASIEN_VISITATION pv ON c.clinic_id = pv.clinic_id
+                                            WHERE c.clinic_id = pv.clinic_id
+                                            AND pv.visit_id = '" . $formData['visit_id'] . "'
+                                        ")->getRowArray());
+        $employee =  $this->lowerKey($db->query("SELECT FULLNAME,EMPLOYEE_ID FROM EMPLOYEE_ALL where OBJECT_CATEGORY_ID = '20' AND SPECIALIST_TYPE_ID is Not Null
+                                            ")->getResultArray());
 
-        $pain = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_DETAIL where visit_id = '202410050857320537E72' and parameter_id = '01'
+
+
+        $pain = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_DETAIL where visit_id = '" . $formData['visit_id'] . "' and parameter_id = '01'
             ")->getResultArray() ?? []);
 
         $pain = array_map(function ($item) {
@@ -71,10 +144,20 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
 
         return $this->response->setStatusCode(200)->setJSON([
             'success' => $success,
-            'value'   => ['fisioterapi' => $data, 'diagnosa' => $diagnosa, 'kop' => $kopprint, 'fioterapi_detail' => $dataDetail, 'fisioterapi_schedule' => $dataSchedule, 'monitoring_nyeri' => $pain],
+            'value'   => [
+                'fisioterapi' => $data,
+                'diagnosa' => $diagnosa,
+                'kop' => $kopprint,
+                'fioterapi_detail' => $dataDetail,
+                'fisioterapi_schedule' => $dataSchedule,
+                'monitoring_nyeri' => $pain,
+                'clinic_cover' => $clinic,
+                'employee' => $employee
+            ],
 
 
-        ]); // baru havin 26 09
+
+        ]);
     }
 
     public function insertOrUpdateDataFisio()
@@ -86,9 +169,7 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
         $data = [];
 
         foreach ($formData as $key => $value) {
-            if ($value !== null && $value !== '') {
-                $data[$key] = $value;
-            }
+            $data[$key] = $value;
         }
 
         if (!isset($data['vactination_id'])) {
@@ -147,16 +228,6 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
 
 
 
-
-
-
-
-
-
-
-
-
-
     public function kopprint()
     {
         $db = db_connect();
@@ -180,7 +251,7 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
         try {
 
             if (isset($formData['program'])  && is_array($formData['program']) && !empty($formData['program'])) {
-                $deleteSchedule = $modelSchedule->where('visit_id', $formData['visit_id'])->where('document_id', $formData['vactination_id'])->delete();
+                $deleteSchedule = $modelSchedule->where('visit_id', $formData['visit_id'])->where('document_id', $formData['vactination_id'])->where('schedule_type', $formData['schedule_type'])->delete();
                 if (!$deleteSchedule) {
                     throw new \Exception('Failed Delete Schedule.');
                 }
@@ -193,7 +264,7 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
 
                     $dataProgram[] = [
                         'org_unit_code' => $formData['org_unit_code'],
-                        'vactination_id' => $vactination_id,
+                        'vactination_id' => $program['vactination_id'],
                         'no_registration' => $formData['no_registration'],
                         'visit_id' => $formData['visit_id'],
                         'document_id' => $formData['vactination_id'],
@@ -216,9 +287,16 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                         'tarif_id' => $program['program_id'],
                         'treatment' => $formData['treatment'],
                         'treatment_program' => $program['program_name'],
-                        'start_date' => $program['vactination_date'] . ' ' . $program['start'],
-                        'end_date' => $program['vactination_date'] . ' ' . $program['end'],
+                        'start_date' => (!empty($program['vactination_date']) && !empty($program['start'])) ? $program['vactination_date'] . ' ' . $program['start'] : null,
+                        'end_date' => (!empty($program['vactination_date']) && !empty($program['end'])) ? $program['vactination_date'] . ' ' . $program['end'] : null,
                         'examination_date' => date("Y-m-d H:i:s"),
+                        'treatment_description' => $program['treatment_description'],
+                        'schedule_type' => $program['schedule_type'],
+                        'valid_user'  => $program['valid_user'] !== "" ? $program['valid_user'] : null,
+                        'valid_pasien' => $program['valid_pasien'] !== "" ? $program['valid_pasien'] : null,
+                        'valid_other'  => $program['valid_other'] !== "" ? $program['valid_other'] : null,
+
+
                     ];
                 }
 
@@ -229,7 +307,6 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                         throw new \Exception('Failed to insert batch of Program.');
                     }
 
-                    // check table pasien fisioterapi
                     $existingData = $this->lowerKey($model->where('visit_id', $formData['visit_id'])->where('vactination_id', $formData['vactination_id'])->first() ?? []);
 
                     if (!is_null($existingData['tarif_id']) && !empty($existingData['tarif_id'])) {

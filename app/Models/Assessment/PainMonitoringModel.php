@@ -42,4 +42,17 @@ class PainMonitoringModel extends Model
     protected $createdField  = 'modified_date';
     protected $updatedField  = 'modified_date';
     protected $deletedField  = 'deleted_at';
+    function deletePasienDiagnosa($document_id)
+    {
+        return $this->db->query("update assessment_pain_monitoring
+            set no_registration = 'x-'+no_registration,
+            document_id = 'x-'+document_id,
+            body_id = 'x-'+body_id,
+            clinic_id = 'x-'+clinic_id,
+            employee_id = 'x-'+employee_id,
+            visit_id = 'x-'+visit_id,
+            trans_id = 'x-'+trans_id
+            where document_id = '$document_id'
+        ");
+    }
 }

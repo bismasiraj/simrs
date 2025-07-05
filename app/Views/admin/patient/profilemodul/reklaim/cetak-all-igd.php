@@ -317,7 +317,7 @@
                 <form action="" method="">
                     <div class="row">
                         <h6 class="text-center"><b>SURAT BUKTI PELAYANAN <br> NAMA RS : <?=@$kop['display']?> KODE RS :
-                                0701R001 KELAS RS : B
+                                <?=@$kop['org_type']?> KELAS RS : <?=@$kop['org_type']?>
                             </b></h6>
                         <h6 class="text-uppercase text-decoration-underline text-center"><b>rawat jalan</b></h6>
                     </div>
@@ -343,7 +343,7 @@
                         </div>
 
                         <div class="col-3">
-                            <table class="table table-bordered" style="border: solid black;">
+                            <!-- <table class="table table-bordered" style="border: solid black;">
                                 <tbody>
                                     <tr style="height: 15px;">
                                         <td class="text-center">
@@ -351,7 +351,6 @@
                                         </td>
                                     </tr>
                                     <tr style="height: 25px;">
-                                        <!-- Sesuaikan tinggi baris sesuai kebutuhan -->
                                         <td class="text-center">
                                             <label class="text-uppercase fs-2"
                                                 style="font-family: 'Times New Roman', Times, serif;">
@@ -360,7 +359,7 @@
                                         </td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table> -->
                         </div>
                     </div>
                     <div class="row">
@@ -536,7 +535,7 @@
                         <td class="p-1">
                             <b>Triage</b>
                             <p class="m-0 mt-1 p-0">
-                                <?= !empty(@$triaseIgd['val']['ats_tipe']) ? @$triaseIgd['val']['ats_tipe'] : '-'; ?>
+                                <?= !empty(@$triaseIgd['val']['ats_tipe']) ? @nl2br($triaseIgd['val']['ats_tipe']) : '-'; ?>
                             </p>
                         </td>
                     </tr>
@@ -545,7 +544,8 @@
                         <td class="p-1">
                             <b><?= @$triaseIgd['val']['ats_tipe']; ?></b>
                             <p class="m-0 mt-1 p-0">
-                                <?= !empty(@$triaseIgd['val']['ats_item']) ? @$triaseIgd['val']['ats_item']:'-'; ?></p>
+                                <?= !empty(@$triaseIgd['val']['ats_item']) ? nl2br($triaseIgd['val']['ats_item']):'-'; ?>
+                            </p>
                         </td>
                     </tr>
                     <?php endif;?>
@@ -554,7 +554,7 @@
                         <td class="p-1" colspan="2">
                             <b>Hamil</b>
                             <p class="m-0 mt-1 p-0">
-                                <?= !empty(@$triaseIgd['val']['hamil']) ? @$triaseIgd['val']['hamil']:'-'; ?></p>
+                                <?= !empty(@$triaseIgd['val']['hamil']) ? nl2br($triaseIgd['val']['hamil']):'-'; ?></p>
                         </td>
                     </tr>
                     <tr>
@@ -598,88 +598,343 @@
 
     <body>
         <div class="container-fluid mt-5">
+
             <!-- template header -->
             <?= view("admin/patient/profilemodul/formrm/reklaim/template_header.php"); ?>
             <!-- end of template header -->
             <div class="row">
-                <h4 class="text-start">Subjektif (S)</h4>
+                <h5 class="text-start">Subjektif (S)</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td style="width: 33%;">
+                        <td class="p-1">
                             <b>Keluhan Utama (Autoanamnesis)</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['anamnesis']; ?></p>
-                            <b>Keluhan Utama (Alloanamnesis)</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['alloanamnesis']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['anamnesis']; ?></p>
                         </td>
-                        <td style="width: 33%;">
+                        <td class="p-1">
                             <b>Riwayat Penyakit Sekarang</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_sekarang']; ?></p>
-                            <b>Riwayat Penyakit Dahulu</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_dahulu']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_sekarang']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
+                            <b>Riwayat Penyakit Dahulu</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_dahulu']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
                             <b>Riwayat Penyakit Keluarga</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_keluarga']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_keluarga']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>Riwayat Alergi (Non Obat)</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_alergi_nonobat']; ?></p>
+                            <b>Riwayat Alergi (Obat)</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_alergi_obat']; ?></p>
+                        </td>
+                        <td class="p-1">
                             <b>Riwayat Obat Yang Dikonsumsi</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_obat_dikonsumsi']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_obat_dikonsumsi']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Riwayat Kehamilan dan Persalinan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_kehamilan']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>Riwayat Diet</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_diet']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>Riwayat Imunisasi</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_imunisasi']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="p-1">
+                            <b>Riwayat Kebiasaan (Negatif)</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_alkohol']; ?></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Obyektif (O)</h4>
+                <h5 class="text-start">Obyektif (O)</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td colspan="4"><b>Vital Sign</b></td>
+                        <td colspan="4" class="p-1"><b>Vital Sign</b></td>
                     </tr>
                     <tr>
                         <td class="p-1">
                             <b>Tekanan Darah</b>
-                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tensi_atas']; ?> /
-                                <?= @$resumeMedis['val']['tensi_bawah']; ?></p>mmHg
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tensi_bawah']; ?> mmHg</p>
                         </td>
                         <td class="p-1">
                             <b>Denyut Nadi</b>
-                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tensi_atas']; ?> /
-                                <?= @$resumeMedis['val']['tensi_bawah']; ?></p>m
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['nadi']; ?> x/m</p>
                         </td>
                         <td class="p-1">
                             <b>Suhu Tubuh</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['suhu']; ?> </p>℃
-                            </div>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['suhu']; ?> ?</p>
                         </td>
                         <td class="p-1">
                             <b>Respiration Rate</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['respiration']; ?></p>x/m
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['respiration']; ?> x/m</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Berat Badan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['berat']; ?> kg</p>
+                        </td>
+                        <td class="p-1">
+                            <b>Tinggi Badan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tinggi']; ?> cm</p>
+                        </td>
+                        <td class="p-1">
+                            <b>SpO2</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['spo2']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>BMI</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['imt']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <?php if (!empty($resumeMedis['val']['gcs_desc'])) { ?>
+
+            <?php 
+        if($resumeMedis['visit']['ageyear'] < 18){?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b><i>pGCS / Tingkat Kesadaran</i></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>pGCS E / Respon Membuka Mata :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_e'] . '] ' . @$resumeMedis['val']['gsc_e_desc']; ?>.</span>
+                                    <b>pGCS V / Respon Verbal Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_v'] . '] ' . @$resumeMedis['val']['gsc_v_desc']; ?>.</span>
+                                    <b>pGCS M / Respon Motorik Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_m'] . '] ' . @$resumeMedis['val']['gsc_m_desc']; ?>.</span>
+                                </div>
+
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>Score pGCS : </b>
+                                    <span class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['gcs_desc']; ?></span>
+                                </div>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
-                            <b>SpO2</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['spo2']; ?></p>
-                            </div>
-                        </td>
-                        <td class="p-1">
-                            <b>Berat Badan</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['berat']; ?></p>kg
-                            </div>
-                        </td>
-                        <td colspan="2">
-                            <b><i>GCS / Tingkat Kesadaran</i></b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['gcs']; ?></p>
+                            <b>Keadaan Umum</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['keadaanumum']) ? @$resumeMedis['val']['keadaanumum'] : '-'; ?>
+                            </p>
                         </td>
                     </tr>
                 </tbody>
             </table>
+
+            <?php }else{ ?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b><i>GCS / Tingkat Kesadaran</i></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>GCS E / Respon Membuka Mata :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_e'] . '] ' . @$resumeMedis['val']['gsc_e_desc']; ?>.</span><br>
+                                    <b>GCS V / Respon Verbal Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_v'] . '] ' . @$resumeMedis['val']['gsc_v_desc']; ?>.</span><br>
+                                    <b>GCS M / Respon Motorik Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_m'] . '] ' . @$resumeMedis['val']['gsc_m_desc']; ?>.</span>
+                                </div>
+
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>Score GCS : </b>
+                                    <span class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['gcs_desc']; ?></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Keadaan Umum</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['keadaanumum']) ? @$resumeMedis['val']['keadaanumum'] : '-'; ?>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php } ?>
+            <?php } ?>
+
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1" style="width: 50%;">
+                            <b>Skala Nyeri</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['pain_score']; ?></p>
+                        </td>
+                        <td class="p-1" style="width: 50%;">
+                            <b>Resiko Jatuh</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['fall_score']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php if ($resumeMedis['visit']['specialist_type_id'] === "1.12"): ?>
+            <table class="table table-bordered" id="statusDermatologiShow">
+                <tbody>
+                    <tr>
+                        <td colspan="4" class="fw-bold">Status Dermatologik</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="row">
+                                <b class="col-12">I. Inspeksi</b>
+                            </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td class="fw-bold">Lokasi</td>
+                                        <td class="fw-bold">UKK</td>
+                                        <td class="fw-bold">Distribusi</td>
+                                        <td class="fw-bold">Konfigurasi</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_location'] ?></td>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_ukk'] ?></td>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_distribution'] ?></td>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_configuration'] ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Palpasi</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sd_palpation'] ?></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Lain-Lain</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sd_others'] ?></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="row">
+                                <b class="col-12">Status Venerologik</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Inspeksi</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sv_inspection'] ?></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Palpasi</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sv_palpation'] ?></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php endif; ?>
+            <?php
+        if ($resumeMedis['visit']['specialist_type_id'] === "1.16"): ?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Var/NRS</th>
+                        <th>Pupil Kiri</th>
+                        <th>Pupil kanan</th>
+                    </tr>
+                    <tr>
+                        <td><?= @$resumeMedis['val']['saraf']['vas_nrs'] ?></td>
+                        <td>
+                            <b>Diameter :</b><?= @$resumeMedis['val']['saraf']['left_diameter'] ?>
+                            <br><b>Refleks Cahaya :</b><?= @$resumeMedis['val']['saraf']['left_light_reflex'] ?>
+                            <br><b>Kornea:</b><?= @$resumeMedis['val']['saraf']['left_cornea'] ?>
+                            <br><b>Isokor Anisokor :</b><?= @$resumeMedis['val']['saraf']['left_isokor_anisokor'] ?>
+                        </td>
+                        <td>
+                            <b>Diameter :</b><?= @$resumeMedis['val']['saraf']['right_diameter'] ?>
+                            <br><b>Refleks Cahaya :</b><?= @$resumeMedis['val']['saraf']['right_light_reflex'] ?>
+                            <br><b>Kornea:</b><?= @$resumeMedis['val']['saraf']['right_cornea'] ?>
+                            <br><b>Isokor Anisokor :</b><?= @$resumeMedis['val']['saraf']['right_isokor_anisokor'] ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Leher</th>
+                        <th>Gerak</th>
+                        <th>Kekuatan</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Kaku kuduk :</b><?= @$resumeMedis['val']['saraf']['stiff_neck'] ?>
+                            <br><b>Meningeal Sign :</b><?= @$resumeMedis['val']['saraf']['meningeal_sign'] ?>
+                            <br><b>Brudzinki I-IV :</b><?= @$resumeMedis['val']['saraf']['brudzinki_i_iv'] ?>
+                            <br><b>Kernig Sign:</b><?= @$resumeMedis['val']['saraf']['kernig_sign'] ?>
+                            <br><b>Dolls eye phenomena :</b><?= @$resumeMedis['val']['saraf']['dolls_eye_phenomenon'] ?>
+                            <br><b>Vertebra :</b><?= @$resumeMedis['val']['saraf']['vertebra'] ?>
+                            <br><b>Extremity :</b><?= @$resumeMedis['val']['saraf']['extremity'] ?>
+                        </td>
+                        <td>
+                            <b>Gerak Atas Kiri :</b><?= @$resumeMedis['val']['saraf']['motion_upper_left'] ?>
+                            <br><b>Gerak Atas Kanan :</b><?= @$resumeMedis['val']['saraf']['motion_upper_right'] ?>
+                            <br><b>Gerak Bawah Kiri :</b><?= @$resumeMedis['val']['saraf']['motion_lower_left'] ?>
+                            <br><b>Gerak Bawah Kanan :</b><?= @$resumeMedis['val']['saraf']['motion_lower_right'] ?>
+                        </td>
+                        <td>
+                            <b>Kekuatan Atas Kiri :</b><?= @$resumeMedis['val']['saraf']['strength_upper_left'] ?>
+                            <br><b>Kekuatan Atas Kanan :</b><?= @$resumeMedis['val']['saraf']['strength_upper_right'] ?>
+                            <br><b>Kekuatan Bawah Kiri:</b><?= @$resumeMedis['val']['saraf']['strength_lower_left'] ?>
+                            <br><b>Kekuatan Bawah Kanan
+                                :</b><?= @$resumeMedis['val']['saraf']['strength_lower_right'] ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php endif; ?>
+
             <table class="table table-bordered">
                 <tbody>
                     <?php
@@ -695,18 +950,18 @@
                                 if ($key + 1 != count($resumeMedis['lokalis2'])) {
                                     echo '<tr>';
                                     echo '<td class="p-1" style="width: 50%;">'
-                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
+                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_detail'] . '</p>' .
                                         '</td>';
                                 } else {
                                     echo '<tr>';
                                     echo '<td class="p-1" colspan="2" style="width: 50%;">'
-                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
+                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_detail'] . '</p>' .
                                         '</td>';
                                     echo '</tr>';
                                 }
                             } else {
                                 echo '<td class="p-1" style="width: 50%;">'
-                                    . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
+                                    . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_detail'] . '</p>' .
                                     '</td>';
                                 echo "<tr>";
                             }
@@ -716,194 +971,373 @@
                 ?>
                 </tbody>
             </table>
+
+            <table class="table table-bordered">
+                <tbody>
+                    <?php
+                if (!empty($resumeMedis['lokalis'])) {
+                    foreach ($resumeMedis['lokalis'] as $key => $value) {
+                        if ($value['value_score'] == 3) {
+                            $filepath = WRITEPATH . 'uploads/lokalis/' . $value['value_detail'];
+
+                            if (file_exists($filepath)) {
+                                $filedata = file_get_contents($filepath);
+                                $filedata64 = base64_encode($filedata);
+                                $selectlokalis[$key]['filedata64'] = $filedata64;
+
+                                echo '<tr>';
+                                echo '<th>' . $value['nama_lokalis'] . '</th>';
+                                echo '<td style="width: 50%;">';
+                                echo '<img class="mt-3" src="data:image/jpeg;base64,' . $filedata64 . '" width="400px">';
+                                echo '</td>';
+                                echo '</tr>';
+                            }
+                        }
+                    }
+                }
+                ?>
+                </tbody>
+            </table>
+
+            <?php
+        if ($resumeMedis['visit']['specialist_type_id'] === "1.10"): ?>
+            <?php
+            if (!empty($resumeMedis['val']['mata']) && is_array($resumeMedis['val']['mata'])) {
+                $result = [];
+                foreach ($resumeMedis['val']['mata'] as $item) {
+                    $nama_lokalis = str_replace(["DEXTRA", "SINISTRA"], "", $item['nama_lokalis']);
+                    $nama_lokalis = trim($nama_lokalis);
+                    $value_info = $item['value_info'];
+                    $value_detail = $item['value_detail'];
+
+                    if (isset($result[$nama_lokalis])) {
+                        $result[$nama_lokalis][$value_info] = $value_detail;
+                    } else {
+                        $result[$nama_lokalis] = [
+                            "SINISTRA" => $value_info === "SINISTRA" ? $value_detail : null,
+                            "nama_lokalis" => $nama_lokalis,
+                            "DEXTRA" => $value_info === "DEXTRA" ? $value_detail : null
+                        ];
+                    }
+                }
+
+                $resultChunks = array_chunk($result, ceil(count($result) / 2), true);
+                echo "<div style='display: flex; gap: auto;'>";
+
+                foreach ($resultChunks as $chunk) {
+                    echo "<div style='flex: 1;'>";
+                    echo "<table border='1' class='table table-bordered'>";
+                    echo "<tr><td class='fw-bold'>Oculus Dextra</td><td class='fw-bold text-center'>Keterangan</td><td class='fw-bold'>Oculus Sinistra</td></tr>";
+                    foreach ($chunk as $row) {
+                        echo "<tr>";
+                        echo "<td>" . ($row['DEXTRA'] ?? '') . "</td>";
+                        echo "<td class='text-center'>{$row['nama_lokalis']}</td>";
+                        echo "<td>" . ($row['SINISTRA'] ?? '') . "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                    echo "</div>";
+                }
+
+                echo "</div>";
+            }
+            ?>
+
+            <?php endif; ?>
+            <?php if (!empty($resumeMedis['val']['pemeriksaan']) && is_array($resumeMedis['val']['pemeriksaan'])) { ?>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td style="width: 50%;">
-                            <b>Diagnosis Masuk</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['pdiagnosa']; ?></p>
+                        <td class="p-1" colspan="2">
+                            <b>Catatan Obyektif</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['pemeriksaan']) ? @$resumeMedis['val']['pemeriksaan'] : '-'; ?>
+                            </p>
                         </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php } ?>
+            <?php if (!empty($resumeMedis['val']['ats_tipe']) && is_array($resumeMedis['val']['ats_tipe'])) { ?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
                         <td class="p-1">
-                            <b>Procedure Masuk</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['pprocedures']; ?></p>
+                            <b>Triage</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['ats_tipe']) ? @$resumeMedis['val']['ats_tipe'] : '-'; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <?php if (!empty($resumeMedis['val']['ats_tipe'])): ?>
+                    <tr>
+                        <td class="p-1">
+                            <b><?= @$resumeMedis['val']['ats_tipe']; ?></b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['ats_item']) ? @$resumeMedis['val']['ats_item'] : '-'; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php if (!empty($resumeMedis['val']['hamil']) && ($resumeMedis['val']['hamil'] === "Hamil")): ?>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>Hamil</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['hamil']) ? @$resumeMedis['val']['hamil'] : '-'; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
-                            <b>Indikasi Rawat Inap</b>
+                        <td class="p-1" colspan="2">
+                            <b>Umur Kehamilan</b>
+                            <p class="m-0 mt-1 p-0"></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>G</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['hamil_g']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>P</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['hamil_p']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>A</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['hamil_a']; ?></p>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <?php } ?>
+
+
+            <div class="row">
+                <h4 class="text-start">Assessment (A)</h4>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b>Diagnosis</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['namadiagnosa']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
-                            <b>Diagnosis Pulang</b>
-                            <textarea type="text" class="form-control" id=""
-                                name=""><?= @$resumeMedis['val']['pdiagnosa']; ?></textarea>
-                        </td>
-                        <td class="p-1">
-                            <b>Procedure Pulang</b>
-                            <textarea type="text" class="form-control" id=""
-                                name=""><?= @$resumeMedis['val']['pprocedures']; ?></textarea>
+                            <b>Permasalahan Medis</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['masalah_medis']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
-                            <b>Status/Cara Pulang</b>
-                            <p class="m-0 mt-0 p-0"></p>
-                        </td>
-                        <td class="p-1">
-                            <b>Kondisi Pulang</b>
-                            <p class="m-0 mt-0 p-0"></p>
+                            <b>Penyebab Cidera / Keracunan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['penyebab_cidera']; ?></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Penunjang Medis</h4>
+                <h4 class="text-start">Planning (P)</h4>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <?php if ($resumeMedis['visit']['isrj'] == '0') {
+                ?>
+                    <tr>
+                        <td class="p-1">
+                            <b>Standing Order</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['standing_order']; ?></p>
+                        </td>
+                    </tr>
+                    <?php
+                } ?>
+                    <tr>
+                        <td class="p-1">
+                            <b>Target / Sasaran Terapi</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['sasaran']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <h5 class="text-start">Pemeriksaan Diagnostik Penunjang</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
                         <td class="p-1">
                             <b>Laboratorium</b>
-                            <textarea type="text" class="form-control" id="laboratorium"
-                                name="laboratorium"><?= @$resumeMedis['val']['laboratorium']; ?></textarea>
+                            <p class="m-0 mt-1 p-0">
+                                <?= isset($resumeMedis['val']['laboratorium']) ? nl2br($resumeMedis['val']['laboratorium']) : ''; ?>
+                            </p>
                         </td>
+                    </tr>
+                    <tr>
                         <td class="p-1">
                             <b>Radiologi</b>
-                            <textarea type="text" class="form-control" id="radiologi"
-                                name="radiologi"><?= @$resumeMedis['val']['radiologi']; ?></textarea>
+                            <p class="m-0 mt-1 p-0">
+                                <?= isset($resumeMedis['val']['radiologi']) ? nl2br($resumeMedis['val']['radiologi']) : ''; ?>
+                            </p>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Terapi Obat (Farmakoterapi)</h4>
+                <h5 class="text-start">Rencana Asuhan dan Terapi</h5>
             </div>
             <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <td>
-                            <b>Nama Resep</b>
-                        </td>
-                        <td>
-                            <b>Signature</b>
-                        </td>
-                        <td>
-                            <b>Mulai Terapi</b>
-                        </td>
-                        <td>
-                            <b>Selesai Terapi</b>
-                        </td>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['farmakologia']; ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['signatura'] ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['tanggal_mulai'] ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['tanggal_selesai'] ?></p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <h4 class="text-start">Take Home Prescription</h4>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <td>
-                            <b>Nama Resep</b>
-
-                        </td>
-                        <td>
-                            <b>Signature</b>
+                        <td class="p-1">
+                            <b>Farmakoterapi</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= isset($resumeMedis['val']['farmakologia']) ? nl2br($resumeMedis['val']['farmakologia']) : ''; ?>
+                            </p>
 
                         </td>
                     </tr>
-                </thead>
-                <tbody>
                     <tr>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['farmakologia']; ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['signatura'] ?></p>
+                        <td class="p-1">
+                            <b>Target / Sasaran Terapi</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['prosedur']; ?></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="row mb-3">
-                <div class="col">
-                    <b>Terapi Tindakan (Procedure)</b>
+            <div class="row">
+                <h5 class="text-start">Catatan Procedure</h5>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b>Standing Order</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['standing_order']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <h5 class="text-start">Rencana Tindak Lanjut</h5>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b>Rencana Tindak Lanjut</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['rencana_tl']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Kontrol</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['kontrol']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php if (@$resumeMedis['val']['edukasi_pasien']) {
+        ?>
+            <div class="row">
+                <h5 class="text-start">Edukasi Pasien</h5>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <!-- <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapi kepada:</b> -->
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['edukasi_pasien']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php
+        } ?>
+
+
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <div>Sampangan, <?= tanggal_indo(date('Y-m-d')); ?></div>
+                </div>
+                <div class="col-md-4"></div>
+                <div class="col-md-4 text-center">
+                    <div></div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-auto" align="center">
-                    <div>Tanda Tangan Dokter</div>
-                    <div class="mb-1">
-                        <div id="qrcodeMedis"></div>
-                    </div>
+                <div class="col-md-4 text-center">
+                    <div></div>
+                    <br>
+                    <div class="mb-2">Dokter</div>
                 </div>
-                <div class="col"></div>
-                <div class="col-auto" align="center">
-                    <div>Tanda Tangan Pasien/Keluarga</div>
-                    <div class="mb-1">
-                        <div id="qrcode1Medis"></div>
-                    </div>
+                <div class="col-md-4"></div>
+                <div class="col-md-4 text-center">
+                    <div></div>
+                    <br>
+                    <div class="mb-2">Penerima Penjelasan</div>
                 </div>
             </div>
-            <i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i>
+            <div class="row">
+                <div class="col-md-4" align="center">
+                    <div class="mb-1">
+                        <div id="qrcode"></div>
+                    </div>
+                    <p class="p-0 m-0 py-1" id="qrcode_name">(<?= @$resumeMedis['val']['dokter']; ?>)</p>
+                    <p><i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i></p>
+                </div>
+                <div class="col-md-4"></div>
+                <div class="col-md-4" align="center">
+                    <div class="mb-1">
+                        <div id="qrcode1"></div>
+                    </div>
+                    <p class="p-0 m-0 py-1" id="">(<?= @$resumeMedis['val']['nama']; ?>)</p>
+                </div>
+            </div>
         </div>
 
         <!-- Optional JavaScript; choose one of the two! -->
 
         <!-- Option 1: Bootstrap Bundle with Popper -->
-
+        <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     </body>
-
     <script>
-    var qrcode = new QRCode(document.getElementById("qrcodeMedis"), {
-        text: '<?= @$resumeMedis['val']['dpjp']; ?>',
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+    let val = <?= json_encode($resumeMedis['val']); ?>;
+    let sign = <?= json_encode($resumeMedis['sign']); ?>;
+
+    sign = JSON.parse(sign)
     </script>
     <script>
-    var qrcode = new QRCode(document.getElementById("qrcode1Medis"), {
-        text: '<?= @$resumeMedis['val']['nama']; ?>',
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    </script>
-    <style>
-    /* @media print {
-        @page {
-            margin: none;
-            scale: 85;
+    $.each(sign, function(key, value) {
+        console.log(value)
+        if (value.user_type == 1 && value.isvalid == 1) {
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: value.sign_path,
+                width: 70,
+                height: 70,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
+        } else if (value.user_type == 2 && value.isvalid == 1) {
+            var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
+                text: value.sign_path,
+                width: 70,
+                height: 70,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            // $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
         }
-
-        .container {
-            width: 210mm;
-        }
-    } */
-    </style>
-    <script type="text/javascript">
-    window.print();
+    })
     </script>
 
     </html>
@@ -1023,6 +1457,12 @@
                         </thead>
                         <tbody id="render-tables-inv" class="border">
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="fw-bold text-end">Grand Total</td>
+                                <td class="fw-bold text-end" id="total-all-pay-inv"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -1241,12 +1681,12 @@
                     <table>
                         <!-- kiri -->
                         <!-- <tr>
-                        <td>No.Lab / No.RM</td>
-                        <td>:</td>
-                        <td>
-                            <div id="noLab_rm"></div>
-                        </td>
-                    </tr> -->
+                            <td>No.Lab / No.RM</td>
+                            <td>:</td>
+                            <td>
+                                <div id="noLab_rm"></div>
+                            </td>
+                        </tr> -->
                         <tr>
                             <th>Nama Pasien</th>
                             <th>:</th>
@@ -1408,7 +1848,7 @@
         if (diagnosaList.length === 0) {
             result = "";
         } else if (diagnosaList.length === 1) {
-            result = diagnosaList
+            result = diagnosaList;
         } else {
             result = diagnosaList.join(" ,<br>");
         }
@@ -1419,15 +1859,15 @@
         dataTable?.data?.forEach(e => {
             if (e.tarif_name?.toLowerCase().includes("antigen")) {
                 $("#tindakan_medis").html(`<h6>Expertise :</h6>
-                <p>Note: Rapid Antigen SARS-CoV-2
-                    * Spesimen : Swab Nasofaring/ Orofaring
-                    * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
-                    * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan
-                    ke orang lain,
-                    disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila
-                    probabilitas pretes relatif tinggi,
-                    terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
-                </p>`);
+                    <p>Note: Rapid Antigen SARS-CoV-2
+                        * Spesimen : Swab Nasofaring/ Orofaring
+                        * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
+                        * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan
+                        ke orang lain,
+                        disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila
+                        probabilitas pretes relatif tinggi,
+                        terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
+                    </p>`);
             }
             if (!groupedData[e.nolab_lis]) {
                 groupedData[e.nolab_lis] = {};
@@ -1465,60 +1905,60 @@
 
                         if (!isFirstGroup) {
                             dataResultTable += `<tr>
-                                            <td colspan="6">
-                                                <hr style="border-top: 2px solid #000;">
-                                            </td>
-                                        </tr>`;
+                                                <td colspan="6">
+                                                    <hr style="border-top: 2px solid #000;">
+                                                </td>
+                                            </tr>`;
                         }
 
                         dataResultTable += `<tr>
-                                        <td colspan="6">
-                                            <strong>No. Lab: ${nolabLis} / RM: ${norm}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6"><strong class="fst-italic"><u>
-                                            Tgl.Priksa: ${formattedCheckDate} Tgl. Sampel :${formattedSampleDate}</u></strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6">
-                                            <hr style="border-top: 1px dashed #ddd;">
-                                        </td>
-                                    </tr>`;
+                                            <td colspan="6">
+                                                <strong>No. Lab: ${nolabLis} / RM: ${norm}</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6"><strong class="fst-italic"><u>
+                                                Tgl.Priksa: ${formattedCheckDate} Tgl. Sampel :${formattedSampleDate}</u></strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6">
+                                                <hr style="border-top: 1px dashed #ddd;">
+                                            </td>
+                                        </tr>`;
 
                         for (let kelPemeriksaan in groupedData[nolabLis][norm]) {
                             if (groupedData[nolabLis][norm].hasOwnProperty(kelPemeriksaan)) {
                                 dataResultTable += `<tr>
-                            <td colspan="6"><strong>${kelPemeriksaan}</strong></td>
-                        </tr>`;
+                                <td colspan="6"><strong>${kelPemeriksaan}</strong></td>
+                            </tr>`;
 
                                 for (let tarifName in groupedData[nolabLis][norm][kelPemeriksaan]) {
                                     if (groupedData[nolabLis][norm][kelPemeriksaan].hasOwnProperty(tarifName)) {
                                         dataResultTable += `<tr>
-                                    <td colspan="6" style="padding-left: 20px;"><strong>${tarifName}</strong></td>
-                                </tr>`;
+                                        <td colspan="6" style="padding-left: 20px;"><strong>${tarifName}</strong></td>
+                                    </tr>`;
 
                                         groupedData[nolabLis][norm][kelPemeriksaan][tarifName].forEach(e => {
                                             dataResultTable += `<tr>
-                                                <td style="padding-left: 40px;">${e.parameter_name}</td>
-                                                <td>
-                                                    ${(e.flag_hl?.trim() || '') === '' ? '-' : 
-                                                        ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
-                                                        (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
-                                                        e.hasil)}
-                                                </td>
+                                                    <td style="padding-left: 40px;">${e.parameter_name}</td>
+                                                    <td>
+                                                        ${(e.flag_hl?.trim() || '') === '' ? e.hasil : 
+                                                            ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
+                                                            (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
+                                                            e.hasil)}
+                                                    </td>
 
-                                                <td>${(e.flag_hl?.trim() || '') === '' ? '-' : 
-                                                        (e.flag_hl?.trim().includes('K') ? `<b style="color:red;">${e.flag_hl.trim()}</b>` :
-                                                        ['L', 'H', 'K' , '(*)'].includes(e.flag_hl?.trim()) ? `<b class="fw-bold">${e.flag_hl.trim()}</b>` : 
-                                                        e.flag_hl.trim())}
-                                                </td>
-                                                <td>${!e.satuan? "-":e.satuan}</td>
-                                                <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
-                                                <td>${!e.catatan? "-": e.catatan === "-" ? !e.rekomendasi ? "-" : e.rekomendasi : e.catatan }</td>
+                                                    <td>${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                            (e.flag_hl?.trim().includes('K') ? `<b style="color:red;">${e.flag_hl.trim()}</b>` :
+                                                            ['L', 'H', 'K' , '(*)'].includes(e.flag_hl?.trim()) ? `<b class="fw-bold">${e.flag_hl.trim()}</b>` : 
+                                                            e.flag_hl.trim())}
+                                                    </td>
+                                                    <td>${!e.satuan? "-":e.satuan}</td>
+                                                    <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
+                                                    <td>${!e.catatan? "-": e.catatan === "-" ? !e.rekomendasi ? "-" : e.rekomendasi : e.catatan }</td>
 
-                                            </tr>`;
+                                                </tr>`;
                                         });
                                     }
                                 }
@@ -2049,7 +2489,7 @@
                 <form action="" method="">
                     <div class="row">
                         <h6 class="text-center"><b>SURAT BUKTI PELAYANAN <br> NAMA RS : <?=@$kop['display']?> KODE RS :
-                                0701R001 KELAS RS : B
+                                <?=@$kop['org_type']?> KELAS RS : <?=@$kop['org_type']?>
                             </b></h6>
                         <h6 class="text-uppercase text-decoration-underline text-center"><b>rawat jalan</b></h6>
                     </div>
@@ -2074,7 +2514,7 @@
                             <label>Berat Lahir:</label>
                         </div>
 
-                        <div class="col-3">
+                        <!-- <div class="col-3">
                             <table class="table table-bordered" style="border: solid black;">
                                 <tbody>
                                     <tr style="height: 15px;">
@@ -2083,7 +2523,6 @@
                                         </td>
                                     </tr>
                                     <tr style="height: 25px;">
-                                        <!-- Sesuaikan tinggi baris sesuai kebutuhan -->
                                         <td class="text-center">
                                             <label class="text-uppercase fs-2"
                                                 style="font-family: 'Times New Roman', Times, serif;">
@@ -2093,7 +2532,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="row">
                         <div class="col">
@@ -2263,88 +2702,343 @@
 
     <body>
         <div class="container-fluid mt-5">
+
             <!-- template header -->
             <?= view("admin/patient/profilemodul/formrm/reklaim/template_header.php"); ?>
             <!-- end of template header -->
             <div class="row">
-                <h4 class="text-start">Subjektif (S)</h4>
+                <h5 class="text-start">Subjektif (S)</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td style="width: 33%;">
+                        <td class="p-1">
                             <b>Keluhan Utama (Autoanamnesis)</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['anamnesis']; ?></p>
-                            <b>Keluhan Utama (Alloanamnesis)</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['alloanamnesis']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['anamnesis']; ?></p>
                         </td>
-                        <td style="width: 33%;">
+                        <td class="p-1">
                             <b>Riwayat Penyakit Sekarang</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_sekarang']; ?></p>
-                            <b>Riwayat Penyakit Dahulu</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_dahulu']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_sekarang']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
+                            <b>Riwayat Penyakit Dahulu</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_dahulu']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
                             <b>Riwayat Penyakit Keluarga</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_keluarga']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_penyakit_keluarga']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>Riwayat Alergi (Non Obat)</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_alergi_nonobat']; ?></p>
+                            <b>Riwayat Alergi (Obat)</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_alergi_obat']; ?></p>
+                        </td>
+                        <td class="p-1">
                             <b>Riwayat Obat Yang Dikonsumsi</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['riwayat_obat_dikonsumsi']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_obat_dikonsumsi']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Riwayat Kehamilan dan Persalinan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_kehamilan']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>Riwayat Diet</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_diet']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>Riwayat Imunisasi</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_imunisasi']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="p-1">
+                            <b>Riwayat Kebiasaan (Negatif)</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['riwayat_alkohol']; ?></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Obyektif (O)</h4>
+                <h5 class="text-start">Obyektif (O)</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td colspan="4"><b>Vital Sign</b></td>
+                        <td colspan="4" class="p-1"><b>Vital Sign</b></td>
                     </tr>
                     <tr>
                         <td class="p-1">
                             <b>Tekanan Darah</b>
-                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tensi_atas']; ?> /
-                                <?= @$resumeMedis['val']['tensi_bawah']; ?></p>mmHg
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tensi_bawah']; ?> mmHg</p>
                         </td>
                         <td class="p-1">
                             <b>Denyut Nadi</b>
-                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tensi_atas']; ?> /
-                                <?= @$resumeMedis['val']['tensi_bawah']; ?></p>m
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['nadi']; ?> x/m</p>
                         </td>
                         <td class="p-1">
                             <b>Suhu Tubuh</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['suhu']; ?> </p>℃
-                            </div>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['suhu']; ?> ?</p>
                         </td>
                         <td class="p-1">
                             <b>Respiration Rate</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['respiration']; ?></p>x/m
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['respiration']; ?> x/m</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Berat Badan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['berat']; ?> kg</p>
+                        </td>
+                        <td class="p-1">
+                            <b>Tinggi Badan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['tinggi']; ?> cm</p>
+                        </td>
+                        <td class="p-1">
+                            <b>SpO2</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['spo2']; ?></p>
+                        </td>
+                        <td class="p-1">
+                            <b>BMI</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['imt']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <?php if (!empty($resumeMedis['val']['gcs_desc'])) { ?>
+
+            <?php 
+        if($resumeMedis['visit']['ageyear'] < 18){?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b><i>pGCS / Tingkat Kesadaran</i></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>pGCS E / Respon Membuka Mata :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_e'] . '] ' . @$resumeMedis['val']['gsc_e_desc']; ?>.</span>
+                                    <b>pGCS V / Respon Verbal Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_v'] . '] ' . @$resumeMedis['val']['gsc_v_desc']; ?>.</span>
+                                    <b>pGCS M / Respon Motorik Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_m'] . '] ' . @$resumeMedis['val']['gsc_m_desc']; ?>.</span>
+                                </div>
+
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>Score pGCS : </b>
+                                    <span class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['gcs_desc']; ?></span>
+                                </div>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
-                            <b>SpO2</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['spo2']; ?></p>
-                            </div>
-                        </td>
-                        <td class="p-1">
-                            <b>Berat Badan</b>
-                            <div class="input-group">
-                                <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['berat']; ?></p>kg
-                            </div>
-                        </td>
-                        <td colspan="2">
-                            <b><i>GCS / Tingkat Kesadaran</i></b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['gcs']; ?></p>
+                            <b>Keadaan Umum</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['keadaanumum']) ? @$resumeMedis['val']['keadaanumum'] : '-'; ?>
+                            </p>
                         </td>
                     </tr>
                 </tbody>
             </table>
+
+            <?php }else{ ?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b><i>GCS / Tingkat Kesadaran</i></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>GCS E / Respon Membuka Mata :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_e'] . '] ' . @$resumeMedis['val']['gsc_e_desc']; ?>.</span><br>
+                                    <b>GCS V / Respon Verbal Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_v'] . '] ' . @$resumeMedis['val']['gsc_v_desc']; ?>.</span><br>
+                                    <b>GCS M / Respon Motorik Terbaik :</b> <span
+                                        class="m-0 mt-1 p-0"><?= '[' . @$resumeMedis['val']['gcs_m'] . '] ' . @$resumeMedis['val']['gsc_m_desc']; ?>.</span>
+                                </div>
+
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-auto">
+                                    <b>Score GCS : </b>
+                                    <span class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['gcs_desc']; ?></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Keadaan Umum</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['keadaanumum']) ? @$resumeMedis['val']['keadaanumum'] : '-'; ?>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php } ?>
+            <?php } ?>
+
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1" style="width: 50%;">
+                            <b>Skala Nyeri</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['pain_score']; ?></p>
+                        </td>
+                        <td class="p-1" style="width: 50%;">
+                            <b>Resiko Jatuh</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['fall_score']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php if ($resumeMedis['visit']['specialist_type_id'] === "1.12"): ?>
+            <table class="table table-bordered" id="statusDermatologiShow">
+                <tbody>
+                    <tr>
+                        <td colspan="4" class="fw-bold">Status Dermatologik</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="row">
+                                <b class="col-12">I. Inspeksi</b>
+                            </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td class="fw-bold">Lokasi</td>
+                                        <td class="fw-bold">UKK</td>
+                                        <td class="fw-bold">Distribusi</td>
+                                        <td class="fw-bold">Konfigurasi</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_location'] ?></td>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_ukk'] ?></td>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_distribution'] ?></td>
+                                        <td><?= @$resumeMedis['val']['kulit']['sd_ins_configuration'] ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Palpasi</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sd_palpation'] ?></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Lain-Lain</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sd_others'] ?></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="row">
+                                <b class="col-12">Status Venerologik</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Inspeksi</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sv_inspection'] ?></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Palpasi</b>
+                                <span class="col-12"><?= @$resumeMedis['val']['kulit']['sv_palpation'] ?></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php endif; ?>
+            <?php
+        if ($resumeMedis['visit']['specialist_type_id'] === "1.16"): ?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Var/NRS</th>
+                        <th>Pupil Kiri</th>
+                        <th>Pupil kanan</th>
+                    </tr>
+                    <tr>
+                        <td><?= @$resumeMedis['val']['saraf']['vas_nrs'] ?></td>
+                        <td>
+                            <b>Diameter :</b><?= @$resumeMedis['val']['saraf']['left_diameter'] ?>
+                            <br><b>Refleks Cahaya :</b><?= @$resumeMedis['val']['saraf']['left_light_reflex'] ?>
+                            <br><b>Kornea:</b><?= @$resumeMedis['val']['saraf']['left_cornea'] ?>
+                            <br><b>Isokor Anisokor :</b><?= @$resumeMedis['val']['saraf']['left_isokor_anisokor'] ?>
+                        </td>
+                        <td>
+                            <b>Diameter :</b><?= @$resumeMedis['val']['saraf']['right_diameter'] ?>
+                            <br><b>Refleks Cahaya :</b><?= @$resumeMedis['val']['saraf']['right_light_reflex'] ?>
+                            <br><b>Kornea:</b><?= @$resumeMedis['val']['saraf']['right_cornea'] ?>
+                            <br><b>Isokor Anisokor :</b><?= @$resumeMedis['val']['saraf']['right_isokor_anisokor'] ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Leher</th>
+                        <th>Gerak</th>
+                        <th>Kekuatan</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Kaku kuduk :</b><?= @$resumeMedis['val']['saraf']['stiff_neck'] ?>
+                            <br><b>Meningeal Sign :</b><?= @$resumeMedis['val']['saraf']['meningeal_sign'] ?>
+                            <br><b>Brudzinki I-IV :</b><?= @$resumeMedis['val']['saraf']['brudzinki_i_iv'] ?>
+                            <br><b>Kernig Sign:</b><?= @$resumeMedis['val']['saraf']['kernig_sign'] ?>
+                            <br><b>Dolls eye phenomena :</b><?= @$resumeMedis['val']['saraf']['dolls_eye_phenomenon'] ?>
+                            <br><b>Vertebra :</b><?= @$resumeMedis['val']['saraf']['vertebra'] ?>
+                            <br><b>Extremity :</b><?= @$resumeMedis['val']['saraf']['extremity'] ?>
+                        </td>
+                        <td>
+                            <b>Gerak Atas Kiri :</b><?= @$resumeMedis['val']['saraf']['motion_upper_left'] ?>
+                            <br><b>Gerak Atas Kanan :</b><?= @$resumeMedis['val']['saraf']['motion_upper_right'] ?>
+                            <br><b>Gerak Bawah Kiri :</b><?= @$resumeMedis['val']['saraf']['motion_lower_left'] ?>
+                            <br><b>Gerak Bawah Kanan :</b><?= @$resumeMedis['val']['saraf']['motion_lower_right'] ?>
+                        </td>
+                        <td>
+                            <b>Kekuatan Atas Kiri :</b><?= @$resumeMedis['val']['saraf']['strength_upper_left'] ?>
+                            <br><b>Kekuatan Atas Kanan :</b><?= @$resumeMedis['val']['saraf']['strength_upper_right'] ?>
+                            <br><b>Kekuatan Bawah Kiri:</b><?= @$resumeMedis['val']['saraf']['strength_lower_left'] ?>
+                            <br><b>Kekuatan Bawah Kanan
+                                :</b><?= @$resumeMedis['val']['saraf']['strength_lower_right'] ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php endif; ?>
+
             <table class="table table-bordered">
                 <tbody>
                     <?php
@@ -2360,18 +3054,18 @@
                                 if ($key + 1 != count($resumeMedis['lokalis2'])) {
                                     echo '<tr>';
                                     echo '<td class="p-1" style="width: 50%;">'
-                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
+                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_detail'] . '</p>' .
                                         '</td>';
                                 } else {
                                     echo '<tr>';
                                     echo '<td class="p-1" colspan="2" style="width: 50%;">'
-                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
+                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_detail'] . '</p>' .
                                         '</td>';
                                     echo '</tr>';
                                 }
                             } else {
                                 echo '<td class="p-1" style="width: 50%;">'
-                                    . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
+                                    . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_detail'] . '</p>' .
                                     '</td>';
                                 echo "<tr>";
                             }
@@ -2381,194 +3075,355 @@
                 ?>
                 </tbody>
             </table>
+
+            <table class="table table-bordered">
+                <tbody>
+                    <?php
+                if (!empty($resumeMedis['lokalis'])) {
+                    foreach ($resumeMedis['lokalis'] as $key => $value) {
+                        if ($value['value_score'] == 3) {
+                            $filepath = WRITEPATH . 'uploads/lokalis/' . $value['value_detail'];
+
+                            if (file_exists($filepath)) {
+                                $filedata = file_get_contents($filepath);
+                                $filedata64 = base64_encode($filedata);
+                                $selectlokalis[$key]['filedata64'] = $filedata64;
+
+                                echo '<tr>';
+                                echo '<th>' . $value['nama_lokalis'] . '</th>';
+                                echo '<td style="width: 50%;">';
+                                echo '<img class="mt-3" src="data:image/jpeg;base64,' . $filedata64 . '" width="400px">';
+                                echo '</td>';
+                                echo '</tr>';
+                            }
+                        }
+                    }
+                }
+                ?>
+                </tbody>
+            </table>
+
+            <?php
+        if ($resumeMedis['visit']['specialist_type_id'] === "1.10"): ?>
+            <?php
+            if (!empty($resumeMedis['val']['mata']) && is_array($resumeMedis['val']['mata'])) {
+                $result = [];
+                foreach ($resumeMedis['val']['mata'] as $item) {
+                    $nama_lokalis = str_replace(["DEXTRA", "SINISTRA"], "", $item['nama_lokalis']);
+                    $nama_lokalis = trim($nama_lokalis);
+                    $value_info = $item['value_info'];
+                    $value_detail = $item['value_detail'];
+
+                    if (isset($result[$nama_lokalis])) {
+                        $result[$nama_lokalis][$value_info] = $value_detail;
+                    } else {
+                        $result[$nama_lokalis] = [
+                            "SINISTRA" => $value_info === "SINISTRA" ? $value_detail : null,
+                            "nama_lokalis" => $nama_lokalis,
+                            "DEXTRA" => $value_info === "DEXTRA" ? $value_detail : null
+                        ];
+                    }
+                }
+
+                $resultChunks = array_chunk($result, ceil(count($result) / 2), true);
+                echo "<div style='display: flex; gap: auto;'>";
+
+                foreach ($resultChunks as $chunk) {
+                    echo "<div style='flex: 1;'>";
+                    echo "<table border='1' class='table table-bordered'>";
+                    echo "<tr><td class='fw-bold'>Oculus Dextra</td><td class='fw-bold text-center'>Keterangan</td><td class='fw-bold'>Oculus Sinistra</td></tr>";
+                    foreach ($chunk as $row) {
+                        echo "<tr>";
+                        echo "<td>" . ($row['DEXTRA'] ?? '') . "</td>";
+                        echo "<td class='text-center'>{$row['nama_lokalis']}</td>";
+                        echo "<td>" . ($row['SINISTRA'] ?? '') . "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                    echo "</div>";
+                }
+
+                echo "</div>";
+            }
+            ?>
+
+            <?php endif; ?>
+            <?php if (!empty($resumeMedis['val']['pemeriksaan']) && is_array($resumeMedis['val']['pemeriksaan'])) { ?>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td style="width: 50%;">
-                            <b>Diagnosis Masuk</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['pdiagnosa']; ?></p>
+                        <td class="p-1" colspan="2">
+                            <b>Catatan Obyektif</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['pemeriksaan']) ? @$resumeMedis['val']['pemeriksaan'] : '-'; ?>
+                            </p>
                         </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php } ?>
+            <?php if (!empty($resumeMedis['val']['ats_tipe']) && is_array($resumeMedis['val']['ats_tipe'])) { ?>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
                         <td class="p-1">
-                            <b>Procedure Masuk</b>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['pprocedures']; ?></p>
+                            <b>Triage</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['ats_tipe']) ? @$resumeMedis['val']['ats_tipe'] : '-'; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <?php if (!empty($resumeMedis['val']['ats_tipe'])): ?>
+                    <tr>
+                        <td class="p-1">
+                            <b><?= @$resumeMedis['val']['ats_tipe']; ?></b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['ats_item']) ? @$resumeMedis['val']['ats_item'] : '-'; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php if (!empty($resumeMedis['val']['hamil']) && ($resumeMedis['val']['hamil'] === "Hamil")): ?>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>Hamil</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= !empty(@$resumeMedis['val']['hamil']) ? @$resumeMedis['val']['hamil'] : '-'; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
-                            <b>Indikasi Rawat Inap</b>
+                        <td class="p-1" colspan="2">
+                            <b>Umur Kehamilan</b>
+                            <p class="m-0 mt-1 p-0"></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>G</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['hamil_g']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>P</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['hamil_p']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>A</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['hamil_a']; ?></p>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <?php } ?>
+
+
+            <div class="row">
+                <h4 class="text-start">Assessment (A)</h4>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b>Diagnosis</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['namadiagnosa']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
-                            <b>Diagnosis Pulang</b>
-                            <textarea type="text" class="form-control" id=""
-                                name=""><?= @$resumeMedis['val']['pdiagnosa']; ?></textarea>
-                        </td>
-                        <td class="p-1">
-                            <b>Procedure Pulang</b>
-                            <textarea type="text" class="form-control" id=""
-                                name=""><?= @$resumeMedis['val']['pprocedures']; ?></textarea>
+                            <b>Permasalahan Medis</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['masalah_medis']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
-                            <b>Status/Cara Pulang</b>
-                            <p class="m-0 mt-0 p-0"></p>
-                        </td>
-                        <td class="p-1">
-                            <b>Kondisi Pulang</b>
-                            <p class="m-0 mt-0 p-0"></p>
+                            <b>Penyebab Cidera / Keracunan</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['penyebab_cidera']; ?></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Penunjang Medis</h4>
+                <h4 class="text-start">Planning (P)</h4>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <?php if ($resumeMedis['visit']['isrj'] == '0') {
+                ?>
+                    <tr>
+                        <td class="p-1">
+                            <b>Standing Order</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['standing_order']; ?></p>
+                        </td>
+                    </tr>
+                    <?php
+                } ?>
+                    <tr>
+                        <td class="p-1">
+                            <b>Target / Sasaran Terapi</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['sasaran']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <h5 class="text-start">Pemeriksaan Diagnostik Penunjang</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
                         <td class="p-1">
                             <b>Laboratorium</b>
-                            <textarea type="text" class="form-control" id="laboratorium"
-                                name="laboratorium"><?= @$resumeMedis['val']['laboratorium']; ?></textarea>
+                            <p class="m-0 mt-1 p-0">
+                                <?= isset($resumeMedis['val']['laboratorium']) ? nl2br($resumeMedis['val']['laboratorium']) : ''; ?>
+                            </p>
                         </td>
+                    </tr>
+                    <tr>
                         <td class="p-1">
                             <b>Radiologi</b>
-                            <textarea type="text" class="form-control" id="radiologi"
-                                name="radiologi"><?= @$resumeMedis['val']['radiologi']; ?></textarea>
+                            <p class="m-0 mt-1 p-0">
+                                <?= isset($resumeMedis['val']['radiologi']) ? nl2br($resumeMedis['val']['radiologi']) : ''; ?>
+                            </p>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Terapi Obat (Farmakoterapi)</h4>
+                <h5 class="text-start">Rencana Asuhan dan Terapi</h5>
             </div>
             <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <td>
-                            <b>Nama Resep</b>
-                        </td>
-                        <td>
-                            <b>Signature</b>
-                        </td>
-                        <td>
-                            <b>Mulai Terapi</b>
-                        </td>
-                        <td>
-                            <b>Selesai Terapi</b>
-                        </td>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['farmakologia']; ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['signatura'] ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['tanggal_mulai'] ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['tanggal_selesai'] ?></p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <h4 class="text-start">Take Home Prescription</h4>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <td>
-                            <b>Nama Resep</b>
-
-                        </td>
-                        <td>
-                            <b>Signature</b>
+                        <td class="p-1">
+                            <b>Farmakoterapi</b>
+                            <p class="m-0 mt-1 p-0">
+                                <?= isset($resumeMedis['val']['farmakologia']) ? nl2br($resumeMedis['val']['farmakologia']) : ''; ?>
+                            </p>
 
                         </td>
                     </tr>
-                </thead>
-                <tbody>
                     <tr>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['val']['farmakologia']; ?></p>
-                        </td>
-                        <td>
-                            <p class="m-0 mt-0 p-0"><?= @$resumeMedis['recipe']['signatura'] ?></p>
+                        <td class="p-1">
+                            <b>Target / Sasaran Terapi</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['prosedur']; ?></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="row mb-3">
-                <div class="col">
-                    <b>Terapi Tindakan (Procedure)</b>
-                </div>
-            </div>
             <div class="row">
-                <div class="col-auto" align="center">
-                    <div>Tanda Tangan Dokter</div>
-                    <div class="mb-1">
+                <h5 class="text-start">Catatan Procedure</h5>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b>Standing Order</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['standing_order']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <h5 class="text-start">Rencana Tindak Lanjut</h5>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <b>Rencana Tindak Lanjut</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['rencana_tl']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1">
+                            <b>Kontrol</b>
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['kontrol']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php if (@$resumeMedis['val']['edukasi_pasien']) {
+        ?>
+            <div class="row">
+                <h5 class="text-start">Edukasi Pasien</h5>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td class="p-1">
+                            <!-- <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapi kepada:</b> -->
+                            <p class="m-0 mt-1 p-0"><?= @$resumeMedis['val']['edukasi_pasien']; ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php
+        } ?>
+
+            <div class="col-md-4 text-start">
+                <div>Sampangan, <?= tanggal_indo(date('Y-m-d')); ?></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-3" align="center">
+                    <br>
+                    <div>Dokter</div>
+                    <div id="qrcode-container">
                         <div id="qrcodeMedis"></div>
                     </div>
+                    <p class="p-0 m-0 py-1" id="qrcodeMedis_name">(<?= @$resumeMedis['val']['dokter']; ?>)</p>
+                    <p><i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i></p>
                 </div>
                 <div class="col"></div>
-                <div class="col-auto" align="center">
-                    <div>Tanda Tangan Pasien/Keluarga</div>
-                    <div class="mb-1">
-                        <div id="qrcode1Medis"></div>
+                <div class="col-3" align="center">
+                    <div>Penerima Penjelasan</div>
+                    <div>
+                        <div id="qrcodeMedis1"></div>
                     </div>
+                    <p class="p-0 m-0 py-1" id="">(<?= @$resumeMedis['val']['nama']; ?>)</p>
                 </div>
             </div>
-            <i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i>
         </div>
 
         <!-- Optional JavaScript; choose one of the two! -->
 
         <!-- Option 1: Bootstrap Bundle with Popper -->
-
+        <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     </body>
-
     <script>
-    var qrcode = new QRCode(document.getElementById("qrcodeMedis"), {
-        text: '<?= @$resumeMedis['val']['dpjp']; ?>',
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+    let val = <?= json_encode($resumeMedis['val']); ?>;
+    let sign = <?= json_encode($resumeMedis['sign']); ?>;
+
+    sign = JSON.parse(sign)
     </script>
     <script>
-    var qrcode = new QRCode(document.getElementById("qrcode1Medis"), {
-        text: '<?= @$resumeMedis['val']['nama']; ?>',
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-    </script>
-    <style>
-    /* @media print {
-        @page {
-            margin: none;
-            scale: 85;
+    $.each(sign, function(key, value) {
+        if (value.user_type == 1 && value.isvalid == 1) {
+            var qrcode = new QRCode(document.getElementById("qrcodeMedis"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            $("#qrcodeMedis_name").html(`(${value.fullname??value.user_id})`)
+        } else if (value.user_type == 2 && value.isvalid == 1) {
+            var qrcode1 = new QRCode(document.getElementById("qrcodeMedis1"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            // $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
         }
-
-        .container {
-            width: 210mm;
-        }
-    } */
-    </style>
-    <script type="text/javascript">
-    window.print();
+    })
     </script>
 
     </html>
@@ -2588,7 +3443,7 @@
                         <td class="p-1">
                             <b>Triage</b>
                             <p class="m-0 mt-1 p-0">
-                                <?= !empty(@$triaseIgd['val']['ats_tipe']) ? @$triaseIgd['val']['ats_tipe'] : '-'; ?>
+                                <?= !empty(@$triaseIgd['val']['ats_tipe']) ? nl2br($triaseIgd['val']['ats_tipe']) : '-'; ?>
                             </p>
                         </td>
                     </tr>
@@ -2597,7 +3452,8 @@
                         <td class="p-1">
                             <b><?= @$triaseIgd['val']['ats_tipe']; ?></b>
                             <p class="m-0 mt-1 p-0">
-                                <?= !empty(@$triaseIgd['val']['ats_item']) ? @$triaseIgd['val']['ats_item']:'-'; ?></p>
+                                <?= !empty(@$triaseIgd['val']['ats_item']) ? nl2br($triaseIgd['val']['ats_item']):'-'; ?>
+                            </p>
                         </td>
                     </tr>
                     <?php endif;?>
@@ -2606,7 +3462,7 @@
                         <td class="p-1" colspan="2">
                             <b>Hamil</b>
                             <p class="m-0 mt-1 p-0">
-                                <?= !empty(@$triaseIgd['val']['hamil']) ? @$triaseIgd['val']['hamil']:'-'; ?></p>
+                                <?= !empty(@$triaseIgd['val']['hamil']) ? nl2br($triaseIgd['val']['hamil']):'-'; ?></p>
                         </td>
                     </tr>
                     <tr>
@@ -2760,6 +3616,12 @@
                         </thead>
                         <tbody id="render-tables-inv" class="border">
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="fw-bold text-end">Grand Total</td>
+                                <td class="fw-bold text-end" id="total-all-pay-inv"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -2867,6 +3729,7 @@
         let grandTotal = 0;
 
         for (let casemix in groupedData) {
+
             if (groupedData.hasOwnProperty(casemix)) {
                 let casemixId = casemix.replace(/[\s\/]+/g, '_');
 
@@ -2879,12 +3742,14 @@
 
                 $(`#sub-inv-${casemixId}`).html(`Rp. ${formatCurrency(totalSubtotal)}`);
 
-                // Add the totalSubtotal to grandTotal
+
                 grandTotal += totalSubtotal;
             }
         }
 
         $("#total-all-pay-inv").html(`Rp. ${formatCurrency(grandTotal)}`);
+
+
 
     };
     const renderDataPatientinvorat = () => {
@@ -3129,8 +3994,39 @@
     const dataRenderTablesLaborat = () => {
         <?php $dataJsonTables = json_encode($lab); ?>
         let dataTable = <?php echo $dataJsonTables; ?>;
+
+        const diagnosaList = [];
+        dataTable?.data?.forEach((item) => {
+            if (item.diagnosa_desc !== null && !diagnosaList.includes(item.diagnosa_desc)) {
+                diagnosaList.push(item.diagnosa_desc);
+            }
+        });
+
+        let result;
+        if (diagnosaList.length === 0) {
+            result = "";
+        } else if (diagnosaList.length === 1) {
+            result = diagnosaList;
+        } else {
+            result = diagnosaList.join(" ,<br>");
+        }
+
+        $("#diagnosa_klinis").html(result);
         let groupedData = {};
-        dataTable?.forEach(e => {
+
+        dataTable?.data?.forEach(e => {
+            if (e.tarif_name?.toLowerCase().includes("antigen")) {
+                $("#tindakan_medis").html(`<h6>Expertise :</h6>
+                    <p>Note: Rapid Antigen SARS-CoV-2
+                        * Spesimen : Swab Nasofaring/ Orofaring
+                        * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
+                        * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan
+                        ke orang lain,
+                        disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila
+                        probabilitas pretes relatif tinggi,
+                        terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
+                    </p>`);
+            }
             if (!groupedData[e.nolab_lis]) {
                 groupedData[e.nolab_lis] = {};
             }
@@ -3203,35 +4099,29 @@
 
                                         groupedData[nolabLis][norm][kelPemeriksaan][tarifName].forEach(e => {
                                             dataResultTable += `<tr>
-                                            <td style="padding-left: 40px;">${e.parameter_name}</td>
-                                            <td>${e.flag_hl === 'L ' || e.flag_hl === 'L' ? `<b style="color:blue;">${e.hasil}</b>` :
-                                                e.flag_hl === 'H ' || e.flag_hl === 'H' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                e.flag_hl === '(*) ' || e.flag_hl === '(*)' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                e.hasil}</td>
-                                            <td>${!e.satuan ? "-" : e.satuan}</td>
-                                            <td>${!e.nilai_rujukan ? "-" : e.nilai_rujukan}</td>
-                                            <td>${!e.metode_periksa ? "-" : e.metode_periksa}</td>
-                                            <td>${e.flag_hl === 'L ' || e.flag_hl === 'L' ? `<b style="color:blue;">${e.flag_hl}</b>` :
-                                                e.flag_hl === 'H ' || e.flag_hl === 'H' ? `<b style="color:red;">${e.flag_hl}</b>` :
-                                                e.flag_hl === '(*)' || e.flag_hl === '(*)' ? `<b style="color:red;">${e.flag_hl}</b>` :
-                                                e.flag_hl}</td>
-                                        </tr>`;
+                                                    <td style="padding-left: 40px;">${e.parameter_name}</td>
+                                                    <td>
+                                                        ${(e.flag_hl?.trim() || '') === '' ? e.hasil : 
+                                                            ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
+                                                            (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
+                                                            e.hasil)}
+                                                    </td>
+
+                                                    <td>${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                            (e.flag_hl?.trim().includes('K') ? `<b style="color:red;">${e.flag_hl.trim()}</b>` :
+                                                            ['L', 'H', 'K' , '(*)'].includes(e.flag_hl?.trim()) ? `<b class="fw-bold">${e.flag_hl.trim()}</b>` : 
+                                                            e.flag_hl.trim())}
+                                                    </td>
+                                                    <td>${!e.satuan? "-":e.satuan}</td>
+                                                    <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
+                                                    <td>${!e.catatan? "-": e.catatan === "-" ? !e.rekomendasi ? "-" : e.rekomendasi : e.catatan }</td>
+
+                                                </tr>`;
                                         });
                                     }
                                 }
                             }
                         }
-
-                        $("#noLab_rm-lab").html(firstItem?.nolab_lis + '/ ' + firstItem?.norm);
-                        $("#name_patient-lab").html(firstItem?.nama);
-                        $("#adresss_patient-lab").html(firstItem?.alamat);
-                        $("#date_check-lab").html(formattedCheckDate);
-                        $("#date_sampel-lab").html(formattedSampleDate);
-                        $("#payment_method-lab").html(firstItem?.cara_bayar_name);
-                        $("#doctor_send-lab").html(firstItem?.pengirim_name);
-                        $("#room_poli-lab").html(firstItem?.ruang_name);
-                        $("#doctor-responsible-lab").html(firstItem?.pengirim_name);
-                        $("#validator-ttd-lab").html(firstItem?.pengirim_name);
 
                         isFirstGroup = false;
                     }
@@ -3240,13 +4130,34 @@
 
             $("#render-tables").html(dataResultTable);
 
+            $("#noLab_rm").html(dataTable?.data[0]?.nolab_lis + '/ ' + dataTable?.data[0]?.norm)
+            $("#name_patient").html(dataTable?.data[0]?.nama)
+            $("#adresss_patient").html(dataTable?.data[0]?.alamat)
+            $("#date_check").html(moment(dataTable?.data[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
+            $("#payment_method").html(dataTable?.data[0]?.cara_bayar_name)
+            $("#doctor_send").html(dataTable?.data[0]?.pengirim_name)
+            $("#room_poli").html(dataTable?.data[0]?.ruang_name)
+            $("#class_pay").html(`${dataTable?.data[0]?.kelas_name} - ${dataTable?.data[0]?.cara_bayar_name}`)
+            $("#datetime-now-valid").html(
+                `${moment(dataTable?.data[0]?.tgl_hasil_selesai).format("DD/MM/YYYY HH:mm:ss")}`)
+
+
+
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: `https://www.pkusampangan.com/`, // Your text here
+                width: 70,
+                height: 70,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+
             function addImageToQRCode1() {
                 var qrElement = document.getElementById("qrcode");
                 var qrCanvas = qrElement.querySelector('canvas');
 
                 var img = new Image();
-                img.src = '<?= base_url() ?>'
-                assets / img / logo.png;
+                img.src = '<?= base_url() ?>assets/img/logo.png';
 
                 img.onload = function() {
                     var canvas = document.createElement('canvas');
@@ -3270,33 +4181,26 @@
 
             addImageToQRCode1();
         }
-
-        new QRCode(document.getElementById("qrcode1-lab"), {
-            text: `${dataTable[0]?.pengirim_name}`,
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
-
-        new QRCode(document.getElementById("qrcode-lab"), {
-            text: `<?= user()->fullname; ?> | ${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`,
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
     }
     const renderDataPatientLaborat = () => {
-        <?php $dataJson = json_encode($visit); ?>
+        <?php $dataJson = json_encode($lab); ?>
         let data = <?php echo $dataJson; ?>
         // render patient 
-        $("#gender_patient-lab").html(data?.name_of_gender)
-        $("#date_age-lab").html(moment(data?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.age)
-        $("#no_tlp-lab").html(data?.phone_number)
-        $("#diagnosa_klinis-lab").html(data?.diagnosa)
+        $("#gender_patient").html(data?.visit?.name_of_gender)
+        $("#doctor-responsible-lab").html(data?.visit?.doctor_responsible)
+
+        $("#date_age").html(moment(data?.visit?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.visit?.age)
+        $("#no_tlp").html(data?.visit?.phone_number)
+        $("#validator-ttd").html(data?.visit?.valid_users_p)
+
+        var qrcode = new QRCode(document.getElementById("qrcode1"), {
+            text: `${data?.visit?.valid_users_p}`, // Your text here
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
     }
     </script>
 
@@ -3588,7 +4492,7 @@
                     </div>
                     <div class="col-auto" align="center">
 
-                        <img class="mt-2" src="<?= base_url() ?>assets/img/assets/img/paripurna.png" width="70px">
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="70px">
                     </div>
                 </div>
                 <br>

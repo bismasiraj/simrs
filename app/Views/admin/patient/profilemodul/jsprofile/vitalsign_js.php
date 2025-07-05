@@ -47,7 +47,7 @@
         $("#avtno_registration").val('<?= $visit['no_registration']; ?>')
         $("#avtvisit_id").val('<?= $visit['visit_id']; ?>')
         $("#avtorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
-        $("#avtdoctor").val('<?= $visit['fullname']; ?>')
+        $("#avtdoctor").val('<?= @$visit['fullname']; ?>')
         $("#avtkal_id").val('<?= $visit['kal_id']; ?>')
         $("#avttheid").val('<?= $visit['pasien_id']; ?>')
         $("#avtthename").val('<?= $visit['diantar_oleh']; ?>')
@@ -58,11 +58,15 @@
         $("#avtageyear").val('<?= $visit['ageyear']; ?>')
         $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
         $("#avtageday").val('<?= $visit['ageday']; ?>')
+        // $("#avtpetugas").val('<?= user()->getFullname(); ?>')
+        // $("#avtpetugas_id").val('<?= user()->username; ?>')
+        $("#avtmodified_by").val('<?= user()->username; ?>')
+        console.log($("#avtmodified_by").val())
+        $("#avtaccount_id").val(5)
         flatpickrInstances["flatavtexamination_date"].setDate(
             moment().format("DD/MM/YYYY HH:mm")
         );
         $("#flatavtexamination_date").trigger("change");
-        $("#avtaccount_id").val(5)
 
         var ageYear = <?= $visit['ageyear']; ?>;
         var ageMonth = <?= $visit['agemonth']; ?>;
@@ -101,26 +105,6 @@
                 .append($("<td>").html(examselect.temperature + '/°C'))
                 .append($("<td>").html(examselect.saturasi + '/SpO2%'))
             )
-        // .append($("<tr>")
-        //     .append($("<td>").html("<b>S</b>"))
-        //     .append($("<td colspan='5'>").html(examselect.anamnase))
-        // )
-        // .append($("<tr>")
-        //     .append($("<td>").html("<b>O</b>"))
-        //     .append($("<td colspan='5'>").html(examselect.pemeriksaan))
-        // )
-        // .append($("<tr>")
-        //     .append($("<td>").html("<b>A</b>"))
-        //     .append($("<td colspan='5'>").html(examselect.description))
-        // )
-        // .append($("<tr>")
-        //     .append($("<td>").html("<b>P</b>"))
-        //     .append($("<td colspan='5'>").html(examselect.instruction))
-        // )
-        // .append($("<tr>")
-        //     .append($("<td>").html("Instruksi"))
-        //     .append($("<td colspan='5'>").html(examselect.instruction))
-        // )
     }
 
 

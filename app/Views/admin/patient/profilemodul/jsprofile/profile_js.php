@@ -31,9 +31,24 @@ foreach ($examDetail as $key => $value) {
     var avalue = <?= json_encode($aValue); ?>;
     var aparameter = <?= json_encode($aParameter); ?>;
     var atype = <?= json_encode($aType); ?>;
-    var avalueparent = <?= json_encode($aValueParent); ?>;
-    var pasienVisitation = JSON.parse('<?= json_encode($visit); ?>')
+    let avalueparent = <?= json_encode($aValueParent); ?>;
+    let aparent = <?= json_encode($aParent); ?>;
+    // var pasienVisitation = <?= json_encode($visit) ?>;
     var visit = <?= json_encode($visit) ?>;
+    var nomor = '<?= $visit['no_registration']; ?>';
+    var ke = '%'
+    var mulai = '<?= $visit['visit_date'] ?>' //tidak terpakai
+    var akhir = `${moment(new Date()).format("YYYY-MM-DD")}`
+    var lunas = '%'
+    // var klinik = '<?= $visit['clinic_id']; ?>'
+    var klinik = '%'
+    var rj = '%'
+    var status = '%'
+    var nota = '%'
+    var trans = '<?= $visit['trans_id']; ?>'
+    var specialist = visit?.specialist_type_id
+    var userRoles = <?= json_encode(user()->getRoles()); ?>;
+    // $(document).ready(function(e) {
 
     var fallRiskScore = Array();
     var painjson = [];
@@ -41,7 +56,7 @@ foreach ($examDetail as $key => $value) {
     var painMonitoringDetil;
     var painIntervensi;
     var triage;
-    var triageDetil;
+    var triageDetil = [];
     var apgar;
     var apgarDetil;
     var stabilitas;
@@ -91,14 +106,68 @@ foreach ($examDetail as $key => $value) {
     })
 </script>
 <script>
-    $(document).ready(function() {
-        $('input, textarea, select').each(function() {
-            const key = $(this).attr('id'); // Use ID or placeholder as key
-
-            $(this).on('input', function() {
-                localStorage.setItem(key, $(this).val());
-            });
+    const sortAscending = (arr, varForModifiedDateObjectName) => {
+        // Sort by the specified dynamic object field
+        let sortedArr = arr.sort(function(a, b) {
+            // Compare the values of the dynamic property (passed as varForModifiedDateObjectName)
+            return new Date(a[varForModifiedDateObjectName]) - new Date(b[varForModifiedDateObjectName]);
         });
+        return sortedArr;
+    };
+    const getLastObject = (arr) => {
+        let selectedarr = arr[arr?.length - 1]
+        return selectedarr;
+    }
+
+    const deleteById = (id, docs_type, response) => {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success ms-2",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Apa anda yakin?",
+            text: "Anda tidak akan dapat mengembalikannya!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, Hapus!",
+            cancelButtonText: "Batal!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                postData({
+                    id: id,
+                    docs_type: docs_type,
+                    visit_id: visit.visit_id,
+                    trans_id: visit.trans_id,
+                    no_registration: visit.no_registration
+                }, 'admin/patient/deleteById', response);
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                swalWithBootstrapButtons.fire({
+                    title: "Dibatalkan",
+                    text: "File Anda aman :)",
+                    icon: "error"
+                });
+            }
+        });
+    }
+    const deleteByIdNoSwal = (id, docs_type, response) => {
+        postData({
+            id: id,
+            docs_type: docs_type
+        }, 'admin/patient/deleteById', response);
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        if (!(visit?.locked === '0' || visit?.locked === null) || (visit?.platform == 'profile' && visit?.class_room_id != null)) {
+            closedBillCond()
+        }
+        if (visit.isrj == '1' && visit.pasien_id != null)
+            getIcare()
     });
 </script>
 <script>
@@ -131,11 +200,17 @@ foreach ($examDetail as $key => $value) {
     }
 </script>
 <script>
-    // $(document).ready(function() {
-    //     getAssessmentMedis(99)
-    // })
+    $(document).ready(function() {
+        // $("#assessmentmedisTab").trigger("click")
+    })
 </script>
 <script type="text/javascript">
+    function fillExamination(data, identifier) {
+        $(`#${identifier}anamnase`).val(data?.anamnase)
+        $(`#${identifier}alloanamnase`).val(data?.alo_anamnase)
+        $(`#${identifier}description`).val(data?.description)
+    }
+
     function fillExaminationDetail(data, identifier) {
         $(`#${identifier}temperature`).val(data?.temperature)
         $(`#${identifier}tension_upper`).val(data?.tension_upper)
@@ -175,6 +250,13 @@ foreach ($examDetail as $key => $value) {
         $(`#${identifier}urine`).val(data?.urine)
         $(`#${identifier}tfu`).val(data?.tfu)
         $(`#${identifier}uterus`).val(data?.uterus)
+        $(`#${identifier}vs_status_id`).val(data?.vs_status_id)
+        console.log(identifier)
+        console.log(data?.weight)
+    }
+
+    function appendAccordionItem(accordionId, accordionContent) {
+        $("#" + accordionId).append(accordionContent);
     }
 
     function getAssessmentMedis(diagCat) {
@@ -182,7 +264,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentMedis',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'diagCat': diagCat,
                 'norujukan': '<?= $visit['norujukan']; ?>',
@@ -206,12 +288,6 @@ foreach ($examDetail as $key => $value) {
                 lokalisAll = data.lokalis
 
                 if (pasienDiagnosaAll.length > 0) {
-                    // if (diagCat == 99) {
-                    //     fillDataProfileRM(pasienDiagnosaAll.length - 1)
-                    // } else {
-                    //     fillDataArm(pasienDiagnosaAll.length - 1)
-                    //     fillRiwayat()
-                    // }
                     displayTableAssessmentMedis()
                 } else {
                     initialAddArm()
@@ -248,7 +324,7 @@ foreach ($examDetail as $key => $value) {
                     '</h4>' +
                     '<div class="row mt-4">' +
                     '<div class="col-md-3">' +
-                    '<h5 class="font-size-14 mb-4 badge bg-primary">Apakah Nyeri:</h5>' +
+                    '<h5 class="font-size-14 mb-4 badge bg-primary">Observasi Nyeri:</h5>' +
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
@@ -314,7 +390,7 @@ foreach ($examDetail as $key => $value) {
                     $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
                     $("#formPainMonitoringEditBtn" + bodyId).slideUp()
                     $("#formPainMonitoringSignBtn" + bodyId).slideDown()
-                    $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
+                    $("#formPainMonitoring" + bodyId).find("input, textarea, select, option").prop("disabled", false)
                 })
                 $("#formPainMonitoringCetakBtn" + bodyId).on("click", function() {
                     var win = window.open('<?= base_url() . '/admin/rm/keperawatan/monitoring_nyeri/' . base64_encode(json_encode($visit)); ?>' + '/' + bodyId, '_blank');
@@ -366,7 +442,7 @@ foreach ($examDetail as $key => $value) {
                                 $("#formPainMonitoringSignBtn" + bodyId).slideUp();
                             }
                             // Disable the form inputs
-                            $form.find("input, textarea, select").prop("disabled", true);
+                            $form.find("input, textarea, select, option").prop("disabled", true);
 
                             // Optionally display a success message
                             successSwal(response.message);
@@ -396,7 +472,7 @@ foreach ($examDetail as $key => $value) {
                     //                 $("#formPainMonitoringSignBtn" + bodyId).slideUp();
                     //             }
                     //             // Disable the form inputs
-                    //             $form.find("input, textarea, select").prop("disabled", true);
+                    //             $form.find("input, textarea, select, option").prop("disabled", true);
 
                     //             // Optionally display a success message
                     //             successSwal(response.message);
@@ -415,6 +491,7 @@ foreach ($examDetail as $key => $value) {
                     //     }
                     // });
                 }));
+
                 $("#formPainMonitoringEdit" + bodyId).on("click", function() {
                     $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
                     $("#formPainMonitoringEditBtn" + bodyId).slideUp()
@@ -440,18 +517,19 @@ foreach ($examDetail as $key => $value) {
                     // $("#formPainMonitoringEditBtn" + bodyId).slideDown()
                     $("#formPainMonitoring" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                     let painDetilSelected = painMonitoringDetil.filter(item => item.body_id == bodyId);
-                    $.each(painDetilSelected, function(key, value) {
-                        if (value.p_type == 'ASES021' && value.body_id == bodyId && value.parameter_id == '01') {
-                            $('#atypeASES02101' + bodyId).val(value.value_id)
-                            // $('#atypeASES02101' + bodyId).prop("disabled", true)
-                            $("#ases022body_id" + bodyId).val(bodyId)
-                            // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
-                            aValueParamPain('<?= @$value['parent_id']; ?>', value.value_id, bodyId, flag)
-                            aValueParamPain('<?= @$value['parent_id']; ?>', $('#atypeASES02101' + bodyId).val(), bodyId, flag)
-                        } else {
-                            aValueParamPain('<?= @$value['parent_id']; ?>', value.p_type, bodyId, flag)
-                        }
-                    })
+                    // console.log(painDetilSelected)
+                    let painDetil01 = painDetilSelected.filter(item => item.parameter_id == '01')
+                    // console.log(painDetil01)
+                    aValueParamPain('<?= @$value['parent_id']; ?>', painDetil01[0]?.value_id, bodyId, flag)
+                    // $.each(painDetilSelected, function(key, value) {
+                    //     if (value.p_type == 'ASES021' && value.body_id == bodyId) {
+                    //         $('#atypeASES02101' + bodyId).val(value.value_id)
+                    //         // $('#atypeASES02101' + bodyId).prop("disabled", true)
+                    //         $("#ases022body_id" + bodyId).val(bodyId)
+                    //         // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
+                    //         // aValueParamPain('<?= @$value['parent_id']; ?>', $('#atypeASES02101' + bodyId).val(), bodyId, flag)
+                    //     }
+                    // })
                     let painIntervensiSelected = painIntervensi.filter(item => item.body_id == bodyId)
                     if (painIntervensiSelected.length > 0) {
                         $("#bodyAssessment002Intervensi" + bodyId).html("")
@@ -462,9 +540,10 @@ foreach ($examDetail as $key => $value) {
                     });
                     await checkSignSignature("formPainMonitoring" + bodyId, "ases022body_id" + bodyId, "formPainMonitoringSaveBtn", 4)
                     if ($("#ases022valid_user" + bodyId).val() == '') {
-                        $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
-                        $("#formPainMonitoringEditBtn" + bodyId).slideUp()
+                        $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
+                        $("#formPainMonitoringEditBtn" + bodyId).slideDown()
                         $("#formPainMonitoringSignBtn" + bodyId).slideUp()
+                        $("#formPainMonitoring" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                     } else {
                         $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
                         $("#formPainMonitoringEditBtn" + bodyId).slideUp()
@@ -491,10 +570,12 @@ foreach ($examDetail as $key => $value) {
         $("#bodyAssessment" + parent_id + body_id).html("")
         $("#bodyAssessment002Intervensi" + body_id).html("")
         var counter = 0;
+        let val21 = avalue?.filter(item => item.p_type == 'ASES021')
         $.each(aparameter, function(key, value) {
             if (value.p_type == 'ASES021' && value.parameter_id != '01') {
                 counter++;
                 if (value.parameter_id == '05') {
+                    let valparam05 = avalue?.filter(item => item.p_type == p_type)
                     $("#bodyAssessment" + parent_id + body_id).append(
                         '<tr>' +
                         '<td>' + counter + '.</td>' +
@@ -503,6 +584,11 @@ foreach ($examDetail as $key => $value) {
                         '</select></td>' +
                         '</tr>'
                     )
+                    $.each(valparam05, function(key1, value1) {
+                        $("#" + parent_id + value.p_type + value.parameter_id + body_id).append(
+                            '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
+                        )
+                    });
                 } else if (value.entry_type == 1) {
                     $("#bodyAssessment" + parent_id + body_id).append(
                         `<tr>
@@ -525,14 +611,10 @@ foreach ($examDetail as $key => $value) {
                     )
                 }
 
-                $.each(avalue, function(key1, value1) {
+                $.each(val21, function(key1, value1) {
                     if (value1.parameter_id == value.parameter_id && value1.p_type == 'ASES021' && value.parameter_id != '05') {
                         $("#" + parent_id + value.p_type + value.parameter_id + body_id).append(
                             '<div class="col-md-3"><div class="form-check mb-3"><input class="form-check-input" type="radio" name="parameter_id' + value1.parameter_id + '" id="parent_id' + parent_id + value1.value_id + body_id + '" value="' + value1.value_id + '" onchange="aValueParamScore(\'' + parent_id + '\', \'' + p_type + '\', \'' + value1.parameter_id + '\', ' + value1.value_score + ')"><label class="form-check-label" for="parent_id' + parent_id + value1.value_id + body_id + '">' + value1.value_desc + '</label></div></div>'
-                        )
-                    } else if (value.parameter_id == '05' && value1.parameter_id == '01' && value1.p_type == p_type) {
-                        $("#" + parent_id + value.p_type + value.parameter_id + body_id).append(
-                            '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
                         )
                     }
                 });
@@ -540,39 +622,7 @@ foreach ($examDetail as $key => $value) {
             if (value.p_type == p_type) {
                 if (p_type == 'ASES022' || p_type == 'ASES023' || p_type == 'ASES024') {
                     $("#bodyAssessment002Intervensi" + body_id).append(
-                        // '<thead>' +
-                        // '<tr>' +
-                        // '<th>Tanggal dan Jam Intervensi</th>' +
-                        // '<th>Intervensi</th>' +
-                        // '<th>Rute</th>' +
-                        // '<th>' + value.parameter_desc + '</th>' +
-                        // '<th>Re-Assessment</th>' +
-                        // '</tr>' +
-                        // ' </thead>' +
 
-                        // '<tr>' +
-                        // '<td>' +
-                        // '<input id="flattimeIntervensi' + body_id + 0 + '" + type="text" class="form-control" value="">' +
-                        // '<input id="timeIntervensi' + body_id + 0 + '" name="timeIntervensi[]" type="hidden" class="form-control" value="">' +
-                        // '<input id="reassessment_date' + body_id + 0 + '" name="reassessment_date[]" type="text" class="form-control d-none" value="">' +
-                        // '</td>' +
-                        // '<td>' +
-                        // '<select id="intervensi' + body_id + 0 + '" name="intervensi[]" type="text" class="form-control" value="">' +
-                        // '</select>' +
-                        // '</td>' +
-                        // '<td>' +
-                        // '<select id="rute' + body_id + 0 + '" name="rute[]" type="text" class="form-control" value="">' +
-                        // '</select>' +
-                        // '</td>' +
-                        // '<td>' +
-                        // '<select id="painscalescore' + body_id + 0 + '" name="painscalescore[]" type="text" class="form-control" value="">' +
-                        // '</select>' +
-                        // '</td>' +
-                        // '<td>' +
-                        // '<select id="reAssessment' + body_id + 0 + '" name="reAssessment[]" type="text" class="form-control" value="" onchange="setRescheduleIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + 0 + ', this.value)">' +
-                        // '</select>' +
-                        // '</td>' +
-                        // '</tr>' +
 
                         '<tr id="divBtnIntervensi' + body_id + '">' +
                         '<td colspan="5">' +
@@ -587,33 +637,10 @@ foreach ($examDetail as $key => $value) {
                         '</tr>'
                     )
 
-                    // datetimepickerbyid('flattimeIntervensi' + body_id + 0)
 
-
-                    // $.each(avalue, function(key1, value1) {
-                    //     if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
-                    //         $("#painscalescore" + body_id + '0').append(
-                    //             '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
-                    //         )
-                    //     }
-                    // });
-                    // var initialDate = new Date();
-                    // // Set the initial date to two hours ahead
-                    // initialDate.setHours(initialDate.getHours());
-
-                    // var timeZoneOffsetMinutes = initialDate.getTimezoneOffset();
-
-                    // // Adjust the date to the local time zone
-                    // initialDate.setMinutes(initialDate.getMinutes() - timeZoneOffsetMinutes);
-                    // // Format the initial date into a string compatible with the datetime-local input
-                    // var formattedInitialDate = initialDate.toISOString().slice(0, 16);
 
 
                     addIntervensi('<?= @$value['parent_id']; ?>', p_type, body_id, 0, 1)
-
-                    // Set the value of the input field to the formatted initial date
-                    // document.getElementById("timeIntervensi" + body_id + '0').value = formattedInitialDate;
-                    // document.getElementById("reassessment_date" + body_id + '0').value = formattedInitialDate;
                 } else {
                     if (value.p_type == p_type) {
                         if (value.entry_type == 1) {
@@ -661,6 +688,8 @@ foreach ($examDetail as $key => $value) {
 
             }
         });
+
+        //INI UNTUK INTERVENSI
         $.each(avalue, function(key1, value1) {
             if (value1.parameter_id == '01' && value1.p_type == 'GEN0005') {
                 $("#reAssessment" + body_id + '0').append(
@@ -683,46 +712,67 @@ foreach ($examDetail as $key => $value) {
                 )
             }
         });
+
+
+
+        // if (flag == '0') {
+        //     $.each(painMonitoringDetil, function(key1, value1) {
+        //         if (value1.body_id == body_id && value1.parameter_id == '07') {
+        //             $("#002ASES02107" + body_id).val(value1.value_desc)
+        //         } else if (value1.body_id == body_id && value1.parameter_id == '04') {
+        //             // let param1Arr = painMonitoringDetil.filter(item => (item.body_id == body_id && item.parameter_id == '01'))
+        //             // console.log(param1Arr)
+        //             // let param1 = param1Arr[0]?.value_id
+        //             // console.log(param1)
+        //             // let val01 = avalue.filter(item => item.value_id == param1)
+        //             // let valptype = val01[0]?.value_info
+        //             // console.log(valptype)
+        //             // let valnew = avalue.filter(item => item.p_type == valptype)
+        //             // console.log(valnew)
+        //             // //bisma
+        //             // $.each(valnew, function(key2, value2) {
+        //             //     $("#002ASES02104" + body_id).append(
+        //             //         '<option value="' + value2.value_id + '">[' + value2.value_score + '] ' + value2.value_desc + '.</option>'
+        //             //     )
+        //             // })
+        //             // $("#002ASES02104" + body_id).val(value1.value_desc)
+        //         } else if (value1.body_id == body_id && (value1.parameter_id == '05')) {
+        //             $("#atypeASES02105" + body_id).val(value1.value_id)
+        //             $('#atypeASES02105' + body_id + ' option').prop("disabled", true)
+        //         } else if (value1.body_id == body_id && (value1.parameter_id == '01')) {
+        //             $("#atypeASES02101" + body_id).val(value1.value_id)
+        //             $('#atypeASES02101' + body_id + ' option').prop("disabled", true)
+        //         } else {
+        //             $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
+        //             $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
+        //         }
+        //         if (value1.p_type == p_type) {
+        //             $("#" + value1.p_type + value1.parameter_id + body_id).val(value1.value_score)
+        //         }
+        //     });
+        // }
         if (flag == '0') {
-            $.each(painMonitoringDetil, function(key1, value1) {
-                if (value1.body_id == body_id && value1.parameter_id == '07') {
+            $("#bodyAssessment002Intervensi" + body_id).html("")
+            let detil = painMonitoringDetil.filter(item => item.body_id == body_id)
+            $.each(detil, function(key1, value1) {
+                if (value1.parameter_id == '07') {
                     $("#002ASES02107" + body_id).val(value1.value_desc)
-                } else if (value1.body_id == body_id && (value1.parameter_id == '05')) {
-                    $("#atypeASES02105" + body_id).val(value1.value_id)
-                    $('#atypeASES02105' + body_id + ' option').prop("disabled", true)
-                } else if (value1.body_id == body_id && (value1.parameter_id == '01')) {
+                } else if (value1.parameter_id == '04') {
+                    $("#002ASES02104" + body_id).val(value1.value_desc)
+                } else if ((value1.parameter_id == '05')) {
+                    $("#002ASES02105" + body_id).val(value1.value_id)
+                    $('#002ASES02105' + body_id + ' option').prop("disabled", true)
+                } else if ((value1.parameter_id == '01')) {
                     $("#atypeASES02101" + body_id).val(value1.value_id)
                     $('#atypeASES02101' + body_id + ' option').prop("disabled", true)
                 } else {
                     $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
                     $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
                 }
-                if (value1.p_type == p_type) {
-                    $("#" + value1.p_type + value1.parameter_id + body_id).val(value1.value_score)
-                }
             });
-        }
-        if (flag == '0') {
-            if (p_type == 'ASES022' || p_type == 'ASES023' || p_type == 'ASES024') {
-                $("#bodyAssessment002Intervensi" + body_id).html("")
-                $.each(painMonitoringDetil, function(key1, value1) {
-                    if (value1.body_id == body_id && value1.parameter_id == '07') {
-                        $("#002ASES02107" + body_id).val(value1.value_id)
-                    } else if (value1.body_id == body_id && (value1.parameter_id == '05')) {
-                        $("#002ASES02105" + body_id).val(value1.value_id)
-                        $('#002ASES02105' + body_id + ' option').prop("disabled", true)
-                    } else if (value1.body_id == body_id && (value1.parameter_id == '01')) {
-                        $("#002ASES02101" + body_id).val(value1.value_id)
-                        $('#002ASES02101' + body_id + ' option').prop("disabled", true)
-                    } else {
-                        $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
-                        $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
-                    }
-                });
-
-            } else {
-                $("#bodyAssessment002Intervensi" + body_id).find("select, input, textarea").prop("disabled", true)
-            }
+            // if (p_type == 'ASES022' || p_type == 'ASES023' || p_type == 'ASES024') {} else {
+            //     $("#bodyAssessment002Intervensi" + body_id).find("select, input, textarea").prop("disabled", true)
+            // }
         }
     }
 
@@ -929,7 +979,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getPainMonitoring',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -941,7 +991,6 @@ foreach ($examDetail as $key => $value) {
                 painMonitoring = data.painMonitoring
                 painMonitoringDetil = data.painDetil
                 painIntervensi = data.painIntervensi
-
                 $.each(painMonitoring, function(key, value) {
                     $("#" + container).html("")
                     if (value.document_id == $("#arpbody_id").val()) {
@@ -965,7 +1014,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/copyPainMonitoring',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': $("#" + document_id)?.val()
             }),
@@ -996,7 +1045,364 @@ foreach ($examDetail as $key => $value) {
         });
     }
 </script>
+<!-- TRIASE NEW ESI FORMAT -->
 
+<script type="text/javascript">
+    function addTriageNew(flag, index, document_id, container, isaddbutton = true) {
+        $(`#${container}`).html("")
+        const parent = aparent.find(p => p.parent_id === '010');
+        if (!parent) return;
+
+        let bodyId = '';
+        const documentId = $("#" + document_id).val();
+
+        if (flag === 1) {
+            const date = new Date();
+            bodyId = date.toISOString().substring(0, 23).replace(/[-:.T]/g, '');
+        } else {
+            bodyId = triage[index].body_id
+        }
+
+        const typeOptions = atype
+            .filter(t => t.parent_id === parent.parent_id)
+            .map(t => `<option value="${t.p_type}">${t.p_description}</option>`)
+            .join('');
+
+        const typeOptionsChange = atype
+            .find(t => t.parent_id === parent.parent_id)
+
+
+        const paramOptions = aparameter
+            .filter(t => t.p_type === typeOptionsChange.p_type && t.parameter_id <= 5)
+            .map(t => `<option value="${t.parameter_id}">${t.parameter_desc}</option>`)
+            .join('');
+
+        function buildStep(stepNum, parameterId, label) {
+            const radios = avalue
+                .filter(v => v.p_type === 'GEN0008' && v.parameter_id === parameterId)
+                .map(v => `
+                                        <div class="col-md-3">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="gen0008${parameterId}" 
+                                            id="step${stepNum}${parameterId}${v.value_id}${bodyId}"
+                                            value="${v.value_id}" ${v.value_id === avalue.find(x => x.p_type === parent.p_type && x.parameter_id === parameterId)?.value_id ? 'checked' : ''}>
+                                            <label class="form-check-label" for="step${stepNum}${parameterId}${v.value_id}${bodyId}">
+                                            ${v.value_desc}
+                                            </label>
+                                        </div>
+                                        </div>
+                                    `).join('');
+
+            return `
+                        <div class="col-md-3">
+                            <h5 class="font-size-14 mb-4 badge bg-primary">Step ${stepNum}:</h5>
+                        </div>
+                        <div class="col-md-9">
+                            <h5 class="font-size-14 mb-4">${label}</h5>
+                            <div class="row">${radios}</div>
+                        </div>`;
+        }
+
+        const html = `
+                        <form id="formTriage${bodyId}" accept-charset="utf-8"
+                        enctype="multipart/form-data" method="post" class="mt-4">
+                        <div class="card border border-1 rounded-4 m-4 p-4">
+                            <div class="card-body">
+                            <h4 class="card-title">Triage</h4>
+                            <div class="row mt-4">
+                                <div class="col-md-3">
+                                <h5 class="font-size-14 mb-4 badge bg-primary">Jenis Triage:</h5>
+                                </div>
+                                <div class="col-md-9">
+                                <div class="form-check mb-3">
+                                    <select class="form-control" name="p_type" id="aParamTriage${bodyId}"
+                                    onchange="aValueParamTriageNew('${parent.parent_id}', this.value, '${bodyId}', 1)">
+                                    ${typeOptions}
+                                    </select>
+                                </div>
+                                </div>
+                                ${buildStep(1, '01', 'Perlu tindakan Live Saving/Resusitasi segera?')}
+                                ${buildStep(2, '02', 'Resiko Tinggi, Kebingungan/Letargis/Disorientasi, Nyeri/Distress Berat?')}
+                                ${buildStep(3, '03', 'Berapa jenis sumber daya IGD yang dibutuhkan?')}
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                <h5 class="font-size-14 mb-4 badge bg-primary">Indikator:</h5>
+                                </div>
+                                <div class="col-md-12 " id="bodyAssessment010${bodyId}">
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                <h5 class="font-size-14 mb-4 badge bg-primary">Score Triase:</h5>
+                                </div>
+                                <div class="col-md-9">
+                                <div class="form-check mb-3">
+                                    <select class="form-control" name="total_score" id="aTriageTotalScore${bodyId}">
+                                        ${paramOptions}
+                                    </select>
+                                </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-footer text-end mb-4">
+                                <button type="submit" id="formTriageSaveBtn${bodyId}"
+                                class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> Simpan</button>
+                                <button type="button" id="formTriageEditBtn${bodyId}"
+                                class="btn btn-secondary btn-edit" style="margin-right:10px;"><i class="fa fa-edit"></i> Edit</button>
+                            </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden inputs -->
+                        <input name="org_unit_code" type="hidden" value="${visit.org_unit_code}">
+                        <input name="visit_id" type="hidden" value="${visit.visit_id}">
+                        <input name="trans_id" type="hidden" value="${visit.trans_id}">
+                        <input name="body_id" type="hidden" value="${bodyId}">
+                        <input name="document_id" type="hidden" id="triagedocument_id${bodyId}" value="${documentId}">
+                        <input name="no_registration" type="hidden" value="${visit.no_registration}">
+                        <input name="clinic_id" type="hidden" value="${visit.clinic_id}">
+                        <input name="employee_id" type="hidden" value="${visit.employee_id}">
+                        <input name="petugas_id" type="hidden" value="">
+                        <input name="class_room_id" type="hidden" value="${visit.class_room_id}">
+                        <input name="bed_id" type="hidden" value="${visit.bed_id}">
+                        <input name="description" type="hidden" value="${visit.description}">
+                        <input name="modified_date" type="hidden" value="${visit.modified_date || ''}">
+                        <input name="modified_by" type="hidden" value="${visit.modified_by || ''}">
+                        <input name="valid_date" class="valid-date" type="hidden" value="">
+                        <input name="valid_user" class="valid-user" type="hidden" value="">
+                        <input name="valid_pasien" class="valid-pasien" type="hidden" value="">
+                        </form>`;
+
+        $("#" + container).append(html);
+
+
+        const $form = $("#formTriage" + bodyId);
+        $form.find("#formTriageEditBtn" + bodyId).on("click", () => {
+            $form.find("input, textarea, select").prop("disabled", false);
+            $form.find("#formTriageSaveBtn" + bodyId).show();
+            $form.find("#formTriageEditBtn" + bodyId).hide();
+        });
+
+        $form.on("submit", function(e) {
+            e.preventDefault();
+            const $btn = $(this).find(":submit");
+            $("#triagedocument_id" + bodyId).val($("#" + document_id).val());
+
+            $.ajax({
+                url: '/admin/rm/assessment/saveTriage',
+                type: "POST",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend() {
+                    $btn.prop('disabled', true);
+                },
+                success(data) {
+                    $form.find("input, textarea, select").prop("disabled", true);
+                    $form.find("input[type='datetime-local']").prop("readonly", true);
+                    $form.find("#formTriageSaveBtn" + bodyId).hide();
+                    checkSign("formTriage" + bodyId);
+                },
+                error(xhr) {
+                    alert("Error occurred. Please try again.");
+                    console.error(xhr);
+                },
+                complete() {
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
+
+        if (flag === 1) {
+            $form.find("input, textarea, select").prop("disabled", false);
+            $form.find("#formTriageSaveBtn" + bodyId).show();
+            $form.find("#formTriageEditBtn" + bodyId).hide();
+            aValueParamTriageNew(parent.parent_id, typeOptionsChange.p_type, bodyId, 1)
+
+        } else {
+            const tri = triage[index];
+            if (tri) {
+                Object.keys(tri).forEach(key => {
+                    $form.find(`[name="${key}"]`).val(tri[key]);
+                });
+            }
+            triageDetil.forEach(d => {
+                if (d.body_id === bodyId && d.p_type === parent.p_type || typeOptionsChange
+                    ?.p_type) {
+
+                    $form.find("#aParamTriage" + bodyId).val(tri.p_type);
+                    $form.find("#aTriageTotalScore" + bodyId).val(tri.total_score);
+                    $form.find(`#step1${d.parameter_id}${d.value_id}${bodyId}`).prop("checked", true);
+                    $form.find(`#step2${d.parameter_id}${d.value_id}${bodyId}`).prop("checked", true);
+                    $form.find(`#step3${d.parameter_id}${d.value_id}${bodyId}`).prop("checked", true);
+                    aValueParamTriageNew(parent.parent_id, tri.p_type, bodyId, flag);
+                }
+            });
+            $form.find("input, textarea, select").prop("disabled", true);
+            $form.find("#formTriageSaveBtn" + bodyId).hide();
+            $form.find("#formTriageEditBtn" + bodyId).show();
+            checkSign("formTriage" + bodyId);
+        }
+
+        index++;
+        if (isaddbutton && !$(`#formTriage${bodyId} .valid-user`).val()) {
+            $("#addTriageButton").html(`
+                        <a onclick="addTriageNew(1, ${index}, '${document_id}', '${container}')" 
+                            class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn${bodyId}" style="width:300px">
+                            <i class="fa fa-plus"></i> Tambah Dokumen
+                        </a>`);
+        } else {
+            $("#" + container + "AddBtn").empty();
+        }
+    }
+
+
+
+    function aValueParamTriageNew(parent_id, p_type, body_id, flag) {
+        const containerId = `#bodyAssessment${parent_id}${body_id}`;
+        $(containerId).html("");
+
+        const params = aparameter.filter(p => p.p_type === p_type);
+        for (let i = 0; i < params.length; i += 2) {
+            const paramLeft = params[i];
+            const paramRight = params[i + 1] ?? null;
+
+            const valuesLeft = avalue.filter(v => v.p_type === p_type && v.parameter_id === paramLeft.parameter_id);
+            const valuesRight = paramRight ? avalue.filter(v => v.p_type === p_type && v.parameter_id === paramRight
+                .parameter_id) : [];
+
+            const maxLength = Math.max(valuesLeft.length, valuesRight.length);
+
+            let rowHtml = `<div class="row mb-3">`;
+
+            rowHtml += `
+            <div class="col-md-${paramRight ? '6' : '12'}">
+                <div class="card h-100">
+                    <div class="card-header text-center fw-bold bg-light">${paramLeft.parameter_desc}</div>
+                    <div class="card-body" id="left_${paramLeft.parameter_id}"></div>
+                </div>
+            </div>
+        `;
+
+            if (paramRight) {
+                rowHtml += `
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header text-center fw-bold bg-light">${paramRight.parameter_desc}</div>
+                        <div class="card-body" id="right_${paramRight.parameter_id}"></div>
+                    </div>
+                </div>
+            `;
+            }
+
+            rowHtml += `</div>`;
+            $(containerId).append(rowHtml);
+
+            for (let j = 0; j < maxLength; j++) {
+                const valLeft = valuesLeft[j];
+                const valRight = valuesRight[j];
+
+                const leftId = valLeft ? `${parent_id}${body_id}${paramLeft.parameter_id}${valLeft.value_id}` : "";
+                const rightId = valRight ? `${parent_id}${body_id}${paramRight.parameter_id}${valRight.value_id}` : "";
+
+                if (valLeft) {
+                    const isChecked = triageDetil?.some(d => d.value_id === valLeft.value_id);
+                    $(`#left_${paramLeft.parameter_id}`).append(`
+                    <div class="form-check mb-1">
+                        <input type="checkbox" class="form-check-input score-check-triaseNew" 
+                            data-param="${paramLeft.parameter_id}" 
+                            data-body="${body_id}" 
+                            id="${leftId}" 
+                            name="val${valLeft.value_id}" 
+                            ${isChecked ? 'checked' : ''}>
+                        <label class="form-check-label" for="${leftId}">${valLeft.value_desc}</label>
+                    </div>
+                `);
+                }
+
+                if (valRight) {
+                    const isChecked = triageDetil?.some(d => d.value_id === valRight.value_id);
+                    $(`#right_${paramRight.parameter_id}`).append(`
+                    <div class="form-check mb-1">
+                        <input type="checkbox" class="form-check-input score-check-triaseNew" 
+                            data-param="${paramRight.parameter_id}" 
+                            data-body="${body_id}" 
+                            id="${rightId}" 
+                            name="val${valRight.value_id}" 
+                            ${isChecked ? 'checked' : ''}>
+                        <label class="form-check-label" for="${rightId}">${valRight.value_desc}</label>
+                    </div>
+                `);
+                }
+            }
+        }
+
+        $(containerId).on("change", ".score-check-triaseNew", function() {
+            const body_id = $(this).data("body");
+            const selector = `#bodyAssessment${parent_id}${body_id} .score-check-triaseNew`;
+
+            const selectedParams = [];
+
+            $(selector).each(function() {
+                if ($(this).is(":checked")) {
+                    const pid = $(this).data("param");
+                    if (['01', '02', '03', '04', '05'].includes(pid)) {
+                        selectedParams.push(pid);
+                    }
+                }
+            });
+
+            const minSelected = selectedParams.length > 0 ? selectedParams.sort()[0] : "01";
+            $(`#aTriageTotalScore${body_id}`).val(minSelected).trigger("change");
+        });
+
+        $(`#bodyAssessment${parent_id}${body_id} .score-check-triaseNew`).trigger("change");
+    }
+
+
+
+
+
+    function getTriageNew(bodyId, container) {
+        $("#" + container).html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getTriageNew',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit?.visit_id,
+                'nomor': nomor,
+                'body_id': bodyId
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                triage = data.triage
+                triageDetil = data.triageDetil
+
+                $.each(triage, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyTriagePerawat").html("")
+                        addTriageNew(0, key, "arpbody_id", "bodyTriagePerawat", false)
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyTriageMedis").html("")
+                        addTriageNew(0, key, "armpasien_diagnosa_id", "bodyTriageMedis", false)
+                    }
+
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+</script>
 <!-- TRIASE -->
 <script type="text/javascript">
     function addTriage(flag, index, document_id, container, isaddbutton = true) {
@@ -1120,7 +1526,7 @@ foreach ($examDetail as $key => $value) {
                 $("#formTriageEditBtn" + bodyId).on("click", function() {
                     $("#formTriageSaveBtn" + bodyId).slideDown()
                     $("#formTriageEditBtn" + bodyId).slideUp()
-                    $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", false)
+                    $("#formTriage" + bodyId).find("input, textarea, select, option").prop("disabled", false)
                 })
 
 
@@ -1178,7 +1584,7 @@ foreach ($examDetail as $key => $value) {
                 if (flag == 1) {
                     $("#formTriageSaveBtn" + bodyId).slideDown()
                     $("#formTriageEditBtn" + bodyId).slideUp()
-                    $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", false)
+                    $("#formTriage" + bodyId).find("input, textarea, select, option").prop("disabled", false)
                     $("#aParamTriage" + bodyId).val('ASES028').trigger("change")
                 } else {
                     var triageset = triage[index]
@@ -1199,7 +1605,7 @@ foreach ($examDetail as $key => $value) {
                             // $('#formTriage' + bodyId + ' option').prop("disabled", true)
                             aValueParamTriage('<?= @$value['parent_id']; ?>', triage[index].p_type, bodyId, flag)
                         }
-                        $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", true)
+                        $("#formTriage" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                     })
                     checkSign("formTriage" + bodyId)
                 }
@@ -1242,37 +1648,36 @@ foreach ($examDetail as $key => $value) {
                     $("#theadAssessment" + parent_id + body_id + value.parameter_id).css("color", "white")
                     $("#theadAssessment" + parent_id + body_id + value.parameter_id).css("background-color", "green")
                 }
-
             }
         });
-
         $.each(avalue, function(key, value) {
             if (value.p_type == 'GEN0007') {
                 $("#tbodyAssessment" + parent_id + body_id).append(
                     '<tr id="tbodyAssessment' + parent_id + body_id + value.value_id + '"><td>' + value.value_desc + '</td></tr>'
                 )
-                $.each(aparameter, function(key1, value1) {
-                    if (value1.p_type == p_type) {
-                        $("#tbodyAssessment" + parent_id + body_id + value.value_id).append(
-                            '<td id="tbodyAssessment' + parent_id + body_id + value.value_id + value1.parameter_id + '"></td>'
-                        )
-                        $.each(avalue, function(key2, value2) {
-                            if (value2.value_info == value.value_id && value2.parameter_id == value1.parameter_id && value2.p_type == p_type) {
-                                $("#tbodyAssessment" + parent_id + body_id + value.value_id + value1.parameter_id).append(
-                                    '<div class="form-check mb-3">' +
-                                    '<input name="val' + value2.value_id + '" class="form-check-input" type="checkbox" id="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '" onclick="updateATS(' + value2.value_score + ',\'' + body_id + '\')">' +
-                                    '<label class="form-check-label" for="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '">' + value2.value_desc + '</label>' +
-                                    '</div>'
-                                )
-                                $.each(triageDetil, function(key3, value3) {
-                                    if (value3.value_id == value2.value_id) {
-                                        $("#" + parent_id + body_id + value.value_id + value2.parameter_id + value3.value_id).prop("checked", true)
-                                    }
-                                })
-                            }
+                let param = aparameter.filter(item => item?.p_type == p_type)
+                $.each(param, function(key1, value1) {
+                    $("#tbodyAssessment" + parent_id + body_id + value.value_id).append(
+                        '<td id="tbodyAssessment' + parent_id + body_id + value.value_id + value1.parameter_id + '"></td>'
+                    )
+                    let val = avalue.filter(item => item?.p_type == p_type)
+                    $.each(val, function(key2, value2) {
+                        if (value2.value_info == value.value_id && value2.parameter_id == value1.parameter_id) {
+                            $("#tbodyAssessment" + parent_id + body_id + value.value_id + value1.parameter_id).append(
+                                '<div class="form-check mb-3">' +
+                                '<input name="val' + value2.value_id + '" class="form-check-input" type="checkbox" id="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '" onclick="updateATS(' + value2.value_score + ',\'' + body_id + '\')">' +
+                                '<label class="form-check-label" for="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '">' + value2.value_desc + '</label>' +
+                                '</div>'
+                            )
+                            $.each(triageDetil, function(key3, value3) {
+                                if (value3.value_id == value2.value_id) {
+                                    $("#" + parent_id + body_id + value.value_id + value2.parameter_id + value3.value_id).prop("checked", true)
+                                    return false
+                                }
+                            })
+                        }
 
-                        });
-                    }
+                    });
                 });
             }
         })
@@ -1288,7 +1693,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getTriage',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -1324,7 +1729,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/copyTriage',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'document_id': $("#" + document_id)?.val()
             }),
             dataType: 'json',
@@ -1625,7 +2030,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getApgar',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -1729,7 +2134,7 @@ foreach ($examDetail as $key => $value) {
         $("#formStabilitasEditBtn" + bodyId).on("click", function() {
             $("#formStabilitasSaveBtn" + bodyId).slideDown()
             $("#formStabilitasEditBtn" + bodyId).slideUp()
-            $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formStabilitas" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
         $("#formStabilitas" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control satelite" />')
             .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
@@ -1800,7 +2205,7 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formStabilitasSaveBtn" + bodyId).slideDown()
             $("#formStabilitasEditBtn" + bodyId).slideUp()
-            $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formStabilitas" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         } else {
             var maindataset = stabilitas[index]
 
@@ -1809,7 +2214,7 @@ foreach ($examDetail as $key => $value) {
             })
             $("#formStabilitasSaveBtn" + bodyId).slideUp()
             $("#formStabilitasEditBtn" + bodyId).slideDown()
-            $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formStabilitas" + bodyId).find("input, textarea, select, option").prop("disabled", true)
 
             $.each(stabilitasDetail, function(key, value) {
                 if (value.body_id == bodyId) {
@@ -1833,7 +2238,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getStabilitas',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -1877,7 +2282,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getTindakanPerawat',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor
             }),
             dataType: 'json',
@@ -1896,6 +2301,10 @@ foreach ($examDetail as $key => $value) {
                     if (value.nota_no == $("#tindakanBodyPerawatKolaborasiNota").val() || $("#tindakanBodyPerawatKolaborasiNota").val() == '%')
                         addBillChargePerawat('', value.treatment_type, 0, key, 'tindakanBodyPerawat')
                 })
+                if (!visit?.locked || visit.locked !== '0') {
+                    $(".spppoli-to-hide").remove();
+                }
+
             },
             error: function() {
 
@@ -2185,7 +2594,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getPernapasan',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -2530,7 +2939,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getFallRisk',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -2566,7 +2975,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/copyFallRisk',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': $("#" + document_id)?.val()
             }),
@@ -2600,7 +3009,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- SIRKULASI -->
 <script type="text/javascript">
-    function addSirkulasi(flag, index, document_id, container, isaddbutton = false) {
+    function addSirkulasi(flag, index, document_id, container, isaddbutton = false, identifier = null) {
         var bodyId = '';
         var documentId = $("#" + document_id).val()
         if (flag == 1) {
@@ -2737,7 +3146,7 @@ foreach ($examDetail as $key => $value) {
         $("#formSirkulasiEditBtn" + bodyId).on("click", function() {
             $("#formSirkulasiSaveBtn" + bodyId).slideDown()
             $("#formSirkulasiEditBtn" + bodyId).slideUp()
-            $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formSirkulasi" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
 
         $("#ASES03901" + bodyId).keydown(function(e) {
@@ -2746,7 +3155,10 @@ foreach ($examDetail as $key => $value) {
         $("#ASES03906" + bodyId).keydown(function(e) {
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
-
+        if (identifier != null) {
+            let rr = $("#" + identifier + "nadi").val()
+            $("#ASES03906" + bodyId).val(rr)
+        }
 
         $("#formSirkulasi" + bodyId).append('<input name="org_unit_code" id="sirkulasiorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="sirkulasivisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
@@ -2779,7 +3191,7 @@ foreach ($examDetail as $key => $value) {
                     clicked_submit_btn.button('reset');
                     $("#formSirkulasiSaveBtn" + bodyId).slideUp()
                     $("#formSirkulasiEditBtn" + bodyId).slideDown()
-                    $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", true)
+                    $("#formSirkulasi" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                     checkSign("formSirkulasi" + bodyId)
 
                 },
@@ -2811,7 +3223,7 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formSirkulasiSaveBtn" + bodyId).slideDown()
             $("#formSirkulasiEditBtn" + bodyId).slideUp()
-            $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formSirkulasi" + bodyId).find("input, textarea, select, option").prop("disabled", false)
 
         } else {
             var maindataset = sirkulasiAll[index]
@@ -2821,7 +3233,7 @@ foreach ($examDetail as $key => $value) {
             })
             $("#formSirkulasiSaveBtn" + bodyId).slideUp()
             $("#formSirkulasiEditBtn" + bodyId).slideDown()
-            $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formSirkulasi" + bodyId).find("input, textarea, select, option").prop("disabled", true)
             var sirkulasi = sirkulasiAll[index];
             <?php foreach ($aParameter as $key => $value) {
                 if (@$value['p_type'] == 'ASES039') {
@@ -2864,7 +3276,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getSirkulasi',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -3145,7 +3557,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getNeurosensoris',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -3435,7 +3847,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getAnak',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -3731,7 +4143,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getNeonatus',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -3963,7 +4375,7 @@ foreach ($examDetail as $key => $value) {
         $("#formADLEdit" + bodyId).on("click", function() {
             $("#formADLSave" + bodyId).slideDown()
             $("#formADLEdit" + bodyId).slideUp()
-            $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formADL" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
         $("#formADL" + bodyId).find("select").on("change", function(e) {
             var totalScoreAdl = 0;
@@ -3987,7 +4399,7 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formADLSave" + bodyId).slideDown()
             $("#formADLEdit" + bodyId).slideUp()
-            $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formADL" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         } else {
 
             var maindataset = adlAll[index]
@@ -4037,7 +4449,7 @@ foreach ($examDetail as $key => $value) {
             $("#total_dependency" + bodyId).append($('<option value="' + totalScoreAdl + '">' + scoreAdlName + '</option>'))
             $("#formADLSave" + bodyId).slideDown()
             $("#formADLEdit" + bodyId).slideUp()
-            $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formADL" + bodyId).find("input, textarea, select, option").prop("disabled", true)
             checkSign("formADL" + bodyId)
         }
 
@@ -4051,7 +4463,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getADL',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -4335,7 +4747,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getDekubitus',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -4479,7 +4891,7 @@ foreach ($examDetail as $key => $value) {
             )
         )
         $("#formPencernaanEditBtn").on("click", function() {
-            $("#formPencernaan" + body).find("input, textarea, select").prop("disabled", false)
+            $("#formPencernaan" + body).find("input, textarea, select, option").prop("disabled", false)
             $("#formPencernaanSaveBtn" + bodyId).slideDown()
             $("#formPencernaanEditBtn" + bodyId).slideUp()
         })
@@ -4523,7 +4935,7 @@ foreach ($examDetail as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", true)
+                    $("#formPencernaan" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                     $("#formPencernaanSaveBtn" + bodyId).slideUp()
                     $("#formPencernaanEditBtn" + bodyId).slideDown()
                     clicked_submit_btn.button('reset');
@@ -4561,7 +4973,7 @@ foreach ($examDetail as $key => $value) {
 
 
         if (flag == 1) {
-            $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formPencernaan" + bodyId).find("input, textarea, select, option").prop("disabled", false)
             $("#formPencernaanSaveBtn" + bodyId).slideDown()
             $("#formPencernaanEditBtn" + bodyId).slideUp()
         } else {
@@ -4598,7 +5010,7 @@ foreach ($examDetail as $key => $value) {
                     }
                 }
             } ?>
-            $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formPencernaan" + bodyId).find("input, textarea, select, option").prop("disabled", true)
             $("#formPencernaanSaveBtn" + bodyId).slideUp()
             $("#formPencernaanEditBtn" + bodyId).slideDown()
             checkSign("formPencernaan" + bodyId)
@@ -4615,7 +5027,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getPencernaan',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -4795,7 +5207,7 @@ foreach ($examDetail as $key => $value) {
             .append('<input name="p_type" id="Perkemihansp_type' + bodyId + '" type="hidden" value="ASES042 " class="form-control" />')
 
             $("#formPerkemihanEditBtn" + bodyId).on("click", function() {
-                $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
+                $("#formPerkemihan" + bodyId).find("input, textarea, select, option").prop("disabled", false)
                 $("#formPerkemihanSaveBtn" + bodyId).show()
                 $("#formPerkemihanEditBtn" + bodyId).hide()
             })
@@ -4815,7 +5227,7 @@ foreach ($examDetail as $key => $value) {
                         clicked_submit_btn.button('loading');
                     },
                     success: function(data) {
-                        $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
+                        $("#formPerkemihan" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                         $("#formPerkemihanSaveBtn" + bodyId).hide()
                         $("#formPerkemihanEditBtn" + bodyId).show()
                         clicked_submit_btn.button('reset');
@@ -4833,7 +5245,7 @@ foreach ($examDetail as $key => $value) {
 
 
             if (flag == 1) {
-                $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
+                $("#formPerkemihan" + bodyId).find("input, textarea, select, option").prop("disabled", false)
                 $("#formPerkemihanSaveBtn" + bodyId).show()
                 $("#formPerkemihanEditBtn" + bodyId).hide()
 
@@ -4864,7 +5276,7 @@ foreach ($examDetail as $key => $value) {
                         }
                     }
                 } ?>
-                $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
+                $("#formPerkemihan" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                 $("#formPerkemihanSaveBtn" + bodyId).hide()
                 $("#formPerkemihanEditBtn" + bodyId).show()
             }
@@ -4880,7 +5292,7 @@ foreach ($examDetail as $key => $value) {
                 url: '<?php echo base_url(); ?>admin/rm/assessment/getPerkemihan',
                 type: "POST",
                 data: JSON.stringify({
-                    'visit_id': visit,
+                    'visit_id': visit.visit_id,
                     'nomor': nomor,
                     'body_id': bodyId
                 }),
@@ -4906,7 +5318,8 @@ foreach ($examDetail as $key => $value) {
 
 <!-- // PSIKOLOGI -->
 <script type="text/javascript">
-    function addPsikologi(flag, index, isaddbutton = false) {
+    function addPsikologi(flag, index, document_id, container, isaddbutton = false, identifier = null) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -4915,7 +5328,7 @@ foreach ($examDetail as $key => $value) {
         } else {
             bodyId = psikologiAll[index].body_id
         }
-        $("#bodyPsikologi").append(
+        $("#" + container).append(
             $('<form id="formPsikologi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
@@ -5065,7 +5478,7 @@ foreach ($examDetail as $key => $value) {
             .append('<input name="visit_id" id="psikologivisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="psikologitrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="psikologibody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="psikologidocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="document_id" id="psikologidocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
             .append('<input name="no_registration" id="psikologino_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="p_type" id="psikologip_type' + bodyId + '" type="hidden" value="ASES035" class="form-control" />')
             .append('<input name="valid_date" class="valid_date" id="psikologivalid_date' + bodyId + '" type="hidden"  />')
@@ -5094,6 +5507,8 @@ foreach ($examDetail as $key => $value) {
                     clicked_submit_btn.button('reset');
                     checkSign("formPsikologi" + bodyId)
 
+                    psikologiAll = data.psikologi
+                    psikologiDetailAll = data.psikologiDetail
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     let errorMessage = "An error occurred: ";
@@ -5175,13 +5590,13 @@ foreach ($examDetail as $key => $value) {
         }
     }
 
-    function getPsikologi(bodyId) {
-        $("#bodyPsikologi").html("")
+    function getPsikologi(bodyId, container) {
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getPsikologi',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -5195,7 +5610,9 @@ foreach ($examDetail as $key => $value) {
 
                 $.each(psikologiAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
-                        addPsikologi(0, key)
+                        addPsikologi(0, key, "arpbody_id", "bodyPsikologi")
+                    if (value.document_id == $("#arbbody_id").val())
+                        addPsikologi(0, key, "arbbody_id", "bodyPsikologiBidan")
                 })
             },
             error: function() {
@@ -5471,7 +5888,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getSeksual',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -5659,7 +6076,7 @@ foreach ($examDetail as $key => $value) {
                 success: function(data) {
                     $("#formSocialSaveBtn" + bodyId).slideUp()
                     $("#formSocialEditBtn" + bodyId).slideDown()
-                    $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", true)
+                    $("#formSocial" + bodyId).find("input, textarea, select, option").prop("disabled", true)
                     clicked_submit_btn.button('reset');
                     checkSign("formSocial" + bodyId)
 
@@ -5692,7 +6109,7 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formSocialSaveBtn" + bodyId).slideDown()
             $("#formSocialEditBtn" + bodyId).slideUp()
-            $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formSocial" + bodyId).find("input, textarea, select, option").prop("disabled", false)
 
         } else {
             var maindataset = socialAll[index]
@@ -5728,7 +6145,7 @@ foreach ($examDetail as $key => $value) {
             } ?>
             $("#formSocialSaveBtn" + bodyId).slideUp()
             $("#formSocialEditBtn" + bodyId).slideDown()
-            $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formSocial" + bodyId).find("input, textarea, select, option").prop("disabled", true)
             checkSign("formSocial" + bodyId)
         }
         if (isaddbutton) {
@@ -5743,7 +6160,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getSocial',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -5905,7 +6322,7 @@ foreach ($examDetail as $key => $value) {
         $("#formHearing" + bodyId).on("click", function() {
             $("#formHearingSaveBtn" + bodyId).slideDown()
             $("#formHearingEditBtn" + bodyId).slideUp()
-            $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formHearing" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
 
         $("#formHearing" + bodyId).append('<input name="org_unit_code" id="hearingorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
@@ -5939,7 +6356,7 @@ foreach ($examDetail as $key => $value) {
                     clicked_submit_btn.button('reset');
                     $("#formHearingSaveBtn" + bodyId).slideUp()
                     $("#formHearingEditBtn" + bodyId).slideDown()
-                    $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", true)
+                    $("#formHearing" + bodyId).find("input, textarea, select, option").prop("disabled", true)
 
                     checkSign("formHearing" + bodyId)
 
@@ -5972,7 +6389,7 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formHearingSaveBtn" + bodyId).slideDown()
             $("#formHearingEditBtn" + bodyId).slideUp()
-            $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formHearing" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         } else {
             var maindataset = hearingAll[index]
 
@@ -5981,7 +6398,7 @@ foreach ($examDetail as $key => $value) {
             })
             $("#formHearingSaveBtn" + bodyId).slideUp()
             $("#formHearingEditBtn" + bodyId).slideDown()
-            $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formHearing" + bodyId).find("input, textarea, select, option").prop("disabled", true)
 
             var digest = hearingAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -6023,7 +6440,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getHearing',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -6187,7 +6604,7 @@ foreach ($examDetail as $key => $value) {
         $("#formSleepingEditBtn" + bodyId).on("click", function() {
             $("#formSleepingSaveBtn" + bodyId).slideDown()
             $("#formSleepingEditBtn" + bodyId).slideUp()
-            $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formSleeping" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
 
         $("#formSleeping" + bodyId).append('<input name="org_unit_code" id="sleepingorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
@@ -6221,7 +6638,7 @@ foreach ($examDetail as $key => $value) {
                     clicked_submit_btn.button('reset');
                     $("#formSleepingSaveBtn" + bodyId).slideUp()
                     $("#formSleepingEditBtn" + bodyId).slideDown()
-                    $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", true)
+                    $("#formSleeping" + bodyId).find("input, textarea, select, option").prop("disabled", true)
 
                     checkSign("formSleeping" + bodyId)
 
@@ -6254,7 +6671,7 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formSleepingSaveBtn" + bodyId).slideDown()
             $("#formSleepingEditBtn" + bodyId).slideUp()
-            $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formSleeping" + bodyId).find("input, textarea, select, option").prop("disabled", false)
 
         } else {
             var maindataset = sleepingAll[index]
@@ -6264,7 +6681,7 @@ foreach ($examDetail as $key => $value) {
             })
             $("#formSleepingSaveBtn" + bodyId).slideUp()
             $("#formSleepingEditBtn" + bodyId).slideDown()
-            $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formSleeping" + bodyId).find("input, textarea, select, option").prop("disabled", true)
 
             var sleeping = sleepingAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -6307,7 +6724,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getSleeping',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -6491,7 +6908,7 @@ foreach ($examDetail as $key => $value) {
                             )
                         )
                     )
-
+                    //bisma
                     .append($('<div class="mb-3 row">')
                         .append($('<h4>').html('Skrining Gizi'))
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
@@ -6505,6 +6922,7 @@ foreach ($examDetail as $key => $value) {
                                         .append('<option value="21">Anak 0 - 24 Bulan</option>')
                                         .append('<option value="22">Anak 24 - 60 Bulan</option>')
                                         .append('<option value="23">Anak 5 - 18 tahun</option>')
+                                        .append('<option value="24">Dewasa</option>')
                                     )
                                 )
                             )
@@ -6650,7 +7068,7 @@ foreach ($examDetail as $key => $value) {
         $("#formGiziEditBtn" + bodyId).on("click", function() {
             $("#formGiziSaveBtn" + bodyId).slideDown()
             $("#formGiziEditBtn" + bodyId).slideUp()
-            $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formGizi" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
 
         $("#gizistep1_score_imt" + bodyId).on("change", function() {
@@ -6725,6 +7143,8 @@ foreach ($examDetail as $key => $value) {
             let w = $("#" + identifier + "weight").val()
             let h = $("#" + identifier + "height").val()
 
+            console.log("asdf")
+
             $('#giziweight' + bodyId).val(w)
             $('#giziheight' + bodyId).val(h)
             w = parseFloat(w)
@@ -6790,7 +7210,7 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formGiziSaveBtn" + bodyId).slideDown()
             $("#formGiziEditBtn" + bodyId).slideUp()
-            $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formGizi" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         } else {
             var maindataset = giziAll[index]
 
@@ -6861,12 +7281,13 @@ foreach ($examDetail as $key => $value) {
             })
             $("#formGiziSaveBtn" + bodyId).slideUp()
             $("#formGiziEditBtn" + bodyId).slideDown()
-            $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formGizi" + bodyId).find("input, textarea, select, option").prop("disabled", true)
             checkSign("formGizi" + bodyId)
         }
         if (isaddbutton) {
             index++
-            $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            // addGizi(1, 1, 'arpbody_id', 'bodyGiziPerawat', false, 'arp')
+            $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ',\'' + document_id + '\', \'' + container + '\', false, \'' + identifier + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         }
     }
 
@@ -6915,7 +7336,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getGizi',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -7181,7 +7602,7 @@ foreach ($examDetail as $key => $value) {
                     clicked_submit_btn.button('reset');
                     $("#formEducationFormSaveBtn" + bodyId).slideUp()
                     $("#formEducationFormEditBtn" + bodyId).slideDown()
-                    $("#formEducationForm" + bodyId).find("input, textarea, select").prop("disabled", true)
+                    $("#formEducationForm" + bodyId).find("input, textarea, select, option").prop("disabled", true)
 
                     checkSign("formEducationForm" + bodyId)
 
@@ -7215,7 +7636,7 @@ foreach ($examDetail as $key => $value) {
         $("#formEducationFormEditBtn" + bodyId).on("click", function() {
             $("#formEducationFormSaveBtn" + bodyId).slideDown()
             $("#formEducationFormEditBtn" + bodyId).slideUp()
-            $("#formEducationForm" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formEducationForm" + bodyId).find("input, textarea, select, option").prop("disabled", false)
         })
         $("#formEducationFormCetakBtn" + bodyId).on("click", function() {
             var win = window.open('<?= base_url() . '/admin/rm/keperawatan/formulir_edukasi/' . base64_encode(json_encode($visit)); ?>', '_blank');
@@ -7225,9 +7646,9 @@ foreach ($examDetail as $key => $value) {
         if (flag == 1) {
             $("#formEducationFormSaveBtn" + bodyId).slideDown()
             $("#formEducationFormEditBtn" + bodyId).slideUp()
-            $("#formEducationForm" + bodyId).find("input, textarea, select").prop("disabled", false)
+            $("#formEducationForm" + bodyId).find("input, textarea, select, option").prop("disabled", false)
 
-            initializeQuillEditorsById("GEN001302" + bodyId)
+            // initializeQuillEditorsById("GEN001302" + bodyId)
 
         } else {
 
@@ -7252,7 +7673,7 @@ foreach ($examDetail as $key => $value) {
                     } else if (@$value['entry_type'] == '4') {
                     ?>
                         $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(EducationForm.<?= strtolower(@$value['column_name']); ?>)
-                        initializeQuillEditorsById("GEN001302" + bodyId, EducationForm.<?= strtolower(@$value['column_name']); ?>)
+                        // initializeQuillEditorsById("GEN001302" + bodyId, EducationForm.<?= strtolower(@$value['column_name']); ?>)
                     <?php
                     } else if (@$value['entry_type'] == '2') {
                     ?>
@@ -7291,7 +7712,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationForm',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -7626,7 +8047,7 @@ foreach ($examDetail as $key => $value) {
                         .append('<div class="panel-footer text-end mb-4">' +
                             '<button type="submit" id="formEducationIntegrationSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
                             '<button style="margin-right: 10px" type="button" id="formEducationIntegrationEditBtn' + bodyId + '" onclick="" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
-                            '<button style="margin-right: 10px" type="button" id="formEducationIntegrationCetakBtn' + bodyId + '" onclick="" name="cetak" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light btn-edit"><i class="fa fa-file"></i> <span>Cetak</span></button>' +
+                            // '<button style="margin-right: 10px" type="button" id="formEducationIntegrationCetakBtn' + bodyId + '" onclick="" name="cetak" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light btn-edit"><i class="fa fa-file"></i> <span>Cetak</span></button>' +
                             '</div>')
 
                     )
@@ -8043,7 +8464,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationIntegration',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -8093,8 +8514,7 @@ foreach ($examDetail as $key => $value) {
                                 <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Tanggal:</h5>
                             </div>
                             <div class="col-md-9">
-                                <input id="flatgcsexamination_date` + bodyId + `" type="text" class="form-control">
-                                <input id="gcsexamination_date` + bodyId + `" name="examination_date" type="hidden">
+                                <input id="gcsexamination_date` + bodyId + `" name="examination_date" type="datetime-local" class="form-control">
                             </div>
                         </div>`)
                     .append($('<div class="mb-3 row">')
@@ -8114,10 +8534,22 @@ foreach ($examDetail as $key => $value) {
                                             .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
                                                 .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
-                                                    .append('<option value="0">-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                    .append('<option value="0">-</option>') <?php
+                                                                                            $avalueRev = array_filter($aValue, function ($val) {
+                                                                                                return $val['p_type'] == 'GEN0011';
+                                                                                            });
+                                                                                            rsort($avalueRev);
+                                                                                            foreach ($avalueRev as $key1 => $value1) {
                                                                                                 if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
+                                                                                                    if ($value1['value_id'] == 'G0110200') {
                                                                                             ?>
-                                                            .append('<option value="<?= $value1['value_score']; ?>">[<?= $value1['value_score']; ?>] <?= $value1['value_desc'] ?></option>') <?php
+                                                                .append('<option value="<?= $value1['value_score']; ?>">[x] <?= $value1['value_desc'] ?></option>')
+
+                                                            <?php
+                                                                                                    } else {
+                                                            ?>
+                                                                .append('<option value="<?= $value1['value_score']; ?>">[<?= $value1['value_score']; ?>] <?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                                                                }
                                                                                                                                                                                             }
                                                                                                                                                                                         } ?>
                                                 )
@@ -8142,7 +8574,7 @@ foreach ($examDetail as $key => $value) {
                                 .append('<label class="col-md-4 col-form-label mb-4">Kesimpulan</label>')
                                 .append($('<div class="col-md-8">')
                                     .append($('<select id="GCS_DESC' + bodyId + '" name="GCS_DESC" class="form-control" readonly>')
-                                        .append('<option>-</option>')
+                                        .append('<option value="0">-</option>')
                                         .append('<option value="1">Composmentis</option>')
                                         .append('<option value="2">Apatis</option>')
                                         .append('<option value="3">Delirium</option>')
@@ -8170,80 +8602,94 @@ foreach ($examDetail as $key => $value) {
             )
         )
 
-        datetimepickerbyid("flatgcsexamination_date" + bodyId)
+        // datetimepickerbyid("flatgcsexamination_date" + bodyId)
+        $("#gcsexamination_date" + bodyId).val(get_date())
 
         $("#GEN001101" + bodyId).on("change", function() {
             var e = ($("#GEN001101" + bodyId).val() === null) ? 0 : $("#GEN001101" + bodyId).val();
-            var m = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
-            var v = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
+            var v = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
+            var m = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
 
-            var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
-            var conclutionScore = 0
-            if (totalScore >= 3 && totalScore <= 4)
-                conclutionScore = 6
-            if (totalScore > 4 && totalScore <= 6)
-                conclutionScore = 5
-            if (totalScore > 6 && totalScore <= 9)
-                conclutionScore = 4
-            if (totalScore > 9 && totalScore <= 11)
-                conclutionScore = 3
-            if (totalScore > 11 && totalScore <= 13)
-                conclutionScore = 2
-            if (totalScore > 13 && totalScore <= 15)
-                conclutionScore = 1
+            if (parseInt(v) == 0) {
+                $('#GCS_SCORE' + bodyId).val(0)
+                $('#GCS_DESC' + bodyId).val(0)
+            } else {
+                var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
+                var conclutionScore = 0
+                if (totalScore >= 3 && totalScore <= 8)
+                    conclutionScore = 6
+                else if (totalScore > 8 && totalScore <= 12)
+                    conclutionScore = 5
+                else if (totalScore > 12 && totalScore <= 14)
+                    conclutionScore = 4
+                else if (totalScore > 14 && totalScore <= 15)
+                    conclutionScore = 1
+                // else if (totalScore > 16 && totalScore <= 18)
+                //     conclutionScore = 2
+                // else if (totalScore > 18 && totalScore <= 20)
+                //     conclutionScore = 1
 
-
-
-            $('#GCS_SCORE' + bodyId).val(totalScore)
-            $('#GCS_DESC' + bodyId).val(conclutionScore)
+                $('#GCS_SCORE' + bodyId).val(totalScore)
+                $('#GCS_DESC' + bodyId).val(conclutionScore)
+            }
         })
         $("#GEN001102" + bodyId).on("change", function() {
             var e = ($("#GEN001101" + bodyId).val() === null) ? 0 : $("#GEN001101" + bodyId).val();
-            var m = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
-            var v = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
+            var v = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
+            var m = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
 
-            var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
-            var conclutionScore = 0
-            if (totalScore >= 3 && totalScore <= 4)
-                conclutionScore = 6
-            if (totalScore > 4 && totalScore <= 6)
-                conclutionScore = 5
-            if (totalScore > 6 && totalScore <= 9)
-                conclutionScore = 4
-            if (totalScore > 9 && totalScore <= 11)
-                conclutionScore = 3
-            if (totalScore > 11 && totalScore <= 13)
-                conclutionScore = 2
-            if (totalScore > 13 && totalScore <= 15)
-                conclutionScore = 1
+            if (parseInt(v) == 0) {
 
+                $('#GCS_SCORE' + bodyId).val(0)
+                $('#GCS_DESC' + bodyId).val(0)
+            } else {
+                var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
+                var conclutionScore = 0
+                if (totalScore >= 3 && totalScore <= 8)
+                    conclutionScore = 6
+                else if (totalScore > 8 && totalScore <= 12)
+                    conclutionScore = 5
+                else if (totalScore > 12 && totalScore <= 14)
+                    conclutionScore = 4
+                else if (totalScore > 14 && totalScore <= 15)
+                    conclutionScore = 1
+                // else if (totalScore > 16 && totalScore <= 18)
+                //     conclutionScore = 2
+                // else if (totalScore > 18 && totalScore <= 20)
+                //     conclutionScore = 1
 
-            $('#GCS_SCORE' + bodyId).val(totalScore)
-            $('#GCS_DESC' + bodyId).val(conclutionScore)
+                $('#GCS_SCORE' + bodyId).val(totalScore)
+                $('#GCS_DESC' + bodyId).val(conclutionScore)
+            }
         })
         $("#GEN001103" + bodyId).on("change", function() {
             var e = ($("#GEN001101" + bodyId).val() === null) ? 0 : $("#GEN001101" + bodyId).val();
-            var m = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
-            var v = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
+            var v = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
+            var m = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
 
-            var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
-            var conclutionScore = 0
-            if (totalScore >= 3 && totalScore <= 4)
-                conclutionScore = 6
-            if (totalScore > 4 && totalScore <= 6)
-                conclutionScore = 5
-            if (totalScore > 6 && totalScore <= 9)
-                conclutionScore = 4
-            if (totalScore > 9 && totalScore <= 11)
-                conclutionScore = 3
-            if (totalScore > 11 && totalScore <= 13)
-                conclutionScore = 2
-            if (totalScore > 13 && totalScore <= 15)
-                conclutionScore = 1
+            if (parseInt(v) == 0) {
 
+                $('#GCS_SCORE' + bodyId).val(0)
+                $('#GCS_DESC' + bodyId).val(0)
+            } else {
+                var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
+                var conclutionScore = 0
+                if (totalScore >= 3 && totalScore <= 8)
+                    conclutionScore = 6
+                else if (totalScore > 8 && totalScore <= 12)
+                    conclutionScore = 5
+                else if (totalScore > 12 && totalScore <= 14)
+                    conclutionScore = 4
+                else if (totalScore > 14 && totalScore <= 15)
+                    conclutionScore = 1
+                // else if (totalScore > 16 && totalScore <= 18)
+                //     conclutionScore = 2
+                // else if (totalScore > 18 && totalScore <= 20)
+                //     conclutionScore = 1
 
-            $('#GCS_SCORE' + bodyId).val(totalScore)
-            $('#GCS_DESC' + bodyId).val(conclutionScore)
+                $('#GCS_SCORE' + bodyId).val(totalScore)
+                $('#GCS_DESC' + bodyId).val(conclutionScore)
+            }
         })
 
         $("#formGcsSignBtn" + bodyId).on("click", function() {
@@ -8349,7 +8795,7 @@ foreach ($examDetail as $key => $value) {
             $.each(maindataset, function(key, value) {
                 $("#gcs" + key + bodyId).val(value).trigger("change")
             })
-            $("#flatgcsexamination_date" + bodyId).val(formatedDatetimeFlat(maindataset.examination_date))
+            // $("#flatgcsexamination_date" + bodyId).val(formatedDatetimeFlat(maindataset.examination_date))
             var gcs = gcsAll[index];
             <?php foreach ($aParameter as $key => $value) {
                 if (@$value['p_type'] == 'GEN0011') {
@@ -8427,7 +8873,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getGcs',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -8465,7 +8911,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/copyGcs',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': $("#" + document_id)?.val()
             }),
@@ -8751,7 +9197,7 @@ foreach ($examDetail as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getIntegumen',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': bodyId
             }),
@@ -8807,8 +9253,8 @@ foreach ($examDetail as $key => $value) {
                 )
             )
             .append(
-                "<td><a href='#' onclick='$(\"#adiagpdiag" +
-                diagNurseIdentity +
+                "<td><a href='#' onclick='$(\"#" +
+                container + bodyId + diagIndex +
                 "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>"
             )
         );
@@ -9072,10 +9518,211 @@ foreach ($examDetail as $key => $value) {
         });
     }
 
+    function closeBillPoli() {
+        postData({
+            trans_id: visit.trans_id,
+            visit_id: visit.visit_id,
+            no_registration: visit.no_registration,
+            isrj: visit.isrj
+        }, 'admin/patient/closeBillPoli', (res) => {
+            closedBillCond()
+            visit.locked = '2'
+        })
+    }
+
+    function closedBillCond() {
+        if (!(visit?.locked === '0' || visit?.locked === null) || (visit?.platform == 'profile' && visit?.class_room_id != null)) {
+            if (visit.locked == '2') {
+                $(".btn-spppoli").html("<i class='fa fa-key'></i> Closed")
+                $(".btn-spppoli").attr("class", "btn btn-secondary btn-spppoli")
+                $(".btn-spppoli").prop("disabled", true)
+                $(".spppoli-to-hide").remove()
+            } else if (visit.locked == '1') {
+                $(".btn-spppoli").html("<i class='fa fa-key'></i> Valid Locked")
+                $(".btn-spppoli").attr("class", "btn btn-secondary btn-spppoli")
+                $(".btn-spppoli").prop("disabled", true)
+                $(".spppoli-to-hide").remove()
+            } else if (visit.locked == '5') {
+                $(".btn-spppoli").html("<i class='fa fa-key'></i> Close Bill")
+                $(".btn-spppoli").attr("class", "btn btn-secondary btn-spppoli")
+                $(".btn-spppoli").prop("disabled", true)
+                $(".spppoli-to-hide").remove()
+            }
+        }
+    }
+
     function updateWaktu(task) {
+
+        if (visit.clinic_id == 'P012' || visit.isrj == '0') {
+            return false
+        }
+        let raciktidak = '';
+        let isfarmasi = 0;
+        if (resepDetail[0]?.racikan == '1') {
+            raciktidak = 'Racikan';
+            isfarmasi = 1;
+        } else if (resepDetail[0]?.racikan == '0') {
+            raciktidak = 'Non racikan';
+            isfarmasi = 2;
+        } else {
+            raciktidak = 'Tidak ada';
+            isfarmasi = 0;
+        }
+
+        console.log(raciktidak)
+
         // var statusantrean = $("#pvstatusantrean").val()
         // if (statusantrean == '2' + (String)(checktask) || (statusantrean == '11' && task == 1)) {
-        if (true) {
+        if (task == 5) {
+            $.ajax({
+                url: '<?php echo base_url(); ?>api/antrianbpjs/updateWaktu',
+                type: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                },
+                data: JSON.stringify({
+                    "norm": '<?= $visit['no_registration']; ?>',
+                    "kodebooking": '<?= $visit['trans_id']; ?>',
+                    "taskid": task,
+                    "waktu": Date.now(),
+                    "jenisresep": raciktidak
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $(".updateWaktu5Btn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting ... </span>')
+                },
+                success: function(data) {
+                    console.log("Tambah Antrean " + data.metadata.message)
+
+                    if (data.metadata.code == 200) {
+                        $(".updateWaktu5Btn").html(`<i class="fa fa-check-circle"></i> <span>Berhasil</span></button>`)
+                        // alert("Update Waktu Task-ID 5 Berhasil")
+                        // $("#arstatusantrean").val('2' + (String)(task))
+                        // executeWaktuUpdate()
+                    } else {
+                        // alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status == '401') {
+                        getSatuSehatToken()
+                    } else {
+                        alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                    }
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                },
+                complete: function() {
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                }
+
+            });
+            var datafarmasi;
+            if (isfarmasi == 1) {
+                datafarmasi = {
+                    "kodebooking": '<?= $visit['trans_id']; ?>',
+                    "visit_id": '<?= $visit['visit_id']; ?>',
+                    "jenisresep": 'racikan',
+                    "nomorantrean": 1,
+                    "norm": '<?= $visit['no_registration']; ?>',
+                    "keterangan": "racikan"
+                };
+                $.ajax({
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    type: "POST",
+                    contentType: "application/json",
+                    url: BASE_URL + 'satusehat/postEncounterByVisitEnd',
+                    data: JSON.stringify({
+                        visit: visit?.visit_id,
+                    }),
+                    success: (res) => {},
+                    error: (err) => {
+                        // errorSwal(err.status);
+                        // errorCallbackMethod(err);
+                    },
+                });
+            } else if (isfarmasi == 2) {
+                datafarmasi = {
+                    "kodebooking": '<?= $visit['trans_id']; ?>',
+                    "visit_id": '<?= $visit['visit_id']; ?>',
+                    "jenisresep": 'non racikan',
+                    "nomorantrean": 1,
+                    "norm": '<?= $visit['no_registration']; ?>',
+                    "keterangan": "non racikan"
+                };
+                $.ajax({
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    type: "POST",
+                    contentType: "application/json",
+                    url: BASE_URL + 'satusehat/postEncounterByVisitEnd',
+                    data: JSON.stringify({
+                        visit: visit?.visit_id,
+                    }),
+                    success: (res) => {},
+                    error: (err) => {
+                        // errorSwal(err.status);
+                        // errorCallbackMethod(err);
+                    },
+                });
+            } else {
+                $.ajax({
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    type: "POST",
+                    contentType: "application/json",
+                    url: BASE_URL + 'satusehat/postEncounterByVisitEnd',
+                    data: JSON.stringify({
+                        visit: visit?.visit_id,
+                    }),
+                    success: (res) => {},
+                    error: (err) => {
+                        // errorSwal(err.status);
+                        // errorCallbackMethod(err);
+                    },
+                });
+                return false
+            }
+
+            console.log(datafarmasi)
+            $.ajax({
+                url: '<?php echo base_url(); ?>api/antrianbpjs/addAntreanFarmasi',
+                type: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                },
+                data: JSON.stringify(datafarmasi),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $(".updateWaktu5Btn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting ... </span>')
+                },
+                success: function(data) {
+                    console.log("Update Farmasi" + data.metadata.message)
+
+                },
+                error: function(xhr) {
+                    if (xhr.status == '401') {
+                        getSatuSehatToken()
+                    } else {
+                        // alert("Tambah farmasi: " + xhr.statusText)
+                    }
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                },
+                complete: function() {
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                }
+
+            });
+        } else if (task == 4) {
             $.ajax({
                 url: '<?php echo base_url(); ?>api/antrianbpjs/updateWaktu',
                 type: "POST",
@@ -9100,18 +9747,18 @@ foreach ($examDetail as $key => $value) {
 
                     if (data.metadata.code == 200) {
                         $(".updateWaktu5Btn").html(`<i class="fa fa-check-circle"></i> <span>Berhasil</span></button>`)
-                        alert("Update Waktu Task-ID 5 Berhasil")
+                        // alert("Update Waktu Task-ID 5 Berhasil")
                         // $("#arstatusantrean").val('2' + (String)(task))
                         // executeWaktuUpdate()
                     } else {
-                        alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                        // alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
                     }
                 },
                 error: function(xhr) {
                     if (xhr.status == '401') {
                         getSatuSehatToken()
                     } else {
-                        alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                        // alert("Update Waktu Antrean BPJS: " + xhr.statusText)
                     }
                     $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
                 },
@@ -9122,6 +9769,51 @@ foreach ($examDetail as $key => $value) {
             });
         }
 
+    }
+
+    function getlisttaskid() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/antrianbpjs/getlisttaskid',
+            type: "POST",
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+            },
+            data: JSON.stringify({
+                "norm": '<?= $visit['no_registration']; ?>',
+                "kodebooking": '<?= $visit['trans_id']; ?>',
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                // $(".updateWaktu5Btn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting ... </span>')
+            },
+            success: function(data) {
+                console.log(data)
+
+                // if (data.metadata.code == 200) {
+                //     $(".updateWaktu5Btn").html(`<i class="fa fa-check-circle"></i> <span>Berhasil</span></button>`)
+                //     alert("Update Waktu Task-ID 5 Berhasil")
+                //     // $("#arstatusantrean").val('2' + (String)(task))
+                //     // executeWaktuUpdate()
+                // } else {
+                //     alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                // }
+            },
+            error: function(xhr) {
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                }
+                $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+            },
+            complete: function() {
+                $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+            }
+
+        });
     }
 
     function executeWaktuUpdate() {
@@ -9185,5 +9877,57 @@ foreach ($examDetail as $key => $value) {
             "_blank",
             `toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=${width},height=${height}`
         );
+    }
+
+    function openPopUpTabWithPost(url) {
+        let data = visit
+        // Create a unique name for the new tab
+        const tabName = 'popup_' + Math.random().toString(36).substring(2);
+
+        // Create a form element
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = url;
+        form.target = tabName;
+        form.style.display = "none";
+
+        // Add hidden input fields for each POST parameter
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = data[key];
+                form.appendChild(input);
+            }
+        }
+
+        document.body.appendChild(form);
+
+        // Open the popup/tab first (bypasses popup blockers)
+        window.open("", tabName, "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=100,width=800,height=600");
+
+        // Submit the form to that tab
+        form.submit();
+
+        // Clean up the form after a short delay
+        setTimeout(() => document.body.removeChild(form), 1000);
+    }
+
+    function getIcare() {
+        postData({
+            "param": visit.pasien_id,
+            "kodedokter": visit.employee_id
+        }, "admin/rm/assessment/getIcare", (res) => {
+            console.log(res)
+            console.log(res.metaData)
+            console.log(res.metaData.code)
+            if (res?.metaData?.code == 200)
+                $("#icareshow").html(
+                    `<iframe src="${res?.response?.url}"
+                        width="100%" height="800px" style="border: none;">
+                    </iframe>`)
+            $("#icareshow").show()
+        })
     }
 </script>

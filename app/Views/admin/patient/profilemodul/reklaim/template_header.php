@@ -4,10 +4,10 @@
     </div>
     <div class="col mt-2" align="center">
         <h3><?= @$kop['name_of_org_unit'] ?></h3>
-        <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
-            <?= @$kop['fax'] ?? "-"?>,
-            <?= @$kop['kota'] ?? "-"?></p>
-        <p><?= @$kop['sk'] ?? "-"?></p>
+        <p><?= @$kop['contact_address'] ?? "-" ?>, <?= @$kop['phone'] ?? "-" ?>, Fax:
+            <?= @$kop['fax'] ?? "-" ?>,
+            <?= @$kop['kota'] ?? "-" ?></p>
+        <p><?= @$kop['sk'] ?? "-" ?></p>
 
     </div>
     <div class="col-auto" align="center">
@@ -52,7 +52,7 @@
         <tr>
             <td class="p-1">
                 <b>DPJP</b>
-                <p class="m-0 mt-1 p-0"><?= @$visit['fullname']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @@$visit['fullname']; ?></p>
             </td>
             <td class="p-1">
                 <b>Department</b>
@@ -61,10 +61,9 @@
             <td class="p-1">
                 <b>Tanggal Masuk</b>
                 <p class="m-0 mt-1 p-0">
-                    <?= 
-                        isset($visit['in_date']) && $visit['in_date'] ? $visit['in_date'] : 
-                        (isset($visit['visit_datetime']) ? $visit['visit_datetime'] : '')
-                     ?>
+                    <?=
+                    isset($visit['in_date']) && $visit['in_date'] ? $visit['in_date'] : (isset($visit['visit_datetime']) ? $visit['visit_datetime'] : '')
+                    ?>
                 </p>
 
             </td>
@@ -72,20 +71,20 @@
 
         <!-- jika pasien rawat inap -->
         <?php if (!empty($visit['class_room_id'])) : ?>
-        <tr>
-            <td class="p-1">
-                <b>Kelas</b>
-                <p class="m-0 mt-1 p-0"><?= @$visit['name_of_class_plafond']; ?></p>
-            </td>
-            <td class="p-1">
-                <b>Bangsal/Kamar</b>
-                <p class="m-0 mt-1 p-0"><?= @$visit['name_of_class_room']; ?></p>
-            </td>
-            <td class="p-1">
-                <b>Bed</b>
-                <p class="m-0 mt-1 p-0"><?= @$visit['name_of_class_room']; ?></p>
-            </td>
-        </tr>
+            <tr>
+                <td class="p-1">
+                    <b>Kelas</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['name_of_class_plafond']; ?></p>
+                </td>
+                <td class="p-1">
+                    <b>Bangsal/Kamar</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['name_of_class_room']; ?></p>
+                </td>
+                <td class="p-1">
+                    <b>Bed</b>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['name_of_class_room']; ?></p>
+                </td>
+            </tr>
         <?php endif; ?>
     </tbody>
 </table>

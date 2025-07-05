@@ -1783,14 +1783,14 @@ function vitalsignInput(prop) {
   }
   let ewsId = $("#" + id)
     .closest("form")
-    .find('input[name="vs_status_id"]');
+    .find('select[name="vs_status_id"]');
 
   let scoreFunction;
-  if (ewsId.val() == 1) {
+  if (ewsId.val() == 1 || ewsId.val() === "1") {
     scoreFunction = getAdultScore;
-  } else if (ewsId.val() == 5) {
+  } else if (ewsId.val() == 5 || ewsId.val() === "5") {
     scoreFunction = getNeonatalScore;
-  } else if (ewsId.val() == 10) {
+  } else if (ewsId.val() == 10 || ewsId.val() === "10") {
     scoreFunction = getObsetricScore;
   } else {
     scoreFunction = getAdultScore;
@@ -1843,11 +1843,9 @@ function vitalsignInput(prop) {
       }
       break;
     case name.startsWith("tension_upper"):
-      if (value < 50) {
-        value = 50.0;
-      } else if (value > 250) {
-        value = 250.0;
-      }
+      // if (value > 250) {
+      //   value = 250.0;
+      // }
       data = scoreFunction("darah", value);
       setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
@@ -1894,7 +1892,7 @@ function vitalsignInput(prop) {
 
 function changeEwsParam(className) {
   var optionSelected = $("option:selected", this);
-  $(".className").each((index, each) => {
+  $("." + className).each((index, each) => {
     $(each).change((element) => {
       vitalsignInput({
         value: $(each).val(),
@@ -1945,6 +1943,22 @@ function datetimepickerbyidinitial(
     time_24hr: true, // 24-hour time format
     defaultDate: initial,
     minuteIncrement: 1,
+    allowInput: true,
+    validateOnBlur: true,
+    onChange: function (selectedDates, dateStr, instance) {
+      // Validate the input whenever it changes
+      if (!instance.isValid(dateStr)) {
+        console.warn("Invalid date/time format. Please use YYYY-MM-DD HH:MM.");
+        instance.clear(); // Clear the field if invalid
+      }
+    },
+    onClose: function (selectedDates, dateStr, instance) {
+      // Validate the input when the field loses focus
+      if (!instance.isValid(dateStr)) {
+        console.warn("Invalid date/time format. Please use YYYY-MM-DD HH:MM.");
+        instance.clear(); // Clear the field if invalid
+      }
+    },
   });
   $("#" + flatid).prop("readonly", false);
   $("#" + flatid).on("change", function () {
@@ -1971,6 +1985,7 @@ function datepickerbyidinitial(
     time_24hr: true, // 24-hour time format
     defaultDate: initial,
     minuteIncrement: 1,
+    allowInput: true,
   });
   $("#" + flatid).prop("readonly", false);
   $("#" + flatid).on("change", function () {
@@ -2064,8 +2079,45 @@ function initializeQuillEditorsById(idname, initialvalue = "") {
     });
   }
 }
-function formBtnChangePassword() {}
+const formBtnChangePassword = () => {
+  $("#changePasswordForm").on("submit", function (event) {
+    event.preventDefault();
 
+    let formData = new FormData(this);
+    let jsonObj = {};
+
+    formData.forEach((value, key) => {
+      jsonObj[key] = value;
+    });
+
+    postData(jsonObj, "Home/changePassword", (res) => {
+      if (res.success) {
+        successSwal("Password successfully updated!");
+        $("#changePasswordModal").modal("hide");
+        $("#changePasswordForm")[0].reset();
+      } else {
+        errorSwal(res.message);
+      }
+    });
+  });
+};
+const btnShowChangePasswordModal = () => {
+  $(".modal-change-password")
+    .off()
+    .on("click", function (e) {
+      $("#changePasswordModal").modal("show");
+    });
+};
+function togglePasswordVisibility(inputId, button) {
+  var input = document.getElementById(inputId);
+  if (input.type === "password") {
+    input.type = "text";
+    button.classList.add("btn-outline-primary");
+  } else {
+    input.type = "password";
+    button.classList.remove("btn-outline-primary");
+  }
+}
 function togglePasswordVisibility(inputId, button) {
   var input = document.getElementById(inputId);
   if (input.type === "password") {

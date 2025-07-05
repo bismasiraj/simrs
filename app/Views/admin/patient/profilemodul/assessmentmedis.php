@@ -31,7 +31,7 @@ $group = user()->getRoles();
                 <!-- <h3>Histori Assessmen Medis</h3> -->
 
                 <table class="table table-striped table-hover">
-                    <thead class="table-primary" style="text-align: center;">
+                    <!-- <thead class="table-primary" style="text-align: center;">
                         <tr>
                             <th style="width: 5%;"></th>
                             <th class="text-center" style="width: 15%;"></th class="text-center">
@@ -39,7 +39,7 @@ $group = user()->getRoles();
                             <th class="text-center" style="width: 60%;"></th class="text-center">
                             <th class="text-center" style="width: 10%;"></th class="text-center">
                         </tr>
-                    </thead>
+                    </thead> -->
                     <tbody id="assessmentMedisHistoryBody">
                     </tbody>
                 </table>
@@ -47,7 +47,7 @@ $group = user()->getRoles();
         </div>
     </div><!--./row-->
 </div>
-<div class="modal fade" id="cetakarm" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="cetakarm" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -65,8 +65,8 @@ $group = user()->getRoles();
     </div>
 </div>
 
-<div class="modal fade" id="armModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
+<div class="modal fade" id="armModal" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
+    <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">
                 <div class="col-md-12">
@@ -144,8 +144,8 @@ $group = user()->getRoles();
                                                             <div class="mb-3">
                                                                 <div class="form-group">
                                                                     <label for="armdate_of_diagnosa">Tanggal Assessmennt</label>
-                                                                    <input id="flatarmdate_of_diagnosa" type="text" class="form-control datetimeflatpickr" readonly />
-                                                                    <input id="armdate_of_diagnosa" type="hidden" id="searchmulai" name="date_of_diagnosa">
+                                                                    <!-- <input id="flatarmdate_of_diagnosa" type="text" class="form-control datetimeflatpickr" readonly /> -->
+                                                                    <input id="armdate_of_diagnosa" type="datetime-local" id="searchmulai" class="form-control" name="date_of_diagnosa">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -218,7 +218,22 @@ $group = user()->getRoles();
                 <?php if (user()->checkPermission("assessmentmedis", "c") || user()->checkPermission("assessmentmedis", "c")) {
                     if (true) { ?>
                         <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                        <button type="button" id="formsignarm" name="signrm" onclick="signarm()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                        <button type="button" id="formsignarm" name="signrm" onclick="signarm(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign Dokter</span></button>
+                <?php }
+                } ?>
+                <?php if (user()->checkRoles(['perawat', 'dokter'])) {
+                ?>
+                    <button type="button" id="formsignarm2" name="signrm" onclick="signarm(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign Pasien/Keluarga</span></button>
+                <?php
+                } ?>
+                <?php if (user()->checkPermission("assessmentmedis", "d") && user()->checkRoles(['superuser'])) {
+                    if (true) { ?>
+                        <button type="button" id="formdeletearm" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger pull-right"><i class="fa fa-trash"></i> <span>Remove & Duplicate</span></button>
+                <?php }
+                } ?>
+                <?php if (user()->checkPermission("assessmentmedis", "d") && user()->checkRoles(['superuser'])) {
+                    if (true) { ?>
+                        <button type="button" id="formdeleteonlyarm" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger pull-right"><i class="fa fa-trash"></i> <span>Remove</span></button>
                 <?php }
                 } ?>
                 <button type="button" id="formcetakarm" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fas fa-file"></i> <span>Cetak</span></button>

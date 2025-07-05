@@ -25,17 +25,17 @@ $this->extend('layout/basiclayout', [
 <?php $this->section('content') ?>
 
 <style type="text/css">
-@media print {
+    @media print {
 
-    .no-print,
-    .no-print * {
-        display: none !important;
+        .no-print,
+        .no-print * {
+            display: none !important;
+        }
     }
-}
 
-th {
-    text-align: center;
-}
+    th {
+        text-align: center;
+    }
 </style>
 <?php
 $currency_symbol = "Rp. ";
@@ -62,7 +62,7 @@ $currency_symbol = "Rp. ";
                                             <form id="form-action-antrian" action="" method="post" class="">
                                                 <?= csrf_field(); ?>
                                                 <div class="box-body row">
-                                                    <div class="col ">
+                                                    <div class="col  table-responsive">
                                                         <div class="mb-3">
                                                             <label class="fw-bold">Manajemen Antrian</label>
                                                             <table id="reportDataTable"
@@ -88,27 +88,27 @@ $currency_symbol = "Rp. ";
                                 </div>
                             </div>
                             <style>
-                            .retrieve-data {
-                                overflow-x: auto;
-                                overflow-y: auto;
-                            }
+                                .retrieve-data {
+                                    overflow-x: auto;
+                                    overflow-y: auto;
+                                }
 
-                            .table-responsive {
+                                /* .table-responsive {
                                 width: max-content;
                                 vertical-align: middle;
                                 max-height: 65vh;
-                            }
+                            } */
 
-                            table {
+                                /* table { */
                                 /* text-align: left; */
-                                position: relative;
-                            }
+                                /* position: relative; */
+                                /* } */
 
-                            th {
+                                /* th { */
                                 /* background: white; */
-                                position: sticky;
-                                top: 0;
-                            }
+                                /* position: sticky;
+                                top: 0; */
+                                /* } */
                             </style>
                             <div class="tabsborderbg"></div>
                             <div class="box-body retrieve-data">
@@ -153,57 +153,64 @@ $currency_symbol = "Rp. ";
 
 <!-- <script src="<?php echo base_url(); ?>assets/js/pages/datatables.init.js"></script> -->
 <script type="text/javascript">
-$(document).ready(function() {
-    getDataAntrian()
+    $(document).ready(function() {
+        getDataAntrian()
 
-});
+    });
 
-const getDataAntrian = () => {
-    getDataList('admin/antrian/getData', (res) => {
-        if (res.respon === true) {
-            renderTabelsAntrian(res?.value)
-            window.globalDoctorData = res?.value.doctor
-        } else {
-            $("#bodydata-antrian").html(tempTablesNull())
-        }
-    }, (beforesend) => {
-        getLoadingGlobalServices('bodydata-antrian')
-        // $("#bodydata").html(loadingScreen())
-    })
+    const getDataAntrian = () => {
+        getDataList('admin/antrian/getData', (res) => {
+            if (res.respon === true) {
+                renderTabelsAntrian(res?.value)
+                window.globalDoctorData = res?.value.doctor
+            } else {
+                $("#bodydata-antrian").html(tempTablesNull())
+            }
+        }, (beforesend) => {
+            getLoadingGlobalServices('bodydata-antrian')
+            // $("#bodydata").html(loadingScreen())
+        })
 
-}
+    }
 
-const renderTabelsAntrian = (data) => {
-    let result = "";
-    let isFirstLoketPendaftaran = true;
+    const renderTabelsAntrian = (data) => {
+        let result = "";
+        let isFirstLoketPendaftaran = true;
 
-    data?.data?.forEach(item => {
-        const isLoketPendaftaran = item.display_room.includes("LOKET PENDAFTARAN");
+        // let resultRes = data?.data.filter(item =>!item.display_room.includes("LOKET PENDAFTARAN") || item.display_room === "LOKET PENDAFTARAN 1"
+        // );
 
-        const clinicOptions = data.poli.map(poli =>
-            `<option value="${poli.clinic_id}" ${item?.clinic_id === poli.clinic_id ? 'selected' : ''} data-clinic-name="${poli.name_of_clinic}">
+        data?.data?.forEach(item => {
+            const isLoketPendaftaran = item.display_room.includes("LOKET PENDAFTARAN");
+
+            const clinicOptions = data.poli.map(poli =>
+                `<option value="${poli.clinic_id}" ${item?.clinic_id === poli.clinic_id ? 'selected' : ''} data-clinic-name="${poli.name_of_clinic}">
                 ${poli.name_of_clinic}
             </option>`
-        ).join('');
+            ).join('');
 
-        const selectOptions = item?.clinic_id ?
-            `<option value="${item.clinic_id}" selected>${data.poli.find(poli => poli.clinic_id === item.clinic_id)?.name_of_clinic}</option>` :
-            `<option value="">Pilih</option>`;
+            const selectOptions = item?.clinic_id ?
+                `<option value="">Pilih</option>
+            <option value="${item.clinic_id}" selected>${data.poli.find(poli => poli.clinic_id === item.clinic_id)?.name_of_clinic}</option>` :
+                `<option value="">Pilih</option>`;
 
-        const filteredDoctors = data.doctor.filter(doc => doc.clinic_id === item?.clinic_id);
 
-        const doctorOptions = filteredDoctors.map(doc =>
-            `<option value="${doc.fullname}" data-employee-id="${doc.employee_id}" data-employee-code="${doc.employee_code}" ${item?.fullname === doc.fullname ? 'selected' : ''}>
+            const filteredDoctors = data.doctor.filter(doc => doc.clinic_id === item?.clinic_id);
+
+            const doctorOptions = filteredDoctors.map(doc =>
+                `<option value="${doc.fullname}" data-employee-id="${doc.employee_id}" data-employee-code="${doc.employee_code}" ${item?.fullname === doc.fullname ? 'selected' : ''}>
                 ${doc.fullname}
             </option>`
-        ).join('');
+            ).join('');
 
-        const disableClinicAndDoctor = isLoketPendaftaran;
-        const disableDisplayIp = isLoketPendaftaran && !isFirstLoketPendaftaran;
+            const disableClinicAndDoctor = isLoketPendaftaran;
+            const disableDisplayIp = isLoketPendaftaran && !isFirstLoketPendaftaran;
 
-        if (isLoketPendaftaran && isFirstLoketPendaftaran) isFirstLoketPendaftaran = false;
+            if (isLoketPendaftaran && isFirstLoketPendaftaran) isFirstLoketPendaftaran = false;
 
-        result += `<tr>
+            const isClinic = !item?.clinic_id;
+
+            result += `<tr>
                         <td>
                             <input type="hidden" name="display_id" value="${item.display_id}" />
                             ${item.display_room}
@@ -226,91 +233,126 @@ const renderTabelsAntrian = (data) => {
                             <input type="hidden" name="employee_id" id="employee_id_${item?.clinic_id}" value="${item.employee_id ?? ''}" />
                             <input type="hidden" name="employee_code" id="employee_code_${item?.clinic_id}" value="${item.employee_code ?? ''}" />
                         </td>
-                        <td>
-                            <button type="button" class="btn btn-outline-primary btn-sm checkbox-toggle pull-right w-100 form2btn" ${disableDisplayIp ? 'disabled' : ''}>
-                                <i class="fas fa-check"></i> Save
+                        <td class="d-flex justify-content-start">
+                             <button type="button" class="btn btn-outline-primary btn-sm checkbox-toggle pull-right w-50 form2btn" ${disableDisplayIp ? 'disabled' : ''}>
+                                <i class="fas fa-check"></i> ${isClinic ? ' Save':' Update' }
+                            </button>
+                            <button type="button" class="btn btn-outline-warning  btn-sm checkbox-toggle pull-right w-50 form2btnReset" ${disableDisplayIp ? 'disabled' : ''}>
+                                <i class="fas fa-sync"></i> Reset
                             </button>
                         </td>
                     </tr>`;
-    });
+        });
 
-    $("#bodydata-antrian").html(result);
-    setupForm2BtnListeners();
-};
-
-
-
-
-const updateDoctors = (selectElement) => {
-    const selectedClinicId = selectElement.value;
-    const row = $(selectElement).closest('tr');
-    const doctorSelect = row.find(`[id^='doctorSelect_']`);
-
-    const selectedClinicOption = $(selectElement).find('option:selected');
-    const clinicName = selectedClinicOption.data('clinic-name');
-    row.find(`input[name="name_of_clinic"]`).val(clinicName);
-
-    doctorSelect.empty().append('<option value="">Pilih Dokter</option>');
-
-    const doctors = window.globalDoctorData;
-    const filteredDoctors = doctors?.filter(doc => doc.clinic_id === selectedClinicId);
-
-    filteredDoctors.forEach(doc => {
-        doctorSelect.append(
-            `<option value="${doc.fullname}" data-employee-id="${doc.employee_id}" data-employee-code="${doc.employee_code}">${doc.fullname}</option>`
-        );
-    });
-};
-
-const updateDoctorName = (selectElement) => {
-    const selectedOption = $(selectElement).find('option:selected');
-
-    const employeeId = selectedOption.data('employee-id');
-    const employeeCode = selectedOption.data('employee-code');
-
-    const row = $(selectElement).closest('tr');
-
-    row.find(`input[name="employee_id"]`).val(employeeId);
-    row.find(`input[name="employee_code"]`).val(employeeCode);
-};
+        $("#bodydata-antrian").html(result);
+        setupForm2BtnListeners();
+    };
 
 
 
 
-const setupForm2BtnListeners = () => {
-    $('.form2btn').off('click').on('click', function() {
-        const row = $(this).closest('tr');
-        const display_id = row.find('input[name="display_id"]').val();
-        const clinic_id = row.find('select[name="clinic_id"]').val();
-        const display_ip = row.find('input[name="display_ip"]').val();
-        const fullname = row.find('select[name="fullname"]').val();
-        const employee_id = row.find('input[name="employee_id"]').val();
-        const employee_code = row.find('input[name="employee_code"]').val();
-        const name_of_clinic = row.find('input[name="name_of_clinic"]').val();
+    const updateDoctors = (selectElement) => {
+        const selectedClinicId = selectElement.value;
+        const row = $(selectElement).closest('tr');
+        const doctorSelect = row.find(`[id^='doctorSelect_']`);
 
-        postData({
-            display_id,
-            clinic_id,
-            display_ip,
-            fullname,
-            employee_id,
-            employee_code,
-            name_of_clinic
-        }, 'admin/antrian/updateAntrian', (res) => {
-            $('.form2btn').prop('disabled', false).html('<i class="fas fa-check"></i> Save');
-            if (res?.respon === true) {
-                successSwal(res?.message);
-            } else {
-                errorSwal(res?.message)
-            }
+        const selectedClinicOption = $(selectElement).find('option:selected');
+        const clinicName = selectedClinicOption.data('clinic-name');
+        row.find(`input[name="name_of_clinic"]`).val(clinicName);
 
-        }, (beforesend) => {
-            $('.form2btn').prop('disabled', true).html(
-                '<i class="fas fa-spinner fa-spin"></i> Loading...');
-        })
+        doctorSelect.empty().append('<option value="">Pilih Dokter</option>');
 
-    });
-}
+        const doctors = window.globalDoctorData;
+        const filteredDoctors = doctors?.filter(doc => doc.clinic_id === selectedClinicId);
+
+        filteredDoctors.forEach(doc => {
+            doctorSelect.append(
+                `<option value="${doc.fullname}" data-employee-id="${doc.employee_id}" data-employee-code="${doc.employee_code}">${doc.fullname}</option>`
+            );
+        });
+    };
+
+    const updateDoctorName = (selectElement) => {
+        const selectedOption = $(selectElement).find('option:selected');
+
+        const employeeId = selectedOption.data('employee-id');
+        const employeeCode = selectedOption.data('employee-code');
+
+        const row = $(selectElement).closest('tr');
+
+        row.find(`input[name="employee_id"]`).val(employeeId);
+        row.find(`input[name="employee_code"]`).val(employeeCode);
+    };
+
+
+
+
+    const setupForm2BtnListeners = (props) => {
+        $('.form2btn').off('click').on('click', function() {
+            const row = $(this).closest('tr');
+            const display_id = row.find('input[name="display_id"]').val();
+            const clinic_id = row.find('select[name="clinic_id"]').val();
+            const display_ip = row.find('input[name="display_ip"]').val();
+            const fullname = row.find('select[name="fullname"]').val();
+            const employee_id = row.find('input[name="employee_id"]').val();
+            const employee_code = row.find('input[name="employee_code"]').val();
+            const name_of_clinic = row.find('input[name="name_of_clinic"]').val();
+            postData({
+                display_id,
+                clinic_id,
+                display_ip,
+                fullname,
+                employee_id,
+                employee_code,
+                name_of_clinic
+            }, 'admin/antrian/updateAntrian', (res) => {
+                if (res?.respon === true) {
+                    successSwal(res?.message);
+                    getDataAntrian()
+                } else {
+                    errorSwal(res?.message);
+                }
+
+            }, (beforesend) => {
+                $('.form2btn').prop('disabled', true).html(
+                    '<i class="fas fa-spinner fa-spin"></i> Loading...');
+            });
+        });
+
+        $('.form2btnReset').off('click').on('click', function() {
+            const row = $(this).closest('tr');
+            const display_id = row.find('input[name="display_id"]').val();
+            const clinic_id = row.find('select[name="clinic_id"]').val('');
+            const display_ip = row.find('input[name="display_ip"]').val('');
+            const fullname = row.find('select[name="fullname"]').val('');
+            const employee_id = row.find('input[name="employee_id"]').val('');
+            const employee_code = row.find('input[name="employee_code"]').val('');
+            const name_of_clinic = row.find('input[name="name_of_clinic"]').val('');
+
+            postData({
+                display_id,
+                clinic_id: null,
+                display_ip: null,
+                fullname: null,
+                employee_id: null,
+                employee_code: null,
+                name_of_clinic: null
+            }, 'admin/antrian/updateAntrian', (res) => {
+                if (res?.respon === true) {
+                    successSwal(res?.message);
+                    getDataAntrian()
+                } else {
+                    errorSwal(res?.message);
+                }
+
+            }, (beforesend) => {
+                $('.form2btnReset').prop('disabled', true).html(
+                    '<i class="fas fa-spinner fa-spin"></i> Loading...');
+                $('.form2btn').prop('disabled', true).html(
+                    '<i class="fas fa-spinner fa-spin"></i> Loading...');
+            });
+        });
+    }
 </script>
 
 

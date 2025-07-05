@@ -1,0 +1,4 @@
+'<button id="' + identifier + 'expertise' + counter + '" ' + 'data-bill="' + billJson[key].bill_id + '" ' + 'onclick="actionModalExpertise(\'' + encodeURIComponent(JSON.stringify(billJson[key])) + '\',\'' + identifier + '\', \'' + counter + '\')" ' +
+                    'type="button" data-bs-toggle="modal" data-bs-target="#modalExpertise" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                    (identifier === 'arad' ? 'style="display: block"' : 'style="display: none"') +
+                    '>Ekspertise</button>' + //havin

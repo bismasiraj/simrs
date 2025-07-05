@@ -1,4 +1,4 @@
-<div class="modal fade" id="historyEresepModal" aria-hidden="true" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="historyEresepModal" aria-hidden="true" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content modal-media-content">
 
@@ -14,7 +14,7 @@
                     </div><!--./row-->
                 </div>
             </div><!--./modal-header-->
-            <form id="s" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+            <form id="s" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="modal-body pt0 pb0">
 
                 <div class="pup-scroll-area">
 
@@ -42,6 +42,7 @@
 
 <script type="text/javascript">
     function fillHistoryEresep(resep, keyvisit) {
+
         addRowObat(null, resep.resep_ke, resep, keyvisit)
 
         $("#body" + keyvisit).find("input, textarea, select").prop("disabled", true)

@@ -53,7 +53,7 @@
         /* Color for invalid feedback text */
     }
 </style>
-<div class="modal fade" id="digitalSignModal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="digitalSignModal" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content sign-modal-content rounded-4 shadow-lg">
             <div class="modal-header sign-modal-header">
@@ -75,6 +75,7 @@
                     <input type="hidden" name="sign_ke" id="signsign_ke"> <!-- statis 1 -->
                     <input type="hidden" name="title" id="signtitle"> <!-- Judul dokumen -->
                     <input type="hidden" name="sign_path" id="signsign_path">
+                    <input type="hidden" name="value_id" id="signvalue_id">
 
                     <div class="col-12 mb-3">
                         <label for="signuser_type">Penandatangan</label>
@@ -95,7 +96,7 @@
                             <label for="password">Password</label>
                             <input id="password" type="password" name="password" class="form-control" placeholder="Password">
                         </div>
-                        <div id="displaysignnik" class="form-group">
+                        <div id="displaysignnik" class="form-group d-none">
                             <label for="signnik">NIK</label>
                             <input id="signnik" type="text" class="form-control" name="nik" placeholder="NIK">
                         </div>
@@ -105,10 +106,10 @@
                         </div>
                         <div id="displaysignno_registration" class="form-group">
                             <label for="signno_registration">Nomor RM</label>
-                            <input id="signno_registration" type="text" class="form-control" name="no_registration" placeholder="Nomor RM">
+                            <input id="signno_registration" type="text" class="form-control" name="no_registration" placeholder="Nomor RM" readonly>
                         </div>
                         <div id="displaysigndatepasien" class="form-group">
-                            <label for="signdatepasien">Tanggal Lahir (YYYYMMDD)</label>
+                            <label for="signdatepasien">Tanggal Lahir Pasien (Tahun-Bulan-Tanggal) <span class="text-danger">*tanyakan pada pasien/wali</span></label>
                             <input id="signdatepasien" type="text" name="datebirth" class="form-control" placeholder="YYYYMMDD">
                         </div>
                         <div id="displayttd" class="col-xl-12 col-lg-12 col-md-12 text-center mt-4">
@@ -118,8 +119,9 @@
                                 <button id="openttdmodal" class="btn btn-secondary" type="button"> Ubah TTD</button>
                             </div>
                         </div>
-
-
+                        <div>
+                            <span class="text-danger">*Dokumen yang sudah ditandatangani tidak dapat diubah lagi, silahkan klik submit jika memang anda sudah sangat yakin</span>
+                        </div>
                     </div>
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary btn-block">submit</button>
@@ -129,7 +131,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="digitalSignModalOperation" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="digitalSignModalOperation" role="dialog" aria-labelledby="myModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content rounded-4 shadow-lg">
             <div class="modal-header">
@@ -176,7 +178,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="digitalSignModalGizi" role="dialog">
+<div class="modal fade" id="digitalSignModalGizi" role="dialog" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content rounded-4 shadow-lg">
             <div class="modal-header">
@@ -224,7 +226,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="tandatanganDialog" role="dialog">
+<div class="modal fade" id="tandatanganDialog" role="dialog" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered  modal-fullscreen" role="document">
         <div class="modal-content rounded-4 shadow-lg">
             <div class="modal-header">

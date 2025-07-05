@@ -71,4 +71,27 @@ class ExaminationDetailModel extends Model
     protected $createdField  = 'modified_date';
     protected $updatedField  = 'modified_date';
     protected $deletedField  = 'deleted_at';
+
+    function deletePasienDiagnosa($pasien_diagnosa_id)
+    {
+        return $this->db->query("update examination_detail
+            set no_registration = 'x-'+no_registration,
+            body_id = 'x-'+body_id,
+            document_id = 'x-'+document_id,
+            visit_id = 'x-'+visit_id,
+            clinic_id = 'x-'+clinic_id
+            where body_id = '$pasien_diagnosa_id'
+        ");
+    }
+    function deleteExaminationInfo($body_id)
+    {
+        return $this->db->query("update examination_detail
+            set no_registration = 'x-'+no_registration,
+            body_id = 'x-'+body_id,
+            document_id = 'x-'+document_id,
+            visit_id = 'x-'+visit_id,
+            clinic_id = 'x-'+clinic_id
+            where body_id = '$body_id'
+        ");
+    }
 }

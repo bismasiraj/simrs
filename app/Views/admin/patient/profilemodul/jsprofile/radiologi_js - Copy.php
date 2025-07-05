@@ -31,8 +31,8 @@
     $("#radTab").on("click", function() {
         $('#notaNoRad').html(`<option value="%">Semua</option>`)
 
-        getTreatResultList(nomor, visit)
-        getListRequestRad(nomor, visit)
+        getTreatResultList(nomor, visit.visit_id)
+        getListRequestRad(nomor, visit.visit_id)
         getBillPoli(nomor, ke, mulai, akhir, lunas, 'P016', rj, status, nota, trans)
         // var seen = {};
         // $('#notaNoRad option').each(function() {
@@ -61,13 +61,13 @@
         return parameter == null ? 0 : (parameter)
     }
 
-    function getTreatResultList(nomor, visit) {
+    function getTreatResultList(nomor, visit_id) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/getTreatResultList',
             type: "POST",
             data: JSON.stringify({
                 'nomor': nomor,
-                'visit': visit
+                'visit': visit_id
             }),
             dataType: 'json',
             contentType: false,
@@ -153,7 +153,7 @@
         var key = 'rad' + i
         $("#radChargesBody").append($("<tr id=\"" + key + "\">")
             .append($("<td>").html(String(i) + "."))
-            .append($("<td>").attr("id", "araddisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
+            .append($("<td>").attr("id", "araddisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= @$visit['fullname']; ?>')))
             .append($("<td>").html('<select id="arademployee_id' + key + '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'arad\',\'' + key + '\')">' +
                 chargesDropdownDoctor() +
                 `</select>` +
@@ -260,7 +260,7 @@
             ?>
                 $("#radChargesBody")
                     .append('<input name="employee_id_from[]" id="arademployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="araddoctor_from' + key + '" type="hidden" value="<?= @$visit['fullname']; ?>" class="form-control" />')
 
             <?php
             }
@@ -268,7 +268,7 @@
         }
         $("#radChargesBody")
             .append('<input name="employee_id[]" id="arademployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-            .append('<input name="doctor[]" id="araddoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
+            .append('<input name="doctor[]" id="araddoctor' + key + '" type="hidden" value="<?= @$visit['fullname']; ?>" class="form-control" />')
             .append('<input name="amount[]" id="aradamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
             .append('<input name="nota_no[]" id="aradnota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />')
             .append('<input name="profesi[]" id="aradprofesi' + key + '" type="hidden" value="" class="form-control" />')

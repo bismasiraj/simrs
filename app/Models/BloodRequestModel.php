@@ -35,6 +35,7 @@ class BloodRequestModel extends Model
         'transfusion_start',
         'transfusion_end',
         'reaction_desc',
+        'doctor'
     ];
 
     // Dates

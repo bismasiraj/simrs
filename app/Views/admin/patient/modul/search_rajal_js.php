@@ -6,10 +6,16 @@ $permissions = user()->getPermissions();
 ?>
 <script type="text/javascript">
     var tableRajal = $("#tableSearchRajal").DataTable({
-        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
+        "order": [
+            [0, 'asc']
+        ]
     })
     var tableHistoryRajal = $("#historyRajalTable").DataTable({
-        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>',
+        "order": [
+            [0, 'asc']
+        ]
     })
     $(document).ready(function(e) {
         <?php if ($gsPoli != '') { ?>
@@ -40,6 +46,7 @@ $permissions = user()->getPermissions();
             success: function(data) {
                 tableRajal.clear().draw()
                 data.data.forEach((element, key) => {
+                    console.log(element[0])
                     // stringcolumn += '<tr class="table tablecustom-light">';
                     // element.forEach((element1, key1) => {
                     //     stringcolumn += "<td>" + element1 + "</td>";
@@ -1852,7 +1859,7 @@ $permissions = user()->getPermissions();
                     "namadokter": $("#pvemployee_id option:selected").text(),
                     "jampraktek": "08:00-16:00",
                     "jeniskunjungan": $("#pvtujuankunj").val() == '3' ? 3 : (Number)($("#pvasalrujukan").val()),
-                    "nomorreferensi": $("#pvedit_sep").val() ?? $("#pvnorujukan").val(),
+                    "nomorreferensi": $("#pvedit_sep").val() == '' ? $("#pvnorujukan").val() : $("#pvedit_sep").val(),
                     "nomorantrean": $("#pvticket_no").val(),
                     "angkaantrean": $("#pvticket_no").val(),
                     "estimasidilayani": 0,
@@ -1874,7 +1881,7 @@ $permissions = user()->getPermissions();
                     if (data.metadata.code == 200 || data.metadata.code == 208) {
                         alert("Update task-id 1 berhasil")
                         $("#pvstatusantrean").val('11')
-                        // executeWaktuUpdate()
+                        executeWaktuUpdate()
                     } else {
                         alert("Posting Tambah Antrean BPJS Gagal:" + data.metadata.message)
                     }
@@ -1985,7 +1992,7 @@ $permissions = user()->getPermissions();
                             executeWaktuUpdate()
                         }
                     } else {
-                        alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                        // alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
                     }
                 },
                 error: function(xhr) {
@@ -2047,8 +2054,8 @@ $permissions = user()->getPermissions();
                 }))
 
                 if (data.metadata.code == 200) {
-                    $("#pvstatusantrean").val('2' + (String)(task))
                     executeWaktuUpdate()
+                    $("#pvstatusantrean").val('2' + (String)(task))
                 } else {
                     alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
                 }
@@ -2094,5 +2101,6 @@ $permissions = user()->getPermissions();
             $("#antrian" + visitId).html("#" + ticketNo + ' <i class="fa fa-check-circle"></i>')
         });
         updateWaktu(4, trans, norm)
+
     }
 </script>

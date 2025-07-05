@@ -249,11 +249,7 @@
                                             <td>
                                                 <div>
                                                     <div class="input-group" id="ektgl_masuk_group">
-                                                        <input id="flatektgl_masuk" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
-                                                        <input id="ektgl_masuk" name="tgl_masuk" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
-
-                                                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
+                                                        <input id="ektgl_masuk" name="tgl_masuk" type="datetime-local" class="form-control" placeholder="yyyy-mm-dd">
                                                     </div>
                                                     <!-- input-group -->
                                                 </div>
@@ -264,11 +260,7 @@
                                             <td>
                                                 <div>
                                                     <div class="input-group" id="ektgl_pulang_group">
-                                                        <input id="flatektgl_pulang" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
-                                                        <input id="ektgl_pulang" name="tgl_pulang" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
-
-                                                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
+                                                        <input id="ektgl_pulang" name="tgl_pulang" type="datetime-local" class="form-control" placeholder="yyyy-mm-dd">
                                                     </div>
                                                     <!-- input-group -->
                                                 </div>
@@ -324,11 +316,11 @@
                                         <tr>
                                             <td>Tekanan Darah</td>
                                             <td>
-                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="ekaetension_upper" placeholder="" value="" class="form-control">
+                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="ektension_upper" placeholder="" value="" class="form-control">
                                             </td>
                                             <td> / </td>
                                             <td>
-                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="ekaetension_below" placeholder="" value="" class="form-control">
+                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="ektension_below" placeholder="" value="" class="form-control">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -543,120 +535,17 @@
                                                 <td>Persalinan</td>
                                                 <td>
                                                     <div class="form-check form-check-inline mb-3">
-                                                        <input id="eklaimpersalinan1" class="form-check-input" type="radio" name="persalinan" value="1" onclick="showHideEklaim('persalinanParam',1)">
+                                                        <input id="eklaimpersalinan1" class="form-check-input" type="radio" name="persalinan" value="1">
                                                         <label class="form-check-label" for="eklaimpersalinan1">Ya</label>
                                                     </div>
                                                     <div class="form-check form-check-inline mb-3">
-                                                        <input id="eklaimpersalinan0" class="form-check-input" type="radio" name="persalinan" value="0" onclick="showHideEklaim('persalinanParam',0)" checked>
+                                                        <input id="eklaimpersalinan0" class="form-check-input" type="radio" name="persalinan" value="0" checked>
                                                         <label class="form-check-label" for="eklaimpersalinan0">Tidak</label>
                                                     </div>
                                                     <!-- <label class="radio-inline"><input type="radio" value="1" name="persalinan" onclick="showHideEklaim('persalinanParam',1)">Ya</label>
                                                     <label class="radio-inline"><input type="radio" value="0" name="persalinan" onclick="showHideEklaim('persalinanParam',0)" checked>Tidak</label> -->
                                                 </td>
-                                                <td class="persalinanParam">=></td>
-                                                <td class="persalinanParam">Usia Kehamilan</td>
-                                                <td class="persalinanParam"><input onchange="eklaimInput(this)" type="text" name="usia_kehamilan" id="ekusia_kehamilan" placeholder="" value="" class="form-control"></td>
-                                                <td class="persalinanParam">Minggu</td>
-                                                <td colspan="3"></td>
-                                            </tr>
-                                            <tr class="persalinanParam">
-                                                <td></td>
-                                                <td></td>
-                                                <td>=></td>
-                                                <td>Onset Kontraksi</td>
-                                                <td>
-                                                    <select name="onset_kontraksi" id="ekonset_kontraksi" class="form-select">
-                                                        <option value="spontan">Spontan</option>
-                                                        <option value="induksi">Induksi</option>
-                                                        <option value="non_spontan_non_induksi">Non Spontan Non Induksi</option>
-                                                    </select>
-                                                </td>
-                                                <td colspan="4"></td>
-                                            </tr>
-                                            <tr class="persalinanParam">
-                                                <td></td>
-                                                <td></td>
-                                                <td>=></td>
-                                                <td>Gravida</td>
-                                                <td><input onchange="eklaimInput(this)" type="text" name="gravida" id="ekgravida" placeholder="" value="" class="form-control"></td>
-                                                <td colspan="4"></td>
-                                            </tr>
-                                            <tr class="persalinanParam">
-                                                <td></td>
-                                                <td></td>
-                                                <td>=></td>
-                                                <td>Partus</td>
-                                                <td><input onchange="eklaimInput(this)" type="text" name="partus" id="ekpartus" placeholder="" value="" class="form-control"></td>
-                                                <td colspan="4"></td>
-                                            </tr>
-                                            <tr class="persalinanParam">
-                                                <td></td>
-                                                <td></td>
-                                                <td>=></td>
-                                                <td>Abortus</td>
-                                                <td><input onchange="eklaimInput(this)" type="text" name="abortus" id="ekabortus" placeholder="" value="" class="form-control"></td>
-                                                <td colspan="4"></td>
-                                            </tr>
-                                            <tr class="persalinanParam">
-                                                <td></td>
-                                                <td></td>
-                                                <td class="persalinanHead" style="width: 4%;">No</td>
-                                                <td class="persalinanHead">Metode</td>
-                                                <td class="persalinanHead">Waktu</td>
-                                                <td class="persalinanHead">Letak Janin</td>
-                                                <td class="persalinanHead">Kondisi</td>
-                                            </tr>
-                                            <tr class="persalinanParam">
-                                                <td></td>
-                                                <td></td>
-                                                <td class="persalinanBody persalinanBodyLeft"><input onchange="eklaimInput(this)" type="text" name="delivery_sequence[]" id="ekdelivery_sequence" placeholder="" value="" class="form-control"></td>
-                                                <td class="persalinanBody">
-                                                    <select name="delivery_method[]" id="ekdelivery_method" class="form-select">
-                                                        <option value="vaginal">Vaginal</option>
-                                                        <option value="sc">Sectio Caesarea</option>
-                                                    </select>
-                                                    <div>
-                                                        <input type="checkbox" name="use_manual[]" id="ekuse_manual">
-                                                        <label for="use_manual">Manual Aid</label>
-                                                    </div>
-                                                    <div>
-                                                        <input type="checkbox" name="use_forcep[]" id="ekuse_forcep">
-                                                        <label for="use_forcep">Forcep</label>
-                                                    </div>
-                                                    <div>
-                                                        <input type="checkbox" name="use_vacuum[]" id="ekuse_vacuum">
-                                                        <label for="use_vacuum">Vacuum</label>
-                                                    </div>
-                                                </td>
-                                                <td class="persalinanBody persalinanBodyMiddle"><input onchange="eklaimInput(this)" type="text" name="delivery_dttm[]" id="ekdelivery_dttm" placeholder="" value="" class="form-control"></td>
-
-                                                <td class="persalinanBody persalinanBodyMiddle">
-                                                    <select name="letak_janin[]" id="ekletak_janin" class="form-select">
-                                                        <option value="kepala">Kepala</option>
-                                                        <option value="sungsang">Sungsang</option>
-                                                        <option value="lintang">Lintang</option>
-                                                    </select>
-                                                </td>
-                                                <td class="persalinanBody persalinanBodyright">
-                                                    <select name="kondisi[]" id="ekkondisi" class="form-select">
-                                                        <option value="livebirth">Live Birth</option>
-                                                        <option value="stillbirth">Still Birth</option>
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                            <tr class="persalinanParam">
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-
-                                                <td>
-                                                    <button type="button" id="ekformdiag" name="adddiagnosa" onclick="modalDiagnosa()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Tambah</span></button>
-
-                                                </td>
-                                                <td>
-                                                </td>
-                                                <td>
-                                                </td>
+                                                <td colspan="7"></td>
                                             </tr>
                                             <tr>
                                                 <td>Covid-19</td>
@@ -842,15 +731,18 @@
                                                 <td>=></td>
                                                 <td>Penunjang Pengurang</td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_asam_laktat" id="eklab_asam_laktat" checked>
+                                                    <input type="hidden" name="use_manual[]" value="1">
+                                                    <input type="checkbox" name="lab_asam_laktat" id="eklab_asam_laktat" value="0" checked>
                                                     <label for="lab_asam_laktat">Lab. Asam Laktat</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_d_dimer" id="eklab_d_dimer" checked>
+                                                    <input type="hidden" name="use_manual[]" value="1">
+                                                    <input type="checkbox" name="lab_d_dimer" id="eklab_d_dimer" value="0" checked>
                                                     <label for="lab_d_dimer">Lab. D Dimer</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_anti_hiv" id="eklab_anti_hiv" checked>
+                                                    <input type="hidden" name="use_manual[]" value="1">
+                                                    <input type="checkbox" name="lab_anti_hiv" id="eklab_anti_hiv" value="0" checked>
                                                     <label for="lab_anti_hiv">Lab. Anti HIV</label>
                                                 </td>
                                             </tr>
@@ -858,45 +750,54 @@
                                                 <td colspan="3"></td>
                                                 <td>(centang jika tidak dilakukan)</td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_procalcitonin" id="eklab_procalcitonin" checked>
+                                                    <input type="hidden" name="use_manual[]" value="1">
+                                                    <input type="checkbox" name="lab_procalcitonin" id="eklab_procalcitonin" value="0" checked>
                                                     <label for="lab_procalcitonin">Lab. Procalcitonin</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_pt" id="eklab_pt" checked>
+                                                    <input type="hidden" name="use_manual[]" value="1">
+                                                    <input type="checkbox" name="lab_pt" id="eklab_pt" value="0" checked>
                                                     <label for="lab_pt">Lab. PT</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_analisa_gas" id="eklab_analisa_gas" checked>
+                                                    <input type="hidden" name="use_manual[]" value="1">
+                                                    <input type="checkbox" name="lab_analisa_gas" id="eklab_analisa_gas" value="0" checked>
                                                     <label for="lab_analisa_gas">Lab. Analisa Gas</label>
                                                 </td>
                                             </tr>
                                             <tr class="covidParam">
                                                 <td colspan="4"></td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_crp" id="eklab_crp" checked>
+                                                    <input type="hidden" name="lab_crp" value="1">
+                                                    <input type="checkbox" name="lab_crp" id="eklab_crp" value="0" checked>
                                                     <label for="lab_crp">Lab. CRP</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_aptt" id="eklab_aptt" checked>
+                                                    <input type="hidden" name="lab_aptt" value="1">
+                                                    <input type="checkbox" name="lab_aptt" id="eklab_aptt" value="0" checked>
                                                     <label for="lab_aptt">Lab. APTT</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_albumin" id="eklab_albumin" checked>
+                                                    <input type="hidden" name="lab_albumin" value="1">
+                                                    <input type="checkbox" name="lab_albumin" id="eklab_albumin" value="0" checked>
                                                     <label for="lab_albumin">Lab. Albumi</label>
                                                 </td>
                                             </tr>
                                             <tr class="covidParam">
                                                 <td colspan="4"></td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_kultur" id="eklab_kultur" checked>
+                                                    <input type="hidden" name="lab_kultur" value="1">
+                                                    <input type="checkbox" name="lab_kultur" id="eklab_kultur" value="0" checked>
                                                     <label for="lab_kultur">Lab. Kultur MO (aerob) dengan resistansi</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="lab_waktu_pendarahan" id="eklab_waktu_pendarahan" checked>
+                                                    <input type="hidden" name="lab_waktu_pendarahan" value="1">
+                                                    <input type="checkbox" name="lab_waktu_pendarahan" id="eklab_waktu_pendarahan" value="0" checked>
                                                     <label for="lab_waktu_pendarahan">Lab. Waktu Pendarahan</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="rad_thorax_ap_pa" id="ekrad_thorax_ap_pa" checked>
+                                                    <input type="hidden" name="rad_thorax_ap_pa" value="1">
+                                                    <input type="checkbox" name="rad_thorax_ap_pa" id="ekrad_thorax_ap_pa" value="0" checked>
                                                     <label for="rad_thorax_ap_pa">Radiologi Thorax AP / PA</label>
                                                 </td>
                                             </tr>
@@ -906,37 +807,44 @@
                                                 <td>=></td>
                                                 <td>Meninggal Dunia</td>
                                                 <td>
-                                                    <input type="checkbox" name="pemulasaraan_jenazah" id="ekpemulasaraan_jenazah">
+                                                    <input type="hidden" name="pemulasaraan_jenazah" value="0">
+                                                    <input type="checkbox" name="pemulasaraan_jenazah" id="ekpemulasaraan_jenazah" value="1">
                                                     <label for="pemulasaraan_jenazah">Pemulasaran Jenazah</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="kantong_jenazah" id="ekkantong_jenazah">
+                                                    <input type="hidden" name="kantong_jenazah" value="0">
+                                                    <input type="checkbox" name="kantong_jenazah" id="ekkantong_jenazah" value="1">
                                                     <label for="kantong_jenazah">Kantong Jenazah</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="peti_jenazah" id="ekpeti_jenazah">
+                                                    <input type="hidden" name="peti_jenazah" value="0">
+                                                    <input type="checkbox" name="peti_jenazah" id="ekpeti_jenazah" value="1">
                                                     <label for="peti_jenazah">Peti Jenazah</label>
                                                 </td>
                                             </tr>
                                             <tr class="covidParam">
                                                 <td colspan="4"></td>
                                                 <td>
-                                                    <input type="checkbox" name="plastik_erat" id="ekplastik_erat">
+                                                    <input type="hidden" name="plastik_erat" value="0">
+                                                    <input type="checkbox" name="plastik_erat" id="ekplastik_erat" value="1">
                                                     <label for="plastik_erat">Plastik Erat</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="desinfektan_jenazah" id="ekdesinfektan_jenazah">
+                                                    <input type="hidden" name="desinfektan_jenazah" value="0">
+                                                    <input type="checkbox" name="desinfektan_jenazah" id="ekdesinfektan_jenazah" value="1">
                                                     <label for="desinfektan_jenazah">Disinfektan Jenazah</label>
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" name="mobil_jenazah" id="ekmobil_jenazah">
+                                                    <input type="hidden" name="mobil_jenazah" value="0">
+                                                    <input type="checkbox" name="mobil_jenazah" id="ekmobil_jenazah" value="1">
                                                     <label for="mobil_jenazah">Mobil Jenazah</label>
                                                 </td>
                                             </tr>
                                             <tr class="covidParam">
                                                 <td colspan="4"></td>
                                                 <td>
-                                                    <input type="checkbox" name="desinfektan_mobil_jenazah" id="ekdesinfektan_mobil_jenazah">
+                                                    <input type="hidden" name="desinfektan_mobil_jenazah" value="0">
+                                                    <input type="checkbox" name="desinfektan_mobil_jenazah" id="ekdesinfektan_mobil_jenazah" value="1">
                                                     <label for="desinfektan_mobil_jenazah">Disinfektan Mobil Jenazah</label>
                                                 </td>
                                             </tr>
@@ -948,7 +856,7 @@
                             </div><!--./col-lg-12-->
                             <hr>
                             <div class="col-sm-12 col-md-12 col-lg-12">
-                                <h3>Tarif Rumah Sakit</h3>
+                                <h3>Tarif Rumah Sakit <a href="#eklaimcovid_indicator1" onclick="getBillEklaim18()">(Refresh)</a></h3>
                                 <table class="table mb-0">
                                     <tbody>
                                         <tr>
@@ -1013,15 +921,17 @@
                             <div class="col-md-12">
                                 <div class="dividerhr"></div>
                             </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 mt-4">
+                            <div class="col-sm-12 col-md-5 col-lg-5 mt-4">
                                 <h3>Coding UNU Grouper</h3>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
                                         <table class="table table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
-                                                    <th>Diagnosa (ICD X)</th>
-                                                    <th>Kategori Diagnosis</th>
+                                                    <th style="width: 10%;">Kode</th>
+                                                    <th style="width: 50%;">Diagnosa (ICD X)</th>
+                                                    <th style="width: 30%;">Kategori Diagnosis</th>
+                                                    <th></th>
                                                 </thead>
                                                 <tbody id="ekbodyDiagUnu">
 
@@ -1030,7 +940,8 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="ekunuDiagAdd" onclick="addUnuDiag()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Diagnosa UNU</span></button>
+                                        <select id="searchUnuDiag" class="form-control fit" style="width: 100%;"></select>
+                                        <!-- <button type="button" id="ekunuDiagAdd" onclick="addUnuDiag()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Diagnosa UNU</span></button> -->
                                     </div>
 
                                 </div>
@@ -1039,7 +950,9 @@
                                         <table class="table table-borderedcustom table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
-                                                    <th>Prosedur (ICD IX)</th>
+                                                    <th style="width: 10%;">Kode</th>
+                                                    <th style="width: 90%;">Prosedur (ICD IX)</th>
+                                                    <th></th>
                                                 </thead>
                                                 <tbody id="ekbodyProcUnu">
 
@@ -1048,20 +961,28 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="ekunuProcAdd" onclick="addUnuProc()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Prosedur UNU</span></button>
+                                        <select id="searchUnuProc" class="form-control fit"
+                                            style="width: 100%;"></select>
                                     </div>
 
                                 </div>
                             </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6 mt-4">
+                            <div class="col-sm-12 col-md-2 col-lg-2 mt-4">
+                                <div class="btn-group-vertical">
+                                    <button type="button" class="btn btn-primary" onclick="copyUnuToInaDiag()" fdprocessedid="ke2jss"> Import Coding >>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-5 col-lg-5 mt-4">
                                 <h3>Coding INA Grouper</h3>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
                                         <table class="table table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
-                                                    <th>Diagnosa (ICD X)</th>
-                                                    <th>Kategori Diagnosis</th>
+                                                    <th style="width: 10%;">Kode</th>
+                                                    <th style="width: 50%;">Diagnosa (ICD X)</th>
+                                                    <th style="width: 30%;">Kategori Diagnosis</th>
                                                 </thead>
                                                 <tbody id="ekbodyDiagIna">
 
@@ -1070,16 +991,17 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="ekinaDiagAdd" onclick="addInaDiag()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Diagnosa INA</span></button>
+                                        <select id="searchInaDiag" class="form-control fit" style="width: 100%;"></select>
                                     </div>
-
                                 </div>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
                                         <table class="table table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
-                                                    <th>Prosedur (ICD IX)</th>
+                                                    <th style="width: 10%;">Kode</th>
+                                                    <th style="width: 90%;">Prosedur (ICD IX)</th>
+                                                    <th></th>
                                                 </thead>
                                                 <tbody id="ekbodyProcIna">
 
@@ -1088,9 +1010,8 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="ekinaProcAdd" onclick="addInaProc()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Prosedur INA</span></button>
+                                        <select id="searchInaProc" class="form-control fit" style="width: 100%;"></select>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="col-sm-12 col-md-12 col-lg-12 mt-4">
@@ -1273,7 +1194,7 @@
                                             <td colspan="2" style="border-left:0;text-align:right;vertical-align:top;">&nbsp;&nbsp;</td>
                                         </tr>
                                         <tr>
-                                            <td style="text-align:left;">[ <span class="xlnk" onclick="@$(&quot;#trdebug&quot;).fadeToggle();">debug</span> ]</td>
+                                            <td style="text-align:left;"></td>
                                             <td style="border-left:0;font-weight:bold;text-align:right;" colspan="2">Total Rp</td>
                                             <td id="totalGrouper" style="border-left:0;font-weight:bold;text-align:right;">0</td>
                                         </tr>
@@ -1314,10 +1235,105 @@
                 <div class="">
                     <div class="panel-footer text-end mb-4">
                         <button type="button" id="ekfinalklaimbtn" onclick="finalKlaim()" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Final Klaim</button>
-                        <button type="submit" id="ekformsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
+                        <button type="submit" id="ekformsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary">Simpan</button>
+                        <button type="button" id="ekformgrouping" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary">Grouping</button>
                         <button type="button" id="ekeditbtn" onclick="editKlaim()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
                         <button type="button" id="" onclick="" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
-                        <a href="<?= base_url() . '/admin/cetak/cetakAllGrouping/' . base64_encode(json_encode(@$visit)); ?>" target="_blank">All Template</a>
+                    </div>
+                </div>
+                <div class="modal fade" id="ekPersalinanModal" role="dialog" aria-labelledby="" data-bs-backdrop="static">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content rounded-4">
+                            <div class="modal-header">
+                                <div class="col-md-8">
+                                    <div class="row text-start">
+                                        <h3><b>PERSALINAN</b></h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <div class="col-md-12 text-end">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--./modal-header-->
+                            <div class="modal-body pt0 pb0">
+                                <div id="modalDocument" class="border-1 rounded-4 mb-4" style="">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                            <div class="form-group">
+                                                <label>Usia Kehamilan</label>
+                                                <div class="position-relative">
+                                                    <input onchange="eklaimInput(this)" type="number" name="usia_kehamilan" id="ekusia_kehamilan" min="0" step="1" class="form-control" placeholder="Minggu">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                            <div class="form-group">
+                                                <label>Onset Kontraksi</label>
+                                                <div class="position-relative">
+                                                    <select name="onset_kontraksi" id="ekonset_kontraksi" class="form-select">
+                                                        <option value="spontan">Spontan</option>
+                                                        <option value="induksi">Induksi</option>
+                                                        <option value="non_spontan_non_induksi">SC Tanpa Kontraksi/Induksi</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                            <div class="form-group">
+                                                <label>Gravida</label>
+                                                <div class="position-relative">
+                                                    <!-- <input id="flatbayidate_of_birth" type="text" class="form-control datetimeflatpickr" value=""> -->
+                                                    <input onchange="eklaimInput(this)" type="number" name="gravida" id="ekgravida" min="0" step="1" class="form-control" value="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                            <div class="form-group">
+                                                <label>Partus</label>
+                                                <div class=" position-relative">
+                                                    <input onchange="eklaimInput(this)" type="number" name="partus" id="ekpartus" min="0" step="1" class="form-control" value="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                            <div class="form-group">
+                                                <label>Abortus</label>
+                                                <div class="position-relative">
+                                                    <input onchange="eklaimInput(this)" type="number" name="abortus" id="ekabortus" min="0" step="1" class="form-control" value="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-4 mb-4">
+                                            <div>
+                                                <table id="ekPersalinanTable" class="table table-striped">
+                                                    <thead>
+                                                        <tr class="">
+                                                            <td class="persalinanHead" style="width: 4%;">Urutan</td>
+                                                            <td class="persalinanHead">Waktu</td>
+                                                            <td class="persalinanHead">Cara Kelahiran</td>
+                                                            <td class="persalinanHead">Letak Janin</td>
+                                                            <td class="persalinanHead">Kondisi</td>
+                                                            <td class="persalinanHead">Spesimen SHK</td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="ekPersalinanBody"></tbody>
+                                                </table>
+                                            </div>
+                                            <div id="" class="col-md-12 text-center">
+                                                <a onclick="addEklaimPersalinan()" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                        <div class="panel-footer text-end mb-4">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>

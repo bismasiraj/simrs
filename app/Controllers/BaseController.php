@@ -3,12 +3,35 @@
 namespace App\Controllers;
 
 use App\Helpers\RsaEncryptionHelper;
+use App\Models\Assessment\FallRiskDetailModel;
+use App\Models\Assessment\GcsModel;
+use App\Models\Assessment\PainDetilModel;
+use App\Models\Assessment\PasienTransferModel;
+use App\Models\AssessmentAnesthesiaChecklist;
+use App\Models\AssessmentAnesthesiaModel;
+use App\Models\AssessmentOperationModel;
+use App\Models\AssessmentPraOperasi;
+use App\Models\AssessmentPraOperasiModel;
 use App\Models\ClinicModel;
+use App\Models\DietInapModel;
 use App\Models\DocsSignedModel;
 use App\Models\EmployeeAllModel;
+use App\Models\ExaminationDetailModel;
 use App\Models\ExaminationModel;
+use App\Models\FisioterapiScheduleModel;
+use App\Models\FollowUpModel;
+use App\Models\FoodRecallModel;
+use App\Models\GiziModel;
+use App\Models\InasisKontrolModel;
+use App\Models\InasisRujukanModel;
+use App\Models\InformedConsentModel;
 use App\Models\PasienDiagnosaModel;
+use App\Models\PasienKonsulanModel;
 use App\Models\PasienModel;
+use App\Models\PasienPenunjangModel;
+use App\Models\PatientOperationCheck;
+use App\Models\PatientOperationRequestModel;
+use App\Models\PersalinanModel;
 use App\Models\TreatmentBillModel;
 use CodeIgniter\Controller;
 use CodeIgniter\Database\RawSql;
@@ -50,6 +73,12 @@ abstract class BaseController extends Controller
      */
     protected $helpers = ['url', 'auth'];
     protected $baseurlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest';
+    protected $baseurlaplicares = 'https://apijkn.bpjs-kesehatan.go.id/aplicaresws';
+    // public $imageloc = WRITEPATH;
+    public $imageloc = 'C:\Users\Public\Pictures\\';
+    // protected $baseurlvclaim = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev';
+
+
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -115,21 +144,24 @@ abstract class BaseController extends Controller
     }
     function lowerKey($array)
     {
-        if (is_array($array)) {
-            $result = array();
-            foreach ($array as $key => $value) {
-                if (is_array($value)) {
-                    foreach ($value as $key1 => $value1) {
-                        $result[strtolower($key)][strtolower($key1)] = $value1;
-                    }
-                } else {
-                    $result[strtolower($key)] = $value;
-                }
-            }
+        $result = array();
+
+        if ($array === null) {
             return $result;
-        } else {
-            return [];
         }
+
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $result[strtolower($key)] = array();
+                foreach ($value as $key1 => $value1) {
+                    $result[strtolower($key)][strtolower($key1)] = $value1;
+                }
+            } else {
+                $result[strtolower($key)] = $value;
+            }
+        }
+
+        return $result;
     }
     function lowerKeyOne($array)
     {
@@ -204,24 +236,24 @@ abstract class BaseController extends Controller
 
         if ($thetype == 'antrol') { //antrol
             //tester
-            $consId = '16957';
-            $consSecret = '7dK0AAC16B';
-            $userKey = '6a7b82093922c4fafd211cfed64e82d9';
+            // $consId = '16957';
+            // $consSecret = '7dK0AAC16B';
+            // $userKey = '6a7b82093922c4fafd211cfed64e82d9';
 
             //live
-            // $consId = '25558';
-            // $consSecret = '1hQ5EFD3B5';
-            // $userKey = '86eeb2685a0e05c9dd0ccf73b711f6ad';
+            $consId = '25558';
+            $consSecret = '1hQ5EFD3B5';
+            $userKey = '86eeb2685a0e05c9dd0ccf73b711f6ad';
         } else if ($thetype = 'vclaim') {
             //tester
-            $consId = '16957';
-            $consSecret = '7dK0AAC16B';
-            $userKey = '667fedd9bbe6b6865fdc8abb7fd50848';
+            // $consId = '16957';
+            // $consSecret = '7dK0AAC16B';
+            // $userKey = '667fedd9bbe6b6865fdc8abb7fd50848';
 
             //live
-            // $consId = '25558';
-            // $consSecret = '1hQ5EFD3B5';
-            // $userKey = '6e6af96c3aa5329ffba264db0fc4347d';
+            $consId = '25558';
+            $consSecret = '1hQ5EFD3B5';
+            $userKey = '6e6af96c3aa5329ffba264db0fc4347d';
         }
 
 
@@ -276,7 +308,7 @@ abstract class BaseController extends Controller
 
         // return $results;
         $results = json_decode(($results), true);
-        if (str_contains($url, 'SEP/2.0/inserts')) {
+        if (strpos($url, 'SEP/2.0/inserts') !== false) {
             $results = '{
            "metadata": {
               "code": "200",
@@ -329,7 +361,7 @@ abstract class BaseController extends Controller
         // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
         // $method = 'POST';
         $headers = $this->AuthBridging('vclaim');
-        array_push($headers, "Content-type:Application/x-www-form-urlencoded");
+        array_push($headers, "Content-type:application/json");
 
         $postdata = ($data);
         array_push($headers, 'Content-length' . strlen($postdata));
@@ -337,6 +369,37 @@ abstract class BaseController extends Controller
 
         // return ($headers);
         return ($result);
+    }
+    protected function sendAplicares($url, $method, $data)
+    {
+
+        // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
+        // $method = 'POST';
+        $headers = $this->AuthBridging('vclaim');
+        // array_push($headers, "Content-type:application/json");
+
+        $postdata = ($data);
+        array_push($headers, 'Content-length' . strlen($postdata));
+        $result = $this->SendBridging($url, $method, $postdata, $headers);
+
+        // return ($headers);
+        return ($result);
+    }
+    protected function sendIcare($url, $method, $data)
+    {
+
+        // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
+        // $method = 'POST';
+        $headers = $this->AuthBridging('vclaim');
+        $headers[] = "Content-type: application/json";
+
+        $postdata = ($data);
+        array_push($headers, 'Content-length' . strlen($postdata));
+        $result = $this->SendBridging($url, $method, $postdata, $headers);
+        return $result;
+
+        // return ($headers);   
+        // return ([$url, $method, $postdata, $headers]);
         // ->json($result)
         // ->header('Access-Control-Allow-Origin','*')
         // ->header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS');
@@ -701,13 +764,55 @@ abstract class BaseController extends Controller
         $db = db_connect();
         $data = $db->query("select * from $table where VISIT_ID = '$visit_id' and DOCUMENT_ID = '$document_id'")->getRow(0, "array");
         $parameter = $db->query("select * from ASSESSMENT_PARAMETER ap
-                    INNER JOIN ASSESSMENT_PARAMETER_VALUE av ON ap.P_TYPE = av.P_TYPE
+                    left JOIN ASSESSMENT_PARAMETER_VALUE av ON ap.P_TYPE = av.P_TYPE
                     and ap.PARAMETER_ID = av.PARAMETER_ID
                     where ap.P_TYPE = '$p_type'")->getResultArray();
+        // dd(
+        //     $parameter
+        // );
+        // return $parameter;
+
         $newparam = [];
         if (!is_null($data)) {
             $data = $this->lowerKeyOne($data);
             $parameter = $this->lowerKey($parameter);
+            foreach ($parameter as $key => $value) {
+                if ($value['entry_type'] == '1'  || $value['entry_type'] == '4' || $value['entry_type'] == '5') {
+                    if (isset($data[strtolower($value['column_name'])])) {
+                        $parameter[$key]['value_desc'] = $data[strtolower($value['column_name'])];
+                        $newparam[] = $parameter[$key];
+                    }
+                } else if ($value['entry_type'] == '3') {
+                    if ($value['value_score'] == $data[strtolower($value['column_name'])]) {
+                        // $parameter[$key]['value_desc'] = $data[strtolower($value['column_name'])];
+                        $newparam[] = $parameter[$key];
+                    }
+                } else if (($value['entry_type'] == '2' || $value['entry_type'] == '7') && $data[strtolower($value['column_name'])] == $value['value_score']) {
+                    // return "mauk";
+                    $newparam[] = $parameter[$key];
+                }
+            }
+        }
+
+
+        return $newparam;
+    }
+    public function query_assessment_column_style_body_id($table, $p_type, $visit_id, $document_id)
+    {
+        $db = db_connect();
+        $data = $db->query("select * from $table where VISIT_ID = '$visit_id' and body_id = '$document_id'")->getRow(0, "array");
+        $parameter = $db->query("select * from ASSESSMENT_PARAMETER ap
+                    left JOIN ASSESSMENT_PARAMETER_VALUE av ON ap.P_TYPE = av.P_TYPE
+                    and ap.PARAMETER_ID = av.PARAMETER_ID
+                    where ap.P_TYPE = '$p_type'")->getResultArray();
+        // return
+        //     $data;
+
+        $newparam = [];
+        if (!is_null($data)) {
+            $data = $this->lowerKeyOne($data);
+            $parameter = $this->lowerKey($parameter);
+            // return isset($data["kala_1"]);
             // foreach ($parameter as $key => $value) {
             //     if ($value['entry_type'] == '2' && $data[strtolower($value['column_name'])] == $value['value_score']) {
             //         $data[strtolower($value['column_name'])] = $value['value_desc'];
@@ -717,13 +822,18 @@ abstract class BaseController extends Controller
             //     }
             // }
             foreach ($parameter as $key => $value) {
-                if ($value['entry_type'] == '1'  || $value['entry_type'] == '3' || $value['entry_type'] == '4' || $value['entry_type'] == '5') {
-                    if ($value['value_score'] == $data[strtolower($value['column_name'])]) {
+                if ($value['entry_type'] == '1'  || $value['entry_type'] == '4' || $value['entry_type'] == '5') {
+                    if (isset($data[strtolower($value['column_name'])]) || is_null($data[strtolower($value['column_name'])])) {
+                        $parameter[$key]['value_desc'] = $data[strtolower($value['column_name'])];
+                        $newparam[] = $parameter[$key];
+                    }
+                } else if ($value['entry_type'] == '3') {
+                    if ($value['value_id'] == $data[strtolower($value['column_name'])]) {
                         // $parameter[$key]['value_desc'] = $data[strtolower($value['column_name'])];
                         $newparam[] = $parameter[$key];
                     }
-                }
-                if (($value['entry_type'] == '2' || $value['entry_type'] == '6') && $data[strtolower($value['column_name'])] == $value['value_score']) {
+                } else if (($value['entry_type'] == '2' || $value['entry_type'] == '6' || $value['entry_type'] == '7') && $data[strtolower($value['column_name'])] == $value['value_id']) {
+                    // return "mauk";
                     $newparam[] = $parameter[$key];
                 }
             }
@@ -809,14 +919,56 @@ abstract class BaseController extends Controller
         }
         return $result;
     }
-
-    public function checkSignDocs($signId, $docs_type)
+    public function getSignModel($docs_type)
     {
         if ($docs_type == '2') {
             $model = new PasienDiagnosaModel();
-        } else if ($docs_type == '3') {
+        } else if ($docs_type == '3' || $docs_type == '1') {
             $model = new ExaminationModel();
+        } else if ($docs_type == '4') {
+            $model = new PainDetilModel();
+        } else if ($docs_type == '5') {
+            $model = new FallRiskDetailModel();
+        } else if ($docs_type == '6') {
+            $model = new GcsModel();
+        } else if ($docs_type == '7') {
+            $model = new AssessmentPraOperasiModel();
+        } else if ($docs_type == '8') {
+            $model = new AssessmentOperationModel();
+        } else if ($docs_type == '9') {
+            $model = new PatientOperationCheck();
+        } else if ($docs_type == '10') {
+            $model = new AssessmentAnesthesiaModel();
+        } else if ($docs_type == '11') {
+            $model = new PasienTransferModel();
+        } else if ($docs_type == '12') {
+            $model = new PersalinanModel();
+        } else if ($docs_type == '13') {
+            $model = new InformedConsentModel();
+        } else if ($docs_type == '14') {
+            $model = new PasienPenunjangModel();
+        } else if ($docs_type == '15') {
+            $model = new GiziModel();
+        } else if ($docs_type == '16') {
+            $model = new FoodRecallModel();
+        } else if ($docs_type == '17') {
+            $model = new DietInapModel();
+        } else if ($docs_type == '18') {
+            $model = new FisioterapiScheduleModel();
+        } else if ($docs_type == '19') {
+            $model = new ExaminationDetailModel();
+        } else if ($docs_type == '20') {
+            $model = new InasisKontrolModel();
+        } else if ($docs_type == '21') {
+            $model = new InasisRujukanModel();
+        } else if ($docs_type == '22') {
+            $model = new PasienKonsulanModel();
         }
+        return $model;
+    }
+    public function checkSignDocs($signId, $docs_type)
+    {
+        $model = $this->getSignModel($docs_type);
         // return json_encode($sign_id);
         $select = $model->find($signId);
         // return json_encode($sign_id);
@@ -852,7 +1004,7 @@ abstract class BaseController extends Controller
 
         // Find the document by signId
         $select = $this->lowerKey($docModel
-            ->select("docs_signed.*, ea.fullname")
+            ->select("docs_signed.*, LEFT(sign_path, CHARINDEX(':', sign_path) - 1) fullname")
             ->join("users u", "u.username = docs_signed.user_id", "left")
             ->join("employee_all ea", "ea.employee_id = u.employee_id", "left")
             ->where("sign_id", $signId)->findAll());
@@ -860,6 +1012,17 @@ abstract class BaseController extends Controller
         $result = [];
         foreach ($select as $key => $value) {
             // Check if the necessary data is present
+
+            if ($value['user_type'] == '1') {
+                $empModel = new EmployeeAllModel;
+                $userModel = new UserModel;
+                $filename = $userModel->where("username", $value['user_id'])->first()->employee_id;
+            } else if ($value['user_type'] == '2') {
+                $filename = $dataDoc['no_registration'];
+            } else {
+                $pos = strpos($value['sign_path'], ':'); // cari posisi pertama dari ":"
+                $filename = $dataDoc['no_registration'] . "-" . substr($value['sign_path'], 0, $pos); // ambil substring dari awal sampai sebelum ":"
+            }
 
             $signedData = $value['sign'];
 
@@ -872,6 +1035,8 @@ abstract class BaseController extends Controller
             $result[$key]['user_id'] = $value['user_id'];
             $result[$key]['sign_path'] = $value['sign_path'];
             $result[$key]['fullname'] = $value['fullname'];
+            $result[$key]['sign_ke'] = $value['sign_ke'];
+            $result[$key]['sign_file'] = $this->getSignPict2($value['user_type'], $filename);
         }
 
 
@@ -880,7 +1045,7 @@ abstract class BaseController extends Controller
 
     public function getClinicModel()
     {
-        // $json = '[{"clinic_id":"B027","name_of_clinic":"Bangsal Rayyan","stype_id":3,"clinic_type":3,"other_id":"16","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B016","name_of_clinic":"Bangsal Kahfi","stype_id":3,"clinic_type":3,"other_id":"16","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B017","name_of_clinic":"Bangsal Asiyah","stype_id":3,"clinic_type":3,"other_id":"17","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B018","name_of_clinic":"Bangsal Maryam","stype_id":3,"clinic_type":3,"other_id":"18","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B019","name_of_clinic":"Bangsal Khadijah","stype_id":3,"clinic_type":3,"other_id":"19","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B020","name_of_clinic":"Bangsal Bilqis","stype_id":3,"clinic_type":3,"other_id":"20","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B021","name_of_clinic":"Bangsal Ibrahim","stype_id":3,"clinic_type":3,"other_id":"21","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B022","name_of_clinic":"Bangsal Fatimah","stype_id":3,"clinic_type":3,"other_id":"22","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B023","name_of_clinic":"Bangsal Yahya","stype_id":3,"clinic_type":3,"other_id":"23","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B024","name_of_clinic":"Bangsal Yusuf","stype_id":3,"clinic_type":3,"other_id":"24","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B025","name_of_clinic":"Bangsal Ismail","stype_id":3,"clinic_type":3,"other_id":"25","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B026","name_of_clinic":"Bangsal Musa","stype_id":3,"clinic_type":3,"other_id":"26","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B066","name_of_clinic":"ICU","stype_id":3,"clinic_type":3,"other_id":"66","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B067","name_of_clinic":"Isolasi","stype_id":3,"clinic_type":3,"other_id":"67","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B074","name_of_clinic":"PICU NICU","stype_id":3,"clinic_type":3,"other_id":"74","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B338","name_of_clinic":"Bangsal Maryam","stype_id":3,"clinic_type":3,"other_id":"338","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B341","name_of_clinic":"Bangsal Maryam","stype_id":3,"clinic_type":3,"other_id":"341","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B379","name_of_clinic":"Bangsal Bayi Sakit","stype_id":3,"clinic_type":3,"other_id":"379","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"P001","name_of_clinic":"Spesialis Penyakit Dalam","stype_id":1,"clinic_type":1,"other_id":"Sp.PD","account_id":"26","kdpoli":"INT","sslocation_id":null},{"clinic_id":"P003","name_of_clinic":"Spesialis Anak","stype_id":1,"clinic_type":2,"other_id":"Sp.A","account_id":"21","kdpoli":"ANA","sslocation_id":null},{"clinic_id":"P004","name_of_clinic":"Spesialis Obstetri & Ginekologi","stype_id":1,"clinic_type":3,"other_id":"Sp.OG","account_id":"25","kdpoli":"OBG","sslocation_id":null},{"clinic_id":"P005","name_of_clinic":"Spesialis Bedah","stype_id":1,"clinic_type":5,"other_id":"Sp.B","account_id":"23","kdpoli":"BED","sslocation_id":null},{"clinic_id":"P006","name_of_clinic":"Spesialis Saraf","stype_id":1,"clinic_type":9,"other_id":"Sp.S","account_id":"27","kdpoli":"SAR","sslocation_id":null},{"clinic_id":"P007","name_of_clinic":"Spesialis Kedokteran Jiwa","stype_id":1,"clinic_type":9,"other_id":"Sp.KJ","account_id":"39","kdpoli":null,"sslocation_id":null},{"clinic_id":"P008","name_of_clinic":"Spesialis Mata","stype_id":1,"clinic_type":14,"other_id":"Sp.M","account_id":"29","kdpoli":"MAT","sslocation_id":null},{"clinic_id":"P009","name_of_clinic":"Spesialis Penyakit Kulit dan Kelamin","stype_id":1,"clinic_type":15,"other_id":"Sp.KK","account_id":"24","kdpoli":"KLT","sslocation_id":null},{"clinic_id":"P010","name_of_clinic":"Spesialis THT","stype_id":1,"clinic_type":13,"other_id":"Sp.THT","account_id":"28","kdpoli":"THT","sslocation_id":null},{"clinic_id":"P011","name_of_clinic":"Gigi","stype_id":1,"clinic_type":28,"other_id":"GIGI","account_id":"19","kdpoli":"GIG","sslocation_id":null},{"clinic_id":"P012","name_of_clinic":"Instalasi Gawat Darurat","stype_id":5,"clinic_type":29,"other_id":"IGD","account_id":"36","kdpoli":"IGD","sslocation_id":null},{"clinic_id":"P013","name_of_clinic":"Laboratorium","stype_id":2,"clinic_type":1,"other_id":"LAB","account_id":"35","kdpoli":null,"sslocation_id":null},{"clinic_id":"P014","name_of_clinic":"Spesialis Paru","stype_id":1,"clinic_type":17,"other_id":"Sp.P","account_id":"40","kdpoli":"PAR","sslocation_id":null},{"clinic_id":"P015","name_of_clinic":"Fisioterapi","stype_id":1,"clinic_type":1,"other_id":"PHYSIO","account_id":"34","kdpoli":null,"sslocation_id":null},{"clinic_id":"P016","name_of_clinic":"Radiologi","stype_id":2,"clinic_type":1,"other_id":"RADIO","account_id":"32","kdpoli":null,"sslocation_id":null},{"clinic_id":"P017","name_of_clinic":"Umum","stype_id":1,"clinic_type":1,"other_id":"GENERAL","account_id":"20","kdpoli":"IGD","sslocation_id":null},{"clinic_id":"P018","name_of_clinic":"Spesiaslis Anestesiologi dan Terapi Intensif","stype_id":1,"clinic_type":1,"other_id":"Sp.An","account_id":"22","kdpoli":"ANT","sslocation_id":null},{"clinic_id":"P019","name_of_clinic":"GIZI","stype_id":1,"clinic_type":99,"other_id":"","account_id":"","kdpoli":null,"sslocation_id":null},{"clinic_id":"P021","name_of_clinic":"Klinik Ibu dan Anak (KIA)","stype_id":1,"clinic_type":1,"other_id":"MIDWIFERY","account_id":"37","kdpoli":null,"sslocation_id":null},{"clinic_id":"P022","name_of_clinic":"Spesialis Bedah Ortopedi dan Traumatologi","stype_id":1,"clinic_type":6,"other_id":"Sp.OT","account_id":"30","kdpoli":"OT","sslocation_id":null},{"clinic_id":"P023","name_of_clinic":"Spesialis Patologi Klinik","stype_id":1,"clinic_type":1,"other_id":"Sp.PK","account_id":"31","kdpoli":"PAK","sslocation_id":null},{"clinic_id":"P024","name_of_clinic":"Spesialis Rehabilitasi Medik","stype_id":1,"clinic_type":1,"other_id":"Sp.KFR","account_id":"38","kdpoli":"IRM","sslocation_id":null}]';
+        // $json = '[{"clinic_id":"B027","name_of_clinic":"Bangsal Rayyan","stype_id":3,"clinic_type":3,"other_id":"16","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B016","name_of_clinic":"Bangsal Kahfi","stype_id":3,"clinic_type":3,"other_id":"16","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B017","name_of_clinic":"Bangsal Asiyah","stype_id":3,"clinic_type":3,"other_id":"17","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B018","name_of_clinic":"Bangsal Maryam","stype_id":3,"clinic_type":3,"other_id":"18","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B019","name_of_clinic":"Bangsal Khadijah","stype_id":3,"clinic_type":3,"other_id":"19","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B020","name_of_clinic":"Bangsal Bilqis","stype_id":3,"clinic_type":3,"other_id":"20","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B021","name_of_clinic":"Bangsal Ibrahim","stype_id":3,"clinic_type":3,"other_id":"21","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B022","name_of_clinic":"Bangsal Fatimah","stype_id":3,"clinic_type":3,"other_id":"22","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B023","name_of_clinic":"Bangsal Yahya","stype_id":3,"clinic_type":3,"other_id":"23","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B024","name_of_clinic":"Bangsal Yusuf","stype_id":3,"clinic_type":3,"other_id":"24","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B025","name_of_clinic":"Bangsal Ismail","stype_id":3,"clinic_type":3,"other_id":"25","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B026","name_of_clinic":"Bangsal Musa","stype_id":3,"clinic_type":3,"other_id":"26","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B066","name_of_clinic":"I C U","stype_id":3,"clinic_type":3,"other_id":"66","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B067","name_of_clinic":"Isolasi","stype_id":3,"clinic_type":3,"other_id":"67","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B074","name_of_clinic":"PICU NICU","stype_id":3,"clinic_type":3,"other_id":"74","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B338","name_of_clinic":"Bangsal Maryam","stype_id":3,"clinic_type":3,"other_id":"338","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B341","name_of_clinic":"Bangsal Maryam","stype_id":3,"clinic_type":3,"other_id":"341","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"B379","name_of_clinic":"Bangsal Bayi Sakit","stype_id":3,"clinic_type":3,"other_id":"379","account_id":null,"kdpoli":null,"sslocation_id":null},{"clinic_id":"P001","name_of_clinic":"Spesialis Penyakit Dalam","stype_id":1,"clinic_type":1,"other_id":"Sp.PD","account_id":"26","kdpoli":"INT","sslocation_id":null},{"clinic_id":"P003","name_of_clinic":"Spesialis Anak","stype_id":1,"clinic_type":2,"other_id":"Sp.A","account_id":"21","kdpoli":"ANA","sslocation_id":null},{"clinic_id":"P004","name_of_clinic":"Spesialis Obstetri & Ginekologi","stype_id":1,"clinic_type":3,"other_id":"Sp.OG","account_id":"25","kdpoli":"OBG","sslocation_id":null},{"clinic_id":"P005","name_of_clinic":"Spesialis Bedah","stype_id":1,"clinic_type":5,"other_id":"Sp.B","account_id":"23","kdpoli":"BED","sslocation_id":null},{"clinic_id":"P006","name_of_clinic":"Spesialis Saraf","stype_id":1,"clinic_type":9,"other_id":"Sp.S","account_id":"27","kdpoli":"SAR","sslocation_id":null},{"clinic_id":"P007","name_of_clinic":"Spesialis Kedokteran Jiwa","stype_id":1,"clinic_type":9,"other_id":"Sp.KJ","account_id":"39","kdpoli":null,"sslocation_id":null},{"clinic_id":"P008","name_of_clinic":"Spesialis Mata","stype_id":1,"clinic_type":14,"other_id":"Sp.M","account_id":"29","kdpoli":"MAT","sslocation_id":null},{"clinic_id":"P009","name_of_clinic":"Spesialis Penyakit Kulit dan Kelamin","stype_id":1,"clinic_type":15,"other_id":"Sp.KK","account_id":"24","kdpoli":"KLT","sslocation_id":null},{"clinic_id":"P010","name_of_clinic":"Spesialis THT","stype_id":1,"clinic_type":13,"other_id":"Sp.THT","account_id":"28","kdpoli":"THT","sslocation_id":null},{"clinic_id":"P011","name_of_clinic":"Gigi","stype_id":1,"clinic_type":28,"other_id":"GIGI","account_id":"19","kdpoli":"GIG","sslocation_id":null},{"clinic_id":"P012","name_of_clinic":"Instalasi Gawat Darurat","stype_id":5,"clinic_type":29,"other_id":"IGD","account_id":"36","kdpoli":"IGD","sslocation_id":null},{"clinic_id":"P013","name_of_clinic":"Laboratorium","stype_id":2,"clinic_type":1,"other_id":"LAB","account_id":"35","kdpoli":null,"sslocation_id":null},{"clinic_id":"P014","name_of_clinic":"Spesialis Paru","stype_id":1,"clinic_type":17,"other_id":"Sp.P","account_id":"40","kdpoli":"PAR","sslocation_id":null},{"clinic_id":"P015","name_of_clinic":"Fisioterapi","stype_id":1,"clinic_type":1,"other_id":"PHYSIO","account_id":"34","kdpoli":null,"sslocation_id":null},{"clinic_id":"P016","name_of_clinic":"Radiologi","stype_id":2,"clinic_type":1,"other_id":"RADIO","account_id":"32","kdpoli":null,"sslocation_id":null},{"clinic_id":"P017","name_of_clinic":"Umum","stype_id":1,"clinic_type":1,"other_id":"GENERAL","account_id":"20","kdpoli":"IGD","sslocation_id":null},{"clinic_id":"P018","name_of_clinic":"Spesiaslis Anestesiologi dan Terapi Intensif","stype_id":1,"clinic_type":1,"other_id":"Sp.An","account_id":"22","kdpoli":"ANT","sslocation_id":null},{"clinic_id":"P019","name_of_clinic":"GIZI","stype_id":1,"clinic_type":99,"other_id":"","account_id":"","kdpoli":null,"sslocation_id":null},{"clinic_id":"P021","name_of_clinic":"Klinik Ibu dan Anak (KIA)","stype_id":1,"clinic_type":1,"other_id":"MIDWIFERY","account_id":"37","kdpoli":null,"sslocation_id":null},{"clinic_id":"P022","name_of_clinic":"Spesialis Bedah Ortopedi dan Traumatologi","stype_id":1,"clinic_type":6,"other_id":"Sp.OT","account_id":"30","kdpoli":"OT","sslocation_id":null},{"clinic_id":"P023","name_of_clinic":"Spesialis Patologi Klinik","stype_id":1,"clinic_type":1,"other_id":"Sp.PK","account_id":"31","kdpoli":"PAK","sslocation_id":null},{"clinic_id":"P024","name_of_clinic":"Spesialis Rehabilitasi Medik","stype_id":1,"clinic_type":1,"other_id":"Sp.KFR","account_id":"38","kdpoli":"IRM","sslocation_id":null}]';
         $clinicModel = new ClinicModel();
         $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5)")->findAll());
         // return json_decode($json, true);
@@ -895,8 +1060,10 @@ abstract class BaseController extends Controller
 
     public function getFollowUp()
     {
-        $json = '[{"follow_up":0,"followup":"BELUM DIKETAHUI","tindaklanjutv":null},{"follow_up":1,"followup":"HOMECARE","tindaklanjutv":null},{"follow_up":2,"followup":"DIRUJUK KE RS LAIN","tindaklanjutv":null},{"follow_up":3,"followup":"DI RUJUK KE UNIT LAIN (KONSUL)","tindaklanjutv":null},{"follow_up":4,"followup":"PERAWATAN JALAN (KONTROL)","tindaklanjutv":null},{"follow_up":5,"followup":"RAWAT INAP","tindaklanjutv":null},{"follow_up":6,"followup":"DIRUJUK KE PUSKESMAS","tindaklanjutv":null},{"follow_up":7,"followup":"DIKEMBALIKAN KE RS PERUJUK","tindaklanjutv":null},{"follow_up":8,"followup":"DIKEMBALIKAN KE UNIT YANKES PERUJUK","tindaklanjutv":null},{"follow_up":9,"followup":"DIKEMBALIKAN KE PUSKESMAS PERUJUK ","tindaklanjutv":null},{"follow_up":10,"followup":"TRANSFER INTERNAL","tindaklanjutv":null}]';
-        return json_decode($json, true);
+        $model = new FollowUpModel();
+        $select = $model->select("follow_up, followup")->findAll();
+        // $json = '[{"follow_up":0,"followup":"BELUM DIKETAHUI","tindaklanjutv":null},{"follow_up":1,"followup":"HOMECARE","tindaklanjutv":null},{"follow_up":2,"followup":"DIRUJUK KE RS LAIN","tindaklanjutv":null},{"follow_up":3,"followup":"DI RUJUK KE UNIT LAIN (KONSUL)","tindaklanjutv":null},{"follow_up":4,"followup":"PERAWATAN JALAN (KONTROL)","tindaklanjutv":null},{"follow_up":5,"followup":"RAWAT INAP","tindaklanjutv":null},{"follow_up":6,"followup":"DIRUJUK KE PUSKESMAS","tindaklanjutv":null},{"follow_up":7,"followup":"DIKEMBALIKAN KE RS PERUJUK","tindaklanjutv":null},{"follow_up":8,"followup":"DIKEMBALIKAN KE UNIT YANKES PERUJUK","tindaklanjutv":null},{"follow_up":9,"followup":"DIKEMBALIKAN KE PUSKESMAS PERUJUK ","tindaklanjutv":null},{"follow_up":10,"followup":"TRANSFER INTERNAL","tindaklanjutv":null}]';
+        return $select;
     }
     public function getGender()
     {
@@ -905,7 +1072,7 @@ abstract class BaseController extends Controller
     }
     public function getEmployee()
     {
-        $json = '[{"fullname":"dr. Gathot Adi Yanuar, Sp.OG","employee_id":"248","dpjp":"436544","specialist_type_id":"1.05","sspractitioner_id":null},{"fullname":"dr. Nurrohman Anindieta, Sp.An.","employee_id":"261","dpjp":"432202","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Yunindra Ken Shaufika","employee_id":"262","dpjp":"False","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Dianika Rohmah A","employee_id":"263","dpjp":"462330","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Pahlevi Yudha P","employee_id":"264","dpjp":"462332","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Wahyu Agung Susilo, Sp.N","employee_id":"284","dpjp":"469467","specialist_type_id":"27","sspractitioner_id":null},{"fullname":"dr. Emirza Nur Wicaksono","employee_id":"286","dpjp":"400146","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Kautsar Hidayatullah","employee_id":"287","dpjp":"292798","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"drg. Farid Masykur A","employee_id":"298","dpjp":"508098","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"dr. Dyah Ayu Sudarmawan","employee_id":"303","dpjp":"461011","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Aulya, Sp.A.","employee_id":"305","dpjp":"510546","specialist_type_id":"1.04","sspractitioner_id":null},{"fullname":"dr. Intan Permatasari Octaviani","employee_id":"309","dpjp":"537532","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Mira Rahmanita Rachman, Sp.KK","employee_id":"318","dpjp":"6649","specialist_type_id":"24","sspractitioner_id":null},{"fullname":"dr. Hary Purwono, Sp.K.J.","employee_id":"319","dpjp":"403699","specialist_type_id":"1.27","sspractitioner_id":null},{"fullname":"Dr. dr. Siswarni, Sp.KFR","employee_id":"320","dpjp":"235169","specialist_type_id":"38","sspractitioner_id":null},{"fullname":"dr. Andi Cleveriawan Arvi Putra, Sp.M","employee_id":"321","dpjp":"272083","specialist_type_id":"1.10","sspractitioner_id":null},{"fullname":"dr. Ridho Zarkasi","employee_id":"325","dpjp":"564636","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Yuli Prihastuti, M.Sc.,Sp.A.","employee_id":"326","dpjp":"404820","specialist_type_id":"1.04","sspractitioner_id":null},{"fullname":"dr. Alvian Fauzi, Sp.P.","employee_id":"327","dpjp":"5072","specialist_type_id":"1.14","sspractitioner_id":null},{"fullname":"dr. Agus Budi Utomo,Sp.S","employee_id":"41","dpjp":"230722","specialist_type_id":"27","sspractitioner_id":null},{"fullname":"dr. Annisa Inayati MS","employee_id":"42","dpjp":null,"specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Annisa Nur Hafika","employee_id":"43","dpjp":null,"specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Arie Hapsari Indah, Sp.A, MSc","employee_id":"44","dpjp":"33694","specialist_type_id":"1.04","sspractitioner_id":null},{"fullname":"dr. Arif Budi Satria, Sp.B.","employee_id":"45","dpjp":"229118","specialist_type_id":"23","sspractitioner_id":null},{"fullname":"dr. Bambang Sutanto, Sp.AN, KIC","employee_id":"46","dpjp":"234869","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Desi Ekawati","employee_id":"47","dpjp":"143675","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Dimas Mardiawan, SpOG","employee_id":"48","dpjp":"38291","specialist_type_id":"1.05","sspractitioner_id":null},{"fullname":"dr. Dina Rismawati, Sp.A, M.Sc","employee_id":"49","dpjp":"33698","specialist_type_id":"21","sspractitioner_id":null},{"fullname":"dr. Eko Dewi Ratna Utami","employee_id":"50","dpjp":"181226","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Febrian Dwi Cahyo, Sp.AN","employee_id":"51","dpjp":"33713","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Iin Novita Nurhidayati Mahmuda, Sp.PD","employee_id":"52","dpjp":"226787","specialist_type_id":"1.03","sspractitioner_id":null},{"fullname":"dr. Kun Salimah,Sp.PD","employee_id":"53","dpjp":"274999","specialist_type_id":"1.03","sspractitioner_id":null},{"fullname":"dr. Laila Saieda","employee_id":"54","dpjp":null,"specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Nur Raudatus Saadah","employee_id":"55","dpjp":"226787","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Ratih Pramuningtyas, Sp.KK","employee_id":"56","dpjp":"226520","specialist_type_id":"1.12","sspractitioner_id":null},{"fullname":"dr. Rizqy Qurrota A\u2019yun Az-Zahra","employee_id":"57","dpjp":"288475","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Rochima Ridha Hidayah","employee_id":"58","dpjp":"False","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Rosnedy Ariswati, M.Kes","employee_id":"59","dpjp":"False","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Sri Rusmanti, M.Kes","employee_id":"60","dpjp":"288487","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Tinton Budi S,Sp.RAD","employee_id":"61","dpjp":"False","specialist_type_id":"32","sspractitioner_id":null},{"fullname":"dr. Utama,Sp.B","employee_id":"62","dpjp":"33654","specialist_type_id":"1.02","sspractitioner_id":null},{"fullname":"dr. Wuryan Dewi Miftahtyas Arum","employee_id":"63","dpjp":null,"specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Yan Wirayudha, Sp.THT","employee_id":"64","dpjp":"33737","specialist_type_id":"1.11","sspractitioner_id":null},{"fullname":"drg. Naviatullaily Yarsiska","employee_id":"65","dpjp":"276293","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"drg. Pamungkas Handy Mulyawan","employee_id":"66","dpjp":"278458","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"drg. Retno Sari","employee_id":"67","dpjp":"278466","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"drg. Aya Dini Oase Caesaria","employee_id":"68","dpjp":null,"specialist_type_id":"19","sspractitioner_id":null},{"fullname":"dr. Sigit Prasetya Utama,Sp.An","employee_id":"69","dpjp":"378035","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Naziya, Sp.M","employee_id":"70","dpjp":"37837","specialist_type_id":"29","sspractitioner_id":null},{"fullname":"dr. Karmila Novianti, M.Sc.Sp.S","employee_id":"71","dpjp":"251119","specialist_type_id":"27","sspractitioner_id":null},{"fullname":"dr. Galuh Rindra Kirana","employee_id":"72","dpjp":"416059","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Astrid Astari Aulia","employee_id":"73","dpjp":null,"specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Nur Isman","employee_id":"74","dpjp":"416058","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Nurul Fajri Widyasari","employee_id":"75","dpjp":"428132","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Riza Abdillah","employee_id":"76","dpjp":"431207","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Adhitya Indra Pradhana, Sp.OT","employee_id":"77","dpjp":"False","specialist_type_id":"1.17","sspractitioner_id":null},{"fullname":"dr. Husam, Sp.Pd","employee_id":"78","dpjp":"435010","specialist_type_id":"26","sspractitioner_id":null},{"fullname":"dr. Syarah Mutia Dewi","employee_id":"79","dpjp":"441266","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Metana Puspitasari, Sp.PK","employee_id":"80","dpjp":"False","specialist_type_id":"31","sspractitioner_id":null}]';
+        $json = '[{"fullname":"dr. Hary Purwono, Sp.K.J.","employee_id":"319","dpjp":"403699","specialist_type_id":"1.27","sspractitioner_id":null},{"fullname":"dr. Ratih Pramuningtyas, Sp.KK","employee_id":"56","dpjp":"226520","specialist_type_id":"1.12","sspractitioner_id":null},{"fullname":"Alfian Novanda Yosanto, dr.","employee_id":"69194","dpjp":"","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Taufiqurrahman Nur Amin, Sp.An","employee_id":"70438","dpjp":"441266","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Gathot Adi Yanuar, Sp.OG","employee_id":"248","dpjp":"436544","specialist_type_id":"1.05","sspractitioner_id":null},{"fullname":"dr. Nita Prasasti","employee_id":"69195","dpjp":"null","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Nurrohman Anindieta, Sp.An.","employee_id":"261","dpjp":"432202","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Yunindra Ken Shaufika","employee_id":"262","dpjp":"False","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Dianika Rohmah A","employee_id":"263","dpjp":"462330","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Pahlevi Yudha P","employee_id":"264","dpjp":"462332","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Wahyu Agung Susilo, Sp.N","employee_id":"284","dpjp":"469467","specialist_type_id":"27","sspractitioner_id":null},{"fullname":"dr. Emirza Nur Wicaksono","employee_id":"286","dpjp":"400146","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Kautsar Hidayatullah","employee_id":"287","dpjp":"292798","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"drg. Farid Masykur A","employee_id":"298","dpjp":"508098","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"dr. Dyah Ayu Sudarmawan","employee_id":"303","dpjp":"461011","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Aulya, Sp.A.","employee_id":"305","dpjp":"510546","specialist_type_id":"1.04","sspractitioner_id":null},{"fullname":"dr. Intan Permatasari Octaviani","employee_id":"309","dpjp":"537532","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Mira Rahmanita Rachman, Sp.KK","employee_id":"318","dpjp":"6649","specialist_type_id":"24","sspractitioner_id":null},{"fullname":"dr. Hary Purwono, Sp.K.J.","employee_id":"319","dpjp":"403699","specialist_type_id":"1.27","sspractitioner_id":null},{"fullname":"Dr. dr. Siswarni, Sp.KFR","employee_id":"320","dpjp":"235169","specialist_type_id":"38","sspractitioner_id":null},{"fullname":"dr. Andi Cleveriawan Arvi Putra, Sp.M","employee_id":"321","dpjp":"272083","specialist_type_id":"1.10","sspractitioner_id":null},{"fullname":"dr. Ridho Zarkasi","employee_id":"325","dpjp":"564636","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Yuli Prihastuti, M.Sc.,Sp.A.","employee_id":"326","dpjp":"404820","specialist_type_id":"1.04","sspractitioner_id":null},{"fullname":"dr. Alvian Fauzi, Sp.P.","employee_id":"327","dpjp":"5072","specialist_type_id":"1.14","sspractitioner_id":null},{"fullname":"dr. Agus Budi Utomo,Sp.S","employee_id":"41","dpjp":"230722","specialist_type_id":"27","sspractitioner_id":null},{"fullname":"dr. Annisa Inayati MS","employee_id":"42","dpjp":null,"specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Annisa Nur Hafika","employee_id":"43","dpjp":null,"specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Arie Hapsari Indah, Sp.A, MSc","employee_id":"44","dpjp":"33694","specialist_type_id":"1.04","sspractitioner_id":null},{"fullname":"dr. Arif Budi Satria, Sp.B.","employee_id":"45","dpjp":"229118","specialist_type_id":"23","sspractitioner_id":null},{"fullname":"dr. Bambang Sutanto, Sp.AN, KIC","employee_id":"46","dpjp":"234869","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Desi Ekawati","employee_id":"47","dpjp":"143675","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Dimas Mardiawan, SpOG","employee_id":"48","dpjp":"38291","specialist_type_id":"1.05","sspractitioner_id":null},{"fullname":"dr. Dina Rismawati, Sp.A, M.Sc","employee_id":"49","dpjp":"33698","specialist_type_id":"21","sspractitioner_id":null},{"fullname":"dr. Eko Dewi Ratna Utami","employee_id":"50","dpjp":"181226","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Febrian Dwi Cahyo, Sp.AN","employee_id":"51","dpjp":"33713","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Iin Novita Nurhidayati Mahmuda, Sp.PD","employee_id":"52","dpjp":"226787","specialist_type_id":"1.03","sspractitioner_id":null},{"fullname":"dr. Kun Salimah,Sp.PD","employee_id":"53","dpjp":"274999","specialist_type_id":"1.03","sspractitioner_id":null},{"fullname":"dr. Laila Saieda","employee_id":"54","dpjp":null,"specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Nur Raudatus Saadah","employee_id":"55","dpjp":"226787","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Ratih Pramuningtyas, Sp.KK","employee_id":"56","dpjp":"226520","specialist_type_id":"1.12","sspractitioner_id":null},{"fullname":"dr. Rizqy Qurrota A\u2019yun Az-Zahra","employee_id":"57","dpjp":"288475","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Rochima Ridha Hidayah","employee_id":"58","dpjp":"False","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Rosnedy Ariswati, M.Kes","employee_id":"59","dpjp":"False","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Sri Rusmanti, M.Kes","employee_id":"60","dpjp":"288487","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Tinton Budi S,Sp.RAD","employee_id":"61","dpjp":"False","specialist_type_id":"32","sspractitioner_id":null},{"fullname":"dr. Muchtar Hanafi, M.Sc., Sp.Rad.","employee_id":"66213","dpjp":"False","specialist_type_id":"32","sspractitioner_id":null},{"fullname":"dr. Utama,Sp.B","employee_id":"62","dpjp":"33654","specialist_type_id":"1.02","sspractitioner_id":null},{"fullname":"dr. Wuryan Dewi Miftahtyas Arum","employee_id":"63","dpjp":null,"specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Yan Wirayudha, Sp.THT","employee_id":"64","dpjp":"33737","specialist_type_id":"1.11","sspractitioner_id":null},{"fullname":"drg. Naviatullaily Yarsiska","employee_id":"65","dpjp":"276293","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"drg. Pamungkas Handy Mulyawan","employee_id":"66","dpjp":"278458","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"drg. Retno Sari","employee_id":"67","dpjp":"278466","specialist_type_id":"19","sspractitioner_id":null},{"fullname":"drg. Aya Dini Oase Caesaria","employee_id":"68","dpjp":null,"specialist_type_id":"19","sspractitioner_id":null},{"fullname":"dr. Sigit Prasetya Utama,Sp.An","employee_id":"69","dpjp":"378035","specialist_type_id":"22","sspractitioner_id":null},{"fullname":"dr. Naziya, Sp.M","employee_id":"70","dpjp":"37837","specialist_type_id":"29","sspractitioner_id":null},{"fullname":"dr. Karmila Novianti, M.Sc.Sp.S","employee_id":"71","dpjp":"251119","specialist_type_id":"27","sspractitioner_id":null},{"fullname":"dr. Galuh Rindra Kirana","employee_id":"72","dpjp":"416059","specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Astrid Astari Aulia","employee_id":"73","dpjp":null,"specialist_type_id":"1.00","sspractitioner_id":null},{"fullname":"dr. Nur Isman","employee_id":"74","dpjp":"416058","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Nurul Fajri Widyasari","employee_id":"75","dpjp":"428132","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Riza Abdillah","employee_id":"76","dpjp":"431207","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Adhitya Indra Pradhana, Sp.OT","employee_id":"77","dpjp":"False","specialist_type_id":"1.17","sspractitioner_id":null},{"fullname":"dr. Husam, Sp.Pd","employee_id":"78","dpjp":"435010","specialist_type_id":"26","sspractitioner_id":null},{"fullname":"dr. Syarah Mutia Dewi","employee_id":"79","dpjp":"441266","specialist_type_id":"20","sspractitioner_id":null},{"fullname":"dr. Metana Puspitasari, Sp.PK","employee_id":"80","dpjp":"False","specialist_type_id":"31","sspractitioner_id":null}]';
         return json_decode($json, true);
     }
     public function getReason()
@@ -932,7 +1099,7 @@ abstract class BaseController extends Controller
     }
     public function getDiagCat()
     {
-        $json = '[{"diag_cat":1,"diagnosa_category":"DIAGNOSA UTAMA"},{"diag_cat":2,"diagnosa_category":"DIAGNOSA PENUNJANG \/SEKUNDER"},{"diag_cat":3,"diagnosa_category":"DIAGNOSA MASUK"},{"diag_cat":4,"diagnosa_category":"DIAGNOSA HARIAN\/ KERJA"},{"diag_cat":5,"diagnosa_category":"DIAGNOSA KECELAKAAN"},{"diag_cat":6,"diagnosa_category":"DIAGNOSA KEMATIAN"},{"diag_cat":7,"diagnosa_category":"DIAGNOSA BANDING"},{"diag_cat":8,"diagnosa_category":"DIAGNOSA UTAMA EKLAIM"},{"diag_cat":9,"diagnosa_category":"DIAGNOSA SEKUNDER EKLAIM"},{"diag_cat":10,"diagnosa_category":"DIAGNOSA AKTUAL (KEPERAWATAN)"},{"diag_cat":11,"diagnosa_category":"DIAGNOSA RESIKO(KEPERAWATAN)"},{"diag_cat":12,"diagnosa_category":"DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)"},{"diag_cat":13,"diagnosa_category":"DIAGNOSA PRA OPERASI"},{"diag_cat":14,"diagnosa_category":"DIAGNOSA PASCA OPERASI"},{"diag_cat":15,"diagnosa_category":"DIAGNOSA OPERASI"},{"diag_cat":16,"diagnosa_category":"DIAGNOSA NUTRISI"},{"diag_cat":17,"diagnosa_category":"DIAGNOSA FUNGSI FISIOTERAPI"}]';
+        $json = '[{"diag_cat":1,"diagnosa_category":"DIAGNOSA UTAMA"},{"diag_cat":2,"diagnosa_category":"DIAGNOSA PENUNJANG \/SEKUNDER"},{"diag_cat":3,"diagnosa_category":"DIAGNOSA MASUK"},{"diag_cat":4,"diagnosa_category":"DIAGNOSA HARIAN\/ KERJA"},{"diag_cat":5,"diagnosa_category":"DIAGNOSA KECELAKAAN"},{"diag_cat":6,"diagnosa_category":"DIAGNOSA KEMATIAN"},{"diag_cat":7,"diagnosa_category":"DIAGNOSA BANDING"},{"diag_cat":8,"diagnosa_category":"DIAGNOSA UTAMA EKLAIM"},{"diag_cat":9,"diagnosa_category":"DIAGNOSA SEKUNDER EKLAIM"},{"diag_cat":10,"diagnosa_category":"DIAGNOSA AKTUAL (KEPERAWATAN)"},{"diag_cat":11,"diagnosa_category":"DIAGNOSA RESIKO(KEPERAWATAN)"},{"diag_cat":12,"diagnosa_category":"DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)"},{"diag_cat":13,"diagnosa_category":"DIAGNOSA PRA OPERASI"},{"diag_cat":14,"diagnosa_category":"DIAGNOSA PASCA OPERASI"},{"diag_cat":15,"diagnosa_category":"DIAGNOSA OPERASI"},{"diag_cat":16,"diagnosa_category":"DIAGNOSA NUTRISI"},{"diag_cat":17,"diagnosa_category":"DIAGNOSA FUNGSI FISIOTERAPI"},{"diag_cat":18,"diagnosa_category":"DIAGNOSA PRIMER INA"}, {"diag_cat":19,"diagnosa_category":"DIAGNOSA SEKUNDER INA"}]';
         return json_decode($json, true);
     }
     function isInvalidDateTime($dateString)
@@ -947,10 +1114,10 @@ abstract class BaseController extends Controller
     }
     function getFullnameByUsername($username)
     {
-        $user = new UserModel();
-        $select = $user->select("employee_id")->where("username", $username)->first();
-        $employee_id = @$select['employee_id'];
-        if (!is_null($employee_id)) {
+        $userModel = new UserModel();
+        $select = $userModel->select("employee_id")->where("username", $username)->first();
+        $employee_id = @$select->employee_id;
+        if (!is_null($select)) {
             $employee = new EmployeeAllModel();
             $select = $employee->select("fullname")->where("employee_id", $employee_id)->first();
             $fullname = @$select['fullname'];
@@ -974,6 +1141,17 @@ abstract class BaseController extends Controller
             return $employee_id;
         }
     }
+    function getDpjpById($employee_id)
+    {
+        $employee = new EmployeeAllModel();
+        $select = $employee->select("dpjp")->where("employee_id", $employee_id)->first();
+        $dpjp = @$select['dpjp'];
+        if (!is_null($dpjp)) {
+            return $dpjp;
+        } else {
+            return $employee_id;
+        }
+    }
     function getClinicName($clinic_id)
     {
         $clinic = new ClinicModel();
@@ -984,5 +1162,99 @@ abstract class BaseController extends Controller
         } else {
             return $clinic_id;
         }
+    }
+    function sortByValue($array, $value)
+    {
+        $ages = array_column($array, $value);
+
+        array_multisort($ages, SORT_ASC, $array);
+
+        return $array;
+    }
+    public function getSignPict2($user_type, $filename)
+    {
+        // Initialize empty arrays for formData and docData
+        $dataForm = [];
+        $dataDoc = [];
+        $data = "";
+        if ($user_type == 1) {
+            $filepath = $this->imageloc . 'uploads/dokter/' . $filename . '.png';
+            if (file_exists($filepath)) {
+                $filedata = file_get_contents($filepath);
+                $filedata64 = base64_encode($filedata);
+                $data = $filedata64;
+            } else {
+                $dir = $this->imageloc . 'uploads/dokter';
+                $filepath = $this->findFileCaseInsensitive($dir, $filename, 'png');
+                if ($filepath && file_exists($filepath)) {
+                    $filedata = file_get_contents($filepath);
+                    $data = base64_encode($filedata);
+                }
+            }
+        } else if ($user_type == 2) {
+            // $pasien = new PasienModel();
+            // $data = $pasien->where("no_registration", $filename)->first();
+            // if (!is_null($data)) {
+            //     $data = $this->lowerKeyOne($data);
+
+            // }
+            $filepath = $this->imageloc . 'uploads/signatures/' . $filename . '.gif';
+            if (file_exists($filepath)) {
+                $filedata = file_get_contents($filepath);
+                $filedata64 = base64_encode($filedata);
+                $data = $filedata64;
+            } else {
+                $dir = $this->imageloc . 'uploads/signatures';
+                $filepath = $this->findFileCaseInsensitive($dir, $filename, 'gif');
+                if ($filepath && file_exists($filepath)) {
+                    $filedata = file_get_contents($filepath);
+                    $data = base64_encode($filedata);
+                }
+            }
+        } else if ($user_type == 3) {
+            $filepath = $this->imageloc . 'uploads/signatures/' . $filename . '.gif';
+            if (file_exists($filepath)) {
+                $filedata = file_get_contents($filepath);
+                $filedata64 = base64_encode($filedata);
+                $data = $filedata64;
+            } else {
+                $dir = $this->imageloc . 'uploads/signatures';
+                $filepath = $this->findFileCaseInsensitive($dir, $filename, 'gif');
+                if ($filepath && file_exists($filepath)) {
+                    $filedata = file_get_contents($filepath);
+                    $data = base64_encode($filedata);
+                }
+            }
+            // $data = $family->where("nik", $nik)->first();
+            // if (!is_null($data)) {
+            //     $data = $this->lowerKeyOne($data);
+
+            //     $filepath = $this->imageloc . 'uploads/signatures/' . $data['sign_file'];
+            //     if (file_exists($filepath)) {
+            //         $filedata = file_get_contents($filepath);
+            //         $filedata64 = base64_encode($filedata);
+            //         $data['sign_file'] = $filedata64;
+            //     }
+            // }
+        }
+
+
+
+        return ($data);
+
+        // Return error or checkpass result
+        return json_encode(['error' => 'Login failed or invalid credentials']);
+    }
+    public function findFileCaseInsensitive($dir, $filenameNoExt, $ext)
+    {
+        foreach (scandir($dir) as $file) {
+            if (
+                strtolower(pathinfo($file, PATHINFO_FILENAME)) === strtolower($filenameNoExt) &&
+                strtolower(pathinfo($file, PATHINFO_EXTENSION)) === strtolower($ext)
+            ) {
+                return $dir . DIRECTORY_SEPARATOR . $file;
+            }
+        }
+        return null;
     }
 }

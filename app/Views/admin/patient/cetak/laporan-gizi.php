@@ -12,15 +12,15 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
     <script src="<?= base_url('/assets/js/default.js') ?>"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <style>
         .form-control:disabled,
@@ -253,12 +253,12 @@
             </tbody>
         </table>
         <h5>Diagnosis</h5>
+        <div class="col-12 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+            <p class="m-0 mt-1 p-0"><?= @$val['nutrition_diagnose']; ?></p>
+        </div>
         <?php if (isset($diagnosa)) : ?>
             <div class="d-flex flex-wrap mb-3">
                 <?php foreach ($diagnosa as $key => $diag) : ?>
-                    <div class="col-12 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <p class="m-0 mt-1 p-0"><?= @$diag['diagnosa_name']; ?></p>
-                    </div>
                 <?php endforeach ?>
             </div>
         <?php endif; ?>
@@ -387,7 +387,7 @@
 
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `<?= $visit['fullname']; ?>`,
+        text: `<?= @$visit['fullname']; ?>`,
         width: 70,
         height: 70,
         colorDark: "#000000",

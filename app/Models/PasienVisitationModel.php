@@ -13,6 +13,7 @@ class PasienVisitationModel extends Model
     protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
+
     protected $useSoftDeletes = false;
 
     protected $allowedFields = [
@@ -80,7 +81,8 @@ class PasienVisitationModel extends Model
         'ssencounter_id',
         'statusantrean',
         'employee_inap',
-        'patient_category_id'
+        'patient_category_id',
+        'locked'
     ];
 
     // Dates
@@ -192,7 +194,7 @@ class PasienVisitationModel extends Model
         return $result->getResultArray();
     }
 
-    public function getKunjunganPoli($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null)
+    public function getKunjunganPoli($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null, $statuspasien = '%')
     {
 
         if (is_null($nama)) {
@@ -214,9 +216,9 @@ class PasienVisitationModel extends Model
                     RIGHT(DAY(VISIT_DATE)+100, 2) DAY,
                     c.NAME_OF_CLINIC,
                     c.CLINIC_ID');
-
             return $builder->findAll();
         } else {
+            // return "bisma'";
 
 
             /* UNTUK WATES MENGGUNAKAN ISVALID DARI TREAT RESULT:
@@ -244,8 +246,8 @@ class PasienVisitationModel extends Model
             pv.booked_Date,
             pv.visit_date,
             pv.visit_id,
-            pv.isattended,
-            pv.diantar_oleh,
+            cast(pv.isattended as varchar(2)) as isattended,
+            REPLACE(pv.diantar_oleh, '''', '') diantar_oleh,
             pv.visitor_address, --untuk pasien umum
             pv.address_of_rujukan,
             pv.rujukan_id,
@@ -261,6 +263,7 @@ class PasienVisitationModel extends Model
             0 urutan,
             NULL as NPK,
             pV.pasien_id, 
+            pV.npk, 
             pv.ticket_no, 
             PV.gender, 
             pv.class_id, 
@@ -321,19 +324,180 @@ class PasienVisitationModel extends Model
             pv.kdpoli_eks,
               pv.diagnosa")
                 ->where("(
+                pv.org_unit_code not like 'x%' and
                 ((isnull(PV.DIANTAR_OLEH,'') like '%$nama%' ) or pv.name_of_pasien like '%$nama%') or
                 (PV.NO_REGISTRATION like '%$kode%' or isnull(PV.DIANTAR_OLEH,'') like '%$kode%' ) or  
                 ( isnull(PV.KK_NO,'') like '%$nokartu%' ) 
                 or  ( isnull(pv.NO_SKP,'') like '%$nokartu%' )
             )
                and ISNULL(pV.contact_address,'') like '%$alamat%'  and
+               ISNULL(pV.status_pasien_id,'') like '$statuspasien'  and
                (PV.name_of_clinic like '%$poli%' or pv.clinic_id like '%$poli%') and
-               ( isnull(PV.fullname,'') like '%$dokter%' or isnull(pv.employee_id,'') like '%$dokter%' )
+               ( isnull(PV.fullname,'') like '%$dokter%' or isnull(pv.employee_id,'') like '$dokter' )
                 and CAST(CONVERT(VARCHAR(10), VISIT_DATE,102) AS DATETIME) >= CAST(CONVERT(VARCHAR(10), '2019-10-01',102) AS DATETIME) AND
                 left(pv.ORG_UNIT_CODE,1) <> 'x'
                 and isnull(pv.LOCKED,'') like '%$sudah%' and
-                PV.visit_date between dateadd(hour,-3,'$mulai') and dateadd(hour,24,'$akhir')")
-                ->orderBy('pv.clinic_id,pv.ticket_no');
+                PV.visit_date between dateadd(hour,-3,'$mulai') and dateadd(second,-1,dateadd(hour,24,'$akhir')) and cast(pv.isattended as varchar(2)) in ('0','1')")
+                ->orderBy('pv.fullname,pv.ticket_no', 'asc');
+            $builder = $builder->get();
+            return $builder->getResultArray();
+        }
+    }
+    public function getKunjunganCasemix($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null, $statuspasien = '%')
+    {
+
+        if (false) {
+            $builder = $this->join('clinic c', 'pasien_visitation.clinic_id = c.clinic_id', 'inner')
+                ->where('VISIT_DATE > CAST(CONVERT(VARCHAR(10),DATEADD(month, -1, GETDATE()),112) AS DATETIME)')
+                ->where('c.stype_id', '1')
+                ->groupBy('YEAR(VISIT_DATE),
+                    MONTH(VISIT_DATE),
+                    DAY(visit_date),
+                    c.NAME_OF_CLINIC,
+                    c.CLINIC_ID')
+                ->orderBy('YEAR(VISIT_DATE),
+                    MONTH(VISIT_DATE),
+                    DAY(visit_date),
+                    c.NAME_OF_CLINIC')
+                ->select('top(200) count(visit_id) as JML,
+                    YEAR(VISIT_DATE) as YEAR,
+                    RIGHT(MONTH(VISIT_DATE)+100, 2) MONTH,
+                    RIGHT(DAY(VISIT_DATE)+100, 2) DAY,
+                    c.NAME_OF_CLINIC,
+                    c.CLINIC_ID');
+            return $builder->findAll();
+        } else {
+            // return "bisma'";
+
+
+            /* UNTUK WATES MENGGUNAKAN ISVALID DARI TREAT RESULT:
+            isnull ((select count (RESULT_ID) from treat_results r where r.isvalid = '1' and r.visit_id = pv.visit_id),0)   as radiologi , */
+
+
+            $db = db_connect('default');
+            $builder = $db->table('pv');
+            $builder = $builder->select("top (200) CASE PV.NO_REGISTRATION WHEN '000000'THEN PV.DIANTAR_OLEH ELSE PV.NAME_OF_PASIEN END AS NAME_OF_PASIEN,   
+            PV.NO_REGISTRATION,    
+            PV.ORG_UNIT_CODE,
+            pV.DATE_OF_BIRTH AS date_of_birth, 
+            PV.CONTACT_ADDRESS  ,
+            PV.PHONE_NUMBER AS PHONE_NUMBER,   
+            PV.MOBILE AS MOBILE,   
+            pv.KAL_ID ,
+            PV.PLACE_OF_BIRTH AS PLACE_OF_BIRTH,
+            null as KALURAHAN,
+            pv.clinic_id,
+            PV.name_of_clinic,
+            pv.clinic_id_from,     
+            PV.fullname,
+            pv.employee_id,
+            pv.employee_id_from,
+            pv.booked_Date,
+            pv.visit_date,
+            pv.visit_id,
+            cast(pv.isattended as varchar(2)) as isattended,
+            REPLACE(pv.diantar_oleh, '''', '') diantar_oleh,
+            pv.visitor_address, --untuk pasien umum
+            pv.address_of_rujukan,
+            pv.rujukan_id,
+            pv.payor_id,
+            pv.reason_id, 
+            pv.STATUS_PASIEN_ID,
+            pv.class_room_id, 
+           -- bed_id,
+           -- keluar_id,
+           -- in_date,
+          --  exit_date,
+          -- pv.employee_inap
+            0 urutan,
+            NULL as NPK,
+            pV.pasien_id, 
+            pV.npk, 
+            pv.ticket_no, 
+            PV.gender, 
+            pv.class_id, 
+            pv.responsible_id, 
+            pv.responsible,
+            PV.ACCOUNT_ID, 
+            PV.KARYAWAN, 
+            PV.DESCRIPTION, 
+            pv.class_id_plafond, 
+            pv.COVERAGE_ID,
+            NULL AS mother,
+            NULL AS father, 
+            NULL AS spouse,
+            pv.patient_category_id, 
+            pv.way_id,
+            pv.follow_up,
+            pv.isnew,
+            pv.family_status_id,
+            PV.KK_NO ,
+            pv.ageyear,
+            pv.agemonth,
+            pv.ageday,
+            pv.diagnosa,
+            isnull(pv.NO_SKPINAP,pv.no_SKP) as NO_SKP,
+            pv.NO_SKPINAP,
+            pv.TANGGAL_RUJUKAN,
+            pV.KODE_AGAMA,
+            pv.PPKRUJUKAN,
+            pv.NORUJUKAN,
+            pv.DIAG_AWAL,
+            PV.LOKASILAKA,
+            PV.MAPPING_SEP, -- NEW 20 JULY 2017
+            PV.TRANS_ID, -- NEEW 20 feb 2018
+            PV.CALL_DATE, --NEW 10042018
+            PV.CALL_DATES,
+            PV.CALL_TIMES,
+            PV.SERVED_DATE,
+            PV.SERVED_INAP,
+            isnull ((null),0)   as radiologi ,
+            pv.diagnosa as  laboratorium,
+            PV.LOCKED,
+            pv.RM_OUT_DATE,
+            pv.RESEND_RM_DATE,
+            pv.RM_IN_DATE,
+            pv.employee_inap,
+            pv.exit_date,
+            pv.statusantrean,
+            pv.kddpjp,
+            pv.bed_id,
+            pv.in_date,
+            pv.ssencounter_id,
+            pv.keluar_id,
+            pv.modified_by,
+            pv.modified_date,
+            pv.responpost_vklaim,
+            pv.asalrujukan,
+            pv.tgl_lahir,
+            pv.kdpoli_eks,
+              pv.diagnosa")
+                ->where("(
+                pv.org_unit_code not like 'x%' and
+                ((isnull(PV.DIANTAR_OLEH,'') like '%$nama%' ) or pv.name_of_pasien like '%$nama%') or
+                (PV.NO_REGISTRATION like '%$kode%' or isnull(PV.DIANTAR_OLEH,'') like '%$kode%' ) or  
+                ( isnull(PV.KK_NO,'') like '%$nokartu%' ) 
+                or  ( isnull(pv.NO_SKP,'') like '%$nokartu%' )
+                or  ( isnull(pv.NO_SKPINAP,'') like '%$nama%' )
+                or  ( isnull(pv.NO_SKP,'') like '%$nama%' )
+            )
+               and ISNULL(pV.contact_address,'') like '%$alamat%'  and
+               (
+                        ('$statuspasien' = '0' AND CAST(pv.visit_date AS DATE) = CAST(GETDATE() AS DATE))
+                    OR ('$statuspasien' = '1' AND YEAR(pv.visit_date) = YEAR(GETDATE()) AND MONTH(pv.visit_date) = MONTH(GETDATE()))
+                    OR ('$statuspasien' = '2' AND YEAR(pv.visit_date) = YEAR(DATEADD(MONTH, -1, GETDATE())) AND MONTH(pv.visit_date) = MONTH(DATEADD(MONTH, -1, GETDATE())))
+                    OR ('$statuspasien' = '3' AND YEAR(pv.visit_date) = YEAR(DATEADD(MONTH, -2, GETDATE())) AND MONTH(pv.visit_date) = MONTH(DATEADD(MONTH, -2, GETDATE())))
+                    OR ('$statuspasien' = '4' AND YEAR(pv.visit_date) = YEAR(DATEADD(MONTH, -3, GETDATE())) AND MONTH(pv.visit_date) = MONTH(DATEADD(MONTH, -3, GETDATE())))
+                    OR ('$statuspasien' = '5')
+                ) and
+               (PV.name_of_clinic like '%$poli%' or pv.clinic_id like '%$poli%') and
+               ( isnull(PV.fullname,'') like '%$dokter%' or isnull(pv.employee_id,'') like '$dokter' )
+                and CAST(CONVERT(VARCHAR(10), VISIT_DATE,102) AS DATETIME) >= CAST(CONVERT(VARCHAR(10), '2019-10-01',102) AS DATETIME) AND
+                left(pv.ORG_UNIT_CODE,1) <> 'x'
+                and isnull(pv.LOCKED,'') like '%$sudah%'
+                and cast(pv.isattended as varchar(2)) in ('0','1')
+                and pv.visit_date > '2025-03-01'")
+                ->orderBy('pv.visit_date,pv.fullname', 'asc');
             $builder = $builder->get();
             return $builder->getResultArray();
         }

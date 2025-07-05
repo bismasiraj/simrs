@@ -26,8 +26,12 @@
             <button type="button" id="btn-print-post-operasi" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
             </button>
+            <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
             <button type="button" id="btn-save-informasi-post-operasi" class="btn btn-primary btn-save-operasi"><i
                     class="fas fa-save"></i> Simpan</button>
+
+            <?php } ?>
+
         </div>
     </form>
 </div>
@@ -64,8 +68,6 @@ $('#btn-save-informasi-post-operasi').on('click', function(e) {
             });
         });
     };
-
-    console.log(jsonObj);
 
     fetchBodyId().then(() => {
         postData(jsonObj, 'admin/PatientOperationRequest/insertAssessmentPostOperasi', (res) => {

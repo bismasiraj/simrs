@@ -1,9 +1,19 @@
 <script type='text/javascript'>
     $(document).ready(function(e) {
-        initializeSearchTarif("searchTarifPenunjangMedis", 'P001');
-
-
+        declareSearchTarifPenunjangMedis()
     })
+    const declareSearchTarifPenunjangMedis = () => {
+        initializeSearchTarif("searchTarifPenunjangMedis", 'PENUNJANG');
+        $("#searchTarifPenunjangMedis").on('select2:select', function(e) {
+            $("#searchTarifPenunjangMedisBtn").click();
+            $('html,body').animate({
+                    scrollTop: $("#searchTarifPenunjangMedis").offset().top - 50
+                },
+                'slow', 'swing');
+            $("#searchTarifPenunjangMedis").click()
+            $("#searchTarifPenunjangMedis").select2('open')
+        });
+    }
     // 1 = checkbox
     // 2 = text
     // 3 = textarea
@@ -156,13 +166,14 @@
             value: 3
         }
     ];
+
     $("#penunjangMedisTab").on("click", function() {
         $('#notaNoPenunjangMedis').html(`<option value="%">Semua</option>`)
-        getTreatResultListPenunjang(nomor, trans, visit)
-        getBillPoli(nomor, ke, mulai, akhir, lunas, 'P001', rj, status, nota, trans)
+        getTreatResultListPenunjang(nomor, trans, visit.visit_id)
+        getBillPoli(nomor, ke, mulai, akhir, lunas, '%', rj, status, nota, trans)
     })
-    $("#formSaveBillPenunjangmedisBtn").on("click", function() {
-        $("#penunjangMedisBody").find("button.simpanbill:not([disabled])").trigger("click")
+    $("#formSaveBillPenunjangBtn").on("click", function() {
+        $("#penunjangChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
     })
     $("#notaNoPenunjangMedis").on("change", function() {
         filterBillPenunjangMedis()
@@ -205,14 +216,14 @@
         return parameter == null ? 0 : (parameter)
     }
 
-    function getTreatResultListPenunjang(nomor, trans, visit) {
+    function getTreatResultListPenunjang(nomor, trans, visit_id) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/PenunjangMedis/getDataResult',
             type: "POST",
             data: JSON.stringify({
                 'no_registration': nomor,
                 'trans_id': trans,
-                'visit_id': visit
+                'visit_id': visit_id
             }),
             dataType: 'json',
             contentType: false,
@@ -225,20 +236,35 @@
                 $("#penunjangMedisBody").html("")
                 mrJson = data.result.filter(item => {
                     const treatment = item.treatment ? item.treatment.toLowerCase() : '';
-                    return treatment.includes('usg') || treatment.includes('ekg') || treatment.includes('ecg');
+                    return treatment.includes('usg') || treatment.includes('ekg') || treatment.includes(
+                        'ecg');
                 });
                 mrJson.forEach((element, key) => {
 
                     $("#penunjangMedisBody").append($("<tr>")
-                        .append($("<td >").append($("<p>").html(moment(mrJson[key].treat_date).format('DD-MM-YYYY HH:MM'))))
-                        .append($("<td >").append($("<p>").html(mrJson[key].nota_no)))
-                        .append($("<td class='text-center'>").append($("<p>").html(mrJson[key].treatment))
-                            .append($("<p class='badge " + (mrJson[key].isvalid == 1 ? "bg-primary" : "bg-danger") + " py-1 px-2'>").html(mrJson[key].isvalid == 1 ? 'TERVALIDASI' : 'BELUM VALIDASI'))
-                            .append($("<p class='" + (mrJson[key].iskritis == 1 ? "badge py-1 px-2 mx-2 bg-danger" : "d-none") + "'>").html('KRITIS'))
+                        .append($("<td class='text-center align-middle'>").append($("<p>").html(
+                            moment(mrJson[key].treat_date)
+                            .format('DD-MM-YYYY HH:MM'))))
+                        .append($("<td class='text-center align-middle'>").append($("<p>").html(
+                            mrJson[key].nota_no)))
+                        .append($("<td class='text-center align-middle'>").append($("<p>").html(
+                                mrJson[key]
+                                .treatment))
+                            .append($("<p class='badge " + (mrJson[key].isvalid == 1 ?
+                                "bg-primary" : "bg-danger") + " py-1 px-2'>").html(mrJson[key]
+                                .isvalid == 1 ? 'TERVALIDASI' : 'BELUM VALIDASI'))
+                            .append($("<p class='" + (mrJson[key].iskritis == 1 ?
+                                "badge py-1 px-2 mx-2 bg-danger" : "d-none") + "'>").html(
+                                'KRITIS'))
                         )
-                        .append($("<td>").append('<div role="group" aria-label="Vertical button group">' +
-                            '<button id="' + 'apenunjangMedis' + '" ' + 'data-bill="' + mrJson[key].bill_id + '" ' + 'onclick="actionModalPenunjangMedis(\'' + encodeURIComponent(JSON.stringify(mrJson[key])) + '\',\'' + 'apenunjangMedis' + '\')" ' +
-                            'type="button" data-bs-toggle="modal" data-bs-target="#modalPenunjangMedis" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                        .append($("<td class='text-center align-middle'>").append(
+                            '<div role="group" aria-label="Vertical button group">' +
+                            '<button id="' + 'apenunjangMedis' + '" ' + 'data-bill="' + mrJson[
+                                key].bill_id + '" ' + 'onclick="actionModalPenunjangMedis(\'' +
+                            encodeURIComponent(JSON.stringify(mrJson[key])) + '\',\'' +
+                            'apenunjangMedis' + '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalPenunjangMedis" ' +
+                            'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
                             '>Hasil</button>'))
                     )
                 });
@@ -250,45 +276,71 @@
     }
 
 
+    const addNotaPenunjangMedis = () => {
+        nota_no = get_bodyid()
+        $("#notaNoPenunjangMedis").append($("<option>").val(nota_no).text(nota_no))
+        $("#notaNoPenunjangMedis").val(nota_no)
+        $("#penunjangChargesBody").html("")
+        return nota_no
+    }
 
     function addBillPenunjangMedis(container) {
         var nota_no = $("#notaNoPenunjangMedis").val();
+        let sesi = '<?= $visit['session_id']; ?>';
 
+        // if (nota_no == '%') {
+        //     $("#notaNoPenunjangMedis").find(`option[value='${sesi}']`).remove()
+        //     nota_no = sesi
+        //     $("#notaNoPenunjangMedis").append($("<option>").val(nota_no).text(nota_no))
+        //     $("#notaNoPenunjangMedis").val(nota_no)
+        //     $("#penunjangChargesBody").html("")
+        //     // getBillPoli(nomor, ke, mulai, akhir, lunas, 'P013', rj, status, nota_no, trans)
+        // }
         if (nota_no == '%') {
-            nota_no = get_bodyid()
-            $("#notaNoPenunjangMedis").append($("<option>").val(nota_no).text(nota_no))
-            $("#notaNoPenunjangMedis").val(nota_no)
-            $("#penunjangChargesBody").html("")
+            nota_no = addNotaPenunjangMedis()
         }
-
+        let codeData = get_bodyid();
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
 
         var i = $('#penunjangChargesBody tr').length + 1;
         var key = 'penunjangmedis' + i
-        $("#penunjangChargesBody").append($("<tr id=\"" + key + "\">")
+        $("#penunjangChargesBody").append($("<tr id=\"apenunjangmedis" + key + "\">")
             .append($("<td>").html(String(i) + "."))
-            .append($("<td>").attr("id", "apenunjangmedisdisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
-            .append($("<td>").html('<select id="apenunjangmedisemployee_id' + key + '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'apenunjangmedis\',\'' + key + '\')">' +
+            .append($("<td>").attr("id", "apenunjangmedisdisplaytreatment" + key).html(tarifData.tarif_name).append($(
+                "<p>").html('<?= @$visit['fullname']; ?>')))
+            .append($("<td>").html('<select id="apenunjangmedisemployee_id' + key +
+                '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'apenunjangmedis\',\'' +
+                key + '\')">' +
                 chargesDropdownDoctor() +
                 `</select>` +
-                '<input id="apenunjangmedisdoctor' + key + '" class="form-control" style="display: none" type="text" readonly>'
+                '<input id="apenunjangmedisdoctor' + key +
+                '" class="form-control" style="display: none" type="text" readonly>'
             ))
-            .append($("<td>").attr("id", "apenunjangmedisdisplaytreat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
+            .append($("<td>").attr("id", "apenunjangmedisdisplaytreat_date" + key).html(moment().format(
+                "DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
-            .append($("<td>").attr("id", "apenunjangmedisdisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
+            .append($("<td>").attr("id", "apenunjangmedisdisplaysell_price" + key).html(formatCurrency(parseFloat(
+                tarifData.amount))).append($("<p>").html("")))
             .append($("<td>")
-                .append('<input type="text" name="quantity[]" id="apenunjangmedisquantity' + key + '" placeholder="" value="0" class="form-control" readonly>')
+                .append('<input type="text" name="quantity[]" id="apenunjangmedisquantity' + key +
+                    '" placeholder="" value="0" class="form-control" readonly>')
                 .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
             )
-            .append($("<td>").attr("id", "apenunjangmedisdisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
+            .append($("<td>").attr("id", "apenunjangmedisdisplayamount_paid" + key).html(formatCurrency(parseFloat(
+                tarifData.amount))))
             // .append($("<td>").attr("id", "apenunjangmedisdisplayamount_plafond" + key).html((parseFloat(tarifData.amount))))
             .append($("<td>")
                 .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
                     '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
-                    '<button id="apenunjangmedissimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'apenunjangmedis\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">simpan</button>' +
-                    '<button id="apenunjangmediseditDeleteCharge' + key + '" type="button" onclick="editBillCharge(\'apenunjangmedis\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off"  style="display: none">Edit</button>' +
-                    '<button id="delBillBtn' + key + '" type="button" onclick="delBill(\'apenunjangmedis\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                    '<button id="apenunjangmedissimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' +
+                    key +
+                    '\', \'apenunjangmedis\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">simpan</button>' +
+                    '<button id="apenunjangmediseditDeleteCharge' + key +
+                    '" type="button" onclick="editBillCharge(\'apenunjangmedis\', \'' + key +
+                    '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off"  style="display: none">Edit</button>' +
+                    '<button id="delBillBtn' + key + '" type="button" onclick="delBill(\'apenunjangmedis\', \'' + key +
+                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
                     '</div>' +
                     '</div>')
             )
@@ -296,46 +348,86 @@
 
 
         $("#penunjangChargesBody")
-            .append('<input type="hidden" name="quantity[]" id="apenunjangmedisquantity' + key + '" placeholder="" value="0" class="form-control" >')
-            .append('<input name="treatment[]" id="apenunjangmedistreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
-            .append('<input name="treat_date[]" id="apenunjangmedistreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="sell_price[]" id="apenunjangmedissell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="amount_paid[]" id="apenunjangmedisamount_paid' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="discount[]" id="apenunjangmedisdiscount' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
-            .append('<input name="subsidisat[]" id="apenunjangmedissubsidisat' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
-            .append('<input name="subsidi[]" id="apenunjangmedissubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+            .append('<input type="hidden" name="quantity[]" id="apenunjangmedisquantity' + key +
+                '" placeholder="" value="0" class="form-control" >')
+            .append('<input name="treatment[]" id="apenunjangmedistreatment' + key + '" type="hidden" value="' + tarifData
+                .tarif_name + '" class="form-control" />')
+            .append('<input name="treat_date[]" id="apenunjangmedistreat_date' + key + '" type="hidden" value="' +
+                get_date() + '" class="form-control" />')
+            .append('<input name="sell_price[]" id="apenunjangmedissell_price' + key + '" type="hidden" value="' + tarifData
+                .amount + '" class="form-control" />')
+            .append('<input name="amount_paid[]" id="apenunjangmedisamount_paid' + key + '" type="hidden" value="' +
+                tarifData.amount + '" class="form-control" />')
+            .append('<input name="discount[]" id="apenunjangmedisdiscount' + key + '" type="hidden" value="' + 0 +
+                '" class="form-control" />')
+            .append('<input name="subsidisat[]" id="apenunjangmedissubsidisat' + key + '" type="hidden" value="' + 0 +
+                '" class="form-control" />')
+            .append('<input name="subsidi[]" id="apenunjangmedissubsidi' + key + '" type="hidden" value="' + 0 +
+                '" class="form-control" />')
 
-            .append('<input name="bill_id[]" id="apenunjangmedisbill_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="trans_id[]" id="apenunjangmedistrans_id' + key + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="no_registration[]" id="apenunjangmedisno_registration' + key + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="theorder[]" id="apenunjangmedistheorder' + key + '" type="hidden" value="' + (billJson.length + 1) + '" class="form-control" />')
-            .append('<input name="visit_id[]" id="apenunjangmedisvisit_id' + key + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="org_unit_code[]" id="apenunjangmedisorg_unit_code' + key + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="class_id[]" id="apenunjangmedisclass_id' + key + '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
-            .append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            .append('<input name="payor_id[]" id="apenunjangmedispayor_id' + key + '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="apenunjangmediskaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="theid[]" id="apenunjangmedistheid' + key + '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
-            .append('<input name="thename[]" id="apenunjangmedisthename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
-            .append('<input name="theaddress[]" id="apenunjangmedistheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
-            .append('<input name="status_pasien_id[]" id="apenunjangmedisstatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isrj[]" id="apenunjangmedisisrj' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
-            .append('<input name="gender[]" id="apenunjangmedisgender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
-            .append('<input name="ageyear[]" id="apenunjangmedisageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
-            .append('<input name="agemonth[]" id="apenunjangmedisagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
-            .append('<input name="ageday[]" id="apenunjangmedisageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
-            .append('<input name="kal_id[]" id="apenunjangmediskal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="apenunjangmediskaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="class_room_id[]" id="apenunjangmedisclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
-            .append('<input name="bed_id[]" id="apenunjangmedisbed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
-            .append('<input name="clinic_id[]" id="apenunjangmedisclinic_id' + key + '" type="hidden" value="P001" class="form-control" />')
-            .append('<input name="clinic_id_from[]" id="apenunjangmedisclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
-            .append('<input name="exit_date[]" id="apenunjangmedisexit_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="cashier[]" id="apenunjangmediscashier' + key + '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
-            .append('<input name="modified_from[]" id="apenunjangmedismodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
-            .append('<input name="islunas[]" id="apenunjangmedisislunas' + key + '" type="hidden" value="0" class="form-control" />')
-            .append('<input name="measure_id[]" id="apenunjangmedismeasure_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tarif_id[]" id="apenunjangmedistarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+            .append(
+                `<input name="bill_id[]" id="apenunjangmedisbill_id${key}" type="hidden" value="${billJson?.bill_id ?? codeData}" class="form-control" />`
+            )
+            .append('<input name="trans_id[]" id="apenunjangmedistrans_id' + key +
+                '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="no_registration[]" id="apenunjangmedisno_registration' + key +
+                '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="theorder[]" id="apenunjangmedistheorder' + key + '" type="hidden" value="' + (billJson
+                .length + 1) + '" class="form-control" />')
+            .append('<input name="visit_id[]" id="apenunjangmedisvisit_id' + key +
+                '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="org_unit_code[]" id="apenunjangmedisorg_unit_code' + key +
+                '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="class_id[]" id="apenunjangmedisclass_id' + key +
+                '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
+            .append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' + key +
+                '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+            .append('<input name="payor_id[]" id="apenunjangmedispayor_id' + key +
+                '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="apenunjangmediskaryawan' + key +
+                '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="theid[]" id="apenunjangmedistheid' + key +
+                '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
+            .append('<input name="thename[]" id="apenunjangmedisthename' + key +
+                '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
+            .append('<input name="theaddress[]" id="apenunjangmedistheaddress' + key +
+                '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
+            .append('<input name="status_pasien_id[]" id="apenunjangmedisstatus_pasien_id' + key +
+                '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
+            .append('<input name="isrj[]" id="apenunjangmedisisrj' + key +
+                '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
+            .append('<input name="gender[]" id="apenunjangmedisgender' + key +
+                '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
+            .append('<input name="ageyear[]" id="apenunjangmedisageyear' + key +
+                '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
+            .append('<input name="agemonth[]" id="apenunjangmedisagemonth' + key +
+                '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
+            .append('<input name="ageday[]" id="apenunjangmedisageday' + key +
+                '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
+            .append('<input name="kal_id[]" id="apenunjangmediskal_id' + key +
+                '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="apenunjangmediskaryawan' + key +
+                '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="class_room_id[]" id="apenunjangmedisclass_room_id' + key +
+                '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
+            .append('<input name="bed_id[]" id="apenunjangmedisbed_id' + key +
+                '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
+            .append('<input name="clinic_id[]" id="apenunjangmedisclinic_id' + key +
+                '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
+            .append('<input name="clinic_id_from[]" id="apenunjangmedisclinic_id_from' + key +
+                '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
+            .append('<input name="exit_date[]" id="apenunjangmedisexit_date' + key + '" type="hidden" value="' +
+                get_date() + '" class="form-control" />')
+            .append('<input name="cashier[]" id="apenunjangmediscashier' + key +
+                '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
+            .append('<input name="modified_from[]" id="apenunjangmedismodified_from' + key +
+                '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
+            .append('<input name="islunas[]" id="apenunjangmedisislunas' + key +
+                '" type="hidden" value="0" class="form-control" />')
+            .append('<input name="measure_id[]" id="apenunjangmedismeasure_id' + key +
+                '" type="hidden" value="" class="form-control" />')
+            .append('<input name="tarif_id[]" id="apenunjangmedistarif_id' + key + '" type="hidden" value="' + tarifData
+                .tarif_id + '" class="form-control" />')
 
         if ('<?= $visit['isrj']; ?>' == '0') {
             $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
@@ -344,15 +436,19 @@
             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
             ?>
                 $("#penunjangChargesBody")
-                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key +
+                        '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
 
             <?php
             } else {
             ?>
                 $("#penunjangChargesBody")
-                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key +
+                        '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
 
             <?php
             }
@@ -362,64 +458,100 @@
             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
             ?>
                 $("#penunjangChargesBody")
-                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key +
+                        '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
 
             <?php
             } else {
             ?>
                 $("#penunjangChargesBody")
-                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
+                    .append('<input name="employee_id_from[]" id="apenunjangmedisemployee_id_from' + key +
+                        '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
+                    .append('<input name="doctor_from[]" id="apenunjangmedisdoctor_from' + key +
+                        '" type="hidden" value="<?= @$visit['fullname']; ?>" class="form-control" />')
 
             <?php
             }
             ?>
         }
+        $("#apenunjangmedisemployee_id_from" + key).val('<?= user()->employee_id; ?>')
+        $("#apenunjangmedisdoctor_from" + key).val('<?= user()->getFullname(); ?>')
+        $("#apenunjangmedisemployee_id" + key).val('<?= user()->employee_id; ?>')
+        $("#apenunjangmedisdoctor" + key).val('<?= user()->getFullname(); ?>')
         $("#penunjangChargesBody")
-            .append('<input name="employee_id[]" id="apenunjangmedisemployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-            .append('<input name="doctor[]" id="apenunjangmedisdoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-            .append('<input name="amount[]" id="apenunjangmedisamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="nota_no[]" id="apenunjangmedisnota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />')
-            .append('<input name="profesi[]" id="apenunjangmedisprofesi' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tagihan[]" id="apenunjangmedistagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#apenunjangmedisquantity" + key).val() + '" class="form-control" />')
-            .append('<input name="treatment_plafond[]" id="apenunjangmedistreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="tarif_type[]" id="apenunjangmedistarif_type' + key + '" type="hidden" value="' + tarifData.tarif_type + '" class="form-control" />')
+            .append('<input name="employee_id[]" id="apenunjangmedisemployee_id' + key +
+                '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
+            .append('<input name="doctor[]" id="apenunjangmedisdoctor' + key +
+                '" type="hidden" value="<?= @$visit['fullname']; ?>" class="form-control" />')
+            .append('<input name="amount[]" id="apenunjangmedisamount' + key + '" type="hidden" value="' + tarifData
+                .amount + '" class="form-control" />')
+            .append('<input name="nota_no[]" id="apenunjangmedisnota_no' + key + '" type="hidden" value="' + nota_no +
+                '" class="form-control" />')
+            .append('<input name="profesi[]" id="apenunjangmedisprofesi' + key +
+                '" type="hidden" value="" class="form-control" />')
+            .append('<input name="tagihan[]" id="apenunjangmedistagihan' + key + '" type="hidden" value="' + tarifData
+                .amount * $("#apenunjangmedisquantity" + key).val() + '" class="form-control" />')
+            .append('<input name="treatment_plafond[]" id="apenunjangmedistreatment_plafond' + key +
+                '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
+            .append('<input name="tarif_type[]" id="apenunjangmedistarif_type' + key + '" type="hidden" value="' + tarifData
+                .tarif_type + '" class="form-control" />')
 
         if ('<?= $visit['class_id']; ?>' != '<?= $visit['class_id_plafond']; ?>') {
 
             var tarifKelas = getPlafond('<?= $visit['class_id_plafond']; ?>', tarifData.tarif_name, tarifData.isCito);
             if (tarifKelas > 0 && '<?= $visit['payor_id']; ?>' != 0 && '<?= $visit['class_id_plafond']; ?>' != 99) {
 
-                $("#penunjangChargesBody").append('<input name="amount_plafond[]" id="apenunjangmedisamount_plafond' + key + '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
-                $("#penunjangChargesBody").append('<input name="amount_paid_plafond[]" id="apenunjangmedisamount_paid_plafond' + key + '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
-                $("#penunjangChargesBody").append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-                $("#penunjangChargesBody").append('<input name="tarif_id_plafond[]" id="apenunjangmedistarif_id_plafond' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+                $("#penunjangChargesBody").append('<input name="amount_plafond[]" id="apenunjangmedisamount_plafond' + key +
+                    '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
+                $("#penunjangChargesBody").append(
+                    '<input name="amount_paid_plafond[]" id="apenunjangmedisamount_paid_plafond' + key +
+                    '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
+                $("#penunjangChargesBody").append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' +
+                    key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+                $("#penunjangChargesBody").append('<input name="tarif_id_plafond[]" id="apenunjangmedistarif_id_plafond' +
+                    key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
             } else {
 
-                $("#penunjangChargesBody").append('<input name="amount_plafond[]" id="apenunjangmedisamount_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-                $("#penunjangChargesBody").append('<input name="amount_paid_plafond[]" id="apenunjangmedisamount_paid_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-                $("#penunjangChargesBody").append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-                $("#penunjangChargesBody").append('<input name="tarif_id_plafond[]" id="apenunjangmedistarif_id_plafond' + key + '" type="hidden" value="" class="form-control" />')
+                $("#penunjangChargesBody").append('<input name="amount_plafond[]" id="apenunjangmedisamount_plafond' + key +
+                    '" type="hidden" value="0" class="form-control" />')
+                $("#penunjangChargesBody").append(
+                    '<input name="amount_paid_plafond[]" id="apenunjangmedisamount_paid_plafond' + key +
+                    '" type="hidden" value="0" class="form-control" />')
+                $("#penunjangChargesBody").append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' +
+                    key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+                $("#penunjangChargesBody").append('<input name="tarif_id_plafond[]" id="apenunjangmedistarif_id_plafond' +
+                    key + '" type="hidden" value="" class="form-control" />')
             }
         } else {
 
-            $("#penunjangChargesBody").append('<input name="amount_plafond[]" id="apenunjangmedisamount_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-            $("#penunjangChargesBody").append('<input name="amount_paid_plafond[]" id="apenunjangmedisamount_paid_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-            $("#penunjangChargesBody").append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            $("#penunjangChargesBody").append('<input name="tarif_id_plafond[]" id="apenunjangmedistarif_id_plafond' + key + '" type="hidden" value="" class="form-control" />')
+            $("#penunjangChargesBody").append('<input name="amount_plafond[]" id="apenunjangmedisamount_plafond' + key +
+                '" type="hidden" value="0" class="form-control" />')
+            $("#penunjangChargesBody").append('<input name="amount_paid_plafond[]" id="apenunjangmedisamount_paid_plafond' +
+                key + '" type="hidden" value="0" class="form-control" />')
+            $("#penunjangChargesBody").append('<input name="class_id_plafond[]" id="apenunjangmedisclass_id_plafond' + key +
+                '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+            $("#penunjangChargesBody").append('<input name="tarif_id_plafond[]" id="apenunjangmedistarif_id_plafond' + key +
+                '" type="hidden" value="" class="form-control" />')
         }
 
         $("#apenunjangmedisquantity" + key).keydown(function(e) {
-            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e
+                .keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e
+                .keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e
+                .keyCode && e.preventDefault();
         });
         $('#apenunjangmedisquantity' + key).on("input", function() {
             var dInput = this.value;
             $("#apenunjangmedisamount_paid" + key).val($("#apenunjangmedisamount" + key).val() * dInput)
-            $("#apenunjangmedisdisplayamount_paid" + key).html(formatCurrency($("#apenunjangmedisamount" + key).val() * dInput))
+            $("#apenunjangmedisdisplayamount_paid" + key).html(formatCurrency($("#apenunjangmedisamount" + key)
+                .val() * dInput))
             $("#apenunjangmedistagihan" + key).val($("#apenunjangmedisamount" + key).val() * dInput)
-            $("#apenunjangmedisamount_paid_plafond" + key).val($("#apenunjangmedisamount_plafond" + key).val() * dInput)
-            $("#apenunjangmedisdisplayamount_paid_plafond" + key).html(formatCurrency($("#apenunjangmedisamount_plafond" + key).val() * dInput))
+            $("#apenunjangmedisamount_paid_plafond" + key).val($("#apenunjangmedisamount_plafond" + key).val() *
+                dInput)
+            $("#apenunjangmedisdisplayamount_paid_plafond" + key).html(formatCurrency($(
+                "#apenunjangmedisamount_plafond" + key).val() * dInput))
         })
     }
 
@@ -427,7 +559,10 @@
         $("#penunjangChargesBody").html("")
         var notaNoPenunjangMedis = $("#notaNoPenunjangMedis").val()
         billJson.forEach((element, key) => {
-            if (billJson[key].clinic_id == 'P001' && (billJson[key].nota_no == notaNoPenunjangMedis || '%' == notaNoPenunjangMedis)) {
+
+            if ((billJson[key].clinic_id == 'P001' || billJson[key].clinic_id == 'B019') && (billJson[key]
+                    .nota_no == notaNoPenunjangMedis || '%' ==
+                    notaNoPenunjangMedis)) {
                 var i = $('#penunjangChargesBody tr').length + 1;
                 var counter = 'penunjangmedis' + i
                 addRowBill("penunjangChargesBody", "apenunjangmedis", key, i, counter)
@@ -438,6 +573,7 @@
 
     const actionModalPenunjangMedis = (bill, identifier) => {
         let data = JSON.parse(decodeURIComponent(bill));
+
 
         // $('#template_jenis_pemeriksaan').val([]).trigger('change');
         postData({
@@ -522,7 +658,8 @@
                     let visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
 
                     // Construct the URL
-                    let url = '<?= base_url() . '/admin/cetak/penunjang_medis/'; ?>' + visitEncoded + '/' +
+                    let url = '<?= base_url() . '/admin/cetak/penunjang_medis/'; ?>' + visitEncoded +
+                        '/' +
                         data?.bill_id + '/' + data?.tarif_id;
 
                     // Redirect to the URL
@@ -593,8 +730,12 @@
                 if (res.status) {
                     successSwal(res.message)
                     $("#modalPenunjangMedis").modal("hide")
-                    $(`[data-id="${identifier.toLowerCase()}quantity${res.bill_id}"]`).val(data.quantity)
-                    $(`[data-id="${identifier.toLowerCase()}displayamount_paid${res.bill_id}"]`).html(data.amount_paid)
+                    $(`[data-id="${identifier.toLowerCase()}quantity${res.bill_id}"]`).val(data
+                        .quantity)
+                    $(`[data-id="${identifier.toLowerCase()}displayamount_paid${res.bill_id}"]`).html(
+                        data.amount_paid)
+
+                    getTreatResultListPenunjang(nomor, trans, visit.visit_id)
 
                 } else {
                     errorSwal('data gagal dikembalikan')
@@ -606,13 +747,14 @@
     };
 
     const renderKop = (props) => {
-        $('.kop-name').text(props?.kop.name_of_org_unit || '');
-        $('.kop-address').text(props?.kop.contact_address || '');
+        $('.kop-name-penunjangMedis').text(props?.kop.name_of_org_unit || '');
+        $('.kop-address-penunjangMedis').html(kop?.contact_address + ',' + kop?.phone + ', Fax:' + kop?.fax + ',' + kop
+            ?.kota +
+            '<br>' + kop?.sk
+        );
     }
     const saveData = (props) => {
-        console.log(props);
         let result = decodeURIComponent(props?.bill)
-        console.log(result);
         $('#savePenunjangMedis').off().on('click', function(e) {
             e.preventDefault();
 
@@ -651,8 +793,12 @@
                 success: function(data) {
                     successSwal('Data berhasil disimpan');
                     $("#modalPenunjangMedis").modal("hide")
-                    $(`[data-id="${props?.identifier}quantity${data?.bill_id}"]`).val(data?.treat_bill.quantity)
-                    $(`[data-id="${props?.identifier}displayamount_paid${data?.bill_id}"]`).html(data?.treat_bill.amount_paid)
+                    $(`[data-id="${props?.identifier}quantity${data?.bill_id}"]`).val(data
+                        ?.treat_bill.quantity)
+                    $(`[data-id="${props?.identifier}displayamount_paid${data?.bill_id}"]`).html(
+                        data?.treat_bill.amount_paid)
+
+                    getTreatResultListPenunjang(nomor, trans, visit.visit_id)
 
                 },
                 error: function() {
@@ -704,6 +850,7 @@
                 </div>
             `;
                 } else if (item.value === 2) {
+
                     // Create text input
                     inputElement = `
                 <div class="mb-3 col-6">
@@ -737,7 +884,8 @@
             const hiddenInput = document.getElementById(`${editor.id}-hidden`);
 
             quill.on('text-change', () => {
-                const quillContent = quill.root.innerHTML; // Get the current content of the Quill editor
+                const quillContent = quill.root
+                    .innerHTML; // Get the current content of the Quill editor
                 hiddenInput.value = quillContent; // Update the hidden input value
             });
         });
@@ -796,4 +944,81 @@
             pdfPreview.style.display = 'none';
         }
     });
+
+
+    $('#data-allpenunjangmedis').off().on('click', function(e) {
+        $("#modalDataAllPenunjangMedis").modal("show");
+        postData({
+            no_registration: visit?.no_registration,
+            trans_id: visit?.trans_id,
+            visit_id: visit?.visit_id
+        }, 'admin/PenunjangMedis/getDataResultAll', (res) => {
+            if (res?.respon === true) {
+                renderDataHasilPenunjangMedis({
+                    data: res?.result
+                })
+            } else {
+                $("#resultmodalDataAllPenunjangMedis").html(tempTablesNull());
+            }
+        }, () => {
+            getLoadingGlobalServices('resultmodalDataAllPenunjangMedis');
+        });
+
+    })
+
+
+    const renderDataHasilPenunjangMedis = (props) => {
+        let result = ""
+
+        props?.data?.map((item, index) => {
+            result += `<tr>
+                            <td class="text-center align-middle">${index + 1}</td>
+                            <td class="text-center align-middle">${item?.treat_date ? moment(item?.treat_date).format("DD/MM/YYYY HH:mm") : item?.treat_date ?? "-"}
+                            </td>
+                            <td class="text-center align-middle">${item?.nota_no}</td>
+                            <td class="text-center align-middle">
+                                <p>
+                                    ${item?.treatment ? item.treatment.replace(/&nbsp;/g, ' ') : ''}
+                                </p>
+                                <p class="badge ${item?.isvalid == 1 ? 'bg-primary' : 'bg-danger'} py-1 px-2">
+                                    ${item?.isvalid == 1 ? 'TERVALIDASI' : 'BELUM VALIDASI'}
+                                </p>
+                                <p class="${item?.iskritis == 1 ? 'badge py-1 px-2 mx-2 bg-danger' : 'd-none'}">
+                                    KRITIS
+                                </p>
+                            </td>
+
+                            <td class="text-center align-middle">
+                                <div role="group" aria-label="Vertical button group">
+                                     <button 
+                                            id="apenunjangMedis" 
+                                            data-bill="${item?.bill_id}" 
+                                            onclick="actionModalPenunjangMedis('${encodeURIComponent(JSON.stringify(item))}', 'apenunjangMedis')" 
+                                            type="button" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#modalPenunjangMedis" 
+                                            class="btn btn-outline-primary waves-effect waves-light" 
+                                            data-row-id="1" 
+                                            autocomplete="off"
+                                        >
+                                        Hasil
+                                    </button>
+                                </div>
+                            </td>
+
+                            
+                        </tr>`
+        });
+
+        $("#resultmodalDataAllPenunjangMedis").html(result);
+
+
+        if (props?.data.length === 0) {
+            $("#resultmodalDataAllPenunjangMedis").html(`<tr style="height: 200px;">
+                                        <td colspan="100" class="align-middle text-center">
+                                            <h3 class="text-center">Data Kosong</h3>
+                                        </td>
+                                    </tr>`);
+        }
+    }
 </script>

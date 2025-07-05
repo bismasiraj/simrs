@@ -37,28 +37,31 @@ $this->extend('layout/basiclayout', [
                             </div>
                             <div class="card-body">
                                 <div class="row mb-3">
-                                    <div class="col-md-3">
+                                    <div class="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
                                         <input type="text" id="search_users_form" class="form-control"
                                             placeholder="Cari Nama">
                                     </div>
-                                    <div class="col-md-3">
-                                        <button type="button" class="btn btn-primary" id="btnsearch_users_form">
+                                    <div class="col-12 col-md-2 col-lg-2">
+                                        <button type="button" class="btn btn-primary w-100" id="btnsearch_users_form">
                                             <i class="fa fa-search"></i> Cari
                                         </button>
                                     </div>
                                 </div>
-                                <table class="table table-bordered">
-                                    <thead class="table-primary">
-                                        <tr>
-                                            <th width="1%" class="text-center">No.</th>
-                                            <th>Nama</th>
-                                            <th width="1%">Email</th>
-                                            <th width="1%"><i class="fas fa-user-cog"></i></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbodyUsers">
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+
+                                    <table class="table table-bordered">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th width="1%" class="text-center">No.</th>
+                                                <th>Nama</th>
+                                                <th width="1%">Email</th>
+                                                <th width="1%"><i class="fas fa-user-cog"></i></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyUsers">
+                                        </tbody>
+                                    </table>
+                                </div>
 
                                 <nav aria-label="User Permissions Pagination">
                                     <ul class="pagination justify-content-end custom-pagination" id="pagination">
@@ -75,7 +78,7 @@ $this->extend('layout/basiclayout', [
 
 
 <div class="modal fade" id="user_profile_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-lg-down">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title mt-0">List Aksess <span id="modal_name_of_clinic"></span>
@@ -175,6 +178,7 @@ $this->extend('layout/basiclayout', [
                             <td></td>
                             <td colspan="3">${filteredData || ''}</td>
                         </tr>`;
+
             });
 
             $('#tbodyUsers').html(htmlContent);
@@ -231,7 +235,7 @@ $this->extend('layout/basiclayout', [
 
             const templateBtnAdd = `
                             <div class="box-tab-tools my-3" style="text-align: center;">
-                                <button type="button" id="addUsersGroup_btn" name="addUsersGroup_btn" class="btn btn-outline-success w-100">
+                                <button type="button" id="addUsersGroup_btn" name="addUsersGroup_btn" class="btn btn-outline-info w-100" style="border-radius: 20px;">
                                     <span><i class="fas fa-plus fa-2xl"></i> Tambah</span>
                                 </button>
                             </div>
@@ -292,7 +296,10 @@ $this->extend('layout/basiclayout', [
                                 </tr>
                             `;
                 $("#body_container_Aksess_users").append(newRow);
-
+                $(".select2").select2({
+                    dropdownParent: $("#user_profile_modal"),
+                    width: "100%"
+                });
                 $("button.formModalUsers").on("click", function() {
                     $(this).closest("tr").remove();
                 });

@@ -60,6 +60,8 @@ $routes->group("api/antrianbpjs", ['filter' => 'login'], function ($routes) {
     $routes->post("deleteAntrean", "AntrianBpjs::deleteAntrean");
     $routes->post("updateWaktu", "AntrianBpjs::updateWaktu");
     $routes->post("updateStatusAntraenPV", "AntrianBpjs::updateStatusAntraenPV");
+    $routes->post("addAntreanFarmasi", "AntrianBpjs::addAntreanFarmasi");
+    $routes->post("getlisttaskid", "AntrianBpjs::getlisttaskid");
 });
 $routes->post("satusehat/loginInternal", "SatuSehat::loginInternal", ['filter' => 'login']);
 $routes->post("satusehat/postOrganization", "SatuSehat::postOrganization", ['filter' => 'login']);

@@ -1,6 +1,7 @@
 <?php
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
+$group = user()->getRoles();
 ?>
 
 <style>
@@ -18,6 +19,16 @@ $permission = user()->getPermissions();
     table.table-fit tfoot td {
         width: auto !important;
     }
+
+    .selected-cppt {
+        --bs-table-color-type: var(--bs-table-striped-color);
+        --bs-table-bg-type: "#efe3d1";
+    }
+
+    /* .table-striped>tbody>tr:nth-of-type(odd)>* {
+        --bs-table-color-type: var(--bs-table-striped-color);
+        --bs-table-bg-type: var(--bs-table-striped-bg);
+    } */
 </style>
 <div class="tab-pane" id="cppt" role="tabpanel">
     <div class="row">
@@ -134,18 +145,18 @@ $permission = user()->getPermissions();
                             <div id="addCpptSoapGroup" class="<?php
                                                                 if (isset($group[11])) {
                                                                 ?>col-md-12<?php } else {
-                                                                            ?>col-md-6
+                                                                            ?>col-md-12
                                         <?php
-                                                                        } ?> ">
-                                <div id="" class="box-tab-tools text-end">
+                                                                        } ?> m-2">
+                                <div id="" class="box-tab-tools text-center">
                                     <a data-toggle="modal" onclick="initialAddacppt(true)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH SOAP</a>
                                 </div>
                             </div>
                             <?php
                             if (!isset($group[11])) {
                             ?>
-                                <div class="col-md-6">
-                                    <div id="addCpptSbarGroup" class="box-tab-tools text-start" style="">
+                                <div class="col-md-12 m-2">
+                                    <div id="addCpptSbarGroup" class="box-tab-tools text-center" style="">
                                         <a data-toggle="modal" onclick="initialAddacppt(false)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH SBAR</a>
                                     </div>
                                 </div>
@@ -155,7 +166,14 @@ $permission = user()->getPermissions();
                         </div>
                     <?php
                     } ?>
-                    <h3>Histori CPPT</h3>
+                    <div class="row m-4">
+                        <div class="col-md-12">
+                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="openHistoryCppt()" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light">
+                                <i class="fa fa-history"></i> <span>History CPPT (Data Transfer)</span>
+                            </button>
+                        </div>
+                    </div>
+                    <h3>CPPT</h3>
                     <div class="row mb-4">
                         <div class="col-md-2">
                             <div class="form-group">
@@ -175,8 +193,8 @@ $permission = user()->getPermissions();
                                 <label for="cpptEpisode">Episode Sama</label>
                                 <div class="input-group">
                                     <select id="cpptEpisode" class="form-select">
-                                        <option value="1">Ya</option>
                                         <option value="0">Tidak</option>
+                                        <option value="1">Ya</option>
                                     </select>
                                 </div>
                             </div>
@@ -195,12 +213,13 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                     </div>
+                    <p id="sessionMessage"></p>
                     <table class="table table-striped table-hover">
                         <thead class="table-primary" style="text-align: center;">
                             <tr>
                                 <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
                                 <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
-                                <th class="text-center" colspan="6" style="width: 70%;">SOAP</th class="text-center">
+                                <th class="text-center" colspan="2" style="width: 70%;">SOAP</th class="text-center">
                                 <th class="text-center" style="width: 5%;"></th class="text-center">
                                 <th class="text-center" style="width: 5%;"></th class="text-center">
                             </tr>
@@ -236,7 +255,7 @@ $permission = user()->getPermissions();
 </div>
 <!-- -->
 
-<div class="modal fade" id="acpptModal" role="dialog" aria-labelledby="">
+<div class="modal fade" id="acpptModal" role="dialog" aria-labelledby="" data-bs-backdrop="static">
     <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -293,97 +312,20 @@ $permission = user()->getPermissions();
                             <input type="hidden" id="acpptvalid_user" class="valid_user" name="valid_user">
                             <input type="hidden" id="acpptvalid_pasien" class="valid_pasien" name="valid_pasien">
                             <div class="row">
-                                <hr>
-                                <div class="col-md-12">
-                                    <div class="dividerhr"></div>
-                                </div><!--./col-md-12-->
-                                <div class="row">
-                                    <div class="col-sm-2 col-xs-12">
-                                        <h5 class="font-size-14 mb-4 badge bg-primary">Dokumen Assessment:</h5>
-                                    </div>
-                                </div>
-                                <div class="row d-none">
-                                    <!-- <div class="col-md-3">
-                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="account_id" id="acpptaccount_id3" value="3"><label class="form-check-label" for="acpptaccount_id3" checked>SOAP</label></div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="account_id" id="acpptaccount_id4" value="4"><label class="form-check-label" for="acpptaccount_id4">SBAR</label></div>
-                                    </div> -->
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="mb-3">
-                                            <div class="form-group">
-                                                <label for="acpptexamination_date">Tanggal Assessmennt</label>
-                                                <input name="" id="flatacpptexamination_date" type="text" class="form-control datetimeflatpickr" readonly />
-                                                <input name="examination_date" id="acpptexamination_date" type="hidden" />
-                                                <!-- <input class="form-control datetime-input" type="datetime-local"  name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(props?.get_data?.[props?.column_name?.toLowerCase()], " YYYY-MM-DDTHH:mm").format("YYYY-MM-DDTHH:mm") : '' }"> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="mb-3">
-                                            <div class="form-group">
-                                                <label for="acpptclinic_id">Pelayanan</label>
-                                                <select name="clinic_id" id="acpptclinic_id" type="hidden" class="form-control ">
-                                                    <?php if ($visit['isrj'] == 1) {
-                                                        $selectedClinic = $visit['class_room_id'];
-                                                    } else {
-                                                        $selectedClinic = $visit['clinic_id'];
-                                                    } ?>
-                                                    <?php foreach ($clinic as $key => $value) {
-                                                    ?>
-                                                        <?php if ($selectedClinic == $visit['clinic_id']) { ?>
-                                                            <option value="<?= $value['clinic_id']; ?>" selected><?= $value['name_of_clinic']; ?></option>
-                                                        <?php } else { ?>
-                                                            <option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option>
-                                                        <?php } ?>
-                                                    <?php
-                                                    } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="mb-3">
-                                            <div class="form-group">
-                                                <label for="acpptemployee_id">Dokter</label>
-                                                <select name="employee_id" id="acpptemployee_id" type="hidden" class="form-control ">
-                                                    <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
-                                                        $dokterselected = $visit['employee_inap'];
-                                                    } else {
-                                                        $dokterselected = $visit['employee_id'];
-                                                    } ?>
-                                                    <?php foreach ($employee as $key => $value) {
-                                                    ?>
-                                                        <?php if ($dokterselected == $visit['employee_id']) { ?>
-                                                            <option value="<?= $value['employee_id']; ?>" selected><?= $value['fullname']; ?></option>
-                                                        <?php } else { ?>
-                                                            <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
-                                                        <?php } ?>
-                                                    <?php
-                                                    } ?>
-                                                </select>
-                                                <!-- <script>
-                                                                        // Set the formatted date to the input field
-                                                                        document.getElementById('acpptemployee_id').value = formattedDate;
-                                                                    </script> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="row mb-4">
                                     <div class="col-md-6">
-                                        <h5 class="" id="headingSubyektif">
-                                            <b id="cpptSubyektifTitle">SUBYEKTIF (S)</b>
-                                        </h5>
-                                        <hr>
-                                        <div id="" class="col-12" aria-labelledby="">
-                                            <div class="text-muted">
-                                                <div class="row">
-                                                    <div class="col-sm-12 mt-2">
-                                                        <div class="form-group"><label id="acpptanamnase_label">Keluhan Utama</label>
-                                                            <textarea name="anamnase" id="acpptanamnase" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                        <div class="row">
+                                            <div class="col-md-2 col-sm-12">
+                                                <h5 class="" id="headingSubyektif">
+                                                    <b id="cpptSubyektifTitle"> (S)</b>
+                                                </h5>
+                                                <hr>
+                                            </div>
+                                            <div id="" class="col-md-10 col-sm-12" aria-labelledby="">
+                                                <div class="text-muted">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <textarea name="anamnase" id="acpptanamnase" placeholder="" value="" class="form-control" rows="14"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -391,204 +333,221 @@ $permission = user()->getPermissions();
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5 class="" id="headingSubyektif">
-                                            <b id="cpptObyektifTitle">OBYEKTIF (O)</b>
-                                        </h5>
-                                        <hr>
-                                        <div id="cpptVitalSign" class="col-12" aria-labelledby="">
-                                            <div class="row mb-4">
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Jenis EWS</label>
-                                                        <select class="form-select" name="vs_status_id" id="acpptvs_status_id">
-                                                            <option value="" selected>-- pilih --</option>
-                                                            <option value="1">Dewasa</option>
-                                                            <option value="4">Anak</option>
-                                                            <option value="5">Neonatus</option>
-                                                            <option value="10">Obsetric</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>BB(Kg)</label>
-                                                        <div class=" position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="acpptweight" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-bb"></span>
+                                        <div class="row">
+                                            <div class="col-md-2 col-sm-12">
+                                                <h5 class="" id="headingSubyektif">
+                                                    <b id="cpptObyektifTitle"> (O) <a href="#" onclick="copyLastTTV()">(Copy)</a></b>
+                                                </h5>
+                                                <hr>
+                                            </div>
+                                            <div id="cpptVitalSign" class="col-md-10 col-sm-12" aria-labelledby="">
+                                                <div class="row mb-4">
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Jenis EWS</label>
+                                                            <select class="form-select" name="vs_status_id" id="acpptvs_status_id">
+                                                                <option value="" selected>-- pilih --</option>
+                                                                <option value="1">Dewasa</option>
+                                                                <option value="4">Anak</option>
+                                                                <option value="5">Neonatus</option>
+                                                                <option value="10">Obsetric</option>
+                                                            </select>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Tinggi(cm)</label>
-                                                        <div class="position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="height" id="acpptheight" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-acpptheight"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Suhu(°C)</label>
-                                                        <div class="position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="acppttemperature" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-acppttemperature"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
-                                                    <div class="form-group">
-                                                        <label>Nadi(/menit)</label>
-                                                        <div class="position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="acpptnadi" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-acpptnadi"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
-                                                            <div class="position-relative">
-                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="acppttension_upper" placeholder="" value="" class="form-control">
-                                                                <span class="h6" id="badge-acppttension_upper"></span>
-                                                            </div>
-                                                            <h4 class="mx-2">/</h4>
-                                                            <div class="position-relative">
-                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="acppttension_below" placeholder="" value="" class="form-control">
-                                                                <span class="h6" id="badge-acppttension_below"></span>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>BB(Kg)</label>
+                                                            <div class=" position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="weight" id="acpptweight" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-bb"></span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Saturasi(SpO2%)</label>
-                                                        <div class="position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="acpptsaturasi" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-acpptsaturasi"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Nafas/RR(/menit)</label>
-                                                        <div class="position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="acpptnafas" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-acpptnafas"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Diameter Lengan(cm)</label>
-                                                        <div class="position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="acpptarm_diameter" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-acpptarm_diameter"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Penggunaan Oksigen (L/mnt)</label>
-                                                        <div class="position-relative">
-                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="acpptoxygen_usage" placeholder="" value="" class="form-control">
-                                                            <span class="h6" id="badge-acpptoxygen_usage"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                    <div class="form-group">
-                                                        <label>Kesadaran</label>
-                                                        <select class="form-select" name="awareness" id="acpptawareness" onchange="vitalsignInput(this)">
-                                                            <option value="0">Sadar</option>
-                                                            <option value="3">Nyeri</option>
-                                                            <option value="10">Unrespon</option>
-                                                        </select>
-                                                        <span class="h6" id="badge-acpptawareness"></span>
-                                                    </div>
-                                                </div>
-                                                <?php if ($visit['specialist_type_id'] == '1.05') {
-                                                ?>
-                                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                                         <div class="form-group">
-                                                            <label>Nyeri</label>
-                                                            <select class="form-select" name="pain" id="prslexampain" onchange="vitalsignInput(this)">
-                                                                <option value="0">Normal</option>
-                                                                <option value="3">Abnormal</option>
-                                                            </select>
-                                                            <span class="h6" id="badge-prslexampain"></span>
+                                                            <label>Tinggi(cm)</label>
+                                                            <div class="position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="height" id="acpptheight" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-acpptheight"></span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
                                                         <div class="form-group">
-                                                            <label>Discharge/Lokia</label>
-                                                            <select class="form-select" name="lochia" id="prslexamlochia" onchange="vitalsignInput(this)">
-                                                                <option value="0">Normal</option>
-                                                                <option value="3">Abnormal</option>
-                                                            </select>
-                                                            <span class="h6" id="badge-prslexamlokia"></span>
+                                                            <label>Suhu(°C)</label>
+                                                            <div class="position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="temperature" id="acppttemperature" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-acppttemperature"></span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                    <div class="col-xs-6 col-sm-6 col-md-3 position-relative">
                                                         <div class="form-group">
-                                                            <label>Proteinuria (Perhari)</label>
-                                                            <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="vitalsignInput(this)">
-                                                                <option value="0">-</option>
-                                                                <option value="2">+</option>
-                                                                <option value="3">++</option>
-                                                            </select>
-                                                            <span class="h6" id="badge-prslexamproteinuria"></span>
+                                                            <label>Nadi(/menit)</label>
+                                                            <div class="position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="nadi" id="acpptnadi" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-acpptnadi"></span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                <?php
-                                                } ?>
-                                                <div class="col-sm-12 mt-2">
-                                                    <div class="form-group">
-                                                        <label id="acpptalo_anamnase_label">Obyektif</label>
-                                                        <textarea name="alo_anamnase" id="acpptalo_anamnase" placeholder="" value="" class="form-control"></textarea>
-                                                    </div>
-                                                </div>
-                                                <span id="acppttotal_score"></span>
-
-                                                <!-- <div class="col-sm-12 mt-2">
-                                                    <div class="form-group"><label>Keadaan Umum</label><textarea name="pemeriksaan" id="acpptpemeriksaan" placeholder="" value="" class="form-control" rows="4"></textarea></div>
-                                                </div> -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <h5 class="" id="headingSubyektif">
-                                            <b id="cpptSubyektifTitle">ASESMEN (A)</b>
-                                        </h5>
-                                        <hr>
-                                        <div id="" class="col-12" aria-labelledby="">
-                                            <div class="">
-                                                <div class="row">
-                                                    <div class="col-sm-12 mt-2">
-                                                        <div class="form-group"><label id="acpptteraphy_desc_label">Catatan Asesmen <a href="#" onclick="copyLastDiagnosis()">(Copy)</a></label>
-                                                            <textarea name="teraphy_desc" id="acpptteraphy_desc" placeholder="" value="" class="form-control" rows="8"></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="groupDiagnosaPerawatCppt" class="row mb-2">
-                                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                                        <div class="mb-4">
-                                                            <div class="staff-members">
-                                                                <div class="table tablecustom-responsive">
-                                                                    <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
-                                                                        <?php if (true) { ?>
-                                                                            <thead>
-                                                                                <th class="text-center" style="width: 100%">Diagnosa Perawat</th>
-                                                                            </thead>
-                                                                            <tbody id="bodyDiagPerawatCppt">
-                                                                            </tbody>
-                                                                        <?php }   ?>
-                                                                    </table>
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                            <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="acppttension_upper" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acppttension_upper"></span>
                                                                 </div>
-                                                                <div class="box-tab-tools" style="text-align: center;">
-                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawatBasic('bodyDiagPerawatCppt', '', null, null, 'acpptModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-to-hide"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
+                                                                <h4 class="mx-2">/</h4>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="acppttension_below" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acppttension_below"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Saturasi(SpO2%)</label>
+                                                            <div class="position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="acpptsaturasi" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-acpptsaturasi"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Nafas/RR(/menit)</label>
+                                                            <div class="position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="nafas" id="acpptnafas" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-acpptnafas"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Diameter Lengan(cm)</label>
+                                                            <div class="position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="acpptarm_diameter" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-acpptarm_diameter"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Penggunaan Oksigen (L/mnt)</label>
+                                                            <div class="position-relative">
+                                                                <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="acpptoxygen_usage" placeholder="" value="" class="form-control">
+                                                                <span class="h6" id="badge-acpptoxygen_usage"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Kesadaran</label>
+                                                            <select class="form-select" name="awareness" id="acpptawareness" onchange="vitalsignInput(this)">
+                                                                <option value="0">Sadar</option>
+                                                                <option value="3">Nyeri</option>
+                                                                <option value="10">Unrespon</option>
+                                                            </select>
+                                                            <span class="h6" id="badge-acpptawareness"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Keadaan Umum</label>
+                                                            <!-- <textarea name="pemeriksaan" id="acpptpemeriksaan" placeholder="" value="" class="form-control" rows="4"></textarea> -->
+                                                            <select class="form-select" name="pemeriksaan" id="acpptpemeriksaan">
+                                                                <option value="0">Baik</option>
+                                                                <option value="1">Sedang</option>
+                                                                <option value="2">Buruk</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <?php if ($visit['specialist_type_id'] == '1.05') {
+                                                    ?>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Nyeri</label>
+                                                                <select class="form-select" name="pain" id="acpptexampain" onchange="vitalsignInput(this)">
+                                                                    <option value="0">Normal</option>
+                                                                    <option value="3">Abnormal</option>
+                                                                </select>
+                                                                <span class="h6" id="badge-acpptexampain"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Discharge/Lokia</label>
+                                                                <select class="form-select" name="lochia" id="acpptexamlochia" onchange="vitalsignInput(this)">
+                                                                    <option value="">-</option>
+                                                                    <option value="0">Normal</option>
+                                                                    <option value="3">Abnormal</option>
+                                                                </select>
+                                                                <span class="h6" id="badge-acpptexamlokia"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Proteinuria (Perhari)</label>
+                                                                <select class="form-select" name="proteinuria" id="acpptexamproteinuria" onchange="vitalsignInput(this)">
+                                                                    <option value="0">-</option>
+                                                                    <option value="2">+</option>
+                                                                    <option value="3">++</option>
+                                                                </select>
+                                                                <span class="h6" id="badge-acpptexamproteinuria"></span>
+                                                            </div>
+                                                        </div>
+                                                    <?php
+                                                    } ?>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <label id="acpptalo_anamnase_label">Obyektif</label>
+                                                            <textarea name="alo_anamnase" id="acpptalo_anamnase" placeholder="" value="" class="form-control"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <span id="acppttotal_score"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-2 col-sm-12">
+                                                <h5 class="" id="headingSubyektif">
+                                                    <b id=""> (A) <a href="#" onclick="copyLastDiagnosis()">(Copy)</a></b>
+                                                </h5>
+                                                <hr>
+                                            </div>
+                                            <div id="" class="col-md-10 col-sm-12" aria-labelledby="">
+                                                <div class="">
+                                                    <div id="groupCatatanAsesmen" class="row">
+                                                        <div class="col-sm-12 mt-2">
+                                                            <div class="form-group">
+                                                                <!-- <label id="acpptteraphy_desc_label">Catatan Asesmen </label> -->
+                                                                <textarea name="teraphy_desc" id="acpptteraphy_desc" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="groupDiagnosaPerawatCppt" class="row mb-2">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                            <div class="mb-4">
+                                                                <div class="staff-members">
+                                                                    <div class="table tablecustom-responsive">
+                                                                        <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                                                            <?php if (true) { ?>
+                                                                                <thead>
+                                                                                    <th class="text-center" style="width: 100%">Diagnosa Perawat</th>
+                                                                                </thead>
+                                                                                <tbody id="bodyDiagPerawatCppt">
+                                                                                </tbody>
+                                                                            <?php }   ?>
+                                                                        </table>
+                                                                    </div>
+                                                                    <div class="box-tab-tools" style="text-align: center;">
+                                                                        <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawatBasic('bodyDiagPerawatCppt', '', null, null, 'acpptModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-to-hide"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -598,18 +557,28 @@ $permission = user()->getPermissions();
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5 class="" id="headingSubyektif">
-                                            <b id="cpptPlanningTitle">PLANNING (P)</b>
-                                        </h5>
-                                        <hr>
-                                        <div id="" class="col-12" aria-labelledby="">
-                                            <div class="text-muted">
-                                                <div class="row">
-                                                    <div class="col-sm-12 mt-2">
-                                                        <div class="form-group">
-                                                            <label id="acpptinstruction_label">Catatan Planning</label>
-                                                            <textarea name="instruction" id="acpptinstruction" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                        <div class="row">
+                                            <div class="col-md-2 col-sm-12">
+                                                <h5 class="" id="headingSubyektif">
+                                                    <b id="cpptPlanningTitle"> (P)</b>
+                                                </h5>
+                                                <hr>
+                                            </div>
+                                            <div id="" class="col-md-10 col-sm-12" aria-labelledby="">
+                                                <div class="text-muted">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 mt-2">
+                                                            <div class="form-group">
+                                                                <!-- <label id="acpptinstruction_label">Catatan Planning</label> -->
+                                                                <textarea name="instruction" id="acpptinstruction" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                                            </div>
                                                         </div>
+                                                        <!-- <div class="col-sm-12 mt-2">
+                                                            <div class="form-group">
+                                                                <label id="acpptstanding_order_label">Standing Order</label>
+                                                                <textarea name="standing_order" id="acpptstanding_order" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                                            </div>
+                                                        </div> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -617,7 +586,7 @@ $permission = user()->getPermissions();
                                     </div>
                                 </div>
                                 <div class="row mb-4">
-                                    <div id="cpptFallRiskSegment" class="col-6 mt-4">
+                                    <!-- <div id="cpptFallRiskSegment" class="col-6 mt-4">
                                         <h4><b>Resiko Jatuh</b></h4>
                                         <hr>
                                         <div class="col-md-12">
@@ -631,7 +600,7 @@ $permission = user()->getPermissions();
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div id="cpptGcsSegment" class="col-6 mt-4">
                                         <h4><b>GCS</b></h4>
                                         <hr>
@@ -646,6 +615,61 @@ $permission = user()->getPermissions();
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div id="cpptSuratPengantarSegment" class="col-6 mt-4">
+                                        <h4><b>Surat Pengantar Lab</b></h4>
+                                        <hr>
+                                        <div class="col-md-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengantarlabcppt" id="pengantarLabCppt0" value="-" checked>
+                                                <label class="form-check-label" for="pengantarLabCppt0">
+                                                    Tidak Ada
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengantarlabcppt" id="pengantarLabCppt1" value="gds">
+                                                <label class="form-check-label" for="pengantarLabCppt1">
+                                                    GDS
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengantarlabcppt" id="pengantarLabCppt2" value="creatinin">
+                                                <label class="form-check-label" for="pengantarLabCppt2">
+                                                    Creatinin
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengantarlabcppt" id="pengantarLabCppt3" value="ldl">
+                                                <label class="form-check-label" for="pengantarLabCppt3">
+                                                    LDL
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengantarlabcppt" id="pengantarLabCppt4" value="asam urat">
+                                                <label class="form-check-label" for="pengantarLabCppt4">
+                                                    Asam Urat
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pengantarlabcppt" id="pengantarLabCppt5" value="others">
+                                                <label class="form-check-label" for="pengantarLabCppt5">
+                                                    Lainnya
+                                                </label>
+                                            </div>
+                                            <div class="mb-3" id="pengantarLabCpptOthers" style="display: none;">
+                                                <input type="text" class="form-control" id="pengantarLabCpptOthersText" name="pengantarlabcpptotherstext" placeholder="Please specify">
+                                            </div>
+                                        </div>
+                                        <script>
+                                            const radios = document.querySelectorAll('input[name="pengantarlabcppt"]');
+                                            const otherInput = document.getElementById('pengantarLabCpptOthers');
+
+                                            radios.forEach(radio => {
+                                                radio.addEventListener('change', () => {
+                                                    otherInput.style.display = (radio.id === 'pengantarLabCppt5' && radio.checked) ? 'block' : 'none';
+                                                });
+                                            });
+                                        </script>
                                     </div>
                                 </div>
                                 <!-- <h4 id="assessmentGroupHeader">A:</h4> -->
@@ -760,9 +784,69 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                     </div> -->
-                                <div class="col-md-12">
-                                    <hr>
-                                </div><!--./col-md-12-->
+                                <div class="row">
+                                    <div class="col-sm-4 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="acpptexamination_date">Tanggal Assessmennt</label>
+                                                <!-- <input name="" id="flatacpptexamination_date" type="text" class="form-control datetimeflatpickr" readonly /> -->
+                                                <input name="examination_date" id="acpptexamination_date" type="datetime-local" class="form-control" />
+                                                <!-- <input class="form-control datetime-input" type="datetime-local"  name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(props?.get_data?.[props?.column_name?.toLowerCase()], " YYYY-MM-DDTHH:mm").format("YYYY-MM-DDTHH:mm") : '' }"> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="acpptclinic_id">Pelayanan</label>
+                                                <select name="clinic_id" id="acpptclinic_id" type="hidden" class="form-control ">
+                                                    <?php if ($visit['isrj'] == 1) {
+                                                        $selectedClinic = $visit['class_room_id'];
+                                                    } else {
+                                                        $selectedClinic = $visit['clinic_id'];
+                                                    } ?>
+                                                    <?php foreach ($clinic as $key => $value) {
+                                                    ?>
+                                                        <?php if ($selectedClinic == $visit['clinic_id']) { ?>
+                                                            <option value="<?= $value['clinic_id']; ?>" selected><?= $value['name_of_clinic']; ?></option>
+                                                        <?php } else { ?>
+                                                            <option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option>
+                                                        <?php } ?>
+                                                    <?php
+                                                    } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="acpptemployee_id">Dokter</label>
+                                                <select name="employee_id" id="acpptemployee_id" type="hidden" class="form-control ">
+                                                    <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
+                                                        $dokterselected = $visit['employee_inap'];
+                                                    } else {
+                                                        $dokterselected = $visit['employee_id'];
+                                                    } ?>
+                                                    <?php foreach ($employee as $key => $value) {
+                                                    ?>
+                                                        <?php if ($dokterselected == $visit['employee_id']) { ?>
+                                                            <option value="<?= $value['employee_id']; ?>" selected><?= $value['fullname']; ?></option>
+                                                        <?php } else { ?>
+                                                            <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
+                                                        <?php } ?>
+                                                    <?php
+                                                    } ?>
+                                                </select>
+                                                <!-- <script>
+                                                                        // Set the formatted date to the input field
+                                                                        document.getElementById('acpptemployee_id').value = formattedDate;
+                                                                    </script> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
                                 <div class="row text-center">
                                     <div class="col-sm-12 col-md-4 m-4">
                                         <div id="formaddacpptqrcode1" class="qrcode-class"></div>

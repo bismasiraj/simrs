@@ -234,7 +234,7 @@ class TreatmentObatModel extends Model
         treatment_obat.org_unit_code,
         treatment_obat.class_room_id,
         treatment_obat.brand_id, 
-        treatment_obat.dose ,
+        CAST(treatment_obat.dose as decimal(10,2)) dose,
         isnull(jml_bks,0.0) jml_bks ,
         isnull(dose_presc,0.0) dose_presc ,
         isnull(orig_dose,0.0) orig_dose ,
@@ -318,6 +318,7 @@ class TreatmentObatModel extends Model
           treatment_obat.measure_dosis,
           isnull(treatment_obat.dose1,0) as dose1,
           isnull(treatment_obat.dose2,0) as dose2")
+            // ->where('visit_id', "202502240948570353045")
             ->where('no_registration', $nomor)
             ->where('racikan in (0,1,3)')
             ->where('sold_status', $soldStatus)

@@ -44,7 +44,8 @@ class PersalinanModel extends Model
         'modified_by',
         'valid_date',
         'valid_user',
-        'valid_pasien',
+        'valid_doctor',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

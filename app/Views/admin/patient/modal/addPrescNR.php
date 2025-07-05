@@ -110,7 +110,7 @@
         var doctor = doctor
         var employeeId = '<?= $visit['employee_id']; ?>'
         var employeeIdFrom = '<?= $visit['employee_id']; ?>'
-        var doctorFrom = '<?= $visit['fullname']; ?>'
+        var doctorFrom = '<?= @$visit['fullname']; ?>'
         var statusObat = toItem.status_pasien_id
         var tarifId = "1201008"
         var treatment = "PEMBELIAN OBAT NON RACIKAN"

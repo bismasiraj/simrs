@@ -321,7 +321,7 @@
                 <form action="" method="">
                     <div class="row">
                         <h6 class="text-center"><b>SURAT BUKTI PELAYANAN <br> NAMA RS : <?=@$kop['display']?> KODE RS :
-                                0701R001 KELAS RS : B </b>
+                                <?=@$kop['org_type']?> KELAS RS : <?=@$kop['org_type']?> </b>
                         </h6>
                         <h6 class="text-uppercase text-decoration-underline text-center"><b>rawat jalan</b></h6>
                     </div>
@@ -346,7 +346,7 @@
                             <label>Berat Lahir:</label>
                         </div>
 
-                        <div class="col-3">
+                        <!-- <div class="col-3">
                             <table class="table table-bordered" style="border: solid black;">
                                 <tbody>
                                     <tr style="height: 15px;">
@@ -355,7 +355,6 @@
                                         </td>
                                     </tr>
                                     <tr style="height: 25px;">
-                                        <!-- Sesuaikan tinggi baris sesuai kebutuhan -->
                                         <td class="text-center">
                                             <label class="text-uppercase fs-2"
                                                 style="font-family: 'Times New Roman', Times, serif;">
@@ -365,7 +364,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="row">
                         <div class="col">
@@ -641,6 +640,12 @@
                         </thead>
                         <tbody id="render-tables-inv" class="border">
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="fw-bold text-end">Grand Total</td>
+                                <td class="fw-bold" id="total-all-pay-inv"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -1026,7 +1031,7 @@
         if (diagnosaList.length === 0) {
             result = "";
         } else if (diagnosaList.length === 1) {
-            result = diagnosaList
+            result = diagnosaList;
         } else {
             result = diagnosaList.join(" ,<br>");
         }
@@ -1121,7 +1126,7 @@
                                             dataResultTable += `<tr>
                                                     <td style="padding-left: 40px;">${e.parameter_name}</td>
                                                     <td>
-                                                        ${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                        ${(e.flag_hl?.trim() || '') === '' ? e.hasil : 
                                                             ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
                                                             (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
                                                             e.hasil)}
@@ -1668,7 +1673,7 @@
                 <form action="" method="">
                     <div class="row">
                         <h6 class="text-center"><b>SURAT BUKTI PELAYANAN <br> NAMA RS : <?=@$kop['display']?> KODE RS :
-                                0701R001 KELAS RS : B </b>
+                                <?=@$kop['org_type']?> KELAS RS : <?=@$kop['org_type']?> </b>
                         </h6>
                         <h6 class="text-uppercase text-decoration-underline text-center"><b>rawat jalan</b></h6>
                     </div>
@@ -1693,7 +1698,7 @@
                             <label>Berat Lahir:</label>
                         </div>
 
-                        <div class="col-3">
+                        <!-- <div class="col-3">
                             <table class="table table-bordered" style="border: solid black;">
                                 <tbody>
                                     <tr style="height: 15px;">
@@ -1702,7 +1707,6 @@
                                         </td>
                                     </tr>
                                     <tr style="height: 25px;">
-                                        <!-- Sesuaikan tinggi baris sesuai kebutuhan -->
                                         <td class="text-center">
                                             <label class="text-uppercase fs-2"
                                                 style="font-family: 'Times New Roman', Times, serif;">
@@ -1712,7 +1716,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="row">
                         <div class="col">
@@ -1986,6 +1990,12 @@
                         </thead>
                         <tbody id="render-tables-inv" class="border">
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="fw-bold text-end">Grand Total</td>
+                                <td class="fw-bold" id="total-all-pay-inv"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -2354,8 +2364,39 @@
     const dataRenderTablesLaborat = () => {
         <?php $dataJsonTables = json_encode($lab); ?>
         let dataTable = <?php echo $dataJsonTables; ?>;
+
+        const diagnosaList = [];
+        dataTable?.data?.forEach((item) => {
+            if (item.diagnosa_desc !== null && !diagnosaList.includes(item.diagnosa_desc)) {
+                diagnosaList.push(item.diagnosa_desc);
+            }
+        });
+
+        let result;
+        if (diagnosaList.length === 0) {
+            result = "";
+        } else if (diagnosaList.length === 1) {
+            result = diagnosaList;
+        } else {
+            result = diagnosaList.join(" ,<br>");
+        }
+
+        $("#diagnosa_klinis").html(result);
         let groupedData = {};
-        dataTable?.forEach(e => {
+
+        dataTable?.data?.forEach(e => {
+            if (e.tarif_name?.toLowerCase().includes("antigen")) {
+                $("#tindakan_medis").html(`<h6>Expertise :</h6>
+                    <p>Note: Rapid Antigen SARS-CoV-2
+                        * Spesimen : Swab Nasofaring/ Orofaring
+                        * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
+                        * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan
+                        ke orang lain,
+                        disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila
+                        probabilitas pretes relatif tinggi,
+                        terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
+                    </p>`);
+            }
             if (!groupedData[e.nolab_lis]) {
                 groupedData[e.nolab_lis] = {};
             }
@@ -2428,35 +2469,29 @@
 
                                         groupedData[nolabLis][norm][kelPemeriksaan][tarifName].forEach(e => {
                                             dataResultTable += `<tr>
-                                            <td style="padding-left: 40px;">${e.parameter_name}</td>
-                                            <td>${e.flag_hl === 'L ' || e.flag_hl === 'L' ? `<b style="color:blue;">${e.hasil}</b>` :
-                                                e.flag_hl === 'H ' || e.flag_hl === 'H' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                e.flag_hl === '(*) ' || e.flag_hl === '(*)' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                e.hasil}</td>
-                                            <td>${!e.satuan ? "-" : e.satuan}</td>
-                                            <td>${!e.nilai_rujukan ? "-" : e.nilai_rujukan}</td>
-                                            <td>${!e.metode_periksa ? "-" : e.metode_periksa}</td>
-                                            <td>${e.flag_hl === 'L ' || e.flag_hl === 'L' ? `<b style="color:blue;">${e.flag_hl}</b>` :
-                                                e.flag_hl === 'H ' || e.flag_hl === 'H' ? `<b style="color:red;">${e.flag_hl}</b>` :
-                                                e.flag_hl === '(*)' || e.flag_hl === '(*)' ? `<b style="color:red;">${e.flag_hl}</b>` :
-                                                e.flag_hl}</td>
-                                        </tr>`;
+                                                    <td style="padding-left: 40px;">${e.parameter_name}</td>
+                                                    <td>
+                                                        ${(e.flag_hl?.trim() || '') === '' ? e.hasil : 
+                                                            ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
+                                                            (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
+                                                            e.hasil)}
+                                                    </td>
+
+                                                    <td>${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                            (e.flag_hl?.trim().includes('K') ? `<b style="color:red;">${e.flag_hl.trim()}</b>` :
+                                                            ['L', 'H', 'K' , '(*)'].includes(e.flag_hl?.trim()) ? `<b class="fw-bold">${e.flag_hl.trim()}</b>` : 
+                                                            e.flag_hl.trim())}
+                                                    </td>
+                                                    <td>${!e.satuan? "-":e.satuan}</td>
+                                                    <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
+                                                    <td>${!e.catatan? "-": e.catatan === "-" ? !e.rekomendasi ? "-" : e.rekomendasi : e.catatan }</td>
+
+                                                </tr>`;
                                         });
                                     }
                                 }
                             }
                         }
-
-                        $("#noLab_rm-lab").html(firstItem?.nolab_lis + '/ ' + firstItem?.norm);
-                        $("#name_patient-lab").html(firstItem?.nama);
-                        $("#adresss_patient-lab").html(firstItem?.alamat);
-                        $("#date_check-lab").html(formattedCheckDate);
-                        $("#date_sampel-lab").html(formattedSampleDate);
-                        $("#payment_method-lab").html(firstItem?.cara_bayar_name);
-                        $("#doctor_send-lab").html(firstItem?.pengirim_name);
-                        $("#room_poli-lab").html(firstItem?.ruang_name);
-                        $("#doctor-responsible-lab").html(firstItem?.pengirim_name);
-                        $("#validator-ttd-lab").html(firstItem?.pengirim_name);
 
                         isFirstGroup = false;
                     }
@@ -2465,13 +2500,34 @@
 
             $("#render-tables").html(dataResultTable);
 
+            $("#noLab_rm").html(dataTable?.data[0]?.nolab_lis + '/ ' + dataTable?.data[0]?.norm)
+            $("#name_patient").html(dataTable?.data[0]?.nama)
+            $("#adresss_patient").html(dataTable?.data[0]?.alamat)
+            $("#date_check").html(moment(dataTable?.data[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
+            $("#payment_method").html(dataTable?.data[0]?.cara_bayar_name)
+            $("#doctor_send").html(dataTable?.data[0]?.pengirim_name)
+            $("#room_poli").html(dataTable?.data[0]?.ruang_name)
+            $("#class_pay").html(`${dataTable?.data[0]?.kelas_name} - ${dataTable?.data[0]?.cara_bayar_name}`)
+            $("#datetime-now-valid").html(
+                `${moment(dataTable?.data[0]?.tgl_hasil_selesai).format("DD/MM/YYYY HH:mm:ss")}`)
+
+
+
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: `https://www.pkusampangan.com/`, // Your text here
+                width: 70,
+                height: 70,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+
             function addImageToQRCode1() {
                 var qrElement = document.getElementById("qrcode");
                 var qrCanvas = qrElement.querySelector('canvas');
 
                 var img = new Image();
-                img.src = '<?= base_url() ?>'
-                assets / img / logo.png;
+                img.src = '<?= base_url() ?>assets/img/logo.png';
 
                 img.onload = function() {
                     var canvas = document.createElement('canvas');
@@ -2495,33 +2551,26 @@
 
             addImageToQRCode1();
         }
-
-        new QRCode(document.getElementById("qrcode1-lab"), {
-            text: `${dataTable[0]?.pengirim_name}`,
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
-
-        new QRCode(document.getElementById("qrcode-lab"), {
-            text: `<?= user()->fullname; ?> | ${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`,
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
     }
     const renderDataPatientLaborat = () => {
-        <?php $dataJson = json_encode($visit); ?>
+        <?php $dataJson = json_encode($lab); ?>
         let data = <?php echo $dataJson; ?>
         // render patient 
-        $("#gender_patient-lab").html(data?.name_of_gender)
-        $("#date_age-lab").html(moment(data?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.age)
-        $("#no_tlp-lab").html(data?.phone_number)
-        $("#diagnosa_klinis-lab").html(data?.diagnosa)
+        $("#gender_patient").html(data?.visit?.name_of_gender)
+        $("#doctor-responsible-lab").html(data?.visit?.doctor_responsible)
+
+        $("#date_age").html(moment(data?.visit?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.visit?.age)
+        $("#no_tlp").html(data?.visit?.phone_number)
+        $("#validator-ttd").html(data?.visit?.valid_users_p)
+
+        var qrcode = new QRCode(document.getElementById("qrcode1"), {
+            text: `${data?.visit?.valid_users_p}`, // Your text here
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
     }
     </script>
 

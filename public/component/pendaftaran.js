@@ -54,7 +54,10 @@ const getIp = () => {
    return new Promise((resolve) => {
       getDataList("antrian/ip", (res) => {
          let ipMe = window.ipMe;
-         let results = res.value.data;
+         let results = res.value.data.filter((item) =>
+            item.display_room.includes("LOKET PENDAFTARAN")
+         );
+
          let result = results.filter((item) => item?.display_ip === ipMe);
          window.loket = results.filter(
             (item) =>
@@ -79,7 +82,7 @@ const getIp = () => {
 const initializeVideoPlayer = () => {
    const videoPlayer = document.getElementById("videoPlayer");
    videoPlayer.src = `assets/vidio/${videoFiles[currentVideoIndex]}`;
-   videoPlayer.volume = 0.01;
+   videoPlayer.muted = true;
    videoPlayer.addEventListener("ended", playNextVideo);
 };
 
@@ -87,7 +90,7 @@ const playNextVideo = () => {
    currentVideoIndex = (currentVideoIndex + 1) % videoFiles.length;
    const videoPlayer = document.getElementById("videoPlayer");
    videoPlayer.src = `assets/vidio/${videoFiles[currentVideoIndex]}`;
-   videoPlayer.volume = 0.01;
+   videoPlayer.muted = true;
 };
 
 const getDataOne = () => {
@@ -124,11 +127,11 @@ const getDataOne = () => {
                               <h4 class="fw-bold">${item?.display_room
                                  .replace("PENDAFTARAN", "")
                                  .trim()} 
-                                  <div id="${
+                                  <div style="font-size: 39px;"  id="${
                                      item?.display_room.split(
                                         "LOKET PENDAFTARAN "
                                      )[1]
-                                  }-id" class="color-content-green"></div>
+                                  }-id" class="color-content-green text-danger"></div>
                               </h4>
                           </div>
                       </div>`;
@@ -181,9 +184,9 @@ const displayQueue = (data) => {
       console.log("ada data");
 
       $("#queueDisplay").html(`
-           <h3 class="fw-bold"><u>NO ANTRIAN</u></h3>
-           <h1 class="fw-bold">${String(data.no_urut).padStart(3, "0")}</h1>
-           <h2 class="fw-bold">Loket ${data.loket}</h2>
+           <h3 class="fw-bold" style=" font-size: 36px;" >NO ANTRIAN</h3>
+           <h1 class="fw-bold" style="font-size: 155px;">${String(data.no_urut).padStart(3, "0")}</h1>
+           <h2 class="fw-bold" style="font-size: 53px;">Loket ${data.loket}</h2>
        `);
    } else {
       $("#queueDisplay").text("Menunggu antrian...");
@@ -233,18 +236,18 @@ const announceQueue = async (data) => {
       // setTimeout(() => announceQueue(data), 1000);
    };
 
-   setTimeout(() => {
-      if (!speechExecuted) {
-         console.warn("Reload");
-         announceQueue(data);
-      }
-   }, 1000);
+   // setTimeout(() => {
+   //    if (!speechExecuted) {
+   //       console.warn("Reload");
+   //       announceQueue(data);
+   //    }
+   // }, 1000);
 
    speechSynthesis.speak(msg); // Mulai ucapan
    postData(
       {
          visit_id: data.visit_id,
-         id: data.id,
+         id: `${data.id}`,
       },
       "pendaftaran/updateStatus",
       (res) => {

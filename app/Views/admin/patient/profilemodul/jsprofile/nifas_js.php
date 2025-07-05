@@ -142,7 +142,7 @@ $lochea = array_filter($aValue, function ($value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getNifasAll',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': ''
             }),

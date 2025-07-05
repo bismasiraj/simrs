@@ -12,17 +12,18 @@
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
+    <script src="<?= base_url() ?>assets\js\jquery.min.js"></script>
+    <script src="<?= base_url() ?>assets\libs\jquery-ui-dist\jquery-ui.min.js"></script>
 
+
+    <script src="<?= base_url() ?>assets/libs/qrcode/qrcode.min.js"></script>
+    <!-- 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script> -->
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -282,10 +283,10 @@
                         </td>
                         <td>
                             <b>Waktu Berangkat</b>
-                            <div type="text" class="form-control" name=""><?= date('d-m-Y H:i', strtotime($doc['examination_date'])) ?>
+                            <div type="text" class="form-control" name=""><?= date('d-m-Y H:i', strtotime(@$doc1['examination_date'])) ?>
                             </div>
                             <b>Waktu Tiba</b>
-                            <div type="text" class="form-control" name=""><?= date('d-m-Y H:i', strtotime($doc2['examination_date'])) ?>
+                            <div type="text" class="form-control" name=""><?= date('d-m-Y H:i', strtotime(@$doc3['examination_date'])) ?>
                             </div>
                         </td>
                     </tr>
@@ -298,19 +299,19 @@
                 <tbody>
                     <tr>
                         <td>
-                            <b>Keluhan Utama (Autoanamnesis)</b>
-                            <div type="text" class="form-control" id="anamnesis" name="anamnesis" value=""><?= @$sub['anamnesis'] ?></div>
+                            <b>Keluhan Utama</b>
+                            <div type="text" class="form-control" id="description" name="description" value=""><?= @$doc['description'] ?></div>
                         </td>
-                        <td>
+                        <!-- <td>
                             <b>Riwayat Penyakit Sekarang</b>
                             <div type="text" class="form-control" id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" value=""><?= @$sub['riwayat_penyakit_sekarang'] ?></div>
                         </td>
                         <td>
                             <b>Riwayat Penyakit Dahulu</b>
                             <div type="text" class="form-control" id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" value=""><?= @$sub['riwayat_penyakit_dahulu'] ?></div>
-                        </td>
+                        </td> -->
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td>
                             <b>Riwayat Penyakit Keluarga</b>
                             <div type="text" class="form-control" id="riwayat_penyakit_keluarga" name="riwayat_penyakit_keluarga"><?= @$sub['riwayat_penyakit_keluarga'] ?></div>
@@ -345,7 +346,7 @@
                             <b>Riwayat Kebiasaan (Negatif)</b>
                             <div type="text" class="form-control" id="riwayat_alkohol" name="riwayat_alkohol"><?= @$sub['riwayat_alkohol'] ?></div>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
             <div class="row">
@@ -360,21 +361,21 @@
                         <td>
                             <b>Tekanan Darah</b>
                             <div class="input-group">
-                                <div type="text" class="form-control" id="tensi_atas" name="tensi_atas" value=""><?= @$doc['tension_upper'] ?>/<?= @$doc['tension_below'] ?></div>
+                                <div type="text" class="form-control" id="tensi_atas" name="tensi_atas" value=""><?= @$doc1['tension_upper'] ?>/<?= @$doc1['tension_below'] ?></div>
                                 <span class="input-group-text" id="basic-addon2">mmHg</span>
                             </div>
                         </td>
                         <td>
                             <b>Denyut Nadi</b>
                             <div class="input-group">
-                                <div type="text" class="form-control" id="nadi" name="nadi" value=""><?= @$doc['nadi'] ?></div>
+                                <div type="text" class="form-control" id="nadi" name="nadi" value=""><?= @$doc1['nadi'] ?></div>
                                 <span class="input-group-text" id="basic-addon2">x/m</span>
                             </div>
                         </td>
                         <td>
                             <b>Suhu Tubuh</b>
                             <div class="input-group">
-                                <div type="text" class="form-control" id="suhu" name="suhu" value=""><?= @$doc['temperature'] ?></div>
+                                <div type="text" class="form-control" id="suhu" name="suhu" value=""><?= @$doc1['temperature'] ?></div>
                                 <span class="input-group-text" id="basic-addon2">℃</span>
                             </div>
                         </td>
@@ -390,21 +391,21 @@
                         <td>
                             <b>Berat Badan</b>
                             <div class="input-group">
-                                <div type="text" class="form-control" id="berat" name="berat"><?= @$doc['weight'] ?></div>
+                                <div type="text" class="form-control" id="berat" name="berat"><?= @$doc1['weight'] ?></div>
                                 <span class="input-group-text" id="basic-addon2">kg</span>
                             </div>
                         </td>
                         <td>
                             <b>Tinggi Badan</b>
                             <div class="input-group">
-                                <div type="text" class="form-control" id="tinggi" name="tinggi" value=""><?= @$doc['height'] ?></div>
+                                <div type="text" class="form-control" id="tinggi" name="tinggi" value=""><?= @$doc1['height'] ?></div>
                                 <span class="input-group-text" id="basic-addon2">cm</span>
                             </div>
                         </td>
                         <td>
                             <b>SpO2</b>
                             <div class="input-group">
-                                <div type="text" class="form-control" id="spo2" name="spo2" value=""><?= @$doc['saturasi'] ?></div>
+                                <div type="text" class="form-control" id="spo2" name="spo2" value=""><?= @$doc1['saturasi'] ?></div>
                             </div>
                         </td>
                         <td>
@@ -417,7 +418,7 @@
                 </tbody>
             </table>
 
-            <table class="table table-bordered">
+            <!-- <table class="table table-bordered">
                 <tbody>
                     <tr>
                         <td>
@@ -467,8 +468,8 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
-            <table class="table table-bordered">
+            </table> -->
+            <!-- <table class="table table-bordered">
                 <tbody>
                     <tr>
                         <td>
@@ -481,8 +482,8 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
-            <table class="table table-bordered">
+            </table> -->
+            <!-- <table class="table table-bordered">
                 <tr>
                     <td>
                         <div class="row mb-1">
@@ -493,7 +494,7 @@
                         </div>
                     </td>
                 </tr>
-            </table>
+            </table> -->
             <div class="row">
                 <h4 class="text-start">Assessment (A)</h4>
             </div>
@@ -501,11 +502,17 @@
                 <tbody>
                     <tr>
                         <td colspan="2">
-                            <b>Diagnosis (ICD-10)</b>
-                            <div type="text" class="form-control" id="icd10" name="icd10" value=""><?= @$sub['icd10'] ?></div>
+                            <b>Diagnosa Keperawatan</b>
+                            <?php if (!is_null($diag)) {
+                                foreach ($diag as $keyd => $valued) {
+                            ?>
+                                    <div type="text" class="form-control" id="icd10" name="icd10" value=""><?= $valued['diag_notes'] ?></div>
+                            <?php
+                                }
+                            } ?>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td>
                             <b>Permasalahan Medis</b>
                             <div type="text" class="form-control" id="masalah_medis" name="masalah_medis" value=""><?= @$sub['masalah_medis'] ?></div>
@@ -520,7 +527,7 @@
                             <b>Penyebab Cidera / Keracunan</b>
                             <div type="text" class="form-control" id="penyebab_cidera" name="penyebab_cidera" value=""><?= @$sub['penyebab_cidera'] ?></div>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
             <div class="row">
@@ -530,13 +537,13 @@
                 <tbody>
                     <tr>
                         <td>
-                            <b>Target / Sasaran Terapi</b>
-                            <div type="text" class="form-control" id="sasaran" name="sasaran" value=""><?= @$sub['sasaran'] ?></div>
+                            <b>Catatan Planning</b>
+                            <div type="text" class="form-control" id="instruction" name="instruction" value=""><?= @$doc['instruction'] ?></div>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="row">
+            <!-- <div class="row">
                 <h5 class="text-start">Pemeriksaan Diagnostik Penunjang</h5>
             </div>
             <table class="table table-bordered">
@@ -589,7 +596,7 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> -->
             <div class="row">
                 <h4 class="text-start">Status Pasien</h4>
             </div>
@@ -606,9 +613,6 @@
                             <b>Sebelum Transfer</b>
                         </td>
                         <td>
-                            <b>Selama Transfer</b>
-                        </td>
-                        <td>
                             <b>Setelah Transfer</b>
                         </td>
                     </tr>
@@ -618,73 +622,64 @@
                         <td>
                             <b>Kondisi Umum</b>
                         </td>
-                        <td><?= @$doc['anamnase'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['anamnase'] ?></td>
+                        <td><?= @$doc1['anamnase'] ?></td>
+                        <td><?= @$doc3['anamnase'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>T (Tensi)</b>
                         </td>
-                        <td><?= @$doc['tension_upper'] ?>/<?= @$doc['tension_below'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['tension_upper'] ?>/<?= @$doc2['tension_below'] ?></td>
+                        <td><?= @$doc1['tension_upper'] ?>/<?= @$doc1['tension_below'] ?></td>
+                        <td><?= @$doc3['tension_upper'] ?>/<?= @$doc3['tension_below'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>N (Detak Jantung)</b>
                         </td>
-                        <td><?= @$doc['nadi'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['nadi'] ?></td>
+                        <td><?= @$doc1['nadi'] ?></td>
+                        <td><?= @$doc3['nadi'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>RR (Frekuensi Pernapasan)</b>
                         </td>
-                        <td><?= @$doc['nafas'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['nafas'] ?></td>
+                        <td><?= @$doc1['nafas'] ?></td>
+                        <td><?= @$doc3['nafas'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>S (Suhu Badan)</b>
                         </td>
-                        <td><?= @$doc['temperature'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['temperature'] ?></td>
+                        <td><?= @$doc1['temperature'] ?></td>
+                        <td><?= @$doc3['temperature'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>BB (Berat Badan)</b>
                         </td>
-                        <td><?= @$doc['weight'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['weight'] ?></td>
+                        <td><?= @$doc1['weight'] ?></td>
+                        <td><?= @$doc3['weight'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>TB (Tinggi Badan)</b>
                         </td>
-                        <td><?= @$doc['height'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['height'] ?></td>
+                        <td><?= @$doc1['height'] ?></td>
+                        <td><?= @$doc3['height'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>SpO2</b>
                         </td>
-                        <td><?= @$doc['saturasi'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['saturasi'] ?></td>
+                        <td><?= @$doc1['saturasi'] ?></td>
+                        <td><?= @$doc3['saturasi'] ?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>Catatan Penting</b>
                         </td>
-                        <td><?= @$doc['alo_anamnase'] ?></td>
-                        <td></td>
-                        <td><?= @$doc2['alo_anamnase'] ?></td>
+                        <td><?= @$doc1['alo_anamnase'] ?></td>
+                        <td><?= @$doc3['alo_anamnase'] ?></td>
                     </tr>
                 </tbody>
             </table>
@@ -695,14 +690,16 @@
                 <div class="col-3" align="center">
                     <div>Petugas Yang Menyerahkan</div>
                     <div class="mb-4">
-                        <div class="pt-2" id="qrcode"></div>
+                        <div class="pt-2" id="qrcode2"></div>
                     </div>
+                    <div id="qrcode2name"></div>
                 </div>
                 <div class="col"></div>
                 <div class="col-3" align="center">
                     <div>Petugas Yang Menerima</div>
                     <div class="mb-4">
-                        <div class="pt-2" id="qrcode1"></div>
+                        <div class="pt-2" id="qrcode3"></div>
+                        <div id="qrcode3name"></div>
                     </div>
                 </div>
             </div>
@@ -711,14 +708,16 @@
                 <div class="col-3" align="center">
                     <div>Petugas Yang Menyerahkan</div>
                     <div class="mb-1">
-                        <div class="pt-2" id="qrcode2"></div>
+                        <div class="pt-2" id="qrcode6"></div>
+                        <div id="qrcode6name"></div>
                     </div>
                 </div>
                 <div class="col"></div>
                 <div class="col-3" align="center">
                     <div>Petugas Yang Menerima</div>
                     <div class="mb-1">
-                        <div class="pt-2" id="qrcode3"></div>
+                        <div class="pt-2" id="qrcode7"></div>
+                        <div id="qrcode7name"></div>
                     </div>
                 </div>
             </div>
@@ -732,115 +731,33 @@
 
 </body>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+    let val = <?= json_encode($val); ?>;
+    let sign = <?= json_encode($sign); ?>;
+
+    sign = JSON.parse(sign)
 </script>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode2"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode3"), {
-        text: 'a',
-        width: 85,
-        height: 85,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+    $.each(sign, function(key, value) {
+        if (value.user_type == 1) {
+            if (document.getElementById("qrcode" + value.sign_ke)) {
+                var qrcode = new QRCode(document.getElementById("qrcode" + value.sign_ke), {
+                    text: value.sign_path,
+                    width: 150,
+                    height: 150,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H // High error correction
+                });
+                $("#qrcode" + value.sign_ke + "name").html(`(${value.fullname??value.user_id})`)
+            }
+        }
+    })
 </script>
 
 <?php
 
 ?>
 
-
-<script>
-    $(document).ready(function() {
-        <?php $visitJson = json_encode($visit); ?>
-        let dataResult = []
-        let visitData = <?php echo $visitJson; ?>;
-        visitData.aValue.map((e) => {
-            let stabilitasArray = e.value_info.split(';');
-            dataResult += `<tr><td>${e.value_score}</td>
-                                <td>${e.value_desc}</td>
-                                <td>${stabilitasArray[0]}</td>
-                                <td>${stabilitasArray[1]}</td>
-                            </tr>`;
-        });
-
-        $("#drajat-stabilitas-tabels").html(dataResult)
-
-        $("#org_unit_code").val("<?= @$visit['visit']['org_unit_code']; ?>")
-        $("#no_registration").html("<?= @$visit['visit']['no_registration']; ?>")
-        $("#visit_id").val("<?= @$visit['visit']['visit_id']; ?>")
-        $("#clinic_id").html("<?= @$visit['visit']['clinic_id']; ?>")
-        $("#class_").val("")
-        $("#class-bangsal").val("")
-        $("#class-bed").val("")
-        $("#in_date").val("<?= @$visit['visit']['in_date']; ?>")
-        $("#exit_date").val("<?= @$visit['visit']['exit_date']; ?>")
-        $("#keluar_id").val("<?= @$visit['visit']['keluar_id']; ?>")
-        $("#name_of_class").html("<?= @$visit['visit']['name_of_class']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").html("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= @$visit['visit']['employee_id']; ?>")
-        $("#description").val("<?= @$visit['visit']['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= @$visit['visit']['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= @$visit['visit']['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= @$visit['visit']['ageyear']; ?>")
-        $("#agemonth").val("<?= @$visit['visit']['agemonth']; ?>")
-        $("#ageday").val("<?= @$visit['visit']['ageday']; ?>")
-        $("#thename").html("<?= @$visit['visit']['diantar_oleh']; ?>")
-        $("#theaddress").html("<?= @$visit['visit']['visitor_address']; ?>")
-        $("#theid").val("<?= @$visit['visit']['pasien_id']; ?>")
-        $("#isrj").val("<?= @$visit['visit']['isrj']; ?>")
-        $("#gender").html("<?= @$visit['visit']['name_of_gender']; ?>")
-        $("#patient_age").html("<?= @$visit['visit']['age']; ?>")
-
-        $("#doctor").html("<?= @$visit['visit']['sspractitioner_name']; ?>")
-        $("#kal_id").val("<?= @$visit['visit']['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= @$visit['visit']['account_id']; ?>")
-    })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
-
-    })
-</script>
 <style>
     @media print {
         @page {

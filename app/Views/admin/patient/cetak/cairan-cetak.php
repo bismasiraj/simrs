@@ -12,25 +12,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <title><?= $title; ?></title>
-
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
-        rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
-    <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
-    <script src="<?= base_url('/assets/js/default.js') ?>"></script>
+    <!-- <link href="<?= base_url(); ?>css/jquery.signature.css" rel="stylesheet"> -->
+    <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/jquery/jquery.min.js"></script>
+    <script src="<?= base_url(); ?>js/jquery.signature.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/qrcode/qrcode.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
+    <script src="<?= base_url(); ?>assets/js/default.js"></script>
     <style>
     .form-control:disabled,
     .form-control[readonly] {
@@ -85,7 +75,11 @@
             <div class="col text-center">
                 <h3><?= @$organization['name_of_org_unit'] ?></h3>
 
-                <p><?= @$organization['contact_address'] ?></p>
+                <p><?= @$organization['contact_address'] ?>,<?= @$organization['phone'] ?>, Fax:
+                    <?= @$organization['fax'] ?>,
+                    <?= @$organization['kota'] ?>
+                    <br><?= @$organization['sk'] ?>
+                </p>
             </div>
             <div class="col-auto text-center">
                 <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -119,8 +113,8 @@
                     <tr>
                         <th rowspan="3" class="align-middle text-uppercase ">TGL/JAM</th>
                         <th rowspan="3" class="align-middle text-uppercase">Berat</th>
-                        <th colspan="7" class="align-middle text-uppercase text-center">PEMASUKAN</th>
-                        <th colspan="8" class="align-middle text-uppercase text-center">PENGLUARAN</th>
+                        <th colspan="5" class="align-middle text-uppercase text-center">PEMASUKAN</th>
+                        <th colspan="7" class="align-middle text-uppercase text-center">PENGLUARAN</th>
                         <th rowspan="3" class="align-middle text-uppercase">Kesimpulan</th>
 
 
@@ -128,7 +122,7 @@
                         <th rowspan="3" class="align-middle text-uppercase">paraf</th>
                     </tr>
                     <tr>
-                        <th class="text-uppercase align-middle" colspan="2">Oral</th>
+                        <!-- <th class="text-uppercase align-middle" colspan="2">Oral</th> -->
                         <th class="text-uppercase align-middle" colspan="2">ENTERAL</th>
                         <th class="text-uppercase align-middle" colspan="2">Perenteral</th>
                         <th rowspan="2" class="align-middle text-uppercase">Total Cairan Masuk</th>
@@ -137,12 +131,12 @@
                         <th rowspan="2" class="align-middle ">BAK (cc) Warna</th>
                         <th rowspan="2" class="align-middle text-uppercase">BAB</th>
                         <th rowspan="2" class="align-middle ">NGT (cc)</th>
-                        <th rowspan="2" class="align-middle ">RWL (cc)</th>
+                        <!-- <th rowspan="2" class="align-middle ">Urine</th> -->
                         <th rowspan="2" class="align-middle text-uppercase">Total Cairan Keluar</th>
                     </tr>
                     <tr>
-                        <th>Jenis</th>
-                        <th>jml (cc)</th>
+                        <!-- <th>Jenis</th>
+                        <th>jml (cc)</th> -->
                         <th>Jenis</th>
                         <th>jml (cc)</th>
                         <th>Jenis Cairan</th>
@@ -162,9 +156,9 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+    </script> -->
 
 </body>
 
@@ -192,6 +186,9 @@ const dataRender = () => {
     let result = <?= json_encode($dataTabels); ?>;
     let aValue = <?= json_encode($aValue); ?>;
     let filteredDataValue = aValue?.filter(item => item?.p_type === "GEN0023");
+    const resultNotIwl = result.filter(item => item.fluid_type !== "G0230308");
+    console.log(resultNotIwl);
+
 
     const fluidTypeMapping = {
         "G0230301": "oral",
@@ -225,12 +222,11 @@ const dataRender = () => {
         return grouped;
     };
 
-    const groupedData = groupData(result);
+    const groupedData = groupData(resultNotIwl);
     let data = '';
 
 
     Object.keys(groupedData).forEach(dateKey => {
-        console.log(groupedData);
 
         const group = groupedData[dateKey];
 
@@ -260,7 +256,8 @@ const dataRender = () => {
             bak: 0,
             bab: 0,
             ngt: 0,
-            rwl: 0,
+            iwl: 0,
+            urin: 0,
             totalKeluar: 0
         };
 
@@ -275,12 +272,14 @@ const dataRender = () => {
                     pengeluaran.muntah.jenis.push(item.fluid_category);
                     pengeluaran.muntah.jumlah += item.fluid_amount || 0;
                 }
-                if (item.fluid_type === "G0230311") {
+                if (item.fluid_type === "G0230307") {
                     pengeluaran.drain += item.fluid_amount || 0;
-                } else if (item.fluid_type === "G0230312") {
-                    pengeluaran.bak += item.fluid_amount || 0;
-                } else if (item.fluid_type === "G0230313") {
+                    // } else if (item.fluid_type === "G0230312") {
+                    //     pengeluaran.bak += item.fluid_amount || 0;
+                } else if (item.fluid_type === "G0230306") {
                     pengeluaran.bab += item.fluid_amount || 0;
+                } else if (item.fluid_type === "G0230303") {
+                    pengeluaran.urin += item.fluid_amount || 0;
                 }
                 pengeluaran.totalKeluar += item.fluid_amount || 0;
             }
@@ -299,12 +298,12 @@ const dataRender = () => {
         const kesimpulan = pemasukan.totalMasuk - pengeluaran.totalKeluar;
         const dateHeader = group[0].examination_date.replace('T', ' ');
         data +=
-            `<tr><td colspan="20" class="text-center fw-bold">${moment(dateHeader).format("DD/MM/YYYY HH:mm")}</td></tr>`;
+            `<tr><td colspan="21" class="text-center fw-bold">${moment(dateHeader).format("DD/MM/YYYY HH:mm")}</td></tr>`;
         data += `<tr>
             <td>${moment(group[0].examination_date).format("DD/MM/YYYY HH:mm")}</td>
             <td>${/^[0-9]+$/.test(group[0].awareness) ? parseInt(group[0].awareness, 10) : ''}</td>
-            <td>${oralJenis}</td>
-            <td>${pemasukan.oral.jumlah}</td>
+          <!--  <td>${oralJenis}</td>
+            <td>${pemasukan.oral.jumlah}</td>-->
             <td>${enteralJenis}</td>
             <td>${pemasukan.enteral.jumlah}</td>
             <td>${parenteralJenis}</td>
@@ -313,10 +312,11 @@ const dataRender = () => {
             <td>${muntahJenis}</td>
             <td>${pengeluaran.muntah.jumlah}</td>
             <td>${pengeluaran.drain}</td>
-            <td>${pengeluaran.bak}</td>
+            <!--<td>${pengeluaran.bak} fgdgd</td>--->
+            <td>${pengeluaran.urin}</td>
             <td>${pengeluaran.bab}</td>
             <td>${pengeluaran.ngt}</td>
-            <td>${pengeluaran.rwl}</td>
+            <!--<td>${pengeluaran.iwl}</td>-->
             <td class='fw-bold'>${pengeluaran.totalKeluar}</td>
             <td class='fw-bold'>${kesimpulan >= 0 ? '+' : ''}${kesimpulan}</td>
             <td>${group[0].nama_petugas || ''}</td>

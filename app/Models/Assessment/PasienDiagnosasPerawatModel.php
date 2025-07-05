@@ -22,6 +22,7 @@ class PasienDiagnosasPerawatModel extends Model
         'diag_notes',
         'modified_date',
         'modified_by',
+        'diag_cat'
     ];
 
     protected $useTimestamps = true;

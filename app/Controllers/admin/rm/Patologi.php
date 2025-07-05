@@ -193,7 +193,7 @@ class Patologi extends \App\Controllers\BaseController
                     if (!in_array($fileMimeType, $allowedMimeTypes)) {
                         throw new Exception('Gagal Upload File, Format tidak mendukung.');
                     }
-                    $uploadPath = WRITEPATH . 'uploads/patologi/' . $formData['visit_id'] . '/';
+                    $uploadPath = $this->imageloc . 'uploads/patologi/' . $formData['visit_id'] . '/';
                     $pathInfo = pathinfo($formFile->getClientName());
                     $extension = $pathInfo['extension'];
 
@@ -354,7 +354,7 @@ class Patologi extends \App\Controllers\BaseController
                     if (!in_array($fileMimeType, $allowedMimeTypes)) {
                         throw new Exception('Gagal Upload File, Format tidak mendukung.');
                     }
-                    $uploadPath = WRITEPATH . 'uploads/patologi/' . $formData['visit_id'] . '/';
+                    $uploadPath = $this->imageloc . 'uploads/patologi/' . $formData['visit_id'] . '/';
                     $pathInfo = pathinfo($formFile->getClientName());
                     $extension = $pathInfo['extension'];
 

@@ -4,20 +4,20 @@ $permission = user()->getPermissions();
 ?>
 
 <style>
-table.table-fit {
-    width: auto !important;
-    table-layout: auto !important;
-}
+    table.table-fit {
+        width: auto !important;
+        table-layout: auto !important;
+    }
 
-table.table-fit thead th,
-table.table-fit tfoot th {
-    width: auto !important;
-}
+    table.table-fit thead th,
+    table.table-fit tfoot th {
+        width: auto !important;
+    }
 
-table.table-fit tbody td,
-table.table-fit tfoot td {
-    width: auto !important;
-}
+    table.table-fit tbody td,
+    table.table-fit tfoot td {
+        width: auto !important;
+    }
 </style>
 
 <div class="tab-pane" id="gearinvasi" role="tabpanel">
@@ -27,8 +27,8 @@ table.table-fit tfoot td {
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-12 border-r">
                     <?php echo view('admin/patient/profilemodul/profilebiodata', [
-            'visit' => $visit,
-          ]); ?>
+                        'visit' => $visit,
+                    ]); ?>
                 </div>
                 <div class="col-lg-9 col-md-9 col-xs-12">
                     <div class="accordion mt-4">
@@ -90,14 +90,3 @@ table.table-fit tfoot td {
         </div>
     </div>
 </div>
-
-
-
-<?php echo view('admin/patient/profilemodul/jsprofile/alatinvasi_js.php', [
-  'title' => 'Test',
-  'visit' => $visit,
-  'aParent' => $aParent,
-  'aType' => $aType,
-  'aParameter' => $aParameter,
-  'aValue' => $aValue,
-]) ?>

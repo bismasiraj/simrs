@@ -9,20 +9,6 @@
     var lastOrder = 0;
     var falljson = [];
     falljson = <?= json_encode($exam); ?>;
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-    })
     $("#fallTab").on("click", function() {
         $("#fallBody").html('')
         getFallRiskAll()
@@ -269,7 +255,7 @@
             url: '<?php echo base_url(); ?>admin/rm/assessment/getFallRisk',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
+                'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'body_id': ''
             }),

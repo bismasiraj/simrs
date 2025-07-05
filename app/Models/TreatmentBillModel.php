@@ -131,7 +131,7 @@ class TreatmentBillModel extends Model
 
     public function getBill($nomor, $ke, $mulai, $akhir, $lunas, $klinik, $rj, $status, $nota, $trans, $start = null, $end = null)
     {
-        $sql = "SP_TAGIHANPASIEN_NOTATRANS;1 @NOMOR = '$nomor', @KE = '$ke', @MULAI = '$mulai', @AKHIR = '$akhir', @LUNAS = '$lunas', @KLINIK = '$klinik', @RJ = '$rj', @status = '$status', @NOTA = '$nota', @TRANS = '$trans'";
+        $sql = "SP_TAGIHANPASIEN_NOTATRANS_POLI;1 @NOMOR = '$nomor', @KE = '$ke', @MULAI = '$mulai', @AKHIR = '$akhir', @LUNAS = '$lunas', @KLINIK = '$klinik', @RJ = '$rj', @status = '$status', @NOTA = '$nota', @TRANS = '$trans'";
 
         $result = $this->db->query(new RawSql($sql));
 

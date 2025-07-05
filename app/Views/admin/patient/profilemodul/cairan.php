@@ -1,6 +1,6 @@
 <div class="tab-pane" id="cairan" role="tabpanel">
     <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-12 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
@@ -9,7 +9,7 @@
         </div>
         <!--./col-lg-6-->
 
-        <div class="col-lg-10 col-md-10 col-xs-12">
+        <div class="col-lg-10 col-md-12 col-xs-12">
             <div class="accordion mt-4">
                 <!-- <center>
                     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
@@ -33,14 +33,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="startDateCairan">Start Date</label>
-                            <input type="text" id="startDateCairan" class="form-control   dateflatpickr">
+                            <input type="text" id="startDateCairan" class="form-control  datetimeflatpickr-cairan-show">
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="endDateCairan">End Date</label>
-                            <input type="text" id="endDateCairan" class="form-control   dateflatpickr">
+                            <input type="text" id="endDateCairan" class="form-control  datetimeflatpickr-cairan-show">
                         </div>
                     </div>
 
@@ -60,6 +60,7 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Tipe Cairan</th>
+                                <th>Jumlah Cairan</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -72,6 +73,10 @@
                 </div>
                 <div class="col-md-12 d-flex align-items-end justify-content-end">
                     <div class="form-group">
+                        <button type="button" id="btn-print-priview-cairangen0023"
+                            class="btn btn-outline-secondary ml-2">
+                            <i class="fa fa-print"></i> Priview IWL
+                        </button>
                         <button type="button" id="btn-print-cairangen0023" class="btn btn-secondary  ml-2">
                             <i class="fa fa-print"></i> Print
                         </button>
@@ -87,7 +92,7 @@
 <!-- Modal Tambah Dokumen -->
 <div class="modal fade modal-xl" id="create-modal-cairan-gen0023" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-lg-down" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="title-gen0023">Cairan</h5>

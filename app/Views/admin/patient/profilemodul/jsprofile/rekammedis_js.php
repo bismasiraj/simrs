@@ -1,28 +1,3 @@
-<script type='text/javascript'>
-    var tagihan = 0.0;
-    var subsidi = 0.0;
-    var potongan = 0.0;
-    var pembulatan = 0.0;
-    var pembayaran = 0.0;
-    var retur = 0.0;
-    var total = 0.0;
-    var lastOrder = 0;
-
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-    })
-</script>
 <script type="text/javascript">
     var pasienDiagnosa = <?= json_encode($pasienDiagnosa); ?>;
     var currentIndex;
@@ -47,7 +22,7 @@
         $("#arclinic_id").val("<?= $visit['clinic_id']; ?>")
 
         $("#aremployee_id").val("<?= $visit['employee_id']; ?>")
-        $("#ardoctor").val("<?= $visit['fullname']; ?>")
+        $("#ardoctor").val("<?= @$visit['fullname']; ?>")
         $("#arclass_room_id").val("<?= $visit['class_room_id']; ?>")
         $("#arbed_id").val("<?= $visit['bed_id']; ?>")
 
@@ -154,7 +129,7 @@
         var sslocation_id = '<?= $locationId; ?>'
         var sslocation_name = '<?= $namelocation; ?>'
         var sspractitioner_id = '<?= $visit['sspractitioner_id'] ?? ''; ?>'
-        var sspractitioner_name = '<?= $visit['sspractitioner_name'] ?? $visit['fullname']; ?>'
+        var sspractitioner_name = '<?= $visit['sspractitioner_name'] ?? @$visit['fullname']; ?>'
         var ssencounter_id = '<?= $visit['ssencounter_id']; ?>'
         var ssorganizationid = '<?= $orgunit['SSORGANIZATIONID']; ?>'
 

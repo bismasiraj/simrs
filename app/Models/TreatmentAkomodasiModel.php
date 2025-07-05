@@ -100,7 +100,8 @@ class TreatmentAkomodasiModel extends Model
 
     public function getPasienRanap($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null, $keluar = null, $x)
     {
-        $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_NOKARTU;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '%$dokter%', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
+        $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_NOKARTU_NEWFILTER;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '$dokter', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
+        // $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_NOKARTU;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '$dokter', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }
@@ -118,7 +119,7 @@ class TreatmentAkomodasiModel extends Model
     }
     public function getregisterkeluar($mulai, $akhir, $status, $rj, $poli)
     {
-        $sql = "SP_EIS_Register_PINDAH;1 @MULAI = '$mulai', @AKHIR = '$akhir', @STATUS = '$status', @RJ = '$rj', @POLI = '$poli'";
+        $sql = "SP_EIS_Register_KELUAR;1 @MULAI = '$mulai', @AKHIR = '$akhir', @STATUS = '$status', @RJ = '$rj', @POLI = '$poli'";
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }
@@ -282,5 +283,77 @@ class TreatmentAkomodasiModel extends Model
                 where p.no_registration = pa.no_registration  and p.org_unit_code = pa.org_unit_code   
                 and ps.clinic_id  = p.clinic_id  and cs.class_id= p.class_id
                 and visit_id ='$visit'";
+    }
+    public function getDataRanapByVisitId($visit_id)
+    {
+        $sql = "SELECT top(1)
+                        (p.name_of_pasien) AS NAME_OF_PASIEN,   
+                        tb.NO_REGISTRATION,   
+                        tb.ORG_UNIT_CODE,  
+                        (P.Date_of_birth) AS DATE_OF_BIRTH,   
+                        (p.CONTACT_ADDRESS) AS CONTACT_ADDRESS,   
+                        (p.PHONE_NUMBER) as PHONE_NUMBER,   
+                        (p.MOBILE) as MOBILE,   
+                        (p.KAL_ID) as KALURAHAN,
+                        (tb.clinic_id) as clinic_id,
+                        (tb.clinic_id_FROM) as clinic_id_from,
+                        (c.name_of_clinic) AS NAME_OF_CLINIC,    
+                        (isnull(left(tb.doctor,30), '-')) as fullname,
+                        (tb.employee_id) AS EMPLOYEE_ID,
+                        (tb.employee_id_from) AS employee_id_from,
+                        (tb.EMPLOYEE_ID) as employee_inap,
+                        (tb.treat_date) as booked_Date,
+                        --DATEFROMPARTS (left(tb.visit_id,4), substring(tb.visit_id,5,2), substring(tb.visit_id,7,2)) as visit_date,
+                        -- DATETIMEFROMPARTS ( left(tb.visit_id,4), substring(tb.visit_id,5,2), substring(tb.visit_id,7,2), substring(tb.visit_id,9,2), substring(tb.visit_id,11,2), substring(tb.visit_id,13,2), substring(tb.visit_id,15,2) )  as visit_date,
+                        --  DATEDIFF(DAY,-2,MIN(tb.treat_date)) as visit_date,
+                        (tb.treat_date) as visit_date,
+                        tb.visit_id,
+                        (p.name_of_pasien ) as diantar_oleh,
+                        (p.contact_address) as visitor_address,
+                        ( tb.class_room_id) AS CLASS_ROOM_ID, 
+                        ( tb.bed_id) AS bed_id,
+                        ( tb.keluar_id) AS KELUAR_ID,
+                        (tb.treat_date) AS TREAT_DATE,
+                        (TB.exit_date) AS EXIT_DATE,
+                        (tb.status_pasien_id) AS STATUS_PASIEN_ID,
+                        (class_room.name_of_class) AS CLASS_ROOM, 
+                        (P.KK_NO) as PASIEN_ID, --new, 13 june 2017
+                        p.PASIEN_ID  as npk, 
+                        (isnull(p.gender,1)) as gender, 
+                        (tb.payor_id) AS PAYOR_ID,
+                        (tb.class_id) AS CLASS_ID, 
+                        case when islunas = '2' then 'Rawat Inap Selesai  | ' 
+                        when islunas = '1' then 'Rawat Inap Lock | ' else '' end +
+                        case when isnull(STATUS_TARIF,'0') = '1' then 'Farmasi Selesai |' 
+                        else '' end  as responsible, --JIKA 2, MASIH DIANGGAP HANYA OPEN DAN CLIOSE,TTP 1 VALID LOCK
+                        (tb.ACCOUNT_ID) AS ACCOUNT_ID, 
+                        (tb.KARYAWAN) AS KARYAWAN, 
+                        (abs(tb.ageyear)) AS AGEYEAR,
+                        (abs(tb.agemonth)) AS AGEMONTH,
+                        (abs(tb.ageday)) AS AGEDAY,
+                        (tb.no_skpinap) AS NO_SKPINAP,
+                        (p.KODE_AGAMA) AS KODE_AGAMA,
+                        (tb.mapping_sep) AS MAPPING_SEP,
+                        tb.TRANS_ID,
+                            '' as radiologi,
+                                
+                                '' as laboratorium   ,
+                                tb.CLINIC_TYPE,
+                                pk.CONSUL_TYPE
+                    
+                    
+                FROM treatment_akomodasi tb
+                    left outer join clinic c on tb.clinic_id = c.clinic_id
+                    left outer join   employee_all ea on  ea.employee_id = tb.employee_id
+                    left outer join class_room on tb.class_room_id = class_room.class_room_id
+                    left outer join PASIEN_KONSULAN pk on tb.VISIT_ID = pk.VISIT_ID
+                    , pasien p
+                    where tb.visit_id = '$visit_id'
+                        and p.NO_REGISTRATION = tb.NO_REGISTRATION
+                        and p.ORG_UNIT_CODE = tb.ORG_UNIT_CODE
+                        
+                order by (tb.treat_date) desc";
+        $result = $this->db->query(new RawSql($sql));
+        return $result->getFirstRow();
     }
 }

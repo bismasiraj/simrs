@@ -38,7 +38,9 @@ extends Model
         'jnspelayanan',
         'responpost',
         'responput',
-        'respondel'
+        'respondel',
+        'needs',
+        'given'
     ];
 
     // Dates

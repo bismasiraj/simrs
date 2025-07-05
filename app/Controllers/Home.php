@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\AssessmentModel;
+use App\Models\BatchingBridgingModel;
 use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
 use App\Models\erm\RMJ27Model;
@@ -13,11 +14,27 @@ use App\Models\UserLoginModel;
 use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 use Config\Services;
+use DateTime;
 use Myth\Auth\Entities\User;
 use Myth\Auth\Models\UserModel;
 
 class Home extends BaseController
 {
+    function getAge($dob)
+    {
+        $dob = new DateTime($dob);
+        $today = new DateTime(); // Current date
+        $age = $dob->diff($today);
+
+        return "{$age->y} years, {$age->m} months, {$age->d} days";
+    }
+
+    function clearCache()
+    {
+        $cache = \Config\Services::cache(); // Get the cache service
+        $cache->clean(); // Clear all cached items
+        return "done";
+    }
     function get_client_ip()
     {
         $ipaddress = '';
@@ -39,7 +56,7 @@ class Home extends BaseController
     }
     public function coba()
     {
-
+        return $this->getAge('1994-01-21');
         // $ipaddress = '';
         // if (getenv('HTTP_CLIENT_IP'))
         //     $ipaddress = getenv('HTTP_CLIENT_IP');
@@ -282,10 +299,10 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
     {
         $db = db_connect();
 
-        $select = $db->query("select * from hosnic_emr_rj_mata where body_id = '$norm'")->getResultArray();
+        $select = $db->query("select paraf_doctor from employee_sign where employee_id = '$norm'")->getResultArray();
 
         // return json_encode(($select));
-        echo '<img src="data:image/' . $format . ';base64,' . ($select[0][$namatable]) . '" />';
+        echo '<img src="data:image/' . $format . ';base64,' . ($select[$namatable]['paraf_doctor']) . '" />';
     }
 
     public function saveimage()
@@ -380,5 +397,137 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
         } else {
             return $this->response->setJSON(['success' => false, 'message' => 'Failed to update password.']);
         }
+    }
+    private function checkResponse($result, $body, $url, $type)
+    {
+        $bb = new BatchingBridgingModel();
+
+        if (!isset($result['metadata']['code']) || $result['metadata']['code'] != '200') {
+            $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "'")->delete();
+            $bb->insert([
+                'no_registration' => $body['norm'],
+                'trans_id' => $body['kodebooking'],
+                'url' => $url,
+                'method' => 'POST',
+                'parameter' => json_encode($body),
+                'result' => json_encode($result),
+                // 'STATUS'=>$result['metadata']['code'],
+                'created_date' => Time::now(),
+                'modified_date' => Time::now(),
+                'tipe' => $type
+            ]);
+            $pv = new PasienVisitationModel();
+            $pv->where('trans_id', $body['kodebooking'])->set('statusantrean', $type)->update();
+        } else {
+            $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "'")->delete();
+            $bb->insert([
+                'no_registration' => $body['norm'],
+                'trans_id' => $body['kodebooking'],
+                'url' => $url,
+                'method' => 'POST',
+                'parameter' => json_encode($body),
+                'result' => json_encode($result),
+                'status' => $result['metadata']['code'],
+                'created_date' => Time::now(),
+                'modified_date' => Time::now(),
+                'tipe' => $type
+            ]);
+        }
+    }
+    public function batchingBridging()
+    {
+        $db = db_connect();
+        $tipe = 1;
+        $data = $db->query("select * from batching_bridging where tipe = '$tipe' 
+        and trans_id not in (select trans_id from PASIEN_VISITATION where PASIEN_VISITATION.VISIT_DATE >='2025-03-01' and WAY_ID = 13)
+        and created_date >= '2025-03-01'
+        order by created_date")->getResultArray();
+
+        foreach ($data as $key => $value) {
+            $value = $this->lowerKey($value);
+            // return json_encode($postdata);
+            $postdata = ($value['parameter']);
+            $postdata = json_decode($postdata, true);
+            $headers = $this->AuthBridging();
+            $url = $value['url'];
+            $method = $value['method'];
+            $url = str_replace("-dev", "", $url);
+            $url = str_replace("_dev", "", $url);
+            $url = str_replace("//", "/", $url);
+            if ($tipe == 1) {
+                $postdata['pasienbaru'] = (int)$postdata['pasienbaru'];
+                $postdata['kodedokter'] = (int)$postdata['kodedokter'];
+                $postdata['jeniskunjungan'] = (int)$postdata['jeniskunjungan'];
+                $postdata['estimasidilayani'] = (int)$postdata['estimasidilayani'];
+                $postdata['sisakuotajkn'] = (int)$postdata['sisakuotajkn'];
+                $postdata['kuotajkn'] = (int)$postdata['kuotajkn'];
+                $postdata['sisakuotanonjkn'] = (int)$postdata['sisakuotanonjkn'];
+                $postdata['kuotanonjkn'] = (int)$postdata['kuotanonjkn'];
+                $postdata['angkaantrean'] = (int)$postdata['angkaantrean'];
+            }
+            $kodebooking = $postdata['kodebooking'];
+            $norm = $postdata['norm'];
+            // $angkaantrean = $postdata['angkaantrean'];
+            $postdata = json_encode($postdata);
+            // dd($postdata);
+            // $method = 'POST';
+            array_push($headers, "Content-length: " . strlen($postdata));
+            $result = $this->SendBridging($url, $method, $postdata, $headers);
+            // return json_encode($result);
+            // dd("update BATCHING_BRIDGING
+            //               set 
+            //               result = '" . json_encode($result) . "'
+            //               where tipe = '" . $value['tipe'] . "' and trans_id = '" . $value['trans_id'] . "';");
+            // $trans_id = $value['trans_id'];
+            if ($result['metadata']['code'] == '200') {
+                // $this->checkResponse($result, $postdata, $url, '2' . $value['tipe']);
+                // $db = db_connect();
+                $bb = new BatchingBridgingModel();
+
+                // $bb->where("trans_id = '" . $kodebooking . "' and tipe = '" . $tipe . "'")->delete();
+                $bb->insert([
+                    'no_registration' => $norm,
+                    'trans_id' => $kodebooking,
+                    'url' => $url,
+                    'method' => 'POST',
+                    'parameter' => ($postdata),
+                    'result' => json_encode($result),
+                    'status' => 1,
+                    'created_date' => $value['created_date'],
+                    'modified_date' => Time::now(),
+                    'tipe' => $tipe
+                ]);
+                // $db->query("update BATCHING_BRIDGING
+                //           set status = 1,
+                //           result = '" . json_encode(value: $result) . "'
+                //           where tipe = '" . $value['tipe'] . "' and trans_id = '" . $value['trans_id'] . "';");
+            } else {
+                // $db = db_connect();
+                $bb = new BatchingBridgingModel();
+
+                // $bb->where("trans_id = '" . $kodebooking . "' and tipe = '" . $tipe . "'")->delete();
+                $datas = [
+                    'no_registration' => $norm,
+                    'trans_id' => $kodebooking,
+                    'url' => $url,
+                    'method' => 'POST',
+                    'parameter' => ($postdata),
+                    'result' => json_encode($result),
+                    'status' => 0,
+                    'created_date' => $value['created_date'],
+                    'modified_date' => Time::now(),
+                    'tipe' => $tipe
+                ];
+                $bb->insert($datas);
+
+                // return json_encode($datas);
+                // $db->query("update BATCHING_BRIDGING
+                //           set 
+                //           result = '" . json_encode($result) . "'
+                //           where tipe = '" . $value['tipe'] . "' and trans_id = '" . $value['trans_id'] . "';");
+            }
+        }
+
+        return json_encode("selesai");
     }
 }

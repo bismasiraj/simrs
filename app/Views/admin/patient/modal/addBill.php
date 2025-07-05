@@ -73,7 +73,7 @@
                                             }
                                             asort($dokterlist);
                                             ?>
-                                            <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
+                                            <option value="<?= $visit['employee_id']; ?>"><?= @$visit['fullname']; ?></option>
                                             <?php foreach ($dokterlist as $key => $value) { ?>
                                                 <option value="<?= $key; ?>"><?= $value; ?></option>
                                             <?php } ?>
@@ -330,7 +330,7 @@
                 echo '$("#adoctor_from").val("' . $visit['fullname_from'] . '");';
             } else {
                 echo '$("#aemployee_id_from").val("' . $visit['employee_id'] . '");';
-                echo '$("#adoctor_from").val("' . $visit['fullname'] . '");';
+                echo '$("#adoctor_from").val("' . @$visit['fullname'] . '");';
             }
             ?>
         }
@@ -427,7 +427,7 @@
                 echo '$("#adoctor_from").val("' . $visit['fullname_from'] . '");';
             } else {
                 echo '$("#aemployee_id_from").val("' . $visit['employee_id'] . '");';
-                echo '$("#adoctor_from").val("' . $visit['fullname'] . '");';
+                echo '$("#adoctor_from").val("' . @$visit['fullname'] . '");';
             }
             ?>
         }

@@ -8,6 +8,1137 @@ use App\Models\PasienVisitationModel;
 
 class Cetak extends \App\Controllers\BaseController
 {
+    public function cetak_pra_operasi($visit, $vactination_id = null)
+    {
+        $title = "Asesmen Pra Operasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select assessment_operation_pra.*
+            from assessment_operation_pra 
+            where assessment_operation_pra.visit_id = '" . $visit['visit_id'] . "' and body_id = '" . $vactination_id . "'
+            ")->getRowArray() ?? []);
+
+            $operasi = $this->lowerKey($db->query("
+                   SELECT start_operation,end_operation, bill_id, rooms_id, TARIF_ID as treatment, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'
+            ")->getRowArray() ?? []);
+
+
+            $riwayat_alergi = $this->lowerKey($db->query("
+                select PASIEN_HISTORY.VALUE_DESC, PASIEN_HISTORY.HISTORIES, PASIEN_HISTORY.item_id from ASSESSMENT_PARAMETER ap
+                inner join ASSESSMENT_PARAMETER_VALUE apv on ap.PARAMETER_ID = apv.PARAMETER_ID and apv.P_TYPE = 'GEN0009' 
+                inner join PASIEN_HISTORY on apv.VALUE_ID = PASIEN_HISTORY.VALUE_ID
+                where ap.p_type = 'GEN0009' and ap.PARAMETER_ID = '01' and  no_registration = '" . $visit['no_registration'] . "'
+            ")->getResultArray() ?? []);
+
+            $riwayat_penyakit = $this->lowerKey($db->query("
+                select PASIEN_HISTORY.VALUE_DESC, PASIEN_HISTORY.HISTORIES, PASIEN_HISTORY.item_id from ASSESSMENT_PARAMETER ap
+                inner join ASSESSMENT_PARAMETER_VALUE apv on ap.PARAMETER_ID = apv.PARAMETER_ID and apv.P_TYPE = 'GEN0009' 
+                inner join PASIEN_HISTORY on apv.VALUE_ID = PASIEN_HISTORY.VALUE_ID
+                where ap.p_type = 'GEN0009' and ap.PARAMETER_ID = '05' and  no_registration = '" . $visit['no_registration'] . "'
+            ")->getResultArray() ?? []);
+
+            $blood_request = $this->lowerKey($db->query("
+               select USAGETYPE, BLOOD_QUANTITY, MEASUREMENT from BLOOD_REQUEST br
+                inner join BLOOD_USAGE_TYPE ON br.BLOOD_USAGE_TYPE = BLOOD_USAGE_TYPE.USAGE_TYPE
+                INNER JOIN MEASUREMENT ON br.MEASURE_ID =MEASUREMENT.MEASURE_ID
+                where visit_id = '" . $visit['visit_id'] . "' and CLINIC_ID = 'p002'
+
+            ")->getResultArray() ?? []);
+
+            if (!empty($select)) {
+                $selectlokalis = $this->lowerKey($db->query(
+                    "
+                    select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+                    where body_id = '" . $vactination_id . "'"
+                )->getResultArray() ?? []);
+                foreach ($selectlokalis as $key => $value) {
+                    if ($value['value_score'] == 3) {
+                        $filepath = $this->imageloc . 'uploads/lokalis/' . $value['value_detail'];
+                        if (file_exists($filepath)) {
+                            $filedata = file_get_contents($filepath);
+                            $filedata64 = base64_encode($filedata);
+                            $selectlokalis[$key]['filedata64'] = $filedata64;
+                        }
+                    }
+                }
+
+                $selectDiagnosa = $this->lowerKey($db->query(
+                    "
+                    select ISNULL(DIAGNOSA_NAME,DIAGNOSA_DESC) as DIAGNOSA_Name from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' and DIAG_CAT IN ('1','13','15')
+                    "
+                )->getResultArray()) ?? [];
+
+                $informasiMedis = array_slice($select, 8, 22);
+
+                $newData = [];
+
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS001');
+            }
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $select['ttd_pasien'] = $ttdPasienBase64;
+            $select['ttd_dok'] = $ttdDokterBase64;
+
+            if (isset($select)) {
+                return view("admin/patient/cetak/operasi/pra-operasi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "informasiMedis" => $newData ?? [],
+                    "lokalis" => $selectlokalis ??[],
+                    "operasi" => $operasi,
+                    "diagnosa" => $selectDiagnosa,
+                    "riwayat_alergi" => $riwayat_alergi,
+                    "riwayat_penyakit" => $riwayat_penyakit,
+                    "blood_request" => $blood_request,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/pra-operasi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function cetak_laporan_anesthesi($visit, $vactination_id = null)
+    {
+        $title = "Laporan Anestesi/Sedasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select ASSESSMENT_ANESTHESIA.*,
+            ei.TEMPERATURE as suhu,
+            ei.TENSION_UPPER as tensi_atas,
+            ei.TENSION_BELOW as tensi_bawah,
+            ei.NADI as nadi,
+            ei.NAFAS as respirasi,
+            ei.WEIGHT as bb,
+            ei.HEIGHT as tb,
+            ei.IMT_SCORE,
+            ei.IMT_DESC,
+            ei.SATURASI as saturasi,
+            format(round(ei.WEIGHT*10000/NULLIF(ei.height, 0)/NULLIF(ei.height, 0),2), '0.##') as bmi
+            from ASSESSMENT_ANESTHESIA 
+            left outer join EXAMINATION_detail ei on ASSESSMENT_ANESTHESIA.BODY_ID = ei.document_id and ei.ACCOUNT_ID = '11'
+            where ASSESSMENT_ANESTHESIA.visit_id = '" . $visit['visit_id'] . "' and ASSESSMENT_ANESTHESIA.document_id = '" . $vactination_id . "' 
+            ")->getRowArray() ?? []);
+
+
+            if (!empty($select)) {
+                $selectlokalis = $this->lowerKey($db->query(
+                    "
+                    select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+                    where body_id = '" . $vactination_id . "' AND assessment_lokalis.VALUE_SCORE = 2"
+                )->getResultArray() ?? []);
+
+                $selectDiagnosa = $this->lowerKey($db->query(
+                    "select ISNULL(DIAGNOSA_NAME,DIAGNOSA_DESC) as diagnosa_name from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['document_id'] . "' "
+                )->getResultArray() ?? []);
+
+
+                $informasiMedis = array_splice($select, 13, 16);
+                $keadaanUmum = array_splice($select, 14, 3);
+                $perencanaanAnestesi = array_splice($select, 15, 11);
+
+                $newData = [];
+                $newData2 = [];
+                $newData3 = [];
+
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS006');
+                $newData3 = $this->ConvertValue($keadaanUmum, $newData3, 'OPRS006');
+                $newData2 = $this->ConvertValue($perencanaanAnestesi, $newData2, 'OPRS006');
+            }
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+
+            $operasi = $this->lowerKey($db->query("
+            SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
+
+            
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $select['ttd_pasien'] = $ttdPasienBase64;
+            $select['ttd_dok'] = $ttdDokterBase64;
+            $select['ttd_dokter_name'] = $operasi['doctor'];
+            
+
+            if (isset($select)) {
+                return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "informasiMedis" => $newData ?? [],
+                    "perencanaanAnestesi" => $newData2 ?? [],
+                    "keadaanUmum" => $newData3 ?? [],
+                    "lokalis" => $selectlokalis ?? [],
+                    "diagnosa" => $selectDiagnosa ?? [],
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+
+    public function cetak_laporan_pembedahan($visit, $vactination_id = null)
+    {
+        $title = "Laporan Pembedahan";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("SELECT PASIEN_OPERASI.*, TARIF_ID as OPERATION,ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as tipe_operasi
+            from PASIEN_OPERASI
+            LEFT join ASSESSMENT_PARAMETER_VALUE on PASIEN_OPERASI.SURGERY_TYPE = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+            where PASIEN_OPERASI.visit_id = '" . $visit['visit_id'] . "' and PASIEN_OPERASI.VACTINATION_ID = '" . $vactination_id . "'
+            ")->getRowArray() ?? []);
+
+            $operation_team = $this->lowerKey($db->query("SELECT DOCTOR, TASK from OPERATION_TEAM 
+            INNER JOIN OPERATION_TASK ON OPERATION_TEAM.TASK_ID = OPERATION_TASK.TASK_ID
+            WHERE OPERATION_ID = '" . $vactination_id . "' ORDER BY OPERATION_TASK.TASK_ID ASC
+            ")->getResultArray() ?? []);
+
+            $diagnosas = $this->lowerKey($db->query("SELECT ISNULL(DIAGNOSA_NAME,DIAGNOSA_DESC) as diagnosa_name,diag_cat,suffer_type.suffer from PASIEN_DIAGNOSAS 
+            inner join suffer_type on pasien_diagnosas.suffer_type = suffer_type.suffer_type
+            where pasien_diagnosa_id = '" . $vactination_id . "' and diag_cat IN('13','14','15')
+            ")->getResultArray() ?? []);
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
+
+            $operasi = $this->lowerKey($db->query("
+            SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
+
+            
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $select['ttd_pasien'] = $ttdPasienBase64;
+            $select['ttd_dok'] = $ttdDokterBase64;
+            $select['ttd_dokter_name'] = $operasi['doctor'];
+            
+
+            if (isset($select)) {
+                return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    'operation_team' => $operation_team,
+                    'diagnosas' => $diagnosas,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function cetak_post_operasi($visit, $vactination_id = null)
+    {
+        $title = "Instruksi Post Operasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select ASSESSMENT_OPERATION_POST.*
+            from ASSESSMENT_OPERATION_POST 
+            where ASSESSMENT_OPERATION_POST.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
+            ")->getResultArray() ?? []);
+
+
+            if (!empty($select)) {
+
+                $informasiMedis = array_slice($select[0], 8, 14);
+
+                $newData = [];
+
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS009');
+            }
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
+
+            $operasi = $this->lowerKey($db->query("
+            SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
+
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $select['ttd_pasien'] = $ttdPasienBase64;
+            $select['ttd_dok'] = $ttdDokterBase64;
+            $select['ttd_dokter_name'] = $operasi['doctor'];
+
+
+            if (isset($select[0])) {
+                return view("admin/patient/cetak/operasi/post-operasi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "informasiMedis" => $newData ?? [],
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/post-operasi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+
+    public function cetak_catatan_keperawatan($visit, $vactination_id = null)
+    {
+        $title = "Catatan Keperawatan Peri Operasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("SELECT ASSESSMENT_OPERATION.*,
+            ed.TEMPERATURE as suhu,
+            ed.TENSION_UPPER as tensi_atas,
+            ed.TENSION_BELOW as tensi_bawah,
+            ed.NADI as nadi,
+            ed.NAFAS as respirasi,
+            ed.WEIGHT as bb,
+            ed.HEIGHT as tb,
+            ed.IMT_SCORE,
+            ed.IMT_DESC,
+            ed.SATURASI as saturasi,
+            CASE
+                WHEN ed.HEIGHT = 0 THEN NULL
+                ELSE ROUND(ed.WEIGHT * 10000.0 / (ed.HEIGHT * ed.HEIGHT), 2)
+            END AS bmi
+            from ASSESSMENT_OPERATION 
+            left outer join EXAMINATION_detail ed on ASSESSMENT_OPERATION.document_id = ed.document_id and ed.ACCOUNT_ID = '10'
+            where ASSESSMENT_OPERATION.visit_id = '" . $visit['visit_id'] . "' and ASSESSMENT_OPERATION.document_id = '" . $vactination_id . "' 
+            ")->getRowArray() ?? []);
+            if (!empty($select)) {
+
+                $selectDiagnosa = $this->lowerKey($db->query("
+                SELECT PASIEN_DIAGNOSAS_NURSE.DIAG_NOTES FROM PASIEN_DIAGNOSA_NURSE
+                INNER JOIN PASIEN_DIAGNOSAS_NURSE ON PASIEN_DIAGNOSA_NURSE.BODY_ID = PASIEN_DIAGNOSAS_NURSE.BODY_ID
+                WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                ")->getResultArray() ?? []);
+
+                $selectDrain = $this->lowerKey($db->query("
+                SELECT DRAIN_TYPE,DRAIN_KINDS,SIZE,DESCRIPTION 
+                FROM ASSESSMENT_OPERATION_DRAIN WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                ")->getResultArray() ?? []);
+
+                $selectInstrument = $this->lowerKey($db->query("
+                SELECT BRAND_NAME,QUANTITY_BEFORE,QUANTITY_INTRA,QUANTITY_ADDITIONAL,QUANTITY_AFTER 
+                FROM ASSESSMENT_INSTRUMENT WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                ")->getResultArray() ?? []);
+                $instruments = [
+                    ['Quantity Before', 0, 0, 0],
+                    ['Quantity Intra', 0, 0, 0],
+                    ['Quantity Additional', 0, 0, 0],
+                    ['Quantity After', 0, 0, 0],
+                ];
+                foreach ($selectInstrument as $item) {
+                    $instruments[0][1] += $item['quantity_before'];
+                    $instruments[1][1] += $item['quantity_intra'];
+                    $instruments[2][1] += $item['quantity_additional'];
+                    $instruments[3][1] += $item['quantity_after'];
+                }
+                foreach ($selectInstrument as $index => $item) {
+                    $instruments[0][$index + 1] = $item['quantity_before'];
+                    $instruments[1][$index + 1] = $item['quantity_intra'];
+                    $instruments[2][$index + 1] = $item['quantity_additional'];
+                    $instruments[3][$index + 1] = $item['quantity_after'];
+                }
+
+                $aldrete = $this->lowerKey($db->query("
+                      SELECT
+                            BODY_ID, OBSERVATION_DATE,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_02,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_02,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_02,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_05,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_05,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_05,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_05
+                        FROM ASSESSMENT_ANESTHESIA_RECOVERY
+                        INNER JOIN ASSESSMENT_PARAMETER ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER.P_TYPE
+                        INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
+                        WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                        AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS023'
+                        GROUP BY BODY_ID, OBSERVATION_DATE;
+                ")->getResultArray() ?? []);
+                $bromage = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_ANESTHESIA_RECOVERY where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and p_type = 'oprs024' ")->getResultArray() ?? []);
+                $steward = $this->lowerKey($db->query("
+                    SELECT
+                        BODY_ID, OBSERVATION_DATE,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_02,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_02,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_02,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03
+                    FROM ASSESSMENT_ANESTHESIA_RECOVERY
+                    INNER JOIN ASSESSMENT_PARAMETER ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER.P_TYPE
+                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
+                    WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                    AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS025'
+                    GROUP BY BODY_ID, OBSERVATION_DATE;
+                ")->getResultArray() ?? []);
+
+                
+                $informasiMedis = array_slice($select, 8, 8);
+                $informasiIntra = array_slice($select, 16, 23);
+                
+                $informasiIntra2 = array_slice($select, 39, 13);
+                $informasiPasca = array_slice($select, 51, 11);
+                $newData = [];
+                $newData2 = [];
+                $newData3 = [];
+                $newData4 = [];
+                
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS003');
+                $newData2 = $this->ConvertValue($informasiIntra, $newData2, 'OPRS004');
+                $newData3 = $this->ConvertValue($informasiIntra2, $newData3, 'OPRS004');
+                $newData4 = $this->ConvertValue($informasiPasca, $newData4, 'OPRS005');
+            }
+            $operasi = $this->lowerKey($db->query("
+                           SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'
+                   ")->getRowArray() ?? []);
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
+
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $select['ttd_pasien'] = $ttdPasienBase64;
+            $select['ttd_dok'] = $ttdDokterBase64;
+            $select['dokter'] = $operasi['doctor'];
+
+
+            if (isset($select)) {
+                return view("admin/patient/cetak/operasi/catatan-keperawatan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "informasiMedis" => $newData ?? [],
+                    "informasiIntra" => $newData2 ?? [],
+                    "informasiIntra2" => $newData3 ?? [],
+                    "informasiPasca" => $newData4 ?? [],
+                    "diagnosas" => $selectDiagnosa ?? [],
+                    "drains" => $selectDrain ?? [],
+                    "instrument" => $instruments ?? [],
+                    "aldrete" => $aldrete ?? [],
+                    "bromage" => $bromage ?? [],
+                    "steward" => $steward ?? [],
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/catatan-keperawatan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function cetak_checklist_keselamatan($visit, $vactination_id = null)
+    {
+        $title = "Checklist Keselamatan Operasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select * FROM ASSESSMENT_OPERATION_CHECK
+            where ASSESSMENT_OPERATION_CHECK.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
+            ")->getRowArray() ?? []);
+
+
+            $instruments = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_INSTRUMENT where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' ")->getResultArray() ?? []);
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+
+            $theSignIn = array_slice($select, 8, 10);
+            $theTimeOut = array_slice($select, 19, 20);
+            $theSignOut = array_slice($select, 40, 2);
+            $theSignOut2 = array_slice($select, 42, 3);
+
+            $newData = [];
+            $newData2 = [];
+            $newData3 = [];
+            $newData4 = [];
+
+
+            $newData = $this->ConvertValue($theSignIn, $newData, 'OPRS026');
+            $newData2 = $this->ConvertValue($theTimeOut, $newData2, 'OPRS027');
+            $newData3 = $this->ConvertValue($theSignOut, $newData3, 'OPRS028');
+            $newData4 = $this->ConvertValue($theSignOut2, $newData4, 'OPRS028');
+
+
+            $operasi = $this->lowerKey($db->query("
+            SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
+
+            
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $select['ttd_pasien'] = $ttdPasienBase64;
+            $select['ttd_dok'] = $ttdDokterBase64;
+            $select['dokter'] = $operasi['doctor'];
+
+            if (isset($select)) {
+                return view("admin/patient/cetak/operasi/checklist-keselamatan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "theSignIn" => $newData ?? [],
+                    "theTimeOut" => $newData2 ?? [],
+                    "theSignOut" => $newData3 ?? [],
+                    "theSignOut2" => $newData4 ?? [],
+                    "instruments" => $instruments ?? [],
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/checklist-keselamatan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function cetak_checklist_anestesi($visit, $vactination_id = null)
+    {
+        $title = "Checklist Anestesi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $query = $this->lowerKey($db->query(
+                "
+                select * from ASSESSMENT_ANESTHESI_CHECKLIST where DOCUMENT_ID = '" . $vactination_id . "'
+                "
+            )->getRowArray() ?? []);
+
+            $operasi = $this->lowerKey($db->query("
+                 SELECT start_operation,end_operation, bill_id, rooms_id, TARIF_ID as treatment FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'
+            ")->getRowArray() ?? []);
+
+
+            $informasiTindakan = array_splice($query, 5, 26);
+
+            $newData = [];
+            $index = 0;
+            foreach ($informasiTindakan as $key => $value) {
+                $value = $value === NULL ? "" : $value;
+                $result = $this->query_getDesc($key, 'OPRS007');
+                if ($result) {
+                    $parameterDesc = $result['PARAMETER_DESC'] ?? 'Unknown Parameter';
+                    $newData[$parameterDesc] = $value;
+                } else {
+                    $newData['Not Found'] = 'Not Found';
+                }
+                $index++;
+            }
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+
+            $treatmentData = $this->getTreatment();
+
+            $AParameter = $db->table('ASSESSMENT_PARAMETER')
+                ->where('P_TYPE', 'OPRS007')
+                ->get();
+            $resultArrayAParameter = $AParameter->getResultArray();
+            $selectAParameter = $this->lowerKey($resultArrayAParameter ?? []);
+
+            $operasi = $this->lowerKey($db->query("
+            SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
+
+            
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $query['ttd_pasien'] = $ttdPasienBase64;
+            $query['ttd_dok'] = $ttdDokterBase64;
+            $query['ttd_dokter_name'] = $operasi['doctor'];
+
+
+
+
+            return view("admin/patient/cetak/operasi/checklist-anestesi.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $query,
+                "organization" => $selectorganization,
+                "informasiTindakan" => $newData ?? [],
+                "treatment" => $treatmentData,
+                "operasi" => $operasi
+            ]);
+        }
+    }
+
+    public function cetak_anesthesi_lengkap($visit, $vactination_id = null)
+    {
+        $title = "Laporan Anestesi Lengkap";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $query = $this->lowerKey($db->query(
+                "
+                select *,
+                ASSESSMENT_ANESTHESIA.org_unit_code as org_unit_code,
+                ASSESSMENT_ANESTHESIA.visit_id as visit_id,
+                ASSESSMENT_ANESTHESIA.trans_id as trans_id,
+                ASSESSMENT_ANESTHESIA.body_id as body_id,
+                ASSESSMENT_ANESTHESIA.document_id as document_id,
+                ASSESSMENT_ANESTHESIA.examination_date as examination_date,
+                ASSESSMENT_ANESTHESIA.modified_date as modified_date
+                
+                from ASSESSMENT_ANESTHESIA
+                left join ASSESSMENT_ANESTHESIA_POST on ASSESSMENT_ANESTHESIA.DOCUMENT_ID = ASSESSMENT_ANESTHESIA_POST.DOCUMENT_ID
+                left join ASSESSMENT_ANESTHESI_CHECKLIST on ASSESSMENT_ANESTHESIA.DOCUMENT_ID = ASSESSMENT_ANESTHESI_CHECKLIST.DOCUMENT_ID
+				left join pasien_operasi on assessment_anesthesia.document_id = pasien_operasi.vactination_id
+                where ASSESSMENT_ANESTHESIA.DOCUMENT_ID =  '" . $vactination_id . "'
+                "
+            )->getRowArray() ?? []);
+
+            $aldrete_score = $this->lowerKey($db->query(
+                "
+                select 
+                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID, 
+                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
+                from ASSESSMENT_ANESTHESIA_RECOVERY 
+                inner join ASSESSMENT_PARAMETER on ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = ASSESSMENT_PARAMETER.PARAMETER_ID AND ASSESSMENT_PARAMETER.P_TYPE = 'oprs023'
+                where DOCUMENT_ID = '" . $vactination_id . "' and ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'oprs023'
+                group by 
+                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID,
+                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
+
+                "
+            )->getResultArray() ?? []);
+
+            $steward_score = $this->lowerKey($db->query(
+                "
+                select 
+                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID, 
+                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
+                from ASSESSMENT_ANESTHESIA_RECOVERY 
+                inner join ASSESSMENT_PARAMETER on ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = ASSESSMENT_PARAMETER.PARAMETER_ID AND ASSESSMENT_PARAMETER.P_TYPE = 'oprs025'
+                where DOCUMENT_ID = '" . $vactination_id . "' and ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'oprs025'
+                group by 
+                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID,
+                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
+                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
+
+                "
+            )->getResultArray() ?? []);
+
+            $bromage_score = $this->lowerKey($db->query(
+                "
+                select value_desc, value_score from ASSESSMENT_ANESTHESIA_RECOVERY where DOCUMENT_ID =  '" . $vactination_id . "' and P_TYPE = 'oprs024'
+                "
+            )->getResultArray() ?? []);
+
+            $infusion   = $this->filtering_array($vactination_id, 'OPRS029');
+            $general    = $this->filtering_array($vactination_id, 'OPRS030');
+            $regional   = $this->filtering_array($vactination_id, 'OPRS033');
+            $ventilasi  = $this->filtering_array($vactination_id, 'OPRS031');
+            $jalan_napas  = $this->filtering_array($vactination_id, 'OPRS032');
+
+            $instruksi_post = $this->lowerKey($db->query(
+                "
+               SELECT 
+                    AOP.*,
+                    PV1.VALUE_DESC AS POSITION,
+                    PV2.VALUE_DESC AS FASTING_UNTIL
+                FROM 
+                    ASSESSMENT_OPERATION_POST AOP
+                INNER JOIN 
+                    ASSESSMENT_PARAMETER_VALUE PV1 
+                    ON AOP.POSITION = PV1.VALUE_ID
+                INNER JOIN 
+                    ASSESSMENT_PARAMETER_VALUE PV2 
+                    ON AOP.FASTING_UNTIL = PV2.VALUE_ID
+                WHERE 
+                    AOP.document_id =  '" . $vactination_id . "'
+
+                "
+            )->getRowArray() ?? []);
+
+
+            $cairan_masuk = $this->lowerKey($db->query("
+                SELECT 
+                    TREATMENT_OBAT.visit_id,
+                    TREATMENT_OBAT.treat_date AS date,
+                    goods.name AS name,
+                    TREATMENT_OBAT.QUANTITY AS quantity
+                FROM 
+                    TREATMENT_OBAT 
+                INNER JOIN 
+                    goods ON TREATMENT_OBAT.BRAND_ID = goods.BRAND_ID 
+                WHERE 
+                    TREATMENT_OBAT.CLINIC_ID = 'P002' 
+                    AND ISALKES = 19
+                    AND TREATMENT_OBAT.visit_id = '" . $visit['visit_id'] . "'
+
+                UNION ALL
+
+                SELECT 
+                    br.visit_id,
+                    br.REQUEST_DATE AS date,
+                    but.usagetype AS name,
+                    br.BLOOD_QUANTITY AS quantity
+                FROM 
+                    BLOOD_REQUEST br
+                LEFT JOIN 
+                    BLOOD_USAGE_TYPE but ON br.blood_usage_type = but.usage_type
+                WHERE 
+                    br.visit_id = '" . $visit['visit_id'] . "';
+
+            ")->getResultArray() ?? []);
+
+            $cairan = $this->lowerKey($db->query("
+                select examination_date,value_desc,fluid_amount,
+                MAX(CASE 
+                WHEN fluid_type IN('G0230301', 'G0230302') 
+                THEN 1 
+                ELSE 0 
+                END) AS cairan_masuk 
+                from assessment_fluid_balance
+                inner join assessment_parameter_value on assessment_fluid_balance.P_TYPE = assessment_parameter_value.p_type AND assessment_parameter_value.VALUE_ID = assessment_fluid_balance.FLUID_TYPE
+                where assessment_fluid_balance.P_TYPE = 'GEN0023' AND VISIT_ID = '" . $visit['visit_id'] . "'
+                group by examination_date, value_desc, fluid_amount
+            ")->getResultArray() ?? []);
+
+            $asParameter  =  $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_PARAMETER WHERE P_TYPE  LIKE 'OPRS%' ORDER BY P_TYPE")->getResultArray() ?? []);
+            $asParameterVal  =  $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_PARAMETER_VALUE WHERE P_TYPE  LIKE 'OPRS%' ORDER BY P_TYPE")->getResultArray() ?? []);
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+            $aldrete_score_group = [];
+            $steward_score_group = [];
+
+            foreach ($aldrete_score as $item) {
+                $bodyId = $item['body_id'];
+                if (!isset($aldrete_score_group[$bodyId])) {
+                    $aldrete_score_group[$bodyId] = [];
+                }
+
+                $aldrete_score_group[$bodyId][] = $item;
+            }
+            foreach ($steward_score as $item) {
+                $bodyId = $item['body_id'];
+                if (!isset($steward_score_group[$bodyId])) {
+                    $steward_score_group[$bodyId] = [];
+                }
+
+                $steward_score_group[$bodyId][] = $item;
+            }
+
+
+            $operasi = $this->lowerKey($db->query("
+            SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
+
+            $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        
+            $ttdPasienBase64 = null;
+            $ttdPasienDir = $this->imageloc . "uploads/signatures/";
+            $noReg = $visit['no_registration'] ?? '';
+        
+            if (!empty($noReg)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdPasienBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $ttdDokterBase64 = null;
+            $ttdDokterDir = $this->imageloc . "uploads/dokter/";
+            $employeeId = $operasi['employee_id'] ?? '';
+        
+            if (!empty($employeeId)) {
+                foreach ($allowedExtensions as $ext) {
+                    $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
+                    $files = glob($pattern);
+                    if (!empty($files)) {
+                        $filePath = $files[0];
+                        if (file_exists($filePath)) {
+                            $fileData = file_get_contents($filePath);
+                            $mimeType = mime_content_type($filePath);
+                            $ttdDokterBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileData);
+                            break;
+                        }
+                    }
+                }
+            }
+        
+            $query['ttd_pasien'] = $ttdPasienBase64;
+            $query['ttd_dok'] = $ttdDokterBase64;
+            $query['ttd_dokter_name'] = $operasi['doctor'];
+
+            
+
+            return view("admin/patient/cetak/operasi/laporan-anesthesi-lengkap.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $query,
+                "infusion" => $infusion,
+                "general" => $general,
+                "regional" => $regional,
+                "ventilasi" => $ventilasi,
+                "jalan_napas" => $jalan_napas,
+                "general_entry_type" => $this->getEntryType($general),
+                "ventilasi_entry_type" => $this->getEntryType($ventilasi),
+                "jalan_napas_entry_type" => $this->getEntryType($jalan_napas),
+                "regional_entry_type" => $this->getEntryType($regional),
+                "instruksi_post" => $instruksi_post,
+                "organization" => $selectorganization,
+                "cairan_masuk" => $cairan_masuk,
+                "cairan" => $cairan,
+                "aldrete_score" => $aldrete_score_group,
+                "steward_score" => $steward_score_group,
+                "bromage_score" => $bromage_score,
+                'a_param' => $asParameter,
+                'a_paramVal' => $asParameterVal
+            ]);
+        }
+    }
     function cetakAntrian($visit)
     {
         $select = json_decode(base64_decode($visit), true);
@@ -527,6 +1658,8 @@ class Cetak extends \App\Controllers\BaseController
                 "
             )->getRowArray() ?? []);
 
+            // dd($query);
+
             if (!empty($query)) {
 
                 $selectDiagnosa = $this->lowerKey($db->query(
@@ -555,7 +1688,7 @@ class Cetak extends \App\Controllers\BaseController
         }
     }
 
-    public function cairan_cetak($visit)
+    public function cairan_cetak($visit, $resultsContent = null)
     {
         if ($this->request->is('get')) {
             $decoded_visit = base64_decode($visit);
@@ -568,10 +1701,20 @@ class Cetak extends \App\Controllers\BaseController
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
-            if (!empty($decoded_visit["startDate"]) && !empty($decoded_visit["endDate"])) {
-                $sql->where('examination_date >=', $decoded_visit["startDate"])
-                    ->where('examination_date <=', $decoded_visit["endDate"]);
+
+
+            if ($resultsContent === null || $resultsContent === 'cetak') {
+                if (!empty($decoded_visit["startDate"]) && !empty($decoded_visit["endDate"])) {
+                    $sql->where('examination_date >=', $decoded_visit["startDate"])
+                        ->where('examination_date <=', $decoded_visit["endDate"]);
+                }
+            } else {
+                if (!empty($decoded_visit["startDate"]) && !empty($decoded_visit["endDate"])) {
+                    $sql->where("FORMAT(examination_date, 'yyyy-MM-dd HH') >=", date('Y-m-d H', strtotime($decoded_visit["startDate"])))
+                        ->where("FORMAT(examination_date, 'yyyy-MM-dd HH') <=", date('Y-m-d H', strtotime($decoded_visit["endDate"])));
+                }
             }
+
             $sql->orderBy('examination_date', 'ASC');
             $results = $this->lowerKey($sql->findAll());
 
@@ -593,18 +1736,45 @@ class Cetak extends \App\Controllers\BaseController
             $resultArrayDiagnosa = $diagnosa->getResultArray();
             $resultArrayDiagnosa = $this->lowerKey($resultArrayDiagnosa);
 
+            $exam = $this->lowerKey($db->query("SELECT TOP 1 weight, examination_date,temperature,
+            temperature,tension_upper,oxygen_usage,nafas,nadi,nadi
+            FROM EXAMINATION_DETAIL
+            WHERE visit_id = ?
+            ORDER BY EXAMINATION_DATE DESC;", $decoded_visit["id"])->getResultArray());
 
-            return view("admin/patient/cetak/cairan-cetak.php", [
-                "visit" => $decoded_visit,
-                "title" => "FORMULIR BALANCE CAIRAN",
-                "organization" => $selectorganization,
-                "dataTabels" => $results,
-                "visit" => $decoded_visit["visit"],
-                "aValue" => $selectAParameterValue,
-                "aPrameter" => $selectAParameter,
-                "diagnosa" => $resultArrayDiagnosa
+            $exam = $exam ? $exam[0] : [];
 
-            ]);
+
+            if ($resultsContent === null || $resultsContent === 'cetak') {
+                return view("admin/patient/cetak/cairan-cetak.php", [
+                    "visit" => $decoded_visit,
+                    "title" => "FORMULIR BALANCE CAIRAN",
+                    "organization" => $selectorganization,
+                    "dataTabels" => $results,
+                    "visit" => $decoded_visit["visit"],
+                    "aValue" => $selectAParameterValue,
+                    "aPrameter" => $selectAParameter,
+                    "diagnosa" => $resultArrayDiagnosa
+                ]);
+            } else {
+                $dateTimeIwl = [
+                    "start" => date('Y-m-d H', strtotime($decoded_visit["startDate"])),
+                    "end" => date('Y-m-d H', strtotime($decoded_visit["endDate"]))
+                ];
+
+                return view("admin/patient/cetak/cairan-cetak-iwl.php", [
+                    "visit" => $decoded_visit,
+                    "title" => "FORMULIR BALANCE CAIRAN",
+                    "organization" => $selectorganization,
+                    "dataTabels" => $results,
+                    "visit" => $decoded_visit["visit"],
+                    "aValue" => $selectAParameterValue,
+                    "aPrameter" => $selectAParameter,
+                    "diagnosa" => $resultArrayDiagnosa,
+                    "date" => $dateTimeIwl,
+                    "exam" => $exam
+                ]);
+            }
         }
     }
 
@@ -1296,6 +2466,8 @@ class Cetak extends \App\Controllers\BaseController
         $db = db_connect();
         $file = $this->lowerKey($db->query("SELECT treat_image FROM TREAT_RESULTS where bill_id = '" . $bill_id . "'")->getRowArray() ?? []);
 
+        return $file;
+
         return view("admin/patient/cetak/radiologi_preview.php", [
             "url" => $file['treat_image'],
         ]);
@@ -1561,10 +2733,9 @@ class Cetak extends \App\Controllers\BaseController
             $db = db_connect();
             $treat_bound = $this->lowerKey($db->query("select reagent_id,description from TREAT_BOUND_DIAGNOSA where tarif_id = '$tarif_id'")->getResultArray() ?? []);
             $select = $this->lowerKey($db->query("
-            select * from TREAT_RESULTS where BILL_ID = '$bill_id' 
-            AND clinic_id IN ('P001', 'P016') 
-            AND (CLINIC_ID = 'P001' OR (CLINIC_ID = 'P016' AND tarif_name LIKE '%USG%' OR tarif_name LIKE '%EKG%' OR tarif_name LIKE '%ECG%'))
-            and tarif_id = '$tarif_id' ")->getResultArray() ?? []);
+                select * from TREAT_RESULTS where BILL_ID = '$bill_id' and tarif_id = '$tarif_id' 
+                 AND (TARIF_NAME LIKE '%USG%' OR TARIF_NAME LIKE '%EKG%' OR TARIF_NAME LIKE '%ECG%')
+             ")->getResultArray() ?? []);
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray());
 
@@ -2401,750 +3572,6 @@ class Cetak extends \App\Controllers\BaseController
                 "aParameter" => $aParameter,
                 "aValue" => $aValue,
                 "organization" => $selectorganization,
-            ]);
-        }
-    }
-
-    public function cetak_pra_operasi($visit, $vactination_id = null)
-    {
-        $title = "Asesmen Pra Operasi";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $select = $this->lowerKey($db->query("
-            select assessment_operation_pra.*
-            from assessment_operation_pra 
-            where assessment_operation_pra.visit_id = '" . $visit['visit_id'] . "' and body_id = '" . $vactination_id . "'
-            ")->getRowArray() ?? []);
-
-            $operasi = $this->lowerKey($db->query("
-                   SELECT start_operation,end_operation,tarif_name as treatment, bill_id, rooms_id FROM pasien_operasi 
-                --left JOIN OPERATION_TYPE ON pasien_operasi.tarif_id = OPERATION_TYPE.OPERATION
-                left join treat_tarif on treat_tarif.tarif_id = pasien_operasi.bill_id
-                WHERE vactination_id = '" . $vactination_id . "'
-            ")->getRowArray() ?? []); //bisma
-
-
-            $riwayat_alergi = $this->lowerKey($db->query("
-                select PASIEN_HISTORY.VALUE_DESC, PASIEN_HISTORY.HISTORIES, PASIEN_HISTORY.item_id from ASSESSMENT_PARAMETER ap
-                inner join ASSESSMENT_PARAMETER_VALUE apv on ap.PARAMETER_ID = apv.PARAMETER_ID and apv.P_TYPE = 'GEN0009' 
-                inner join PASIEN_HISTORY on apv.VALUE_ID = PASIEN_HISTORY.VALUE_ID
-                where ap.p_type = 'GEN0009' and ap.PARAMETER_ID = '01' and  no_registration = '" . $visit['no_registration'] . "'
-            ")->getResultArray() ?? []);
-
-            $riwayat_penyakit = $this->lowerKey($db->query("
-                select PASIEN_HISTORY.VALUE_DESC, PASIEN_HISTORY.HISTORIES, PASIEN_HISTORY.item_id from ASSESSMENT_PARAMETER ap
-                inner join ASSESSMENT_PARAMETER_VALUE apv on ap.PARAMETER_ID = apv.PARAMETER_ID and apv.P_TYPE = 'GEN0009' 
-                inner join PASIEN_HISTORY on apv.VALUE_ID = PASIEN_HISTORY.VALUE_ID
-                where ap.p_type = 'GEN0009' and ap.PARAMETER_ID = '05' and  no_registration = '" . $visit['no_registration'] . "'
-            ")->getResultArray() ?? []);
-
-            $blood_request = $this->lowerKey($db->query("
-               select USAGETYPE, BLOOD_QUANTITY, MEASUREMENT from BLOOD_REQUEST br
-                inner join BLOOD_USAGE_TYPE ON br.BLOOD_USAGE_TYPE = BLOOD_USAGE_TYPE.USAGE_TYPE
-                INNER JOIN MEASUREMENT ON br.MEASURE_ID =MEASUREMENT.MEASURE_ID
-                where visit_id = '" . $visit['visit_id'] . "' and CLINIC_ID = 'p002'
-
-            ")->getResultArray() ?? []);
-
-            if (!empty($select)) {
-                $selectlokalis = $this->lowerKey($db->query(
-                    "
-                    select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
-                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                    where body_id = '" . $vactination_id . "'"
-                )->getResultArray() ?? []);
-                foreach ($selectlokalis as $key => $value) {
-                    if ($value['value_score'] == 3) {
-                        $filepath = WRITEPATH . 'uploads/lokalis/' . $value['value_detail'];
-                        if (file_exists($filepath)) {
-                            $filedata = file_get_contents($filepath);
-                            $filedata64 = base64_encode($filedata);
-                            $selectlokalis[$key]['filedata64'] = $filedata64;
-                        }
-                    }
-                }
-
-                $selectDiagnosa = $this->lowerKey($db->query(
-                    "
-                    select DIAGNOSA_DESC from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' and DIAG_CAT IN ('1','13','15')
-                    "
-                )->getResultArray()) ?? [];
-
-                $informasiMedis = array_slice($select, 8, 22);
-
-                $newData = [];
-
-                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS001');
-            }
-
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
-
-            if (isset($select)) {
-                return view("admin/patient/cetak/operasi/pra-operasi.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    "informasiMedis" => $newData ?? [],
-                    "lokalis" => $selectlokalis,
-                    "operasi" => $operasi,
-                    "diagnosa" => $selectDiagnosa,
-                    "riwayat_alergi" => $riwayat_alergi,
-                    "riwayat_penyakit" => $riwayat_penyakit,
-                    "blood_request" => $blood_request,
-                    "organization" => $selectorganization
-                ]);
-            } else {
-                return view("admin/patient/cetak/operasi/pra-operasi.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
-            }
-        }
-    }
-    public function cetak_laporan_anesthesi($visit, $vactination_id = null)
-    {
-        $title = "Laporan Anestesi/Sedasi";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $select = $this->lowerKey($db->query("
-            select ASSESSMENT_ANESTHESIA.*,
-            ei.TEMPERATURE as suhu,
-            ei.TENSION_UPPER as tensi_atas,
-            ei.TENSION_BELOW as tensi_bawah,
-            ei.NADI as nadi,
-            ei.NAFAS as respirasi,
-            ei.WEIGHT as bb,
-            ei.HEIGHT as tb,
-            ei.IMT_SCORE,
-            ei.IMT_DESC,
-            ei.SATURASI as saturasi,
-            format(round(ei.WEIGHT*10000/ei.height/ei.height,2), '0.##') as bmi
-            from ASSESSMENT_ANESTHESIA 
-            left outer join EXAMINATION_detail ei on ASSESSMENT_ANESTHESIA.BODY_ID = ei.document_id and ei.ACCOUNT_ID = '11'
-            where ASSESSMENT_ANESTHESIA.visit_id = '" . $visit['visit_id'] . "' and ASSESSMENT_ANESTHESIA.document_id = '" . $vactination_id . "' 
-            ")->getRowArray() ?? []);
-
-
-            if (!empty($select)) {
-                $selectlokalis = $this->lowerKey($db->query(
-                    "
-                    select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
-                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                    where body_id = '" . $vactination_id . "' AND assessment_lokalis.VALUE_SCORE = 2"
-                )->getResultArray() ?? []);
-
-                $selectDiagnosa = $this->lowerKey($db->query(
-                    "select DIAGNOSA_desc from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' "
-                )->getResultArray() ?? []);
-
-                $informasiMedis = array_splice($select, 13, 16);
-                $keadaanUmum = array_splice($select, 14, 3);
-                $perencanaanAnestesi = array_splice($select, 15, 7);
-
-                $newData = [];
-                $newData2 = [];
-                $newData3 = [];
-
-                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS006');
-                $newData3 = $this->ConvertValue($keadaanUmum, $newData3, 'OPRS006');
-                $newData2 = $this->ConvertValue($perencanaanAnestesi, $newData2, 'OPRS006');
-            }
-
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
-
-            if (isset($select)) {
-                return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    "informasiMedis" => $newData ?? [],
-                    "perencanaanAnestesi" => $newData2 ?? [],
-                    "keadaanUmum" => $newData3 ?? [],
-                    "lokalis" => $selectlokalis ?? [],
-                    "diagnosa" => $selectDiagnosa ?? [],
-                    "organization" => $selectorganization
-                ]);
-            } else {
-                return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
-            }
-        }
-    }
-
-    public function cetak_laporan_pembedahan($visit, $vactination_id = null)
-    {
-        $title = "Laporan Pembedahan";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $select = $this->lowerKey($db->query("
-            select PASIEN_OPERASI.*, OPERATION_TYPE.OPERATION,ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as tipe_operasi, ao.operation_desc as operation_desc2
-            from PASIEN_OPERASI
-            left JOIN OPERATION_TYPE ON PASIEN_OPERASI.TARIF_ID = OPERATION_TYPE.OPERATION
-            LEFT join ASSESSMENT_PARAMETER_VALUE on PASIEN_OPERASI.SURGERY_TYPE = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-            left join assessment_operation ao on ao.document_id = pasien_operasi.VACTINATION_ID
-            where PASIEN_OPERASI.visit_id = '" . $visit['visit_id'] . "' and PASIEN_OPERASI.VACTINATION_ID = '" . $vactination_id . "'
-            ")->getRowArray() ?? []); //bisma
-
-            $operation_team = $this->lowerKey($db->query("
-            SELECT DOCTOR, TASK from OPERATION_TEAM 
-            INNER JOIN OPERATION_TASK ON OPERATION_TEAM.TASK_ID = OPERATION_TASK.TASK_ID
-            WHERE OPERATION_ID = '" . $vactination_id . "' ORDER BY OPERATION_TASK.TASK_ID ASC
-            ")->getResultArray() ?? []);
-
-            $diagnosas = $this->lowerKey($db->query("
-            select diagnosa_desc,diag_cat,suffer_type.suffer from PASIEN_DIAGNOSAS 
-            inner join suffer_type on pasien_diagnosas.suffer_type = suffer_type.suffer_type
-            where pasien_diagnosa_id = '" . $vactination_id . "' and diag_cat IN('13','14','15')
-            ")->getResultArray() ?? []);
-
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
-
-            // dd($select);
-
-            if (isset($select)) {
-                return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    'operation_team' => $operation_team,
-                    'diagnosas' => $diagnosas,
-                    "organization" => $selectorganization
-                ]);
-            } else {
-                return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
-            }
-        }
-    }
-    public function cetak_post_operasi($visit, $vactination_id = null)
-    {
-        $title = "Instruksi Post Operasi";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $select = $this->lowerKey($db->query("
-            select ASSESSMENT_OPERATION_POST.*
-            from ASSESSMENT_OPERATION_POST 
-            where ASSESSMENT_OPERATION_POST.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
-            ")->getResultArray() ?? []);
-
-
-            if (!empty($select)) {
-
-                $informasiMedis = array_slice($select[0], 8, 14);
-
-                $newData = [];
-
-                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS009');
-            }
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
-
-            if (isset($select[0])) {
-                return view("admin/patient/cetak/operasi/post-operasi.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    "informasiMedis" => $newData ?? [],
-                    "organization" => $selectorganization
-                ]);
-            } else {
-                return view("admin/patient/cetak/operasi/post-operasi.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
-            }
-        }
-    }
-
-    public function cetak_catatan_keperawatan($visit, $vactination_id = null)
-    {
-        $title = "Catatan Keperawatan Peri Operasi";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $select = $this->lowerKey($db->query("
-            select ASSESSMENT_OPERATION.*,
-            ed.TEMPERATURE as suhu,
-            ed.TENSION_UPPER as tensi_atas,
-            ed.TENSION_BELOW as tensi_bawah,
-            ed.NADI as nadi,
-            ed.NAFAS as respirasi,
-            ed.WEIGHT as bb,
-            ed.HEIGHT as tb,
-            ed.IMT_SCORE,
-            ed.IMT_DESC,
-            ed.SATURASI as saturasi,
-            CASE
-                WHEN ed.HEIGHT = 0 THEN NULL
-                ELSE ROUND(ed.WEIGHT * 10000.0 / (ed.HEIGHT * ed.HEIGHT), 2)
-            END AS bmi
-            from ASSESSMENT_OPERATION 
-            left outer join EXAMINATION_detail ed on ASSESSMENT_OPERATION.document_id = ed.document_id and ed.ACCOUNT_ID = '10'
-            where ASSESSMENT_OPERATION.visit_id = '" . $visit['visit_id'] . "' and ASSESSMENT_OPERATION.document_id = '" . $vactination_id . "' 
-            ")->getRowArray() ?? []);
-            if (!empty($select)) {
-
-                $selectDiagnosa = $this->lowerKey($db->query("
-                SELECT PASIEN_DIAGNOSAS_NURSE.DIAG_NOTES FROM PASIEN_DIAGNOSA_NURSE
-                INNER JOIN PASIEN_DIAGNOSAS_NURSE ON PASIEN_DIAGNOSA_NURSE.BODY_ID = PASIEN_DIAGNOSAS_NURSE.BODY_ID
-                WHERE DOCUMENT_ID = '" . $vactination_id . "'
-                ")->getResultArray() ?? []);
-
-                $selectDrain = $this->lowerKey($db->query("
-                SELECT DRAIN_TYPE,DRAIN_KINDS,SIZE,DESCRIPTION 
-                FROM ASSESSMENT_OPERATION_DRAIN WHERE DOCUMENT_ID = '" . $vactination_id . "'
-                ")->getResultArray() ?? []);
-
-                $selectInstrument = $this->lowerKey($db->query("
-                SELECT BRAND_NAME,QUANTITY_BEFORE,QUANTITY_INTRA,QUANTITY_ADDITIONAL,QUANTITY_AFTER 
-                FROM ASSESSMENT_INSTRUMENT WHERE DOCUMENT_ID = '" . $vactination_id . "'
-                ")->getResultArray() ?? []);
-                $instruments = [
-                    ['Quantity Before', 0, 0, 0],
-                    ['Quantity Intra', 0, 0, 0],
-                    ['Quantity Additional', 0, 0, 0],
-                    ['Quantity After', 0, 0, 0],
-                ];
-                foreach ($selectInstrument as $item) {
-                    $instruments[0][1] += $item['quantity_before'];
-                    $instruments[1][1] += $item['quantity_intra'];
-                    $instruments[2][1] += $item['quantity_additional'];
-                    $instruments[3][1] += $item['quantity_after'];
-                }
-                foreach ($selectInstrument as $index => $item) {
-                    $instruments[0][$index + 1] = $item['quantity_before'];
-                    $instruments[1][$index + 1] = $item['quantity_intra'];
-                    $instruments[2][$index + 1] = $item['quantity_additional'];
-                    $instruments[3][$index + 1] = $item['quantity_after'];
-                }
-
-                $aldrete = $this->lowerKey($db->query("
-                      SELECT
-                            BODY_ID, OBSERVATION_DATE,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_01,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_01,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_01,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_01,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_02,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_02,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_02,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_03,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_03,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_03,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_04,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_04,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_04,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_04,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_05,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_05,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_05,
-                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_05
-                        FROM ASSESSMENT_ANESTHESIA_RECOVERY
-                        INNER JOIN ASSESSMENT_PARAMETER ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER.P_TYPE
-                        INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
-                        WHERE DOCUMENT_ID = '" . $vactination_id . "'
-                        AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS023'
-                        GROUP BY BODY_ID, OBSERVATION_DATE;
-                ")->getResultArray() ?? []);
-                $bromage = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_ANESTHESIA_RECOVERY where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and p_type = 'oprs024' ")->getResultArray() ?? []);
-                $steward = $this->lowerKey($db->query("
-                    SELECT
-                        BODY_ID, OBSERVATION_DATE,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_01,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_01,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_01,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_01,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_02,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_02,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_02,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_03,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_03,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_03,
-                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03
-                    FROM ASSESSMENT_ANESTHESIA_RECOVERY
-                    INNER JOIN ASSESSMENT_PARAMETER ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER.P_TYPE
-                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
-                    WHERE DOCUMENT_ID = '" . $vactination_id . "'
-                    AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS025'
-                    GROUP BY BODY_ID, OBSERVATION_DATE;
-                ")->getResultArray() ?? []);
-
-
-                $informasiMedis = array_slice($select, 8, 8);
-                $informasiIntra = array_slice($select, 16, 23);
-                $informasiIntra2 = array_slice($select, 39, 13);
-                $informasiPasca = array_slice($select, 51, 11);
-                $newData = [];
-                $newData2 = [];
-                $newData3 = [];
-                $newData4 = [];
-
-                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS003');
-                $newData2 = $this->ConvertValue($informasiIntra, $newData2, 'OPRS004');
-                $newData3 = $this->ConvertValue($informasiIntra2, $newData3, 'OPRS004');
-                $newData4 = $this->ConvertValue($informasiPasca, $newData4, 'OPRS005');
-            }
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
-
-
-            if (isset($select)) {
-                return view("admin/patient/cetak/operasi/catatan-keperawatan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    "informasiMedis" => $newData ?? [],
-                    "informasiIntra" => $newData2 ?? [],
-                    "informasiIntra2" => $newData3 ?? [],
-                    "informasiPasca" => $newData4 ?? [],
-                    "diagnosas" => $selectDiagnosa ?? [],
-                    "drains" => $selectDrain ?? [],
-                    "instrument" => $instruments ?? [],
-                    "aldrete" => $aldrete ?? [],
-                    "bromage" => $bromage ?? [],
-                    "steward" => $steward ?? [],
-                    "organization" => $selectorganization
-                ]);
-            } else {
-                return view("admin/patient/cetak/operasi/catatan-keperawatan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
-            }
-        }
-    }
-    public function cetak_checklist_keselamatan($visit, $vactination_id = null)
-    {
-        $title = "Checklist Keselamatan Operasi";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $select = $this->lowerKey($db->query("
-            select * FROM ASSESSMENT_OPERATION_CHECK
-            where ASSESSMENT_OPERATION_CHECK.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
-            ")->getRowArray() ?? []);
-
-
-            $instruments = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_INSTRUMENT where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' ")->getResultArray() ?? []);
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
-
-            $theSignIn = array_slice($select, 8, 10);
-            $theTimeOut = array_slice($select, 19, 20);
-            $theSignOut = array_slice($select, 40, 2);
-            $theSignOut2 = array_slice($select, 42, 3);
-
-            $newData = [];
-            $newData2 = [];
-            $newData3 = [];
-            $newData4 = [];
-
-
-            $newData = $this->ConvertValue($theSignIn, $newData, 'OPRS026');
-            $newData2 = $this->ConvertValue($theTimeOut, $newData2, 'OPRS027');
-            $newData3 = $this->ConvertValue($theSignOut, $newData3, 'OPRS028');
-            $newData4 = $this->ConvertValue($theSignOut2, $newData4, 'OPRS028');
-
-            if (isset($select)) {
-                return view("admin/patient/cetak/operasi/checklist-keselamatan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    "theSignIn" => $newData ?? [],
-                    "theTimeOut" => $newData2 ?? [],
-                    "theSignOut" => $newData3 ?? [],
-                    "theSignOut2" => $newData4 ?? [],
-                    "instruments" => $instruments ?? [],
-                    "organization" => $selectorganization
-                ]);
-            } else {
-                return view("admin/patient/cetak/operasi/checklist-keselamatan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
-            }
-        }
-    }
-    public function cetak_checklist_anestesi($visit, $vactination_id = null)
-    {
-        $title = "Checklist Anestesi";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $query = $this->lowerKey($db->query(
-                "
-                select * from ASSESSMENT_ANESTHESI_CHECKLIST where DOCUMENT_ID = '" . $vactination_id . "'
-                "
-            )->getRowArray() ?? []);
-
-            $operasi = $this->lowerKey($db->query("
-                 SELECT start_operation,end_operation,OPERATION as treatment, bill_id, rooms_id FROM pasien_operasi 
-                INNER JOIN OPERATION_TYPE ON pasien_operasi.tarif_id = OPERATION_TYPE.OPERATION
-                WHERE vactination_id = '" . $vactination_id . "'
-            ")->getRowArray() ?? []);
-
-
-            $informasiTindakan = array_splice($query, 5, 26);
-
-            $newData = [];
-            $index = 0;
-            foreach ($informasiTindakan as $key => $value) {
-                $value = $value === NULL ? "" : $value;
-                $result = $this->query_getDesc($key, 'OPRS007');
-                if ($result) {
-                    $parameterDesc = $result['PARAMETER_DESC'] ?? 'Unknown Parameter';
-                    $newData[$parameterDesc] = $value;
-                } else {
-                    $newData['Not Found'] = 'Not Found';
-                }
-                $index++;
-            }
-
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
-
-            $treatmentData = $this->getTreatment();
-
-            $AParameter = $db->table('ASSESSMENT_PARAMETER')
-                ->where('P_TYPE', 'OPRS007')
-                ->get();
-            $resultArrayAParameter = $AParameter->getResultArray();
-            $selectAParameter = $this->lowerKey($resultArrayAParameter ?? []);
-
-
-
-
-            return view("admin/patient/cetak/operasi/checklist-anestesi.php", [
-                "visit" => $visit,
-                'title' => $title,
-                "val" => $query,
-                "organization" => $selectorganization,
-                "informasiTindakan" => $newData ?? [],
-                "treatment" => $treatmentData,
-                "operasi" => $operasi
-            ]);
-        }
-    }
-
-    public function cetak_anesthesi_lengkap($visit, $vactination_id = null)
-    {
-        $title = "Laporan Anestesi Lengkap";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-
-            $query = $this->lowerKey($db->query(
-                "
-                select *,
-                ASSESSMENT_ANESTHESIA.org_unit_code as org_unit_code,
-                ASSESSMENT_ANESTHESIA.visit_id as visit_id,
-                ASSESSMENT_ANESTHESIA.trans_id as trans_id,
-                ASSESSMENT_ANESTHESIA.body_id as body_id,
-                ASSESSMENT_ANESTHESIA.document_id as document_id,
-                ASSESSMENT_ANESTHESIA.examination_date as examination_date,
-                ASSESSMENT_ANESTHESIA.modified_date as modified_date
-                
-                from ASSESSMENT_ANESTHESIA
-                left join ASSESSMENT_ANESTHESIA_POST on ASSESSMENT_ANESTHESIA.DOCUMENT_ID = ASSESSMENT_ANESTHESIA_POST.DOCUMENT_ID
-                left join ASSESSMENT_ANESTHESI_CHECKLIST on ASSESSMENT_ANESTHESIA.DOCUMENT_ID = ASSESSMENT_ANESTHESI_CHECKLIST.DOCUMENT_ID
-				left join pasien_operasi on assessment_anesthesia.document_id = pasien_operasi.vactination_id
-                where ASSESSMENT_ANESTHESIA.DOCUMENT_ID =  '" . $vactination_id . "'
-                "
-            )->getRowArray() ?? []);
-
-            $aldrete_score = $this->lowerKey($db->query(
-                "
-                select 
-                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID, 
-                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
-                from ASSESSMENT_ANESTHESIA_RECOVERY 
-                inner join ASSESSMENT_PARAMETER on ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = ASSESSMENT_PARAMETER.PARAMETER_ID AND ASSESSMENT_PARAMETER.P_TYPE = 'oprs023'
-                where DOCUMENT_ID = '" . $vactination_id . "' and ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'oprs023'
-                group by 
-                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID,
-                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
-
-                "
-            )->getResultArray() ?? []);
-
-            $steward_score = $this->lowerKey($db->query(
-                "
-                select 
-                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID, 
-                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
-                from ASSESSMENT_ANESTHESIA_RECOVERY 
-                inner join ASSESSMENT_PARAMETER on ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = ASSESSMENT_PARAMETER.PARAMETER_ID AND ASSESSMENT_PARAMETER.P_TYPE = 'oprs025'
-                where DOCUMENT_ID = '" . $vactination_id . "' and ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'oprs025'
-                group by 
-                    ASSESSMENT_ANESTHESIA_RECOVERY.BODY_ID,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID,
-                    ASSESSMENT_PARAMETER.PARAMETER_DESC,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE,
-                    ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC
-
-                "
-            )->getResultArray() ?? []);
-
-            $bromage_score = $this->lowerKey($db->query(
-                "
-                select value_desc, value_score from ASSESSMENT_ANESTHESIA_RECOVERY where DOCUMENT_ID =  '" . $vactination_id . "' and P_TYPE = 'oprs024'
-                "
-            )->getResultArray() ?? []);
-
-            $infusion   = $this->filtering_array($vactination_id, 'OPRS029');
-            $general    = $this->filtering_array($vactination_id, 'OPRS030');
-            $regional   = $this->filtering_array($vactination_id, 'OPRS033');
-            $ventilasi  = $this->filtering_array($vactination_id, 'OPRS031');
-            $jalan_napas  = $this->filtering_array($vactination_id, 'OPRS032');
-
-            $instruksi_post = $this->lowerKey($db->query(
-                "
-               SELECT 
-                    AOP.*,
-                    PV1.VALUE_DESC AS POSITION,
-                    PV2.VALUE_DESC AS FASTING_UNTIL
-                FROM 
-                    ASSESSMENT_OPERATION_POST AOP
-                INNER JOIN 
-                    ASSESSMENT_PARAMETER_VALUE PV1 
-                    ON AOP.POSITION = PV1.VALUE_ID
-                INNER JOIN 
-                    ASSESSMENT_PARAMETER_VALUE PV2 
-                    ON AOP.FASTING_UNTIL = PV2.VALUE_ID
-                WHERE 
-                    AOP.document_id =  '" . $vactination_id . "'
-
-                "
-            )->getRowArray() ?? []);
-
-
-            $cairan_masuk = $this->lowerKey($db->query("
-                SELECT 
-                    TREATMENT_OBAT.visit_id,
-                    TREATMENT_OBAT.treat_date AS date,
-                    goods.name AS name,
-                    TREATMENT_OBAT.QUANTITY AS quantity
-                FROM 
-                    TREATMENT_OBAT 
-                INNER JOIN 
-                    goods ON TREATMENT_OBAT.BRAND_ID = goods.BRAND_ID 
-                WHERE 
-                    TREATMENT_OBAT.CLINIC_ID = 'P002' 
-                    AND ISALKES = 19
-                    AND TREATMENT_OBAT.visit_id = '" . $visit['visit_id'] . "'
-
-                UNION ALL
-
-                SELECT 
-                    br.visit_id,
-                    br.REQUEST_DATE AS date,
-                    but.usagetype AS name,
-                    br.BLOOD_QUANTITY AS quantity
-                FROM 
-                    BLOOD_REQUEST br
-                LEFT JOIN 
-                    BLOOD_USAGE_TYPE but ON br.blood_usage_type = but.usage_type
-                WHERE 
-                    br.visit_id = '" . $visit['visit_id'] . "';
-
-            ")->getResultArray() ?? []);
-
-            $cairan = $this->lowerKey($db->query("
-                select examination_date,value_desc,fluid_amount,
-                MAX(CASE 
-                WHEN fluid_type IN('G0230301', 'G0230302') 
-                THEN 1 
-                ELSE 0 
-                END) AS cairan_masuk 
-                from assessment_fluid_balance
-                inner join assessment_parameter_value on assessment_fluid_balance.P_TYPE = assessment_parameter_value.p_type AND assessment_parameter_value.VALUE_ID = assessment_fluid_balance.FLUID_TYPE
-                where assessment_fluid_balance.P_TYPE = 'GEN0023' AND VISIT_ID = '" . $visit['visit_id'] . "'
-                group by examination_date, value_desc, fluid_amount
-            ")->getResultArray() ?? []);
-
-            $asParameter  =  $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_PARAMETER WHERE P_TYPE  LIKE 'OPRS%' ORDER BY P_TYPE")->getResultArray() ?? []);
-            $asParameterVal  =  $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_PARAMETER_VALUE WHERE P_TYPE  LIKE 'OPRS%' ORDER BY P_TYPE")->getResultArray() ?? []);
-
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
-            $aldrete_score_group = [];
-            $steward_score_group = [];
-
-            foreach ($aldrete_score as $item) {
-                $bodyId = $item['body_id'];
-                if (!isset($aldrete_score_group[$bodyId])) {
-                    $aldrete_score_group[$bodyId] = [];
-                }
-
-                $aldrete_score_group[$bodyId][] = $item;
-            }
-            foreach ($steward_score as $item) {
-                $bodyId = $item['body_id'];
-                if (!isset($steward_score_group[$bodyId])) {
-                    $steward_score_group[$bodyId] = [];
-                }
-
-                $steward_score_group[$bodyId][] = $item;
-            }
-
-            return view("admin/patient/cetak/operasi/laporan-anesthesi-lengkap.php", [
-                "visit" => $visit,
-                'title' => $title,
-                "val" => $query,
-                "infusion" => $infusion,
-                "general" => $general,
-                "regional" => $regional,
-                "ventilasi" => $ventilasi,
-                "jalan_napas" => $jalan_napas,
-                "general_entry_type" => $this->getEntryType($general),
-                "ventilasi_entry_type" => $this->getEntryType($ventilasi),
-                "jalan_napas_entry_type" => $this->getEntryType($jalan_napas),
-                "regional_entry_type" => $this->getEntryType($regional),
-                "instruksi_post" => $instruksi_post,
-                "organization" => $selectorganization,
-                "cairan_masuk" => $cairan_masuk,
-                "cairan" => $cairan,
-                "aldrete_score" => $aldrete_score_group,
-                "steward_score" => $steward_score_group,
-                "bromage_score" => $bromage_score,
-                'a_param' => $asParameter,
-                'a_paramVal' => $asParameterVal
             ]);
         }
     }

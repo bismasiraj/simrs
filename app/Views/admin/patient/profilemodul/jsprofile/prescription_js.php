@@ -16,12 +16,13 @@
     var resepOrder = 0;
     var resep_no = '';
     var theOrder = 0;
-    <?php foreach ($employee as $key => $value) {
-        if (is_null($visit['class_room_id'])) {
+    <?php
+    // dd($visit['class_room_id']);
+    foreach ($employee as $key => $value) {
+        if (is_null($visit['class_room_id']) || ($visit['class_room_id'] == '')) {
             if ($employee[$key]['employee_id'] == $visit['employee_id']) {
     ?>
                 var specialist = "<?= $employee[$key]['specialist_type_id']; ?>";
-
             <?php
             }
         }
@@ -29,7 +30,6 @@
             if ($employee[$key]['employee_id'] == $visit['employee_inap']) {
             ?>
                 var specialist = "<?= $employee[$key]['specialist_type_id']; ?>";
-
     <?php
             }
         }
@@ -68,15 +68,24 @@
             $("#jenisresep").val(7)
         <?php
         } ?>
-        getResep(visit, nomor)
+        getResep(visit.visit_id, nomor)
         $("#eresepTitle").html("E-Resep")
+        $("#eresepBtnGroup").slideDown()
+        $("#medItemBtnGroup").slideUp()
+        $("#generateResepGroup").show()
+        $("#eresepAddRGenerateResep").trigger("click")
+    })
+    $("#eresepDischargeTab").on("click", function() {
+        $("#jenisresep").val(5)
+        getResep(visit.visit_id, nomor)
+        $("#eresepTitle").html("Obat Pulang")
         $("#eresepBtnGroup").slideDown()
         $("#medItemBtnGroup").slideUp()
         $("#generateResepGroup").show()
     })
     $("#medicalitemTab").on("click", function() {
         $("#jenisresep").val(8)
-        getResep(visit, nomor)
+        getResep(visit.visit_id, nomor)
         $("#eresepTitle").html("Medical Item")
         $("#eresepBtnGroup").slideUp()
         $("#medItemBtnGroup").slideDown()
@@ -92,7 +101,7 @@
         }
     })
     $("#jenisresep").on("change", function() {
-        getResep(visit, nomor)
+        getResep(visit.visit_id, nomor)
     })
 </script>
 
@@ -104,95 +113,104 @@
 
     var obat;
 
-    function getResep(visit, nomor) {
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/getResep',
-            type: "POST",
-            data: JSON.stringify({
-                'visit_id': visit,
-                'nomor': nomor,
-                'sold_status': $("#jenisresep").val()
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                $("#ereseploadingspace").html(loadingScreen())
-            },
-            success: function(data) {
-                signaParam = data.signa;
-                $("#ereseploadingspace").html("")
-                $("#resepno").html("")
+    function getResep(visit_id, nomor) {
+        postData({
+            visit_id: visit_id,
+            nomor: nomor,
+            sold_status: $("#jenisresep").val()
+        }, 'admin/patient/getResep', function(data) {
+            signaParam = data.signa;
+            $("#ereseploadingspace").html("")
+            $("#resepno").html("")
 
-                $("#resepno").append($('<option>').val('%').text('Semua'));
+            $("#resepno").append($('<option>').val('%').text('Semua'));
 
 
 
-                signaParam.forEach((selemet, skey) => {
-                    if (signaParam[skey].signa_type == 2 && signaParam[skey].isactive == "1") {
-                        signa2Param.push(signaParam[skey])
-                    }
-                    if (signaParam[skey].signa_type == 3) {
-                        signa3Param.push(signaParam[skey])
-                    }
-                    if (signaParam[skey].signa_type == 4 && signaParam[skey].isactive == "1") {
-                        signa4Param.push(signaParam[skey])
-                    }
-                    if ((signaParam[skey].specialist_type == specialist || signaParam[skey].specialist_type == '0.00' || signaParam[skey].specialist_type == null) && signaParam[skey].signa_type == 5 && signaParam[skey].isactive == "1") {
-                        signa5Param.push(signaParam[skey])
-                    }
-                });
-
-                measureParam = data.measurement;
-                regulateParam = data.regulation;
-                resepDetail = []
-                if (typeof data.resepNo !== 'undefined') {
-                    resepNo = data.resepNo;
-
-                    resepNo.forEach((element, key) => {
-                        $("#resepno").append($('<option>').val(resepNo[key]).text(resepNo[key]));
-                    });
-                    resepDetail = data.obat;
+            signaParam.forEach((selemet, skey) => {
+                if (signaParam[skey].signa_type == 2 && signaParam[skey].isactive == "1") {
+                    signa2Param.push(signaParam[skey])
                 }
+                if (signaParam[skey].signa_type == 3) {
+                    signa3Param.push(signaParam[skey])
+                }
+                if (signaParam[skey].signa_type == 4 && signaParam[skey].isactive == "1") {
+                    signa4Param.push(signaParam[skey])
+                }
+                if ((signaParam[skey].specialist_type == specialist || signaParam[skey].specialist_type == '0.00' || signaParam[skey].specialist_type == null) && signaParam[skey].signa_type == 5 && signaParam[skey].isactive == "1") {
+                    signa5Param.push(signaParam[skey])
+                }
+            });
 
-                // visitHistory = data.visitHistory;
+            measureParam = data.measurement;
+            regulateParam = data.regulation;
+            resepDetail = []
+            if (typeof data.resepNo !== 'undefined') {
+                resepNo = data.resepNo;
 
-                // $("#historyEresep").html(visitHistory)
-
-                // obat = data.historyObat
-
-                // obat.forEach((element, key) => {
-                //     fillHistoryEresep(obat[key], obat[key].visit_id)
-                // });
-
-
-                resepGrouped = resepDetail.reduce((result, current) => {
-                    // Check if the resep_no already exists in the result object
-                    if (!result[current.resep_no]) {
-                        result[current.resep_no] = []; // Create an empty array if not
-                    }
-                    // Push the current object into the respective resep_no array
-                    result[current.resep_no].push(current);
-                    return result;
-                }, {});
-
-                console.log(resepGrouped);
-                $("#displayResep").html("")
-                $.each(resepGrouped, function(key, value) {
-                    addRowResep(key, value)
-                })
-
-
-                // filteredResep('%')
-                $("#resepno").val('%');
-                // holdModal('historyEresepModal')
-
-            },
-            error: function() {
-
+                resepNo.forEach((element, key) => {
+                    $("#resepno").append($('<option>').val(resepNo[key]).text(resepNo[key]));
+                });
+                resepDetail = data.obat;
             }
-        });
+
+            visitHistory = data.visitHistory;
+
+            $("#historyEresep").html(visitHistory)
+
+            obat = data.historyObat
+
+            obat.forEach((element, key) => {
+                fillHistoryEresep(obat[key], obat[key].visit_id)
+            });
+
+
+            resepGrouped = resepDetail.reduce((result, current) => {
+                // Check if the resep_no already exists in the result object
+                if (!result[current.resep_no]) {
+                    result[current.resep_no] = []; // Create an empty array if not
+                }
+                // Push the current object into the respective resep_no array
+                result[current.resep_no].push(current);
+                return result;
+            }, {});
+            $("#displayResep").html("")
+            $.each(resepGrouped, function(key, value) {
+                addRowResep(key, value)
+            })
+
+
+            // filteredResep('%')
+            $("#resepno").val('%');
+
+            if ($("#resepno").val() != '%')
+                filteredResep($("#resepno").val())
+            if (visit?.locked == null)
+                visit.locked = 0
+            if (!visit?.locked || visit.locked !== '0') {
+                $(".spppoli-to-hide").remove();
+            }
+            // holdModal('historyEresepModal')
+
+        }, () => {
+            getLoadingscreen("contentEresep", "loadContentEresep")
+
+            $("#ereseploadingspace").html(loadingScreen())
+        })
+    }
+    const checkAllHistoryInsideId = (props) => {
+        let formid = props?.formid
+        let id = props?.id
+
+        console.log(formid)
+        console.log(id)
+
+        $(`#${formid}`).find(`input[name="bill_idcopy[]"]`).each(function() {
+            $(this).prop("checked", $(`#${id}`).prop("checked"))
+        })
+        if (formid) {
+            if (id) {}
+        }
     }
     const addRowResep = (key, data) => {
         let jenisresep = $("#jenisresep").val()
@@ -211,8 +229,8 @@
                             <td>: ${data[0].treat_date}</td>
                         </tr>
                         <tr>
-                            <td>Dokter</td>
-                            <td>: ${data[0].doctor_from}</td>
+                            <td>Tenaga Medis</td>
+                            <td>: ${data[0].doctor}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -279,7 +297,7 @@
 
     function copyResep(formid) {
 
-        const billIds = Array.from(document.querySelectorAll('#' + formid + ' input[name="bill_id[]"]'));
+        const billIds = Array.from(document.querySelectorAll('#' + formid + ' input[name="bill_idcopy[]"]:checked'));
         const billIdValues = billIds.map(input => input.value);
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/generateResep',
@@ -303,7 +321,9 @@
                         'billId': billIdValues,
                         'noresep': noresep,
                         'visit_id': '<?= $visit['visit_id']; ?>',
-                        'trans_id': '<?= $visit['trans_id']; ?>'
+                        'trans_id': '<?= $visit['trans_id']; ?>',
+                        'clinicId': '<?= $visit['clinic_id']; ?>',
+                        'sessionId': visit?.session_id
                     }),
                     dataType: 'json',
                     contentType: false,
@@ -313,7 +333,10 @@
                         var noresep = data
 
                         $("#historyEresepModal").modal("hide")
+                        $("#prescriptionDetailModal").modal("hide")
+                        $("#resepno").val(noresep)
                         $("#eresepTab").trigger("click")
+                        // $("#eresepAddR").trigger("click")
                     },
                     error: function() {
 
@@ -324,9 +347,7 @@
 
             }
         });
-
-
-
+        updateWaktu(5)
     }
 
     function generateResep(norm, clinicId, isrj, isracik = null) {
@@ -523,9 +544,9 @@
             var measureDosisName = '';
             // var racikan = '0'
             var doctor = doctor
-            var employeeId = '<?= $visit['employee_id']; ?>'
-            var employeeIdFrom = '<?= $visit['employee_id']; ?>'
-            var doctorFrom = "<?= $visit['fullname']; ?>"
+            var employeeId = '<?= user()->employee_id; ?>'
+            var employeeIdFrom = '<?= user()->employee_id; ?>'
+            var doctorFrom = "<?= user()->getFullname(); ?>"
             var statusObat = toItem.status_pasien_id
             var tarifId = "1201008"
             var treatment = "PEMBELIAN OBAT RACIKAN"
@@ -549,16 +570,16 @@
             var qty = 0.0
             var numer = "9"
             var resepNo = resepNo
-            var notaNo = resepNo
+            var notaNo = visit?.session_id
             var treatDate = get_date()
             var dose1 = 0.0
             var dose2 = 0.0
             var classRoomId = ""
-            var clinicId = '<?= $visit['clinic_id']; ?>'
-            var clinicIdFrom = '<?= $visit['clinic_id']; ?>'
+            var clinicId = visit?.clinic_id
+            var clinicIdFrom = visit?.clinic_id
             var islunas = 0
 
-            // console.log(measureId)
+            console.log(measureId)
             measureParam.forEach((melement, mkey) => {
                 if (measureParam[mkey].measure_id == parseInt(measureId)) {
                     measureIdName = measureParam[mkey].measurement;
@@ -581,6 +602,12 @@
             // $("#aormeasure_id2" + billId).html(new Option(measureDosisName, measureId2));
             // $("#aormeasure_id2" + billId).val(measureId2);
             $("#aormeasure_dosis" + billId).html(new Option(measureDosisName, parseInt(measureDosis)));
+            measureParam.forEach((melement, mkey) => {
+                if (measureParam[mkey].measure_id == '5' || measureParam[mkey].measure_id == '10' || measureParam[mkey].measure_id == '17') {
+                    console.log(measureParam[mkey].measurement)
+                    $("#aormeasure_dosis" + billId + "").append(new Option(measureParam[mkey].measurement, parseInt(measureParam[mkey].measure_id)));
+                }
+            });
             $("#aormeasure_dosis" + billId).val(parseInt(measureDosis));
             // $("#aormeasure_id2name" + billId).val(measureId2);
             // $("#aorracikan" + billId).val(racikan);
@@ -617,14 +644,14 @@
             $("#aorvisit_id" + billId).val('<?= $visit['visit_id']; ?>');
             $("#aorno_registration" + billId).val('<?= $visit['no_registration']; ?>');
             $("#aortrans_id" + billId).val('<?= $visit['trans_id']; ?>');
-            $("#aormodified_from" + billId).val('<?= $visit['clinic_id']; ?>');
+            $("#aormodified_from" + billId).val(visit?.clinic_id);
             $("#aormodified_by" + billId).val("<?= user()->username; ?>");
             $("#aormodified_date" + billId).val(get_date());
-            $("#aorisrj" + billId).val('<?= $visit['isrj']; ?>');
-            $("#aorthename" + billId).val('<?= $visit['diantar_oleh']; ?>');
-            $("#aortheaddress" + billId).val('<?= $visit['visitor_address']; ?>');
-            $("#aortheid" + billId).val('<?= $visit['pasien_id']; ?>');
-            $("#aororg_unit_code" + billId).val('<?= $visit['org_unit_code']; ?>')
+            $("#aorisrj" + billId).val(visit?.isrj);
+            $("#aorthename" + billId).val(visit?.diantar_oleh);
+            $("#aortheaddress" + billId).val(visit?.visitor_address);
+            $("#aortheid" + billId).val(visit?.pasien_id);
+            $("#aororg_unit_code" + billId).val(visit?.org_unit_code)
             $("#islunas" + billId).val(islunas);
             $("#aordose_presc" + billId).val(dosePresc)
             // alert("#aordose_presc" + billId)
@@ -635,81 +662,90 @@
             $("#aordescription" + billId).val(description)
             $("#aoraturanminum2" + billId).val(description2)
             $("#aorcif" + billId).val(description)
+            postData({
+                brand_id: brandId
+            }, 'admin/patient/checkStockGoods', (res) => {
+                res = parseFloat(res);
+                let data = checkStock(res);
+                setBadge(`badge-aor${billId}`, `badge-aor${billId}`, "bg-" + data?.color, data?.score);
+            })
         }
-
-        $("#formAddPrescrBtn").off().on('click', (function(e) {
-            let clicked_submit_btn = $("#formprescription").closest('form').find(':submit');
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            $.ajax({
-                url: '<?php echo base_url(); ?>admin/patient/addPrescR',
-                type: "POST",
-                data: new FormData(document.getElementById("formprescription")),
-                dataType: 'json',
-                contentType: false,
-                cache: false,
-                processData: false,
-                beforeSend: function() {
-                    clicked_submit_btn.button('loading');
-                },
-                success: function(data) {
-                    if (data.status == "fail") {
-                        var message = "";
-                        $.each(data.error, function(index, value) {
-                            message += value;
-                        });
-                        errorSwal(message);
-                    } else {
-                        successSwal(data.message);
-                        $("#formAddPrescrBtn").slideUp()
-                        $("#formEditPrescrBtn").slideDown()
-                        $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", true)
-
-                        $("#prescRItemBody").html("")
-                        resepDetail = [];
-
-                        data.data.forEach((element, key) => {
-                            datachild = data.data[key]
-                            resepDetail.push(data.data[key])
-                        });
-
-                        getResep(visit, nomor)
-
-                        $("#divRacikan").attr("class", "col-md-6 col-sm-6 col-sm-12")
-                        $("#divNonRacikan").attr("class", "col-md-6 col-sm-6 col-sm-12")
-
-                        filteredResep($("#resepno").val())
-
-                        // $("#addPrescR").modal('hide');
-                    }
-                    clicked_submit_btn.button('reset');
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    let errorMessage = "An error occurred: ";
-
-                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
-                        errorMessage = jqXHR.responseJSON.message;
-                    } else if (textStatus === "timeout") {
-                        errorMessage = "The request timed out.";
-                    } else if (textStatus === "error") {
-                        errorMessage = "Error: " + errorThrown;
-                    } else if (textStatus === "abort") {
-                        errorMessage = "The request was aborted.";
-                    } else {
-                        errorMessage = "Unknown error occurred.";
-                    }
-
-                    errorSwal(errorMessage);
-                    $("#form1btn").html('<i class="fa fa-search"></i>')
-                },
-                complete: function() {
-                    clicked_submit_btn.button('reset');
-                }
-            });
-        }));
-
-
     }
+
+    function checkStock(value) {
+        if (value <= 8) {
+            return {
+                score: parseInt(value),
+                color: "danger",
+                colorPicker: "#dc3545",
+            };
+        } else if (value >= 9 && value <= 11) {
+            return {
+                score: parseInt(value),
+                color: "success",
+                colorPicker: "#198754",
+            };
+        } else if (value >= 12 && value <= 20) {
+            return {
+                score: parseInt(value),
+                color: "light",
+                colorPicker: "#f8f9fa",
+            };
+        } else if (value >= 21 && value <= 24) {
+            return {
+                score: parseInt(value),
+                color: "warning",
+                colorPicker: "#ffc107",
+            };
+        } else if (value >= 25) {
+            return {
+                score: parseInt(value),
+                color: "danger",
+                colorPicker: "#dc3545",
+            };
+        }
+    }
+    $("#formAddPrescrBtn").off().on('click', (function(e) {
+        let clicked_submit_btn = $("#formprescription").closest('form').find(':submit');
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        postDataForm(new FormData(document.getElementById("formprescription")),
+            'admin/patient/addPrescR', (data) => {
+                if (data.status == "fail") {
+                    var message = "";
+                    $.each(data.error, function(index, value) {
+                        message += value;
+                    });
+                    errorSwal(message);
+                } else {
+                    successSwal(data.message);
+                    $("#formAddPrescrBtn").slideUp()
+                    $("#formEditPrescrBtn").slideDown()
+                    $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", true)
+
+                    $("#prescRItemBody").html("")
+                    resepDetail = [];
+
+                    data.data.forEach((element, key) => {
+                        datachild = data.data[key]
+                        resepDetail.push(data.data[key])
+                    });
+
+                    getResep(visit.visit_id, nomor)
+
+                    $("#divRacikan").attr("class", "col-md-6 col-sm-6 col-sm-12")
+                    $("#divNonRacikan").attr("class", "col-md-6 col-sm-6 col-sm-12")
+
+                    filteredResep($("#resepno").val())
+
+                    // $("#addPrescR").modal('hide');
+                }
+                clicked_submit_btn.button('reset');
+                $("#prescriptionDetailModal").modal("hide")
+            }
+        )
+        updateWaktu(5)
+    }));
 
     function updateJmlBks(resep_no, resep_ke, value) {
         value = (Number(value.replace(/[^\d+(\.\d{1,2})$]/g, '')).toFixed(2))
@@ -751,7 +787,7 @@
                                         <tr>
                                             <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
                                             <th class="text-center" colspan="2" style="width: 30%;">Jumlah</th class="text-center">
-                                            <th class="text-center" colspan="3" style="width: 30%;">Aturan Minum</th class="text-center">
+                                            <th class="text-center" colspan="3" style="width: 30%;">Signa</th class="text-center">
                                             <th class="text-center" style="width: 5%;"></th class="text-center">
                                         </tr>
                                     </thead>
@@ -842,7 +878,7 @@
         $("#prescriptionDetailModal").modal("show")
 
         var iseresep = $("#iseresep").val()
-        var soldstatusarray = ['1', '7'];
+        var soldstatusarray = ['1', '5', '7'];
         var soldstatus = $("#jenisresep").val()
 
         resepOrder = 0;
@@ -912,10 +948,102 @@
         // }
     }
 
-    function removeRacik(brand) {
-        console.log(brand)
+    function removeRacik(brand, resepNo = null, resepKe = null) {
         if (confirm('Apakah anda yakin akan menghapus item ini?') == true) {
             $("#" + brand).remove()
+            if (resepNo == null) {
+                $.ajax({
+                    url: '<?php echo base_url(); ?>admin/patient/deletePresc',
+                    type: "POST",
+                    data: JSON.stringify({
+                        "bill": brand
+                    }),
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    // beforeSend: function() {
+                    //     clicked_submit_btn.button('loading');
+                    // },
+                    success: function(data) {
+                        if (data.status == "fail") {
+                            var message = "";
+                            $.each(data.error, function(index, value) {
+                                message += value;
+                            });
+                            errorSwal(message);
+                        } else {
+                            successSwal(data.message);
+                            resepDetail.forEach((element, key) => {
+                                if (resepDetail[key].bill_id == bill)
+                                    resepDetail.splice(key, 1)
+                            });
+                            $("." + bill).remove()
+
+                            var resep_no = $("#resepno").val();
+                            filteredResep(resep_no)
+
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        let errorMessage = "An error occurred: ";
+
+                        if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                            errorMessage = jqXHR.responseJSON.message;
+                        } else if (textStatus === "timeout") {
+                            errorMessage = "The request timed out.";
+                        } else if (textStatus === "error") {
+                            errorMessage = "Error: " + errorThrown;
+                        } else if (textStatus === "abort") {
+                            errorMessage = "The request was aborted.";
+                        } else {
+                            errorMessage = "Unknown error occurred.";
+                        }
+
+                        errorSwal(errorMessage);
+                        $("#form1btn").html('<i class="fa fa-search"></i>')
+                    },
+                    complete: function() {}
+                });
+            } else {
+                $.ajax({
+                    url: '<?php echo base_url(); ?>admin/patient/deleteRacikan',
+                    type: "POST",
+                    data: JSON.stringify({
+                        "resepKe": resepKe,
+                        "resepNo": resepNo
+                    }),
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    // beforeSend: function() {
+                    //     clicked_submit_btn.button('loading');
+                    // },
+                    success: function(data) {
+
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        let errorMessage = "An error occurred: ";
+
+                        if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                            errorMessage = jqXHR.responseJSON.message;
+                        } else if (textStatus === "timeout") {
+                            errorMessage = "The request timed out.";
+                        } else if (textStatus === "error") {
+                            errorMessage = "Error: " + errorThrown;
+                        } else if (textStatus === "abort") {
+                            errorMessage = "The request was aborted.";
+                        } else {
+                            errorMessage = "Unknown error occurred.";
+                        }
+
+                        errorSwal(errorMessage);
+                        $("#form1btn").html('<i class="fa fa-search"></i>')
+                    },
+                    complete: function() {}
+                });
+            }
             if ($("#eresepBody table").length == 0) {
                 $("#eresepBtnGroup").slideDown()
                 $("#medItemBtnGroup").slideDown()
@@ -1033,18 +1161,37 @@
 
         if (keyvisit == null) {
             bodyracik = '#eresepsRacikBody';
+            var soldstatus = $("#jenisresep").val()
+            if (soldstatus == '8') {
+                bodyNonRacik = 'bhpBody';
+            } else {
+                bodyNonRacik = 'eresepNonRacikBody';
+            }
         } else {
-            bodyracik = "#body" + keyvisit;
+            // $("#historyEresep").append(`<table id="${resepNo}table" class="table table-hover table-prescription" style="display: block;">
+            //             <thead class="table-primary" style="text-align: center;">
+            //                 <tr>
+            //                     <th id="${resepNo}oddstatus" colspan="11"> ${doctorFrom} | ${resepNo} | ${treatDate}</th>
+            //                 </tr>
+            //                 <tr>
+            //                     <th class="text-center" style="width: 4%;"></th class="text-center">
+            //                     <th class="text-center" style="width: 30%;"></th class="text-center">
+            //                     <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+            //                     <th class="text-center" colspan="5" style="width: 30%;">Aturan Minum</th class="text-center">
+            //                     <th class="text-center" style="width: 5%;"></th class="text-center">
+            //                     <th class="text-center" style="width: 5%;"></th class="text-center">
+            //                 </tr>
+            //             </thead>
+            //             <tbody id="body${keyvisit}">
+            //             </tbody>
+            //         </table>`);
+            bodyracik = "#rbody" + keyvisit;
+            bodyNonRacik = "nrbody" + keyvisit;
         }
 
         resep_no = $("#resepno").val()
 
-        var soldstatus = $("#jenisresep").val()
-        if (soldstatus == '8') {
-            bodyNonRacik = 'bhpBody';
-        } else {
-            bodyNonRacik = 'eresepNonRacikBody';
-        }
+
         if (resep == null) {
             var racikan = 0;
 
@@ -1081,10 +1228,10 @@
             var measureId2Name = '';
             var measureDosis = '';
             var measureDosisName = '';
-            var doctor = '<?= $visit['fullname']; ?>'
-            var employeeId = '<?= $visit['employee_id']; ?>'
-            var employeeIdFrom = '<?= $visit['employee_id']; ?>'
-            var doctorFrom = '<?= $visit['fullname']; ?>'
+            var doctor = '<?= @$visit['fullname']; ?>'
+            var employeeId = '<?= user()->employee_id; ?>'
+            var employeeIdFrom = '<?= user()->employee_id; ?>'
+            var doctorFrom = '<?= @$visit['fullname']; ?>'
             var statusObat = '';
             var tarifId = '';
             if (racikan == 1) {
@@ -1107,6 +1254,7 @@
             var profesi = 0.0
             var amountPlafond = 0.0
             var amountPaidPlafond = 0.0
+            var statusPasienId = visit?.status_pasien_id;
             var description2 = ""
             var dosePresc = 0.0
             var qty = 0.0
@@ -1114,15 +1262,15 @@
             var resepNo = resep_no
             var notaNo = '<?= $visit['session_id']; ?>'
             var treatDate = get_date()
-            var thename = '<?= $visit['diantar_oleh']; ?>'
+            var thename = visit?.diantar_oleh
             var dose1 = 0.0
             var dose2 = 0.0
             var classRoomId = ""
-            var clinicId = '<?= $visit['clinic_id']; ?>'
-            var clinicIdFrom = '<?= $visit['clinic_id']; ?>'
+            var clinicId = visit?.clinic_id
+            var clinicIdFrom = visit?.clinic_id
             var islunas = 0
             var moduleId = '';
-            var status_tarif = <?= $visit['isrj'] == 1 ? 0 : 1; ?>;
+            var status_tarif = visit?.isrj == '1' ? 0 : 1;
             var iscetak = 1;
             var bodyId = '<?= $visit['session_id']; ?>'
             var modified_by = "<?= user()->username; ?>"
@@ -1134,6 +1282,10 @@
             var billId = resep?.bill_id
             var jmlBks = resep?.jml_bks;
             var dose = resep?.dose;
+            if (typeof(dose) === 'string')
+                if (dose.startsWith(".")) {
+                    dose = "0" + dose;
+                }
             var origDose = resep?.orig_dose;
             var resepKe = resep?.resep_ke;
             var description = resep?.description;
@@ -1169,6 +1321,7 @@
             var amountPaidPlafond = resep?.amount_paid_plafond;
             var description2 = resep?.description2;
             var dosePresc = resep?.dose_presc;
+            var statusPasienId = resep?.status_pasien_id;
             var qty = resep?.quantity;
             var numer = resep?.numer;
             var resepNo = resep?.resep_no;
@@ -1249,14 +1402,20 @@
 
             $(`#` + bodyNonRacik).append(`
                 <tr id="${billId}" class="non-racikan table-success ${billId}">
+                    <td class="${(keyvisit == null ? `d-none` : ``)}">
+                        <input type="checkbox" name="bill_idcopy[]" id="aorbill_id${billId}copy" placeholder="" value="" class="form-check-input">
+                    </td>
                     <td class="d-none">
-                        <input type="text" name="resep_ke[]" id="aorresep_ke${billId}" placeholder="" value="" class="form-control text-right" readonly>
+                        <input type="text" name="resep_ke[]" id="aorresep_ke${billId}" placeholder="" value="" class="form-control text-right d-none" readonly>
                     </td>
                     <td>
                         <select id="aordescription1${billId}" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange('${billId}', this.value)" style="width: 100%"></select>
                     </td>
                     <td ` + (soldstatus == '8' ? 'colspan="2"' : '') + `>
-                        <input type="text" name="dose_presc[]" id="aordose_presc${billId}" placeholder="" value="" class="form-control text-right" onchange="decimalInput(this)" onfocus="this.value=''">
+                        <div class="position-relative">
+                            <input type="text" name="dose_presc[]" id="aordose_presc${billId}" placeholder="" value="" class="form-control text-right" onchange="decimalInput(this)" onfocus="this.value=''">
+                            <span class="h6" id="badge-aor${billId}"></span>
+                        </div>
                         <select name="measure_dosis[]" id="aormeasure_dosis${billId}" placeholder="" value="" class="form-select d-none" readonly></select>
                     </td>
                     <td class="` + (soldstatus == '8' ? 'd-none' : '') + `">
@@ -1264,17 +1423,19 @@
                     </td>
                 </tr>
             `);
-            if (soldstatus == '1' || soldstatus == '7') {
+            if (soldstatus == '1' || soldstatus == '5' || soldstatus == '7') {
                 $(`#${billId}`)
                     .append($('<td colspan="3">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
 
                 if (keyvisit == null) {
                     $(`#${billId}`)
-                        // .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
-                        //     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                        //         .append((status_tarif != 0 && isrj == 0 ? `<button type="button" onclick="stopOdd('${resepNo}', ${resepKe})" class="btn btn-danger btn-btnr" data-row-id="1" autocomplete="off">Stop ODD</i></button>` : ''))
-                        //     )
-                        // )
+                        .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                .append((status_tarif != 0 && isrj == 0 && visit.locked == '0' ? `<button type="button" onclick="stopOdd('${resepNo}', ${resepKe})" class="btn btn-danger btn-btnr" data-row-id="1" autocomplete="off">Stop ODD</i></button>` : ''))
+                            )
+                        )
+                    if (visit.locked == '0' && qty == 0)
+                        $(`#${billId}`)
                         .append($('<td>')
                             .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
@@ -1284,7 +1445,7 @@
                     .append($(`<td colspan="3" class="` + (soldstatus == '8' ? 'd-none' : '') + `">`).append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
 
 
-                if (keyvisit == null) {
+                if (keyvisit == null && visit.locked == '0' && qty == 0) {
                     $(`#${billId}`)
                         // .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
                         //     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
@@ -1296,11 +1457,24 @@
                         )
                 }
             }
+
+            $("#aordescription2" + bodyId).on("keydown", (event) => {
+                if (event.key === 'Tab') {
+                    event.preventDefault();
+                    if ($("#jenisresep").val() == 1 || $("#jenisresep").val() == 7 || $("#jenisresep").val() == 5)
+                        $('#addNonRacikanBtn').trigger("click");
+                    else
+                        $('#addNrMedicalItemBtn').trigger("click");
+                }
+            })
+
         } else if (racikan == 1 && theOrder == '1') { //racikan
-            $(bodyracik).append(`<table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+            $(bodyracik).append(`
+                <div id="${resepNo}${resepKe}group">
+                <table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
                     <thead class="table-primary" style="text-align: center;">
                         <tr>
-                            <th class="text-start" style="width: 30%;"><h5>BUNGKUS: </h5></th class="text-center">
+                            <th class="text-start" style="width: 30%;" ${(keyvisit == null ? `` : `colspan="2"`)}><h5>BUNGKUS: </h5></th class="text-center">
                             <th class="text-center" style="width: 10%;"><input type="text" name="jml_bks[]" id="aorjml_bks${billId}" placeholder="" value="" class="form-control text-right updateJmlBks"  onchange="updateJmlBks('${resepNo}',${resepKe},this.value)"  onfocus="this.value=''"></th class="text-center">
                             <th class="text-center" style="width: 10%;" colspan="2"><select name="measure_id2[]" id="aormeasure_id2${billId}" placeholder="" value="" class="form-select text-right" readonly><option value="">-- Pilih Satuan --<option></select></th class="text-center">
                             <th class="text-center" colspan="5" style="width: 40%;"><input type="text" name="description2[]" id="aordescription2${billId}" placeholder="signa" class="form-control"></th class="text-center">
@@ -1308,20 +1482,29 @@
                             ` : ``) + `
                         </tr>
                         <tr>
-                            <th class="text-center d-none" style="width: 5%;">No</th class="text-center">
+                            <th class="text-center ${(keyvisit == null ? `d-none` : ``)}" style="width: 5%;">
+                                <div class="form-check mb-3">
+                                    <input id="historyRacikCheckAll${resepNo}${resepKe}" type="checkbox" class="form-check-input" onchange="checkAllHistoryInsideId({formid : '${resepNo}${resepKe}table', id: this.id})">
+                                    <label for="historyCheckAll' . $key . '" class="form-check-label" for="educationintegration">Semua</label>
+                                </div>
+                            </th class="text-center">
                             <th class="text-center" style="width: 30%;" colspan="2">Nama Obat</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Dosis</th class="text-center">
-                            <th class="text-center d-none" style="width: 10%;">Dosis</th class="text-center">
                             <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
+                            <th class="text-center d-none" style="width: 10%;">Dosis</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Dosis</th class="text-center">
                             <th class="text-center" style="width: 10%;">Qty</th class="text-center">
                             <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
-                            <th class="text-center" colspan="2"></th class="text-center">
-                                                            ` + (keyvisit == null ? `` : ``) + `
+                            <th class="text-center ${(keyvisit == null ? `` : `d-none`)}" colspan="2"></th class="text-center">
+                                                            
                         </tr>
                     </thead>
                     <tbody id="${resepNo}${resepKe}">
                     </tbody>
-                </table>`)
+                </table>
+                ${(keyvisit == null ? `<div id="eresepRAddNR" class="box-tab-tools text-center mb-4 spppoli-to-hide" style="">
+                    <a data-toggle="modal" onclick="addKomponen('${resepNo}', ${resepKe})" class="btn btn-info btn-lg btn-to-hide" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH Komponen Racikan</a>
+                </div>`:``)}
+                </div>`)
 
 
             $(`#aormeasure_id2${billId}`).on("change", function() {
@@ -1345,20 +1528,26 @@
             treatment = "PEMBELIAN OBAT RACIKAN"
             $(`#${resepNo}${resepKe}`).append(`
                 <tr id="${billId}" class="racikan${racikan} ${billId} table-info">
+                    <td class="${(keyvisit == null ? `d-none` : ``)}">
+                        <input type="checkbox" name="bill_idcopy[]" id="aorbill_id${billId}copy" placeholder="" value="" class="form-check-input d-none" onclick="return false;">
+                    </td>
                     <td id="tdresep_keresep${resepKe}" class="d-none">
                         <input type="text" name="resep_ke[]" id="aorresep_ke${billId}" placeholder="" value="" class="form-control text-right" readonly>
                     </td>
                     <td id="tddescriptionresep${resepKe}" colspan="2">
                         <select id="aordescription1${billId}" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange('${billId}', this.value)" style="width: 100%"></select>
                     </td>
+                    <td>
+                        <select name="measure_dosis[]" id="aormeasure_dosis${billId}" placeholder="" value="" class="form-select" readonly></select>
+                    </td>
                     <td id="dose${resepKe}">
-                        <input type="text" name="dose[]" id="aordose${billId}" placeholder="" value="" class="form-control text-right" onfocus="this.value=''">
+                        <div class="position-relative">
+                            <input type="text" name="dose[]" id="aordose${billId}" placeholder="" value="" class="form-control text-right" onfocus="this.value=''">
+                            <span class="h6" id="badge-aor${billId}"></span>
+                        </div>
                     </td>
                     <td id="orig_dose${resepKe}" class="d-none">
                         <input type="text" name="orig_dose[]" id="aororig_dose${billId}" placeholder="" value="" class="form-control text-right" readonly>
-                    </td>
-                    <td>
-                        <select name="measure_dosis[]" id="aormeasure_dosis${billId}" placeholder="" value="" class="form-select" readonly></select>
                     </td>
                     <td id="dose_presc${resepKe}">
                         <input type="text" name="dose_presc[]" id="aordose_presc${billId}" placeholder="" value="" class="form-control text-right" readonly>
@@ -1369,18 +1558,20 @@
                 </tr>
             `);
 
-            if (keyvisit == null) {
+            if (keyvisit == null && visit.locked == '0') {
                 $(`#${billId}`).append(`
                     <td id="tdbtnracikresep${resepKe}" class="tdbtnresep" rowspan="1000">
                         <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-                            <button type="button" onclick="addKomponen('${resepNo}', ${resepKe})" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</button>
-                            ${status_tarif != 0 && isrj == 0 ? `<button type="button" onclick="stopOdd('${resepNo}', ${resepKe})" class="btn btn-danger btn-btnr" data-row-id="1" autocomplete="off">Stop ODD</button>` : ''}
+                            
+                            ${status_tarif != 0 && isrj == 0 && visit.locked == '0' ? `<button type="button" onclick="stopOdd('${resepNo}', ${resepKe})" class="btn btn-danger btn-btnr" data-row-id="1" autocomplete="off">Stop ODD</button>` : ''}
                         </div>
                     </td>
-                    <td id="tdbtnremoveracikresep${resepKe}" rowspan="1000">
-                        <button type="button" onclick="removeRacik('${billId}')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>
-                    </td>
                 `);
+                if (qty = 0)
+                    $(`#${billId}`).append(`
+                    <td id="tdbtnremoveracikresep${resepKe}" rowspan="1000">
+                        <button type="button" onclick="removeRacik('${resepNo}${resepKe}group', '${resepNo}', '${resepKe}')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>
+                    </td>`);
             }
         } else { //komponen
             tarifId = '1201007';
@@ -1400,17 +1591,23 @@
             $("#tdsigna5Div" + resepKe).remove()
             $(`#${resepNo}${resepKe}`).append(`
                 <tr id="${billId}" class="racikan${racikan} ${billId} table-info">
+                    <td class="${(keyvisit == null ? `d-none` : ``)}">
+                        <input type="checkbox" name="bill_idcopy[]" id="aorbill_id${billId}copy" placeholder="" value="" class="form-check-input d-none" onclick="return false;">
+                    </td>
                     <td id="tddescriptionresep${resepKe}" colspan="2">
                         <select id="aordescription1${billId}" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange('${billId}', this.value)" style="width: 100%"></select>
                     </td>
+                    <td>
+                        <select name="measure_dosis[]" id="aormeasure_dosis${billId}" placeholder="" value="" class="form-select" readonly></select>
+                    </td>
                     <td id="dose${resepKe}">
-                        <input type="text" name="dose[]" id="aordose${billId}" placeholder="" value="" class="form-control text-right" onfocus="this.value=''">
+                        <div class="position-relative">
+                            <input type="text" name="dose[]" id="aordose${billId}" placeholder="" value="" class="form-control text-right" onfocus="this.value=''">
+                            <span class="h6" id="badge-aor${billId}"></span>
+                        </div>
                     </td>
                     <td id="orig_dose${resepKe}" class="d-none">
                         <input type="text" name="orig_dose[]" id="aororig_dose${billId}" placeholder="" value="" class="form-control text-right" readonly>
-                    </td>
-                    <td>
-                        <select name="measure_dosis[]" id="aormeasure_dosis${billId}" placeholder="" value="" class="form-select" readonly></select>
                     </td>
                     <td id="dose_presc${resepKe}">
                         <input type="text" name="dose_presc[]" id="aordose_presc${billId}" placeholder="" value="" class="form-control text-right" readonly>
@@ -1439,36 +1636,73 @@
                 '<input name="measure_id2[]" id="aormeasure_id2' + billId + '" type="hidden" class="form-control" />'
             );
         } else {
-            $(`#aordose${billId}`).on("change", function() {
+            const calculateDose = (prop) => {
                 let dose = $(`#aordose${billId}`).val()
+                let origDose = $(`#aororig_dose${billId}`).val()
+                let jmlBks = $(`#aorjml_bks${billId}`).val()
+                let msDosis = $(`#aormeasure_dosis${billId}`).val()
                 var result = dose
-                if (dose.includes('/')) {
-                    // Split the value by '/' and calculate the result
-                    var parts = dose.split('/');
-                    if (parts.length === 2) {
-                        var numerator = parseFloat(parts[0]);
-                        var denominator = parseFloat(parts[1]);
 
-                        if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
-                            // Update the input field with the result of the division
-                            result = numerator / denominator;
-                            $(this).val(result);
+                if (msDosis == '5' || msDosis == '10' || msDosis == '17') {
+                    if (dose.includes('/')) {
+                        // Split the value by '/' and calculate the result
+                        var parts = dose.split('/');
+
+                        if (parts.length === 2) {
+                            var numerator = parseFloat(parts[0]);
+                            var denominator = parseFloat(parts[1]);
+                            console.log(isNaN(numerator))
+                            console.log(isNaN(denominator))
+                            console.log(denominator)
+                            if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+                                // Update the input field with the result of the division
+                                result = numerator / denominator;
+                                console.log(result)
+                                $(prop).val(result);
+                            }
                         }
+                        // let origDose = $(`#aororig_dose${billId}`).val()
+                        let dosePresc = jmlBks * result;
+                        $(`#aordose_presc${billId}`).val(dosePresc)
+                    } else {
+                        let dosePresc = jmlBks * result;
+                        $(`#aordose_presc${billId}`).val(dosePresc)
                     }
-                    // let origDose = $(`#aororig_dose${billId}`).val()
-                    let jmlBks = $(`#aorjml_bks${billId}`).val()
-                    let dosePresc = jmlBks * result;
-                    $(`#aordose_presc${billId}`).val(dosePresc)
-                } else if (result < 1) {
-                    let jmlBks = $(`#aorjml_bks${billId}`).val()
-                    let dosePresc = jmlBks * result;
-                    $(`#aordose_presc${billId}`).val(dosePresc)
                 } else {
-                    let origDose = $(`#aororig_dose${billId}`).val()
-                    let jmlBks = $(`#aorjml_bks${billId}`).val()
+                    if (origDose == 0) {
+                        origDose = 1;
+                    }
                     let dosePresc = jmlBks * result / origDose;
                     $(`#aordose_presc${billId}`).val(dosePresc)
                 }
+            }
+            $(`#aordose${billId}`).on("change", function() {
+                calculateDose(this)
+                // if (dose.includes('/')) {
+                //     // Split the value by '/' and calculate the result
+                //     var parts = dose.split('/');
+                //     if (parts.length === 2) {
+                //         var numerator = parseFloat(parts[0]);
+                //         var denominator = parseFloat(parts[1]);
+
+                //         if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+                //             // Update the input field with the result of the division
+                //             result = numerator / denominator;
+                //             $(this).val(result);
+                //         }
+                //     }
+                //     // let origDose = $(`#aororig_dose${billId}`).val()
+                //     let dosePresc = jmlBks * result;
+                //     $(`#aordose_presc${billId}`).val(dosePresc)
+                // } else if (result < 1) {
+                //     let dosePresc = jmlBks * result;
+                //     $(`#aordose_presc${billId}`).val(dosePresc)
+                // } else {
+
+                // }
+            })
+            $("#aormeasure_dosis" + billId).on("change", function() {
+                calculateDose(this)
             })
         }
 
@@ -1524,8 +1758,7 @@
             .append('<input name="iscetak[]" id="aoriscetak' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="body_id[]" id="aorbody_id' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="status_tarif[]" id="aorstatus_tarif' + billId + '" type="hidden" class="form-control" />')
-
-
+            .append('<input name="status_pasien_id[]" id="aorstatus_pasien_id' + billId + '" type="hidden" class="form-control" />')
 
         $(`#${billId}`).append('<input name="description[]" id="aordescription' + billId + '" type="hidden" class="form-control" />')
         if (racikan == 0) {
@@ -1533,6 +1766,7 @@
         }
 
         let measureArrayBks = ['5', '10', '17'];
+
         measureParam.forEach((melement, mkey) => {
             if (measureParam[mkey].measure_id == parseInt(measureId)) {
                 measureIdName = measureParam[mkey].measurement;
@@ -1543,24 +1777,27 @@
             if (measureParam[mkey].measure_id == parseInt(measureDosis)) {
                 measureDosisName = measureParam[mkey].measurement;
             }
-            if (measureParam[mkey].measure_id == '5' || measureParam[mkey].measure_id == '10' || measureParam[mkey].measure_id == '17') {
-                $("#aormeasure_id2" + billId + "").append(new Option(measureParam[mkey].measurement, parseInt(measureParam[mkey].measure_id)));
-            }
         });
-
         $("#aordose1" + billId).val(dose1);
         $("#aordose2" + billId).val(dose2);
+
         $("#aordose" + billId).val(dose);
         $("#aororig_dose" + billId).val(origDose);
         $("#aorresep_ke" + billId).val(resepKe);
         $("#aorbrand_id" + billId).val(brandId);
         $("#aormeasure_id" + billId).append(new Option(measureIdName, measureId));
         $("#aormeasure_id" + billId).append(measureId);
-        console.log("#aormeasure_id" + billId + " = " + measureId + measureIdName);
         $("#aormeasure_idname" + billId).val(measureIdName);
         $("#aormeasure_id2" + billId).val(measureId2);
         $("#aormeasure_id2name" + billId).val(measureId2);
+
         $("#aormeasure_dosis" + billId).append(new Option(measureDosisName, measureDosis));
+        measureParam.forEach((melement, mkey) => {
+            if ((measureParam[mkey].measure_id == '5' || measureParam[mkey].measure_id == '10' || measureParam[mkey].measure_id == '17') && measureParam[mkey].measure_id != parseInt(measureDosis)) {
+                $("#aormeasure_id2" + billId + "").append(new Option(measureParam[mkey].measurement, parseInt(measureParam[mkey].measure_id)));
+                $("#aormeasure_dosis" + billId + "").append(new Option(measureParam[mkey].measurement, parseInt(measureParam[mkey].measure_id)));
+            }
+        });
         $("#aormeasure_dosisname" + billId).val(measureDosis);
         $("#aorracikan" + billId).val(racikan);
         $("#aordoctor" + billId).val(doctor);
@@ -1590,6 +1827,7 @@
         $("#aornota_no" + billId).val(notaNo);
         $("#aortreat_date" + billId).val(treatDate);
         $("#aorbill_id" + billId).val(billId);
+        $("#aorbill_id" + billId + "copy").val(billId);
         $("#aorclass_room_id" + billId).val(classRoomId);
         $("#aorclinic_id" + billId).val(clinicId);
         $("#aorclinic_id_from" + billId).val(clinicIdFrom);
@@ -1604,8 +1842,9 @@
         $("#aorthename" + billId).val(thename);
         $("#aortheaddress" + billId).val(theaddress);
         $("#aortheid" + billId).val(theid);
-        $("#aororg_unit_code" + billId).val(orgUnitCode)
-        $("#islunas" + billId).val(islunas);
+        $("#aororg_unit_code" + billId).val(orgUnitCode);
+        $("#aorislunas" + billId).val(islunas);
+        $("#aorstatus_pasien_id" + billId).val(statusPasienId);
 
         $("#aordose_presc" + billId).val(parseFloat(dosePresc).toFixed(2))
 
@@ -1621,7 +1860,7 @@
         $("#aorstatus_tarif" + billId).val(status_tarif);
 
         if (resep == null) {
-            if (soldstatus == '1' || soldstatus == '7') {
+            if (soldstatus == '1' || soldstatus == '5' || soldstatus == '7') {
                 if (racikan == 1) {
                     initializeResepRacikSelect2('aordescription1' + billId)
                 } else {
@@ -1636,7 +1875,7 @@
                 $("#aordescription" + billId).val(description)
             }
         } else {
-            if (soldstatus == '1' || soldstatus == '7') {
+            if (soldstatus == '1' || soldstatus == '5' || soldstatus == '7') {
                 if (racikan == 1) {
                     initializeResepRacikSelect2('aordescription1' + billId, resep.description)
                 } else {

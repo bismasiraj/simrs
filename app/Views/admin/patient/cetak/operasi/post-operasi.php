@@ -108,7 +108,7 @@
                     <td class="p-1" style="width:33.3%">
                         <b>Tanggal Lahir (Usia)</b>
                         <p class="m-0 mt-1 p-0">
-                            <?= tanggal_indo($visit['date_of_birth']) . ' (' . @$visit['age'] . ')'; ?></p>
+                            <?= tanggal_indo($visit['tgl_lahir']) . ' (' . @$visit['age'] . ')'; ?></p>
 
                     </td>
                     <td class="p-1" style="width:66.3%" colspan="2">
@@ -119,11 +119,22 @@
                 <tr>
                     <td class="p-1">
                         <b>DPJP</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['fullname_inap']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['fullname']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Department</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic_from']; ?></p>
+                        <?php 
+                            if (!empty($visit['specialist_type_id'])) {
+                                $db = db_connect();
+                                $query = $db->table('specialist_type')
+                                            ->select('SPECIALIST_TYPE')
+                                            ->where('specialist_type_id', $visit['specialist_type_id'])
+                                            ->get()
+                                            ->getRow();
+
+                                echo $query ? esc($query->SPECIALIST_TYPE) : '-';
+                            }
+                            ?>
                     </td>
                     <td class="p-1">
                         <b>Tanggal Masuk</b>
@@ -135,14 +146,11 @@
                         <b>Kelas</b>
                         <p class="m-0 mt-1 p-0"><?= @$visit['class_room']; ?></p>
                     </td>
-                    <td class="p-1">
+                    <td class="p-1" colspan="2">
                         <b>Bangsal/Kamar</b>
                         <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
                     </td>
-                    <td class="p-1">
-                        <b>Bed</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['bed']; ?></p>
-                    </td>
+
                 </tr>
             </tbody>
         </table>
@@ -165,6 +173,7 @@
                 <div class="mb-1">
                     <div id="qrcode"></div>
                 </div>
+                <div id="qrcode-name"></div>
             </div>
             <div class="col"></div>
             <div class="col-auto" align="center">
@@ -172,6 +181,7 @@
                 <div class="mb-1">
                     <div id="qrcode1"></div>
                 </div>
+                <div id="qrcode1_name"></div>
             </div>
         </div>
     </div>
@@ -187,25 +197,95 @@
 </body>
 
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: `<?= $visit['fullname']; ?>`,
-    width: 150,
-    height: 150,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+const cropTransparentPNG = (base64, callback) => {
+
+
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        let top = null,
+            bottom = null,
+            left = null,
+            right = null;
+
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                const index = (y * canvas.width + x) * 4;
+                const alpha = data[index + 3];
+                if (alpha > 0) {
+                    if (top === null || y < top) top = y;
+                    if (bottom === null || y > bottom) bottom = y;
+                    if (left === null || x < left) left = x;
+                    if (right === null || x > right) right = x;
+                }
+            }
+        }
+
+        if (top === null) return callback(null); // tidak ada gambar
+
+        const width = right - left + 1;
+        const height = bottom - top + 1;
+
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width;
+        croppedCanvas.height = height;
+
+        const croppedCtx = croppedCanvas.getContext('2d');
+        croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+        const croppedBase64 = croppedCanvas.toDataURL('image/png');
+        callback(croppedBase64);
+    };
+    img.src = base64;
+};
+
+const base64_ttd_dok = <?= json_encode($val['ttd_dok'] ?? '') ?>;
+if (base64_ttd_dok) {
+    $('#qrcode').html(
+        `<img src="${base64_ttd_dok}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+    $('#qrcodepertama').html(
+        `<img src="${base64_ttd_dok}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+} else {
+    $('#qrcode').html('');
+    $('#qrcodepertama').html('')
+}
+
+$('#qrcode-name').html(`<?= $val['ttd_dokter_name']?>;`)
+
+const base64_ttd_ps = <?= json_encode($val['ttd_pasien']?? '') ?>;
+// if (base64_ttd_ps) {
+//     $('#qrcode1').html(
+//         `<img src="${base64_ttd_ps}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+// } else {
+//     $('#qrcode1').html('');
+// }
+
+if (base64_ttd_ps) {
+    cropTransparentPNG(base64_ttd_ps, (croppedImage) => {
+        if (croppedImage) {
+            $('#qrcode1').html(
+                `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+            );
+            $('#qrcode1_name').html('<?=$visit['diantar_oleh']?>')
+        } else {
+            $('#qrcode1').html('');
+        }
+    });
+} else {
+    $('#qrcode1').html('');
+}
 </script>
-<script>
-var qrcode = new QRCode(document.getElementById("qrcode1"), {
-    text: `<?= $visit['diantar_oleh']; ?>`,
-    width: 150,
-    height: 150,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
-</script>
+
 
 <style>
 @media print {

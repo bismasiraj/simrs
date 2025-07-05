@@ -50,7 +50,20 @@
 
 <body data-sidebar="dark">
     <!-- Begin page -->
-    <div id="layout-wrapper">
+    <div id="loading-indicator" style="text-align:center; margin-top: 30vh;">
+        <h3>Memuat halaman...</h3>
+        <div class="preload d-flex align-items-center justify-content-center">
+            <div class="spinner">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="layout-wrapper" style="display: none;">
 
         <?php echo view('layout/partials/topbar.php'); ?>
 
@@ -161,20 +174,39 @@
     </script>
     <script>
         var baseurl = "<?php echo base_url(); ?>";
+        $(document).ready(function() {
+            updateWaktu(4)
+            $.ajax({
+                xhrFields: {
+                    withCredentials: true
+                },
+                type: "POST",
+                contentType: "application/json",
+                url: BASE_URL + 'satusehat/postEncounterByVisit',
+                data: JSON.stringify({
+                    visit: visit?.visit_id,
+                }),
+                success: (res) => {},
+                error: (err) => {
+                    // errorSwal(err.status);
+                    // errorCallbackMethod(err);
+                },
+            });
+            // postData({
+            //     visit: visit?.visit_id,
+            // }, 'satusehat/postEncounterByVisit', (res) => {
+            //     console.log("berhasil")
+            // });
+            $(document).ajaxStop(function() {
+                $('#loading-indicator').hide();
+                $('#layout-wrapper').fadeIn(200);
+            });
 
-        // $(window).on('storage', function(e) {
-        //     if (e.originalEvent.storageArea === localStorage && e.originalEvent.key === 'refresh') {
-        //         // Perform a refresh if the key 'refresh' was updated
-        //         location.reload();
-        //     }
-        // });
-
-
-
-        // $(document).ready(function() {
-        //     $('#armstanding_order').wysihtml5();
-        //     $('#arminstruction').wysihtml5();
-        // });
+            setTimeout(function() {
+                $('#loading-indicator').hide();
+                $('#layout-wrapper').fadeIn(200);
+            }, 3000);
+        });
     </script>
     <?php $this->renderSection('jsContent'); ?>
 </body>

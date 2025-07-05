@@ -20,19 +20,23 @@ class odd extends \App\Controllers\BaseController
         $request = service('request');
         $formData = $request->getJSON(true);
 
-        // $formData['visit_id'] = '2024052721452002230C3';
+        $visitId = $formData['visit_id'];
+        $startDate = $formData['start'];
+        $endDate = $formData['end'];
+
         $model = new OddModel();
 
-
         $data = $this->lowerKey(
-            $model->where('visit_id', $formData['visit_id'])
-                ->where('treat_date BETWEEN DATEADD(hour, -24, GETDATE()) AND DATEADD(hour, 24, GETDATE())')
+            $model->where('visit_id', $visitId)
+                ->where("treat_date BETWEEN '$startDate' AND '$endDate'") 
+                ->orderBy('DESCRIPTION', 'ASC')
                 ->findAll()
         );
 
         return $this->response->setJSON($data);
     }
 
+    
 
     public function getDetail()
     {
@@ -44,7 +48,7 @@ class odd extends \App\Controllers\BaseController
         $parameter_id = $json->parameter_id;
 
 
-        $model = new OddModel();
+        $model = new OddModel();    
 
         $data = $this->lowerKey($model->where('visit_id', $visit_id)
             ->where('body_id', $body_id)
@@ -67,17 +71,16 @@ class odd extends \App\Controllers\BaseController
                 return $this->response->setStatusCode(400)->setJSON(['error' => 'Missing bill_id in request data']);
             }
         }
-
         foreach ($formData as $data) {
             $update = [
                 'received_date' => $data['datetime'],
                 'quantity_detail' => $data['qtySend'],
-                'status_obat' => $data['status_obat']
+                'status_obat'=>$data['status_obat']
                 // 'valid_date' => date('Y-m-d H:i:s'),
                 // 'valid_user' => user()->fullname,
             ];
 
-            $model->where('bill_id', $data['bill_id'])
+            $model->where('bill_id', $data['bill_id'])->where('vactination_id', $data['vactination_id'])
                 ->set($update)
                 ->update();
         }
@@ -87,27 +90,6 @@ class odd extends \App\Controllers\BaseController
 
 
 
-
-    // public function cetakData($visit, $vactination = null)
-    // {
-
-    //     if ($this->request->is('get')) {
-    //         $decoded_visit = base64_decode($visit);
-    //         $decoded_visit = json_decode($decoded_visit, true);
-    //         // echo '<pre>';
-    //         // print_r($decoded_visit);
-    //         // echo '</pre>';
-    //         // exit();
-    //         $kopprintData = $this->kopprint();
-
-    //         return view("admin/patient/profilemodul/cetak-informconsern.php", [
-    //             "visit" => $decoded_visit,
-    //             "title" => "Informed Consent - Seksio Sesarea - MOW",
-    //             "title2" => "Persetujuan Tindakan Kedokteran",
-    //             'kop' => $kopprintData[0]
-    //         ]);
-    //     }
-    // }
 
     public function kopprint()
     {

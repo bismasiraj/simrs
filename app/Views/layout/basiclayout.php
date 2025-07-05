@@ -66,7 +66,7 @@
     <!-- <script src="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script> -->
     <script src="<?php echo base_url(); ?>assets/libs/sweetalert/sweetalert.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> -->
+    <!-- <script src="<?= base_url() ?>assets\libs\moment\min\moment.min.js"></script> -->
     <script src="<?php echo base_url(); ?>assets/libs/flatpickr/flatpickr.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> -->
     <script>

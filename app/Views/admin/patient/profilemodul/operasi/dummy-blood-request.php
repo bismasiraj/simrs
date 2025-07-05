@@ -2,7 +2,8 @@
     <div class="row">
         <div class="col-12">
             <div class="box-tab-tools text-center mb-3">
-                <button type="button" class="btn btn-primary btn-lg" id="tambah_permintaan_request2" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Permintaan Darah</button>
+                <button type="button" class="btn btn-primary btn-lg" id="tambah_permintaan_request2"
+                    style="width: 300px"><i class=" fa fa-plus"></i> Tambah Permintaan Darah</button>
             </div>
             <form action="" method="post" id="formPermintaanDarah2">
                 <table class="table table-bordered">
@@ -26,7 +27,11 @@
                     <button type="button" id="btn-print-dummy-blood-request" class="btn btn-success">
                         <i class="fas fa-print"></i> Cetak
                     </button>
-                    <button type="submit" id="btn-save-dummy-blood-request2" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                    <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+                    <button type="submit" id="btn-save-dummy-blood-request2" class="btn btn-primary"><i
+                            class="fas fa-save"></i> Simpan</button>
+
+                    <?php } ?>
                 </div>
             </form>
         </div>
@@ -35,31 +40,29 @@
 </div>
 
 <script>
-    $('#tambah_permintaan_request2').off().on('click', function(e) {
-        console.log('clicked');
-        addPermintaanDarah();
-        console.log('clicked after');
-    })
+$('#tambah_permintaan_request2').off().on('click', function(e) {
+    addPermintaanDarah();
+})
 
-    const addPermintaanDarah = (props) => {
-        <?php
+const addPermintaanDarah = (props) => {
+    <?php
         $bloodUsage = array_filter($aValue, function ($value) {
             return $value['p_type'] === 'BLOD001';
         });
         $bloodOptions = array_map(fn ($value) => ['value' => $value['value_score'], 'desc' => $value['value_desc']], $bloodUsage);
         ?>
-        let bloodOptions = <?php echo json_encode($bloodOptions); ?>;
+    let bloodOptions = <?php echo json_encode($bloodOptions); ?>;
 
-        if (typeof bloodOptions === 'object' && !Array.isArray(bloodOptions)) {
-            bloodOptions = Object.keys(bloodOptions).map(key => bloodOptions[key]);
-        }
+    if (typeof bloodOptions === 'object' && !Array.isArray(bloodOptions)) {
+        bloodOptions = Object.keys(bloodOptions).map(key => bloodOptions[key]);
+    }
 
-        const bloodOptionsHtml = bloodOptions.map(option =>
-            `<option value="${option.value}" ${option.value == props?.data.blood_usage_type ? 'selected' : ''}>${option.desc}</option>`
-        ).join('');
+    const bloodOptionsHtml = bloodOptions.map(option =>
+        `<option value="${option.value}" ${option.value == props?.data.blood_usage_type ? 'selected' : ''}>${option.desc}</option>`
+    ).join('');
 
-        let container = $('#tbodyPermintaanDarah2');
-        let blood = `
+    let container = $('#tbodyPermintaanDarah2');
+    let blood = `
             <tr>
                 <input type="hidden" name="bloodorg_unit_code[]" value="<?= $visit['org_unit_code']; ?>">
                 <input type="hidden" name="bloodvisit_id[]" value="<?= $visit['visit_id']; ?>">
@@ -135,158 +138,156 @@
             </tr>
             `;
 
-        $(container).append(blood);
+    $(container).append(blood);
 
-        // Toggle visibility based on 'terlayani' value
-        if (props?.data?.terlayani == 1) {
-            $(container).find('input.hidden-header').closest('td').show(); // Show hidden-header fields
-            $('th.hidden-header[hidden]').removeAttr('hidden'); // Make them visible
-        } else {
-            $(container).find('input.hidden-header').closest('td').hide(); // Hide hidden-header fields
-            $('th.hidden-header[hidden]').attr('hidden', true);
-        }
+    // Toggle visibility based on 'terlayani' value
+    if (props?.data?.terlayani == 1) {
+        $(container).find('input.hidden-header').closest('td').show(); // Show hidden-header fields
+        $('th.hidden-header[hidden]').removeAttr('hidden'); // Make them visible
+    } else {
+        $(container).find('input.hidden-header').closest('td').hide(); // Hide hidden-header fields
+        $('th.hidden-header[hidden]').attr('hidden', true);
+    }
 
-        flatpickr('.datepicker-darah', {
-            dateFormat: 'Y-m-d H:i',
-            enableTime: true,
-            time_24hr: true,
-            onChange: function(selectedDates, dateStr, instance) {
-                console.log(selectedDates);
-            }
-        });
-        $(container).find('a.btn-trash').last().on('click', function(e) {
-            e.preventDefault();
-            $(this).closest('tr').remove();
-        });
-    };
-    // $('#btn-save-dummy-blood-request2').off().on('click', function(e) {
-    //     let dataSend = $('#formPermintaanDarah2')[0];
-    //     let formData = new FormData(dataSend);
-
-    //     let jsonObj = {
-    //         blood: []
-    //     };
-
-    //     let blood_request = formData.getAll('bloodblood_request[]');
-    //     let blood_quantity = formData.getAll('bloodblood_quantity[]');
-    //     let blood_type_id = formData.getAll('bloodblood_type_id[]');
-    //     let blood_usage_type = formData.getAll('bloodblood_usage_type[]');
-    //     let clinic_id = formData.getAll('bloodclinic_id[]');
-    //     let descriptions = formData.getAll('blooddescriptions[]');
-    //     let measure_id = formData.getAll('bloodmeasure_id[]');
-    //     let transfusion_start = formData.getAll('bloodtransfusion_start[]');
-    //     let transfusion_end = formData.getAll('bloodtransfusion_end[]');
-    //     let reaction_desc = formData.getAll('bloodreaction_desc[]');
-    //     let no_registration = formData.getAll('bloodno_registration[]');
-    //     let org_unit_code = formData.getAll('bloodorg_unit_code[]');
-    //     let request_date = formData.getAll('bloodrequest_date[]');
-    //     let trans_id = formData.getAll('bloodtrans_id[]');
-    //     let using_time = formData.getAll('bloodusing_time[]');
-    //     let visit_id = formData.getAll('bloodvisit_id[]');
-
-    //     for (let i = 0; i < measure_id.length; i++) {
-    //         let entry = {
-    //             blood_request: blood_request[i],
-    //             blood_quantity: blood_quantity[i],
-    //             blood_type_id: blood_type_id[i],
-    //             blood_usage_type: blood_usage_type[i],
-    //             clinic_id: clinic_id[i],
-    //             descriptions: descriptions[i],
-    //             measure_id: measure_id[i],
-    //             transfusion_start: transfusion_start[i],
-    //             transfusion_end: transfusion_end[i],
-    //             reaction_desc: reaction_desc[i],
-    //             no_registration: no_registration[i],
-    //             org_unit_code: org_unit_code[i],
-    //             request_date: request_date[i],
-    //             trans_id: trans_id[i],
-    //             using_time: using_time[i],
-    //             visit_id: visit_id[i]
-    //         };
-
-
-    //         jsonObj.blood.push(entry);
-    //     }
-    //     console.log(jsonObj);
-    //     // postData(jsonObj, 'admin/BloodRequest/insertData', (res) => {
-    //     //     if (res.respon) {
-    //     //         getDataFormPermintaanDarah({
-    //     //             visit_id: res?.data[0].visit_id,
-    //     //             no_registration: res?.data[0].no_registration,
-    //     //             clinic_id: res?.data[0].clinic_id,
-    //     //         })
-    //     //         getHistory({
-    //     //             visit_id: res?.data[0].visit_id,
-    //     //             no_registration: res?.data[0].no_registration,
-    //     //             clinic_id: res?.data[0].clinic_id,
-    //     //         })
-    //     //         successSwal('Data berhasil Ditambahkan.');
-    //     //     } else {
-    //     //         errorSwall(res?.message)
-    //     //     }
-    //     // });
-    // });
-    // $('#btn-save-dummy-blood-request2').off().on('click', function(e) {
-    //     e.preventDefault(); // Prevent the default button behavior
-
-    //     // Get the form element
-    //     const form = $("#formPermintaanDarah2")[0];
-    //     console.log(form);
-    //     // Disable the submit button to prevent multiple clicks
-    //     const clicked_submit_btn = $(this);
-
-    //     // Perform AJAX form submission
-    //     $.ajax({
-    //         url: '<?php echo base_url(); ?>admin/PatientOperationRequest/savePraOperasi',
-    //         type: "POST",
-    //         data: new FormData(form), // Use the form element
-    //         dataType: 'json',
-    //         contentType: false,
-    //         cache: false,
-    //         processData: false,
-    //         beforeSend: () => {
-    //             // You can show a loading spinner or disable the button if needed
-    //         },
-    //         success: data => {
-    //             if (data.status === "fail") {
-    //                 const message = data.error.join(' ');
-    //                 errorSwal('Data tidak ditemukan.');
-    //             } else {
-    //                 successSwal('Data berhasil disimpan.');
-    //                 disablePraOperasi();
-    //             }
-    //             clicked_submit_btn.prop('disabled', false); // Re-enable the submit button
-    //         },
-    //         error: () => {
-    //             errorSwal('Error occurred. Please try again.');
-    //             clicked_submit_btn.prop('disabled', false); // Re-enable the submit button in case of error
-    //         }
-    //     });
-    // });
-    $("#formPermintaanDarah2").on('submit', function(e) {
-        e.preventDefault(); // Prevent the default form submission
-        // const clicked_submit_btn = $(this).find(':submit'); // Refers to the submit button
-
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/PatientOperationRequest/savePraOperasiDummy',
-            type: "POST",
-            data: new FormData(this), // Simplified reference
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: () => {},
-            success: data => {
-                if (data.status === "fail") {
-                    const message = data.error.join(' ');
-                    errorSwal('Data tidak ditemukan.');
-                } else {
-                    successSwal('Data berhasil disimpan.');
-                    disablePraOperasi();
-                }
-                clicked_submit_btn.button('reset');
-            },
-            error: () => errorSwal('Error occurred. Please try again.')
-        });
+    flatpickr('.datepicker-darah', {
+        dateFormat: 'Y-m-d H:i',
+        enableTime: true,
+        time_24hr: true,
+        onChange: function(selectedDates, dateStr, instance) {}
     });
+    $(container).find('a.btn-trash').last().on('click', function(e) {
+        e.preventDefault();
+        $(this).closest('tr').remove();
+    });
+};
+// $('#btn-save-dummy-blood-request2').off().on('click', function(e) {
+//     let dataSend = $('#formPermintaanDarah2')[0];
+//     let formData = new FormData(dataSend);
+
+//     let jsonObj = {
+//         blood: []
+//     };
+
+//     let blood_request = formData.getAll('bloodblood_request[]');
+//     let blood_quantity = formData.getAll('bloodblood_quantity[]');
+//     let blood_type_id = formData.getAll('bloodblood_type_id[]');
+//     let blood_usage_type = formData.getAll('bloodblood_usage_type[]');
+//     let clinic_id = formData.getAll('bloodclinic_id[]');
+//     let descriptions = formData.getAll('blooddescriptions[]');
+//     let measure_id = formData.getAll('bloodmeasure_id[]');
+//     let transfusion_start = formData.getAll('bloodtransfusion_start[]');
+//     let transfusion_end = formData.getAll('bloodtransfusion_end[]');
+//     let reaction_desc = formData.getAll('bloodreaction_desc[]');
+//     let no_registration = formData.getAll('bloodno_registration[]');
+//     let org_unit_code = formData.getAll('bloodorg_unit_code[]');
+//     let request_date = formData.getAll('bloodrequest_date[]');
+//     let trans_id = formData.getAll('bloodtrans_id[]');
+//     let using_time = formData.getAll('bloodusing_time[]');
+//     let visit_id = formData.getAll('bloodvisit_id[]');
+
+//     for (let i = 0; i < measure_id.length; i++) {
+//         let entry = {
+//             blood_request: blood_request[i],
+//             blood_quantity: blood_quantity[i],
+//             blood_type_id: blood_type_id[i],
+//             blood_usage_type: blood_usage_type[i],
+//             clinic_id: clinic_id[i],
+//             descriptions: descriptions[i],
+//             measure_id: measure_id[i],
+//             transfusion_start: transfusion_start[i],
+//             transfusion_end: transfusion_end[i],
+//             reaction_desc: reaction_desc[i],
+//             no_registration: no_registration[i],
+//             org_unit_code: org_unit_code[i],
+//             request_date: request_date[i],
+//             trans_id: trans_id[i],
+//             using_time: using_time[i],
+//             visit_id: visit_id[i]
+//         };
+
+
+//         jsonObj.blood.push(entry);
+//     }
+//     console.log(jsonObj);
+//     // postData(jsonObj, 'admin/BloodRequest/insertData', (res) => {
+//     //     if (res.respon) {
+//     //         getDataFormPermintaanDarah({
+//     //             visit_id: res?.data[0].visit_id,
+//     //             no_registration: res?.data[0].no_registration,
+//     //             clinic_id: res?.data[0].clinic_id,
+//     //         })
+//     //         getHistory({
+//     //             visit_id: res?.data[0].visit_id,
+//     //             no_registration: res?.data[0].no_registration,
+//     //             clinic_id: res?.data[0].clinic_id,
+//     //         })
+//     //         successSwal('Data berhasil Ditambahkan.');
+//     //     } else {
+//     //         errorSwall(res?.message)
+//     //     }
+//     // });
+// });
+// $('#btn-save-dummy-blood-request2').off().on('click', function(e) {
+//     e.preventDefault(); // Prevent the default button behavior
+
+//     // Get the form element
+//     const form = $("#formPermintaanDarah2")[0];
+//     console.log(form);
+//     // Disable the submit button to prevent multiple clicks
+//     const clicked_submit_btn = $(this);
+
+//     // Perform AJAX form submission
+//     $.ajax({
+//         url: '<?php echo base_url(); ?>admin/PatientOperationRequest/savePraOperasi',
+//         type: "POST",
+//         data: new FormData(form), // Use the form element
+//         dataType: 'json',
+//         contentType: false,
+//         cache: false,
+//         processData: false,
+//         beforeSend: () => {
+//             // You can show a loading spinner or disable the button if needed
+//         },
+//         success: data => {
+//             if (data.status === "fail") {
+//                 const message = data.error.join(' ');
+//                 errorSwal('Data tidak ditemukan.');
+//             } else {
+//                 successSwal('Data berhasil disimpan.');
+//                 disablePraOperasi();
+//             }
+//             clicked_submit_btn.prop('disabled', false); // Re-enable the submit button
+//         },
+//         error: () => {
+//             errorSwal('Error occurred. Please try again.');
+//             clicked_submit_btn.prop('disabled', false); // Re-enable the submit button in case of error
+//         }
+//     });
+// });
+$("#formPermintaanDarah2").on('submit', function(e) {
+    e.preventDefault(); // Prevent the default form submission
+    // const clicked_submit_btn = $(this).find(':submit'); // Refers to the submit button
+
+    $.ajax({
+        url: '<?php echo base_url(); ?>admin/PatientOperationRequest/savePraOperasiDummy',
+        type: "POST",
+        data: new FormData(this), // Simplified reference
+        dataType: 'json',
+        contentType: false,
+        cache: false,
+        processData: false,
+        beforeSend: () => {},
+        success: data => {
+            if (data.status === "fail") {
+                const message = data.error.join(' ');
+                errorSwal('Data tidak ditemukan.');
+            } else {
+                successSwal('Data berhasil disimpan.');
+                disablePraOperasi();
+            }
+            clicked_submit_btn.button('reset');
+        },
+        error: () => errorSwal('Error occurred. Please try again.')
+    });
+});
 </script>

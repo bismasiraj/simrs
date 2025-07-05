@@ -6,50 +6,35 @@ foreach ($aValue as $key => $value) {
 }
 ?>
 <script type="text/javascript">
-    $(document).ready(function(e) {
-        const nomor = '<?= $visit['no_registration']; ?>';
-        const ke = '%'
-        // const mulai = '2023-08-01' //tidak terpakai
-        // const akhir = '2023-08-31' //tidak terpakai
-        const lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        const klinik = '%'
-        const rj = '%'
-        const status = '%'
-        const nota = '%'
-        const trans = '<?= $visit['trans_id']; ?>'
-        const trans_id = '<?= $visit['trans_id']; ?>'
-        const visit = '<?= $visit['visit_id']; ?>'
-
-    })
+    $(document).ready(function(e) {})
 
 
 
-    $("#aigdweight").keydown(function(e) {
+    $("#arbdweight").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdheight").keydown(function(e) {
+    $("#arbdheight").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdtemperature").keydown(function(e) {
+    $("#arbdtemperature").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdnadi").keydown(function(e) {
+    $("#arbdnadi").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdtension_upper").keydown(function(e) {
+    $("#arbdtension_upper").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdtension_below").keydown(function(e) {
+    $("#arbdtension_below").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdsaturasi").keydown(function(e) {
+    $("#arbdsaturasi").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdnafas").keydown(function(e) {
+    $("#arbdnafas").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
-    $("#aigdarm_diameter").keydown(function(e) {
+    $("#arbdarm_diameter").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
 
@@ -144,21 +129,21 @@ foreach ($aValue as $key => $value) {
                 //     localStorage.removeItem(key);
                 // })
                 // $("#arbModal").modal("hide")
-                let formData = new FormData(document.getElementById("formaddarb"))
+                // let formData = new FormData(document.getElementById("formaddarb"))
                 let formDataObject = {};
-                formData.forEach(function(value, key) {
-                    formDataObject[key] = value
-                });
+                // formData.forEach(function(value, key) {
+                //     formDataObject[key] = value
+                // });
+                formDataObject = data.perawat
                 var isNewDocument = 0
+
+                console.log(formDataObject)
                 $.each(examForassessment, function(key, value) {
                     if (value.body_id == formDataObject.body_id) {
                         examForassessment[key] = formDataObject
                         isNewDocument = 1
                     }
                 })
-                // if (isNewDocument != 1)
-                //     examForassessment.push(formDataObject)
-
                 if (isNewDocument != 1) {
                     let examNew = Array();
                     examNew.push(formDataObject)
@@ -168,6 +153,20 @@ foreach ($aValue as $key => $value) {
                     examForassessment = examNew
                 }
 
+                $.each(examForassessmentDetail, function(key, value) {
+                    if (value.body_id == formDataObject.body_id) {
+                        examForassessmentDetail[key] = formDataObject
+                        isNewDocument = 1
+                    }
+                })
+                if (isNewDocument != 1) {
+                    let examNew = Array();
+                    examNew.push(formDataObject)
+                    $.each(examForassessmentDetail, function(key, value) {
+                        examNew.push(examForassessmentDetail[key])
+                    })
+                    examForassessmentDetail = examNew
+                }
 
                 // $("#cpptBody").html("")
                 let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
@@ -179,7 +178,11 @@ foreach ($aValue as $key => $value) {
 
                 if (examForassessment.length > 0) {
                     displayTableAssessmentKebidanan();
+                    // displayTableAssessmentKebidananForVitalSign();
                 }
+
+                riwayatAll = data.perawat.pasienHistory
+
 
                 disableARB()
 
@@ -257,6 +260,7 @@ foreach ($aValue as $key => $value) {
 
     //             if (examForassessment.length > 0) {
     //                 displayTableAssessmentKebidanan();
+    //                 displayTableAssessmentKebidananForVitalSign();
     //             }
 
 
@@ -265,7 +269,7 @@ foreach ($aValue as $key => $value) {
 
     //             // getAssessmentKebidanan()
     //             // // $("#formsavearbbtn").slideUp()
-    //             // // $("#formeditarb").slideDown()
+    //             // // $("#formeditarp").slideDown()
     //             // var isNewDocument = 0
     //             // $.each(examForassessment, function(key, value) {
     //             //     if (value.body_id == data.body_id) {
@@ -335,11 +339,11 @@ foreach ($aValue as $key => $value) {
             url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': '<?= $visit['visit_id']; ?>',
-                'trans_id': '<?= $visit['trans_id']; ?>',
-                'nomor': '<?= $visit['no_registration']; ?>',
-                'isrj': '<?= $visit['isrj']; ?>',
-                'norujukan': '<?= $visit['norujukan']; ?>',
+                'visit_id': '<?= @$visit['visit_id']; ?>',
+                'trans_id': '<?= @$visit['trans_id']; ?>',
+                'nomor': '<?= @$visit['no_registration']; ?>',
+                'isrj': '<?= @$visit['isrj']; ?>',
+                'norujukan': '<?= @$visit['norujukan']; ?>',
                 'top': top,
                 'episode': episode
             }),
@@ -350,28 +354,21 @@ foreach ($aValue as $key => $value) {
             processData: false,
             success: function(data) {
                 examForassessment = data.examInfo
+                examForassessmentDetail = data.examDetail
                 riwayatAll = data.pasienHistory
 
                 examSelected = [];
 
-                // $.each(examForassessment, function(key, value) {
                 var vsStatusId = [10];
 
-                //     if (vsStatusId.includes(value.vs_status_id)) {
-                //         fillDataArb(key)
-                //         disableARB()
-                //     }
-                // })
-                // fillDataArb(examForassessment.length)
-
-
-                let examFiltered145 = examForassessment.filter(item => item.account_id == 2 || item.vs_status_id == 10)
+                let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
                 if (examFiltered145.length > 0) {
                     $("#arbDocument").slideDown()
                 }
 
                 if (examForassessment.length > 0) {
                     displayTableAssessmentKebidanan();
+                    // displayTableAssessmentKebidananForVitalSign();
                 }
 
 
@@ -386,21 +383,22 @@ foreach ($aValue as $key => $value) {
 
     function initialAddArb() {
 
-        <?php if ($visit['specialist_type_id'] == '1.05') {
+        <?php if (@$visit['specialist_type_id'] == '1.05') {
         ?>
             $("#arbTitle").html("Assessment Kebidanan")
         <?php
         } ?>
-        let bodyId = '<?= $visit['session_id']; ?>';
+        let bodyId = '<?= @$visit['session_id']; ?>';
         let isnew = false;
         $.each(examForassessment, function(key, value) {
             if (value.body_id == bodyId && value.account_id) {
                 isnew = true;
             }
         })
-        if (isnew) {
-            alert("Anda sudah pernah membuat dokumen Assessment pada sesi " + bodyId + ". Silahkan buat sesi baru.");
-        }
+        // if (isnew) {
+        //     alert("Anda sudah pernah membuat dokumen Assessment pada sesi " + bodyId + ". Silahkan buat sesi baru.");
+        //     return false;
+        // }
 
         $("#bodyDiagBidan").html("")
 
@@ -410,7 +408,7 @@ foreach ($aValue as $key => $value) {
         $("#bodyPainMonitoringBidanAddBtn").html(`<a onclick="addPainMonitoring(1, 0, 'arbbody_id', 'bodyPainMonitoringBidan', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`);
         $("#bodyTriageBidanAddBtn").html(`<a onclick="addTriage(1,0,'arbbody_id', 'bodyTriageBidan', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("bodyApgarBidanAddBtn").html(`<a onclick="addApgar(1, 0, 'arbbody_id', 'bodyApgarBidan', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
-        $("#bodyGiziBidanAddBtn").html(`<a onclick="addGizi(1,1, 'arbbody_id','bodyGiziBidan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyGiziBidanAddBtn").html(`<a onclick="addGizi(1,1, 'arbbody_id','bodyGiziBidan', false, 'arb')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#bodyADLBidanAddBtn").html(`<a onclick="addADL(1,1, 'arbbody_id','bodyADLBidan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#bodyDekubitusBidanAddBtn").html(`<a onclick="addDekubitus(1,1, 'arbbody_id','bodyDekubitusBidan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#bodyStabilitasBidanAddBtn").html(`<a onclick="addDerajatStabilitas(1, 0, 'arbbody_id', 'bodyStabilitasBidan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
@@ -423,135 +421,142 @@ foreach ($aValue as $key => $value) {
         $("#addNeurosensorisButton").html(`<a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addPencernaanButton").html(`<a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addPerkemihanButton").html(`<a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
-        $("#addPernapasanButton").html(`<a onclick="addPernapasan(1,0, 'arbbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addPernapasanButton").html(`<a onclick="addPernapasan(1,0, 'arbbody_id', 'bodyPernapasan', false, 'arb')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addPsikologiButton").html(`<a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addSeksualButton").html(`<a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
-        $("#addSirkulasiButton").html(`<a onclick="addSirkulasi(1,0,'arbbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addSirkulasiButton").html(`<a onclick="addSirkulasi(1,0,'arbbody_id', 'bodySirkulasi', false, 'arb')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addSocialButton").html(`<a onclick="addSocial(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addHearingButton").html(`<a onclick="addHearing(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addSleepingButton").html(`<a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
 
 
 
-        const date = new Date();
-        bodyId = date.toISOString().substring(0, 23);
-        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        // const date = new Date();
+        // bodyId = date.toISOString().substring(0, 23);
+        // bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
         $("#formaddarb").find('input[type="text"], input[type="hidden"], textarea').val(null)
         var initialexam = examForassessment[examForassessment.length - 1]
-        fillExaminationDetail(initialexam, 'arb')
+        $.each(initialexam, function(key, value) {
+            $("#arb" + key).val(value)
+        })
 
-        var ageYear = <?= $visit['ageyear']; ?>;
-        var ageMonth = <?= $visit['agemonth']; ?>;
-        var ageDay = <?= $visit['ageday']; ?>;
+        var initialvital = examForassessmentDetail[examForassessmentDetail.length - 1]
 
-        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
-            $("#avtvs_status_id").prop("selectedIndex", 3);
-        } else if (ageYear >= 18) {
-            $("#avtvs_status_id").prop("selectedIndex", 1);
+        fillExaminationDetail(initialvital, 'arb')
+
+        var ageYear = <?= @$visit['ageyear']; ?>;
+        var ageMonth = <?= @$visit['agemonth']; ?>;
+        var ageDay = <?= @$visit['ageday']; ?>;
+
+        if (visit?.ageyear === 0 && visit?.agemonth === 0 && visit?.ageday <= 28) {
+            $("#arbvs_status_id5").prop("checked", true);
+        } else if (visit.ageyear >= 18) {
+            $("#arbvs_status_id1").prop("checked", true);
         } else {
-            $("#avtvs_status_id").prop("selectedIndex", 2);
+            $("#arbvs_status_id4").prop("checked", true);
         }
         $("#arbbody_id").val(bodyId)
-        $("#arborg_unit_code").val('<?= $visit['org_unit_code']; ?>')
+        $("#arborg_unit_code").val('<?= @$visit['org_unit_code']; ?>')
         $("#arbpasien_diagnosa_id").val(null)
         $("#arbdiagnosa_id").val(null)
-        $("#arbno_registration").val('<?= $visit['no_registration']; ?>')
-        $("#arbvisit_id").val('<?= $visit['visit_id']; ?>')
+        $("#arbno_registration").val('<?= @$visit['no_registration']; ?>')
+        $("#arbvisit_id").val('<?= @$visit['visit_id']; ?>')
         $("#arbbill_id").val(null)
-        <?php if ($visit['isrj'] == 0) { ?>
-            // $('#arbclinic_id').val('<?= $visit['class_room_id']; ?>')
+        <?php if (@$visit['isrj'] == 0) { ?>
+            // $('#arbclinic_id').val('<?= @$visit['class_room_id']; ?>')
         <?php } else { ?>
-            // $('#arbclinic_id').val('<?= $visit['clinic_id']; ?>')
+            // $('#arbclinic_id').val('<?= @$visit['clinic_id']; ?>')
         <?php } ?>
-        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
+        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= @$visit['clinic_id']; ?>')
         $("#arbclinic_id").html($('<option></option>')
             .val(clinicSelect[0].clinic_id)
             .text(clinicSelect[0].name_of_clinic))
 
-        <?php if ($visit['isrj'] == '0') {
+        <?php if (@$visit['isrj'] == '0') {
         ?>
-            $("#arbemployee_id").html('<option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>')
+            $("#arbemployee_id").html('<option value="<?= @$visit['employee_inap']; ?>"><?= @$visit['fullname_inap']; ?></option>')
         <?php
         } else {
         ?>
-            $("#arbemployee_id").html('<option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>')
+            $("#arbemployee_id").html('<option value="<?= @$visit['employee_id']; ?>"><?= @@$visit['fullname']; ?></option>')
         <?php
         } ?>
-        $("#arbclass_room_id").val('<?= $visit['class_room_id']; ?>')
-        $("#arbbed_id").val('<?= $visit['bed_id']; ?>')
-        $("#arbin_date").val('<?= $visit['in_date']; ?>')
-        $("#arbexit_date").val('<?= $visit['exit_date']; ?>')
-        $("#arbkeluar_id").val('<?= $visit['keluar_id']; ?>')
-        flatpickrInstances["flatarbexamination_date"].setDate(moment().format("DD/MM/YYYY HH:mm"))
-        $("#flatarbexamination_date").trigger("change")
+        $("#arbclass_room_id").val('<?= @$visit['class_room_id']; ?>')
+        $("#arbbed_id").val('<?= @$visit['bed_id']; ?>')
+        $("#arbin_date").val('<?= @$visit['in_date']; ?>')
+        $("#arbexit_date").val('<?= @$visit['exit_date']; ?>')
+        $("#arbkeluar_id").val('<?= @$visit['keluar_id']; ?>')
+        // flatpickrInstances["flatarbexamination_date"].setDate(moment().format("DD/MM/YYYY HH:mm"))
+        // $("#flatarbexamination_date").trigger("change")
+        $("#arbexamination_date").val(get_date())
         $("#arbmodified_date").val(get_date())
         $("#arbmodified_by").val('<?= user()->username; ?>')
-        $("#arbmodified_from").val('<?= $visit['clinic_id']; ?>')
-        $("#arbstatus_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
-        $("#arbageyear").val('<?= $visit['ageyear']; ?>')
-        $("#arbagemonth").val('<?= $visit['agemonth']; ?>')
-        $("#arbageday").val('<?= $visit['ageday']; ?>')
-        $("#arbthename").val('<?= $visit['diantar_oleh']; ?>')
-        $("#arbtheaddress").val('<?= $visit['visitor_address']; ?>')
-        $("#arbtheid").val('<?= $visit['pasien_id']; ?>')
-        $("#arbisrj").val('<?= $visit['isrj']; ?>')
-        $("#arbgender").val('<?= $visit['gender']; ?>')
-        $("#arbdoctor").val('<?= $visit['fullname']; ?>')
-        $("#arbkal_id").val('<?= $visit['kal_id']; ?>')
+        $("#arbmodified_from").val('<?= @$visit['clinic_id']; ?>')
+        $("#arbstatus_pasien_id").val('<?= @$visit['status_pasien_id']; ?>')
+        $("#arbageyear").val('<?= @$visit['ageyear']; ?>')
+        $("#arbagemonth").val('<?= @$visit['agemonth']; ?>')
+        $("#arbageday").val('<?= @$visit['ageday']; ?>')
+        $("#arbthename").val('<?= @$visit['diantar_oleh']; ?>')
+        $("#arbtheaddress").val('<?= @$visit['visitor_address']; ?>')
+        $("#arbtheid").val('<?= @$visit['pasien_id']; ?>')
+        $("#arbisrj").val('<?= @$visit['isrj']; ?>')
+        $("#arbgender").val('<?= @$visit['gender']; ?>')
+        $("#arbdoctor").val('<?= @@$visit['fullname']; ?>')
+        $("#arbkal_id").val('<?= @$visit['kal_id']; ?>')
         $("#arbpetugas_id").val('<?= user()->username; ?>')
         $("#arbpetugas").val('<?= user()->getFullname(); ?>')
+        $("#arbpetugas_type").val('<?= user()->getOneRoles(); ?>')
         $("#arbaccount_id").val(2)
 
-        <?php if ($visit['specialist_type_id'] == '1.05') {
+        <?php if (@$visit['specialist_type_id'] == '1.05') {
         ?>
             $("#arbvs_status_id10").trigger("click")
         <?php
         } ?>
 
-        // var ageYear = <?= $visit['ageyear']; ?>;
-        // var ageMonth = <?= $visit['agemonth']; ?>;
-        // var ageDay = <?= $visit['ageday']; ?>;
+        // var ageYear = <?= @$visit['ageyear']; ?>;
+        // var ageMonth = <?= @$visit['agemonth']; ?>;
+        // var ageDay = <?= @$visit['ageday']; ?>;
 
         // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
-        //     $("#armvs_status_id").prop("selectedIndex", 3);
-        // } else if (ageYear >= 18) {
-        //     $("#armvs_status_id").prop("selectedIndex", 1);
+        // $("#armvs_status_id").prop("selectedIndex", 3);
+        // } else if (ageYear>= 18) {
+        // $("#armvs_status_id").prop("selectedIndex", 1);
         // } else {
-        //     $("#armvs_status_id").prop("selectedIndex", 2);
+        // $("#armvs_status_id").prop("selectedIndex", 2);
         // }
 
         $("#arbweight").val(berat)
         $("#arbheight").val(tinggi)
-        // $("#arbvs_status_id").val(1)
 
-        $('#keperawatanListLinkAll').html("")
+        $('#kebidananListLinkAll').html("")
 
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armbody_id").val() + '" target="_blank">Assessmen Kebidanan Ralan Anak</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_dewasa/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ralan Dewasa</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_dewasa/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ranap Dewasa</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_kandungan/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ranap Kandungan</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_neonatus/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ranap Neonatus</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/asuhan_gizi/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Asuhan Gizi</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/asuhan_kebidanan/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Asuhan Kebidanan</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/cppt_ranap/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">CPPT Rawat Inap</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/cppt_ralan/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">CPPT Rawat Jalan</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/diagnosis_keperawatan/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Diagnosis Kebidanan</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/edukasi_integrasi/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Edukasi Integrasi</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/edukasi_obat/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Edukasi Obat Oleh Apoteker</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/formulir_edukasi/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Formulir Pemberian Edukasi</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/hak_dan_kewajiban/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Hak dan Kewajiban Pasien</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/identitas/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Identitas dan Pernyataan Pasien Rawat Inap</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/implementasi/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Implementasi Asuhan Kebidanan</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/inform_concern/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Inform Concern (Pemasangan Infus)</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Kebidanan IGD Anak</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_dewasa/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Kebidanan IGD Dewasa</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/monitoring_nyeri/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Monitoring Nyeri</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/resiko_jatuh/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Monitoring Resiko Jatuh</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/persetujuan_umum/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Persetujuan Umum (General Concert)</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ringkasan/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/sdki/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">SDKI SLKI SIKI</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>/' + $("#arbbody_id").val() + '" target="_blank">Transfer Internal</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/ralan_anak/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #armbody_id").val() + '" target="_blank">Assessmen Kebidanan Ralan Anak</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/ralan_dewasa/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ralan Dewasa</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/ranap_dewasa/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ranap Dewasa</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/ranap_kandungan/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ranap Kandungan</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/ranap_neonatus/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Assessmen Kebidanan Ranap Neonatus</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/asuhan_gizi/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Asuhan Gizi</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/asuhan_kebidanan/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Asuhan Kebidanan</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/cppt_ranap/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">CPPT Rawat Inap</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/cppt_ralan/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">CPPT Rawat Jalan</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/diagnosis_kebidanan/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Diagnosis Kebidanan</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/edukasi_integrasi/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Edukasi Integrasi</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/edukasi_obat/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Edukasi Obat Oleh Apoteker</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/formulir_edukasi/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Formulir Pemberian Edukasi</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/hak_dan_kewajiban/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Hak dan Kewajiban Pasien</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/identitas/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Identitas dan Pernyataan Pasien Rawat Inap</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/implementasi/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Implementasi Asuhan Kebidanan</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/inform_concern/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Inform Concern (Pemasangan Infus)</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/igd_anak/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Kebidanan IGD Anak</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/igd_dewasa/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Kebidanan IGD Dewasa</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/monitoring_nyeri/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Monitoring Nyeri</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/resiko_jatuh/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Monitoring Resiko Jatuh</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/persetujuan_umum/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Persetujuan Umum (General Concert)</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/ringkasan/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/sdki/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">SDKI SLKI SIKI</a></li>')
+        $('#kebidananListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/kebidanan/transfer_internal/' . base64_encode(json_encode(@$visit)); ?>/' + $(" #arbbody_id").val() + '" target="_blank">Transfer Internal</a></li>')
 
         $("#arbisvalid").val(0)
 
@@ -566,22 +571,32 @@ foreach ($aValue as $key => $value) {
         generateSatelite()
 
         // $("#formaddarb").find('input, select, textarea').each(function() {
-        //     const key = $(this).attr('id'); // Use ID or placeholder as key
+        // const key=$(this).attr('id'); // Use ID or placeholder as key
 
-        //     const savedValue = localStorage.getItem(key);
-        //     if (savedValue) {
-        //         $(this).val(savedValue);
-        //     }
+        // const savedValue=localStorage.getItem(key);
+        // if (savedValue) {
+        // $(this).val(savedValue);
+        // }
         // })
         $("#arbModal").modal("show")
     }
-
     const fillDataArb = async (index) => {
-        var ex = examForassessment[index]
+        $("#bodyDiagBidan").html("")
+        $("#formaddarbqrcode1").html("")
+        $("#formaddarbsigner1").html("")
+        $("#formaddarbqrcode2").html("")
+        $("#formaddarbsigner2").html("")
+
+        let ex = examForassessment[index]
         $.each(ex, function(key, value) {
-            $("#arb" + key).val(value)
+            if (!Array.isArray(value)) {
+                $("#arb" + key.replace(/([.#:,\[\]\/])/g, '\\$1')).val(value)
+            }
         })
-        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
+        let examdetail = examForassessmentDetail.filter(item => item?.body_id == $("#arbbody_id").val())
+        fillExaminationDetail(examdetail[0], "arb")
+
+        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= @$visit['clinic_id']; ?>')
         $("#arbclinic_id").html($('<option></option>')
             .val(clinicSelect[0].clinic_id)
             .text(clinicSelect[0].name_of_clinic))
@@ -591,35 +606,13 @@ foreach ($aValue as $key => $value) {
         $("#arbcollapseVitalSign").find("input").each(function() {
             $(this).trigger("change")
         })
-        flatpickrInstances["flatarbexamination_date"].setDate(
-            formatedDatetimeFlat(ex.examination_date)
-        );
-        $("#flatarbexamination_date").trigger("change");
+        // flatpickrInstances["flatarbexamination_date"].setDate(
+        //     formatedDatetimeFlat(ex.examination_date)
+        // );
+        // $("#flatarbexamination_date").trigger("change");
+        $("#arbexamination_date").val(ex.examination_date)
 
         getSateliteBidan(ex)
-
-        // getFallRisk(ex.body_id)
-        // getPainMonitoring(ex.body_id)
-        // getTriage(ex.body_id, "bodyTriage")
-        // getGcs(ex.body_id, "bodyGcsBidan")
-        // getApgar(ex.body_id)
-        // getStabilitas(ex.body_id)
-        // getPernapasan(ex.body_id)
-        // getSirkulasi(ex.body_id)
-        // getNeurosensoris(ex.body_id)
-        // getIntegumen(ex.body_id)
-        // getADL(ex.body_id)
-        // getPencernaan(ex.body_id)
-        // getDekubitus(ex.body_id)
-        // getPsikologi(ex.body_id)
-        // getPerkemihan(ex.body_id)
-        // getSeksual(ex.body_id)
-        // getSocial(ex.body_id)
-        // getGizi(ex.body_id)
-        // getEducationForm(ex.body_id)
-        // getEducationIntegration(ex.body_id)
-        // getHearing(ex.body_id)
-        // getSleeping(ex.body_id)
 
         await checkSignSignature("formaddarb", "arbbody_id", "formsavearbbtnid", 3)
 
@@ -650,7 +643,7 @@ foreach ($aValue as $key => $value) {
             $("#bodyNeurosensoris").html("")
             $("#bodyPencernaan").html("")
             $("#bodyPerkemihan").html("")
-            $("#bodyPsikologi").html("")
+            $("#bodyPsikologiBidan").html("")
             $("#bodySirkulasi").html("")
             $("#bodySeksual").html("")
             $("#bodySocial").html("")
@@ -829,7 +822,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(psikologiAll, function(key, value) {
                     if (value.document_id == $("#arbbody_id").val()) {
-                        addPsikologi(0, key)
+                        addPsikologi(0, key, 'arbbody_id', 'bodyPsikologiBidan')
                         return false
                     }
                 })
@@ -902,7 +895,7 @@ foreach ($aValue as $key => $value) {
     }
 
     const signArb = async () => {
-        $("#formeditarbid").trigger("click")
+        // $("#formeditarbid").trigger("click")
         //const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title)
         let titlenya = $("#arbTitle").html()
         let titlerj = ''
@@ -942,47 +935,91 @@ foreach ($aValue as $key => $value) {
 
         $.each(examForassessment, function(key, value) {
             var pd = examForassessment[key]
-            if (value.account_id == '2')
-                if (key == index) {
-                    $("#assessmentKebidananHistoryBody").append($("<tr>")
-                        .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                        .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
-                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                        .append($("<td>").append($("<b>").html(value.anamnase)))
-                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
-                            value.temperature + '°C; ' +
-                            value.nadi + '/menit; ' +
-                            value.tension_upper + 'mmHg; ' +
-                            value.tension_below + 'mmHg; ' +
-                            value.saturasi + 'SpO2%; ' +
-                            value.nafas + '/menit; ' +
-                            value.arm_diameter + 'cm; ')))
-                        .append($("<td>").append($("<b>").html(value.teraphy_desc)))
-                        .append($("<td>").append($("<b>").html(value.instruction)))
-                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArb(' + key + ')">').html("Lihat")))
-                    )
+            if (value.account_id == '2') {
+                var titlekebidanan = '';
+                if (value.vs_status_id == 1) {
+                    titlekebidanan = 'Dewasa'
+                }
+                if (value.vs_status_id == 4) {
+                    titlekebidanan = 'Neonatus'
+                }
+                if (value.vs_status_id == 5) {
+                    titlekebidanan = 'Anak'
+                }
+                if (value.vs_status_id == 10) {
+                    titlekebidanan = 'Obsetric'
+                }
+
+                let examdetail = examForassessmentDetail.filter(item => item?.body_id == value?.body_id)
+                examdetail = examdetail[0]
+
+                console.log(value.body_id)
+
+                if (value.body_id == '<?= @$visit['session_id']; ?>') {
+                    var rowHtml = `
+                        <tr>
+                            <td><b><i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i></b></td>
+                            <td><b>${formatedDatetimeFlat(value?.examination_date)}</b></td>
+                            <td><b>${value?.name_of_clinic}</b></td>
+                            <td><b>${value?.anamnase}</b></td>
+                            <td>
+                                <b>
+                                    BB: ${examdetail?.weight}Kg; 
+                                    TB: ${examdetail?.height}cm; 
+                                    ${examdetail?.temperature}°C; 
+                                    ${examdetail?.nadi}/menit; 
+                                    ${examdetail?.tension_upper}mmHg; 
+                                    ${examdetail?.tension_below}mmHg; 
+                                    ${examdetail?.saturasi}SpO2%; 
+                                    ${examdetail?.nafas}/menit; 
+                                    ${examdetail?.arm_diameter}cm;
+                                </b>
+                            </td>
+                            <td><b><i>--Silahkan klik tombol lihat--</i></b></td>
+                            <td><b>${value?.instruction}</b></td>
+                            <td>
+                                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                    <button type="button" class="btn btn-success" onclick="fillDataArb(${key})">Lihat</button>
+                                    <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/keperawatan/cetak_kebidanan/' . base64_encode(json_encode(@$visit))) ?>/${value.body_id}/${titlekebidanan}')">Cetak</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    $("#assessmentKebidananHistoryBody").append(rowHtml);
                     $('html, body').animate({
                         scrollTop: 0
                     }, 800);
                 } else {
-                    $("#assessmentKebidananHistoryBody").append($("<tr>")
-                        .append($("<td>"))
-                        .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
-                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                        .append($("<td>").append($("<b>").html(value.anamnase)))
-                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
-                            value.temperature + '°C; ' +
-                            value.nadi + '/menit; ' +
-                            value.tension_upper + 'mmHg; ' +
-                            value.tension_below + 'mmHg; ' +
-                            value.saturasi + 'SpO2%; ' +
-                            value.nafas + '/menit; ' +
-                            value.arm_diameter + 'cm; ')))
-                        .append($("<td>").append($("<b>").html(value.teraphy_desc)))
-                        .append($("<td>").append($("<b>").html(value.instruction)))
-                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArb(' + key + ')">').html("Lihat")))
-                    )
+                    var rowHtml = `
+                        <tr>
+                            <td></td>
+                            <td>${formatedDatetimeFlat(value?.examination_date)}</td>
+                            <td>${value?.name_of_clinic}</td>
+                            <td>${value?.anamnase}</td>
+                            <td>
+                                BB: ${examdetail?.weight}Kg; 
+                                TB: ${examdetail?.height}cm; 
+                                ${examdetail?.temperature}°C; 
+                                ${examdetail?.nadi}/menit; 
+                                ${examdetail?.tension_upper}mmHg; 
+                                ${examdetail?.tension_below}mmHg; 
+                                ${examdetail?.saturasi}SpO2%; 
+                                ${examdetail?.nafas}/menit; 
+                                ${examdetail?.arm_diameter}cm;
+                            </td>
+                            <td><i>--Silahkan klik tombol lihat--</i></td>
+                            <td>${value?.instruction}</td>
+                            <td>
+                                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                    <button type="button" class="btn btn-success" onclick="fillDataArb(${key})">Lihat</button>
+                                    <button type="button" class="btn btn-light" onclick="openPopUpTab('<?= base_url('admin/rm/keperawatan/cetak_kebidanan/' . base64_encode(json_encode(@$visit))) ?>/${value.body_id}/${titlekebidanan}')">Cetak</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    $("#assessmentKebidananHistoryBody").append(rowHtml);
                 }
+            }
         })
         vsStatusId = [2, 7];
 
@@ -1060,6 +1097,6 @@ foreach ($aValue as $key => $value) {
             titlekeperawatan = 'Obsetric'
         }
 
-        openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/cetak_kebidanan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arbbody_id").val() + '/' + titlekeperawatan)
+        openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/cetak_kebidanan/' . base64_encode(json_encode(@$visit)); ?>' + '/' + $("#arbbody_id").val() + '/' + titlekeperawatan)
     }
 </script>

@@ -1,8 +1,11 @@
 <div class="card bg-light border border-1 rounded-4 mt-4 biodata">
     <div class="card-body">
         <div class="col-lg-12 col-md-12 col-sm-12 mb-4 table-biodata-header">
-            <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?>
-                (<?= $visit['no_registration']; ?>)</h3>
+            <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14 pointer">
+                <!-- update perubahan  familymanTab pointer  04/02/2025-->
+                <?= $visit['diantar_oleh']; ?>
+                (<?= $visit['no_registration']; ?>)
+            </h3>
             <hr>
             <?php
             $file = '';
@@ -10,23 +13,46 @@
                 $file = "uploads\images\profile_male.png";
             } else if ($visit['gender'] == '2') {
                 $file = "uploads\images\profile_female.png";
+            } else {
+                $file = "uploads\images\profile_male.png";
             }
 
             ?>
             <img width="115" height="115" class="rounded-circle avatar-lg"
                 src="<?php echo base_url(); ?><?php echo $file ?>">
-
         </div>
         <!--./col-lg-5-->
         <div class="col-lg-12 col-md-12 col-sm-12">
+            <hr>
+            <div class="row text-center">
+                <button type="button" name="save" data-loading-text="processing" class="btn btn-primary pull-right btn-spppoli"
+                    onclick="closeBillPoli()"><i class="fa fa-check-circle"></i> <span>Selesai</span></button>
+            </div>
+            <hr>
             <table class="table">
                 <tr>
                     <td class="bolds"><?php echo lang('Word.age'); ?></td>
-                    <td id="age"><?= $visit['age']; ?></td>
+                    <td><?= $visit['age']; ?></td>
+                </tr>
+                <tr>
+                    <td class="bolds">Tanggal Lahir</td>
+                    <td><?= date("Y-m-d", strtotime(@$visit['tgl_lahir'])); ?></td>
                 </tr>
                 <tr>
                     <td class="bolds">Alamat</td>
-                    <td id="address"><?php echo $visit['visitor_address']; ?></td>
+                    <td><?php echo ($visit['visitor_address']); ?></td>
+                </tr>
+                <tr>
+                    <td class="bolds">NIK</td>
+                    <td><?php echo (@$visit['npk']); ?></td>
+                </tr>
+                <tr>
+                    <td class="bolds">Status Asuransi</td>
+                    <td><?php echo @$visit['name_of_status_pasien']; ?></td>
+                </tr>
+                <tr>
+                    <td class="bolds">Baru / Lama</td>
+                    <td><?php echo @$visit['isnew'] == '0' ? 'Lama' : 'Baru'; ?></td>
                 </tr>
 
                 <tr>
@@ -34,32 +60,37 @@
                     <?php if ($visit['isrj'] == '0') { ?>
                         <td id="dokter"><?php echo $visit['fullname_inap']; ?></td>
                     <?php } else { ?>
-                        <td id="dokter"><?php echo $visit['fullname']; ?></td>
+                        <td id="dokter"><?php echo @$visit['fullname']; ?></td>
                     <?php } ?>
                 </tr>
                 <?php if ($visit['isrj'] == '0') { ?>
                     <tr>
                         <td class="bolds">Tanggal Masuk</td>
-                        <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
+                        <td id="visit_date"><?= date("Y-m-d H:i", strtotime(@$visit['visit_datetime'])); ?></td>
                     </tr>
-                    <tr>
-                        <td class="bolds">Tanggal Keluar</td>
-                        <td id="exit_date"><?php echo $visit['exit_date']; ?></td>
-                    </tr>
+                    <?php if ($visit['keluar_id'] != '0') {
+                    ?>
+                        <tr>
+                            <td class="bolds">Tanggal Keluar</td>
+                            <td id="exit_date"><?= date("Y-m-d H:i", strtotime(@$visit['exit_datetime'])); ?></td>
+                        </tr>
+                    <?php
+                    } ?>
+
                 <?php } else { ?>
                     <tr>
-                        <td class="bolds">Tanggal Kunjung</td>
-                        <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
+                        <td class="bolds">Tanggal</td>
+                        <td id="visit_date"><?= date("Y-m-d H:i", strtotime(@$visit['visit_datetime'])); ?></td>
                     </tr>
                 <?php } ?>
 
                 <tr>
                     <?php if ($visit['isrj'] == '0' && $visit['class_room_id'] != '') { ?>
                         <td class="bolds">Bangsal</td>
-                        <td id="klinik"><?php echo ($visit['name_of_class']); ?></td>
+                        <td id="klinik"><?php echo (@$visit['name_of_class_room']); ?></td>
                     <?php } else { ?>
                         <td class="bolds">Poli</td>
-                        <td id="klinik"><?php echo $visit['name_of_clinic']; ?></td>
+                        <td id="klinik"><?php echo @$visit['name_of_clinic']; ?></td>
                     <?php } ?>
                 </tr>
                 <tr>
@@ -80,9 +111,9 @@
                     </tr>
                 </div>
             </table>
-            <div class="row text-center d-none">
-                <button type="button" name="save" data-loading-text="processing" class="btn btn-primary pull-right"
-                    onclick="updateWaktu(5)"><i class="fa fa-check-circle"></i> <span>Selesai</span></button>
+            <hr>
+            <div class="row text-center mb-4">
+                <button type="button" name="familyman" data-loading-text="processing" class="btn btn-primary pull-right familymanTab"><i class="fa fa-home"></i> <span>Keluarga</span></button>
             </div>
             <?php if (false) {
                 // if (empty($pasienDiagnosa)) {
@@ -160,6 +191,5 @@
 
             <?php } ?>
         </div>
-        <!--./col-lg-7-->
     </div>
 </div>

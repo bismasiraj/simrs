@@ -78,13 +78,16 @@
 </script>
 
 <script>
-    const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title = null) => {
+    const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title = null, columnName = null, value_id = null) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctxttd.clearRect(0, 0, canvasttd.width, canvasttd.height);
         if (user_type == 1) {
-            $("#signvalid_date").val(container + "valid_date")
-            $("#signvalid_user").val(container + "valid_user")
-            $("#signvalid_pasien").val(container + "valid_pasien")
+            if (columnName == null)
+                $("#signvalid_user").val("valid_user")
+            else
+                $("#signvalid_user").val(columnName)
+            $("#signvalid_pasien").val("valid_pasien")
+            $("#signvalid_date").val("valid_date")
             $("#signtombolsave").val(buttonId)
             $("#signform").val(formId)
             $("#signcontainer").val(container)
@@ -96,11 +99,17 @@
             $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
             $("#signno_registration").val("<?= $visit['no_registration']; ?>")
             $("#signdatebirth").val(null)
+            $("#signvalue_id").val(value_id)
             $("#user_id").val("<?= user()->username; ?>")
+            $("#password").val("<?= user()->password; ?>")
         } else if (user_type == 2) {
+            if (columnName == null)
+                $("#signvalid_user").val("valid_user")
+            else
+                $("#signvalid_user").val(columnName)
             $("#signvalid_date").val(container + "valid_date")
-            $("#signvalid_user").val(container + "valid_user")
-            $("#signvalid_pasien").val(container + "valid_pasien")
+            $("#signvalid_user").val(columnName)
+            $("#signvalid_pasien").val(columnName)
             $("#signtombolsave").val(buttonId)
             $("#signform").val(formId)
             $("#signcontainer").val(container)
@@ -112,11 +121,17 @@
             $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
             $("#signno_registration").val("<?= $visit['no_registration']; ?>")
             $("#signdatebirth").val(null)
+            $("#signvalue_id").val(value_id)
             $("#user_id").val("<?= user()->username; ?>")
+            $("#password").val("<?= user()->password; ?>")
         } else {
+            if (columnName == null)
+                $("#signvalid_user").val("valid_user")
+            else
+                $("#signvalid_user").val(columnName)
             $("#signvalid_date").val(container + "valid_date")
-            $("#signvalid_user").val(container + "valid_user")
-            $("#signvalid_pasien").val(container + "valid_pasien")
+            $("#signvalid_user").val(columnName)
+            $("#signvalid_pasien").val(columnName)
             $("#signtombolsave").val(buttonId)
             $("#signform").val(formId)
             $("#signcontainer").val(container)
@@ -128,7 +143,9 @@
             $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
             $("#signno_registration").val("<?= $visit['no_registration']; ?>")
             $("#signdatebirth").val(null)
+            $("#signvalue_id").val(value_id)
             $("#user_id").val("<?= user()->username; ?>")
+            $("#password").val("<?= user()->password; ?>")
         }
 
         $("#digitalSignModal").modal("show")
@@ -212,15 +229,18 @@
                                         value.user_type)
                                     $("#" + formId + "qrcode" + value.user_type).html(
                                         "")
-                                    let qrcode = new QRCode(document.getElementById(
-                                        formId + "qrcode" + value.user_type), {
-                                        text: value.sign_path,
-                                        width: 128,
-                                        height: 128,
-                                        colorDark: "#000000",
-                                        colorLight: "#ffffff",
-                                        correctLevel: QRCode.CorrectLevel.H
-                                    });
+
+                                    $("#" + formId + "qrcode" + value.user_type).html('<img class="mt-3" src="data:image/png;base64,' + value.sign_file + '" width="400px">')
+
+                                    // let qrcode = new QRCode(document.getElementById(
+                                    //     formId + "qrcode" + value.user_type), {
+                                    //     text: value.sign_path,
+                                    //     width: 128,
+                                    //     height: 128,
+                                    //     colorDark: "#000000",
+                                    //     colorLight: "#ffffff",
+                                    //     correctLevel: QRCode.CorrectLevel.H
+                                    // });
                                     $("#" + formId + "signer" + value.user_type).html(
                                         value.fullname ?? value.user_id)
                                     console.log('Signature validity:', value.isValid);
@@ -233,15 +253,40 @@
                                         value.user_type)
                                     $("#" + formId + "qrcode" + value.user_type).html(
                                         "")
-                                    let qrcode = new QRCode(document.getElementById(
-                                        formId + "qrcode" + value.user_type), {
-                                        text: value.sign_path,
-                                        width: 128,
-                                        height: 128,
-                                        colorDark: "#000000",
-                                        colorLight: "#ffffff",
-                                        correctLevel: QRCode.CorrectLevel.H
-                                    });
+                                    $("#" + formId + "qrcode" + value.user_type).html('<img class="mt-3" src="data:image/png;base64,' + value.sign_file + '" width="400px">')
+
+                                    // let qrcode = new QRCode(document.getElementById(
+                                    //     formId + "qrcode" + value.user_type), {
+                                    //     text: value.sign_path,
+                                    //     width: 128,
+                                    //     height: 128,
+                                    //     colorDark: "#000000",
+                                    //     colorLight: "#ffffff",
+                                    //     correctLevel: QRCode.CorrectLevel.H
+                                    // });
+                                    $("#" + formId + "signer" + value.user_type).html(
+                                        "<?= $visit['diantar_oleh']; ?>")
+                                    console.log('Signature validity:', value.isValid);
+                                } else {
+                                    $("#" + formId).find(".valid_pasien").each(
+                                        function() {
+                                            $(this).val(value.sign_path)
+                                        })
+                                    console.log("qrcode: " + "#" + formId + "qrcode" +
+                                        value.user_type)
+                                    $("#" + formId + "qrcode" + value.user_type).html(
+                                        "")
+                                    $("#" + formId + "qrcode" + value.user_type).html('<img class="mt-3" src="data:image/png;base64,' + value.sign_file + '" width="400px">')
+
+                                    // let qrcode = new QRCode(document.getElementById(
+                                    //     formId + "qrcode" + value.user_type), {
+                                    //     text: value.sign_path,
+                                    //     width: 128,
+                                    //     height: 128,
+                                    //     colorDark: "#000000",
+                                    //     colorLight: "#ffffff",
+                                    //     correctLevel: QRCode.CorrectLevel.H
+                                    // });
                                     $("#" + formId + "signer" + value.user_type).html(
                                         "<?= $visit['diantar_oleh']; ?>")
                                     console.log('Signature validity:', value.isValid);
@@ -453,77 +498,247 @@
         localStorage.setItem('testTTD', JSON.stringify(existingData));
 
 
+        let user_type = $("#signuser_type").val();
 
-
-        // $.ajax({
-        //     url: '<?php echo base_url(); ?>signature/postingSignedDocsTable',
-        //     type: "POST",
-        //     // data: [docData, formData],
-        //     data: JSON.stringify(data),
-        //     dataType: 'json',
-        //     contentType: false,
-        //     cache: false,
-        //     processData: false,
-        //     beforeSend: function() {
-        //         clicked_submit_btn.button('loading');
-        //     },
-        //     success: function(data) {
-        //         if (data) {
-        //             var valid_date = $("#signopsvalid_date").val()
-        //             var valid_user = $("#signopsvalid_user").val()
-        //             var valid_pasien = $("#signopsvalid_pasien").val()
-        //             var signButton = $("#signopstombolsave").val()
-        //             var signform = $("#signopsform").val()
-
-        //             $("#" + signform).find(".valid-date").each(function() {
-        //                 $(this).val(get_date())
-        //             })
-        //             $("#" + signform).find(".valid-user").each(function() {
-        //                 $(this).val(get_bodyid())
-        //             })
-        //             $("#" + signform).find(".valid-pasien").each(function() {
-        //                 $(this).val(get_bodyid())
-        //             })
-        //             $("#" + valid_date).val(get_date())
-        //             $("#" + valid_user).val(get_bodyid())
-        //             $("#" + valid_pasien).val(get_bodyid())
-        //             $("#" + signButton).trigger("click")
-        //             $("#digitalSignFormDocs").find("input").val(null)
-        //         }
-        //     },
-        //     error: function(xhr) { // if error occured
-        //         alert("Error occured.please try again");
-        //         clicked_submit_btn.button('reset');
-        //         errorMsg(xhr);
-        //     },
-        //     complete: function() {
-        //         clicked_submit_btn.button('reset');
-        //     }
-        // });
+        if (user_type == '1') {
+            if ($("#password").val() == '') {
+                alert("Password tidak boleh kosong");
+                return false;
+            }
+            if ($("#user_id").val() == '') {
+                alert("Username tidak boleh kosong");
+                return false
+            }
+        } else if (user_type == '2') {
+            if ($("#signno_registration").val() == '') {
+                alert("Nomor Rekam Medis tidak boleh kosong");
+                return false
+            }
+            if ($("#signdatepasien").val() == '') {
+                alert("Tanggal Lahir tidak boleh kosong");
+                return false
+            }
+        } else if (user_type == '3') {
+            if ($("#signname").val() == '') {
+                alert("Nama tidak boleh kosong");
+                return false
+            }
+            if ($("#signno_registration").val() == '') {
+                alert("Nomor Rekam Medis pasien tidak boleh kosong");
+                return false
+            }
+            if ($("#signdatepasien").val() == '') {
+                alert("Tanggal Lahir pasien tidak boleh kosong");
+                return false
+            }
+        }
+        $.ajax({
+            url: '<?php echo base_url(); ?>signature/postingSignedDocsTable',
+            type: "POST",
+            // data: [docData, formData],
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                clicked_submit_btn.button('loading');
+            },
+            success: function(data) {
+                if (data.metadata.code == 200) {
+                    var valid_date = $("#signvalid_date").val()
+                    var valid_user = $("#signvalid_user").val()
+                    var valid_pasien = $("#signvalid_pasien").val()
+                    var signButton = $("#signtombolsave").val()
+                    var signform = $("#signform").val()
+                    var user_type = $("#signuser_type").val()
+                    var container = $("#signcontainer").val()
+                    var formId = $("#signform").val()
+                    $("#" + formId).find("input, select, option, textarea").prop("disabled", false)
+                    $("#" + signform).find(".valid-date").each(function() {
+                        $(this).val(get_date())
+                    })
+                    if (user_type == 1)
+                        $("#" + container + valid_user).val(get_bodyid())
+                    // $("#" + signform).find(".valid-user").each(function() {
+                    // })
+                    if (user_type == 2)
+                        $("#" + signform).find(".valid-pasien").each(function() {
+                            $(this).val(get_bodyid())
+                        })
+                    if (user_type == 3)
+                        $("#" + signform).find(".valid-other").each(function() {
+                            $(this).val(get_bodyid())
+                        })
+                    $("#" + signButton).trigger("click")
+                    // $("#" + valid_date).val(get_date())
+                    // $("#" + valid_user).val(get_bodyid())
+                    // $("#" + valid_pasien).val(get_bodyid())
+                    // $("#" + signButton).trigger("click")
+                    // $("#digitalSignForm").find("input").val(null)
+                } else {
+                    errorSwal(data.metadata.message)
+                }
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                clicked_submit_btn.button('reset');
+                errorSwal(xhr);
+            },
+            complete: function() {
+                clicked_submit_btn.button('reset');
+            }
+        });
+        $("#digitalSignModal").modal("hide")
         checkSignSignatureOperasi(formDataObject.formId, formDataObject.sign_id, formDataObject.tombolsave,
             formDataObject.docs_type);
         $("#digitalSignModalOperation").modal("hide")
     }));
 
-    const addSignUserOPS = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title = null) => {
-        if (sign_ke == 1) {
-            $("#signopsvalid_date").val(container);
-            $("#signopsvalid_user").val(container);
-            $("#signopsvalid_pasien").val(container);
-            $("#signopstombolsave").val(buttonId);
-            $("#signopsform").val(formId);
-            $("#signopscontainer").val(container);
-            $("#signopsdocs_type").val(docs_type);
-            $("#signopssign_id").val(primaryKey);
-            $("#signopsuser_type").val(user_type);
-            $("#signopssign_ke").val(sign_ke);
-            $("#signopstitle").val(title);
-            $("#signopssign_path").val('<?= user()->getFullname(); ?>: ' + get_date());
-            $("#user_id").val("<?= user()->username; ?>");
+    const addSignUserOPS = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title = null, columnName = null) => {
+        // if (sign_ke == 1) {
+        //     $("#signopsvalid_date").val(container);
+        //     $("#signopsvalid_user").val(container);
+        //     $("#signopsvalid_pasien").val(container);
+        //     $("#signopstombolsave").val(buttonId);
+        //     $("#signopsform").val(formId);
+        //     $("#signopscontainer").val(container);
+        //     $("#signopsdocs_type").val(docs_type);
+        //     $("#signopssign_id").val(primaryKey);
+        //     $("#signopsuser_type").val(user_type);
+        //     $("#signopssign_ke").val(sign_ke);
+        //     $("#signopstitle").val(title);
+        //     $("#signopssign_path").val('<?= user()->getFullname(); ?>: ' + get_date());
+        //     $("#user_id").val("<?= user()->username; ?>");
+        // }
+
+        // $("#digitalSignModalOperation").modal("show");
+        // $("#password").focus();
+
+
+
+        console.log(formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke, title, columnName);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctxttd.clearRect(0, 0, canvasttd.width, canvasttd.height);
+        // if (user_type == 1) {
+        //     if (columnName == null)
+        //         $("#signvalid_user").val("valid_user")
+        //     else
+        //         $("#signvalid_user").val(columnName)
+        //     $("#signvalid_pasien").val("valid_pasien")
+        //     $("#signvalid_date").val("valid_date")
+        //     $("#signtombolsave").val(buttonId)
+        //     $("#signform").val(formId)
+        //     $("#signcontainer").val(container)
+        //     $("#signdocs_type").val(docs_type)
+        //     $("#signsign_id").val($("#" + primaryKey).val())
+        //     $("#signuser_type").val(user_type).trigger("change")
+        //     $("#signsign_ke").val(sign_ke)
+        //     $("#signtitle").val(title)
+        //     $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+        //     $("#signno_registration").val("<?= $visit['no_registration']; ?>")
+        //     $("#signdatebirth").val(null)
+        //     $("#user_id").val("<?= user()->username; ?>")
+        // } else if (user_type == 2) {
+        //     $("#signvalid_date").val(container + "valid_date")
+        //     $("#signvalid_user").val(container + "valid_user")
+        //     if (columnName == null)
+        //         $("#signvalid_pasien").val("valid_user")
+        //     else
+        //         $("#signvalid_pasien").val(columnName)
+        //     $("#signvalid_pasien").val(container + "valid_pasien")
+        //     $("#signtombolsave").val(buttonId)
+        //     $("#signform").val(formId)
+        //     $("#signcontainer").val(container)
+        //     $("#signdocs_type").val(docs_type)
+        //     $("#signsign_id").val($("#" + primaryKey).val())
+        //     $("#signuser_type").val(user_type).trigger("change")
+        //     $("#signsign_ke").val(sign_ke)
+        //     $("#signtitle").val(title)
+        //     $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+        //     $("#signno_registration").val("<?= $visit['no_registration']; ?>")
+        //     $("#signdatebirth").val(null)
+        //     $("#user_id").val("<?= user()->username; ?>")
+        // } else {
+        //     $("#signvalid_date").val(container + "valid_date")
+        //     $("#signvalid_user").val(container + "valid_user")
+        //     if (columnName == null)
+        //         $("#signvalid_pasien").val("valid_user")
+        //     else
+        //         $("#signvalid_pasien").val(columnName)
+        //     $("#signtombolsave").val(buttonId)
+        //     $("#signform").val(formId)
+        //     $("#signcontainer").val(container)
+        //     $("#signdocs_type").val(docs_type)
+        //     $("#signsign_id").val($("#" + primaryKey).val())
+        //     $("#signuser_type").val(user_type).trigger("change")
+        //     $("#signsign_ke").val(sign_ke)
+        //     $("#signtitle").val(title)
+        //     $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+        //     $("#signno_registration").val("<?= $visit['no_registration']; ?>")
+        //     $("#signdatebirth").val(null)
+        //     $("#user_id").val("<?= user()->username; ?>")
+        // }
+
+        if (user_type == 1) {
+            if (columnName == null)
+                $("#signvalid_user").val("valid_user")
+            else
+                $("#signvalid_user").val(columnName)
+            $("#signvalid_pasien").val("valid_pasien")
+            $("#signvalid_date").val("valid_date")
+            $("#signtombolsave").val(buttonId)
+            $("#signform").val(formId)
+            $("#signcontainer").val(container)
+            $("#signdocs_type").val(docs_type)
+            $("#signsign_id").val($("#" + primaryKey).val())
+            $("#signuser_type").val(user_type).trigger("change")
+            $("#signsign_ke").val(sign_ke)
+            $("#signtitle").val(title)
+            $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+            $("#signno_registration").val("<?= $visit['no_registration']; ?>")
+            $("#signdatebirth").val(null)
+            // $("#signvalue_id").val(value_id)
+            $("#user_id").val("<?= user()->username; ?>")
+        } else if (user_type == 2) {
+            $("#signvalid_date").val(container + "valid_date")
+            $("#signvalid_user").val(columnName)
+            $("#signvalid_pasien").val(columnName)
+            $("#signtombolsave").val(buttonId)
+            $("#signform").val(formId)
+            $("#signcontainer").val(container)
+            $("#signdocs_type").val(docs_type)
+            $("#signsign_id").val($("#" + primaryKey).val())
+            $("#signuser_type").val(user_type).trigger("change")
+            $("#signsign_ke").val(sign_ke)
+            $("#signtitle").val(title)
+            $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+            $("#signno_registration").val("<?= $visit['no_registration']; ?>")
+            $("#signdatebirth").val(null)
+            // $("#signvalue_id").val(value_id)
+            $("#user_id").val("<?= user()->username; ?>")
+        } else {
+            $("#signvalid_date").val(container + "valid_date")
+            $("#signvalid_user").val(columnName)
+            $("#signvalid_pasien").val(columnName)
+            $("#signtombolsave").val(buttonId)
+            $("#signform").val(formId)
+            $("#signcontainer").val(container)
+            $("#signdocs_type").val(docs_type)
+            $("#signsign_id").val($("#" + primaryKey).val())
+            $("#signuser_type").val(user_type).trigger("change")
+            $("#signsign_ke").val(sign_ke)
+            $("#signtitle").val(title)
+            $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+            $("#signno_registration").val("<?= $visit['no_registration']; ?>")
+            $("#signdatebirth").val(null)
+            // $("#signvalue_id").val(value_id)
+            $("#user_id").val("<?= user()->username; ?>")
         }
 
-        $("#digitalSignModalOperation").modal("show");
-        $("#password").focus();
+        $("#digitalSignModal").modal("show")
+        $("#password").focus()
     }
 </script>
 
@@ -694,10 +909,6 @@
                 return false
             }
         } else if (user_type == '3') {
-            if ($("#signnik").val() == '') {
-                alert("NIK tidak boleh kosong");
-                return false
-            }
             if ($("#signname").val() == '') {
                 alert("Nama tidak boleh kosong");
                 return false
@@ -743,35 +954,49 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
-                if (data) {
+                if (data.metadata.code == 200) {
                     var valid_date = $("#signvalid_date").val()
                     var valid_user = $("#signvalid_user").val()
                     var valid_pasien = $("#signvalid_pasien").val()
                     var signButton = $("#signtombolsave").val()
                     var signform = $("#signform").val()
                     var user_type = $("#signuser_type").val()
+                    var container = $("#signcontainer").val()
+                    var formId = $("#signform").val()
+                    if ($("#signdocs_type").val() === "0" || $("#signdocs_type").val() === 0) {
+                        $("#" + signButton).trigger("click")
+                        return
+                    }
 
-                    $("#" + signform).find(".valid-date").each(function() {
-                        $(this).val(get_date())
-                    })
-                    if (user_type == 1)
-                        $("#" + signform).find(".valid-user").each(function() {
-                            $(this).val(get_bodyid())
+                    $("#" + formId).find("input, select, option, textarea").prop("disabled", false)
+
+                    if (valid_user) {
+                        $("#" + signform).find(".valid-date").each(function() {
+                            $(this).val(get_date())
                         })
+                    }
+                    if (user_type == 1)
+                        $("#" + container + valid_user).val(data.data)
+                    // $("#" + signform).find(".valid-user").each(function() {
+                    // })
                     if (user_type == 2)
                         $("#" + signform).find(".valid-pasien").each(function() {
-                            $(this).val(get_bodyid())
+                            $(this).val(data.data)
                         })
                     if (user_type == 3)
                         $("#" + signform).find(".valid-other").each(function() {
-                            $(this).val(get_bodyid())
+                            $(this).val(data.data)
                         })
 
-                    $("#" + valid_date).val(get_date())
-                    $("#" + valid_user).val(get_bodyid())
-                    $("#" + valid_pasien).val(get_bodyid())
+
+                    $("#" + signButton).trigger("click")
+                    // $("#" + valid_date).val(get_date())
+                    // $("#" + valid_user).val(get_bodyid())
+                    // $("#" + valid_pasien).val(get_bodyid())
                     // $("#" + signButton).trigger("click")
-                    $("#digitalSignForm").find("input").val(null)
+                    // $("#digitalSignForm").find("input").val(null)
+                } else {
+                    errorSwal(data.metadata.message)
                 }
             },
             error: function(xhr) { // if error occured

@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;;
 
 use App\Controllers\BaseController;
+use App\Models\GiziModel as AssessmentGiziModel;
 use App\Models\Assessment\NutritionModel;
 use App\Models\FoodRecallModel;
 use App\Models\GiziModel;
@@ -34,11 +35,12 @@ class Gizi extends \App\Controllers\BaseController
         }
 
 
-        $query = $db->query("
-        SELECT TOP(1) WEIGHT, HEIGHT, AGEYEAR,EXAMINATION_DETAIL.EXAMINATION_DATE 
-        FROM EXAMINATION_DETAIL 
-        LEFT JOIN EXAMINATION_INFO ON EXAMINATION_DETAIL.DOCUMENT_ID = EXAMINATION_INFO.PASIEN_DIAGNOSA_ID
-        WHERE EXAMINATION_DETAIL.visit_id = '" . $formData->visit_id . "' ORDER BY EXAMINATION_DETAIL.EXAMINATION_DATE DESC");
+        $query = $db->query("SELECT TOP(1) WEIGHT, HEIGHT, EXAMINATION_DATE
+                                FROM EXAMINATION_DETAIL
+                                WHERE visit_id = '" . $formData->visit_id . "'
+                                AND CLINIC_ID <> 'P002'
+                                AND (WEIGHT != 0 and HEIGHT != 0 and WEIGHT is not null and HEIGHT is not null)
+                                ORDER BY EXAMINATION_DATE DESC");
         $results = $this->lowerKey($query->getRowArray() ?? []);
 
         $riwayat_alergi = $db->query("select histories from pasien_history where NO_REGISTRATION = '" . $formData->no_registration . "' and VALUE_ID = 'G0090102'");
@@ -366,7 +368,7 @@ class Gizi extends \App\Controllers\BaseController
             $data['p_type'] = explode('-', $data['age_category'])[0];
             $data['age_category'] = explode('-', $data['age_category'])[1];
 
-            $model = new GiziModel();
+            $model = new AssessmentGiziModel();
 
             $model->insert($data);
 
@@ -393,7 +395,7 @@ class Gizi extends \App\Controllers\BaseController
         try {
             $formData = $this->request->getJSON();
 
-            $model = new GiziModel();
+            $model = new AssessmentGiziModel();
             $existingEntry = $this->lowerKey($model->where('visit_id', $formData->visit_id)->where('body_id', $formData->body_id)->first() ?? []);
             $data = $existingEntry;
             $data['valid_date'] = NULL;
@@ -436,22 +438,22 @@ class Gizi extends \App\Controllers\BaseController
                 }
             }
 
-            $polaMakanExist = $this->lowerKey($db->query(
-                "
-                SELECT * FROM ASSESSMENT_NUTRITION_HABIT
-                WHERE HABIT_ID = '" . $data['pola_makan'] . "'
-                "
-            )->getRowArray() ?? []);
+            // $polaMakanExist = $this->lowerKey($db->query(
+            //     "
+            //     SELECT * FROM ASSESSMENT_NUTRITION_HABIT
+            //     WHERE HABIT_ID = '" . $data['pola_makan'] . "'
+            //     "
+            // )->getRowArray() ?? []);
 
             if (empty($polaMakanExist)) {
                 $lastId = $db->query("select top 1 HABIT_ID from ASSESSMENT_NUTRITION_HABIT order by HABIT_ID desc")->getRowArray()['HABIT_ID'];
-                $queryHabit = $db->query("INSERT INTO ASSESSMENT_NUTRITION_HABIT (HABIT_ID, DIETARY_HABIT) VALUES ('" . $lastId + 1 . "','" . strtolower($data['pola_makan']) . "')");
-                $data['pola_makan'] = $lastId + 1;
+                // $queryHabit = $db->query("INSERT INTO ASSESSMENT_NUTRITION_HABIT (HABIT_ID, DIETARY_HABIT) VALUES ('" . $lastId + 1 . "','" . strtolower($data['pola_makan']) . "')");
+                // $data['pola_makan'] = $lastId + 1;
             }
             $data['modified_by'] = user()->username;
             $data['p_type'] = explode('-', $data['age_category'])[0];
             $data['age_category'] = explode('-', $data['age_category'])[1];
-            $model = new GiziModel();
+            $model = new AssessmentGiziModel();
 
             $existingEntry = $this->lowerKey($model->where('visit_id', $formData->visit_id)->where('body_id', $formData->body_id)->first() ?? []);
 
@@ -641,7 +643,7 @@ class Gizi extends \App\Controllers\BaseController
             ]);
         }
 
-        $model = new GiziModel();
+        $model = new AssessmentGiziModel();
         $modelFoodRecall = new FoodRecallModel();
         $modelIntervensi = new InterventionModel();
         $modelDiagnosas = new PasienDiagnosasModel();
@@ -753,7 +755,9 @@ class Gizi extends \App\Controllers\BaseController
                         $diagnosaData[] = [
                             'pasien_diagnosa_id' => $diagnosis->pasien_diagnosa_id,
                             'diagnosa_id' => $diagnosis->diag_id,
-                            'diagnosa_name' => $diagnosis->diag_name,
+                            'diagnosa_name' => !empty($diagnosis->diag_name) ? $diagnosis->diag_name : null,
+                            'diagnosa_desc' => !empty($diagnosis->diag_desc) ? $diagnosis->diag_desc : null,
+
                             'diag_cat' => $diagnosis->diag_cat,
                             'suffer_type' => $diagnosis->suffer_type,
                             'modified_by' => user()->username,
@@ -938,7 +942,12 @@ class Gizi extends \App\Controllers\BaseController
         WHERE visit_id = '" . $formData->visit_id . "' AND no_registration = '" . $formData->no_registration . "' ORDER BY EXAMINATION_DATE DESC");
         $results = $this->lowerKey($query->getResultArray() ?? []);
 
-        $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EXAMINATION_DETAIL WHERE VISIT_ID = '" . $formData->visit_id . "' AND ((WEIGHT != 0 OR WEIGHT IS NULL) AND (HEIGHT !=0 OR HEIGHT IS NULL)) ORDER BY EXAMINATION_DATE DESC")->getRowArray();
+        $exam_info = $db->query("SELECT TOP(1) WEIGHT, HEIGHT, EXAMINATION_DATE
+                                FROM EXAMINATION_DETAIL
+                                WHERE visit_id = '" . $formData->visit_id . "'
+                                AND CLINIC_ID <> 'P002'
+                                AND (WEIGHT != 0 and HEIGHT != 0 and WEIGHT is not null and HEIGHT is not null)
+                                ORDER BY EXAMINATION_DATE DESC")->getRowArray();
 
 
         return $this->response->setJSON([
@@ -1217,7 +1226,7 @@ class Gizi extends \App\Controllers\BaseController
 
         if ($this->auth->attempt(['username' => $username, 'password' => $password])) {
 
-            $model = $type == 'asuhan_gizi' ? new GiziModel() : new SkriningNutritionModel();
+            $model = $type == 'asuhan_gizi' ? new AssessmentGiziModel() : new SkriningNutritionModel();
 
             $data = [
                 'valid_user'    => $username,
@@ -1293,7 +1302,7 @@ class Gizi extends \App\Controllers\BaseController
                     'filename' => $pathInfo['basename'] ?? null,
                 ];
 
-                $model = $data['type'] == 'asuhan_gizi' ? new GiziModel() : new SkriningNutritionModel();
+                $model = $data['type'] == 'asuhan_gizi' ? new AssessmentGiziModel() : new SkriningNutritionModel();
                 $uploadData = $model->where('body_id', $data['id'])->where('visit_id', $data['visit_id'])->set($dataUpdate)->update();
 
                 if (!$uploadData) {
@@ -1321,7 +1330,7 @@ class Gizi extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
 
-            $model = new GiziModel();
+            $model = new AssessmentGiziModel();
 
             $results = $this->lowerKey($model->where('visit_id', $visit['visit_id'])->where('body_id', $body_id)->first() ?? []);
             $fileInfo = pathinfo($results['treat_image']);

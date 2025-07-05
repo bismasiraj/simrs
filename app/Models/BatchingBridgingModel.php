@@ -24,7 +24,8 @@ class BatchingBridgingModel extends Model
         'status',
         'created_date',
         'modified_date',
-        'tipe'
+        'tipe',
+        'waktu'
     ];
 
     // Dates

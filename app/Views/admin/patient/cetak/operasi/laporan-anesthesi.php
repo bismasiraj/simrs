@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+        rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -23,47 +25,47 @@
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <style>
-        .form-control:disabled,
-        .form-control[readonly] {
-            background-color: #FFF;
-            opacity: 1;
-        }
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #FFF;
+        opacity: 1;
+    }
 
-        .form-control,
-        .input-group-text {
-            background-color: #fff;
-            border: 1px solid #fff;
-            font-size: 12px;
-        }
+    .form-control,
+    .input-group-text {
+        background-color: #fff;
+        border: 1px solid #fff;
+        font-size: 12px;
+    }
 
-        @page {
-            size: A4;
-        }
+    @page {
+        size: A4;
+    }
 
-        body {
-            width: 21cm;
-            height: 29.7cm;
-            margin: 0;
-            font-size: 12px;
-        }
+    body {
+        width: 21cm;
+        height: 29.7cm;
+        margin: 0;
+        font-size: 12px;
+    }
 
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-            margin-bottom: .3rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+        margin-bottom: .3rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
     </style>
 </head>
 
@@ -105,7 +107,8 @@
                 <tr>
                     <td class="p-1" style="width:33.3%">
                         <b>Tanggal Lahir (Usia)</b>
-                        <p class="m-0 mt-1 p-0"><?= tanggal_indo($visit['date_of_birth']) . ' (' . @$visit['age'] . ')'; ?></p>
+                        <p class="m-0 mt-1 p-0">
+                            <?= tanggal_indo($visit['tgl_lahir']) . ' (' . @$visit['age'] . ')'; ?></p>
 
                     </td>
                     <td class="p-1" style="width:66.3%" colspan="2">
@@ -116,11 +119,22 @@
                 <tr>
                     <td class="p-1">
                         <b>DPJP</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['fullname_inap']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['fullname']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Department</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic_from']; ?></p>
+                        <?php 
+                            if (!empty($visit['specialist_type_id'])) {
+                                $db = db_connect();
+                                $query = $db->table('specialist_type')
+                                            ->select('SPECIALIST_TYPE')
+                                            ->where('specialist_type_id', $visit['specialist_type_id'])
+                                            ->get()
+                                            ->getRow();
+
+                                echo $query ? esc($query->SPECIALIST_TYPE) : '-';
+                            }
+                            ?>
                     </td>
                     <td class="p-1">
                         <b>Tanggal Masuk</b>
@@ -132,48 +146,48 @@
                         <b>Kelas</b>
                         <p class="m-0 mt-1 p-0"><?= @$visit['class_room']; ?></p>
                     </td>
-                    <td class="p-1">
+                    <td class="p-1" colspan="2">
                         <b>Bangsal/Kamar</b>
                         <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
                     </td>
-                    <td class="p-1">
-                        <b>Bed</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['bed']; ?></p>
-                    </td>
+
                 </tr>
             </tbody>
         </table>
         <h5>Informasi Medis</h5>
         <?php if (isset($informasiMedis)) : ?>
-            <div class="d-flex flex-wrap mb-3">
-                <?php foreach ($informasiMedis as $key => $medis) : ?>
-                    <div class="col-3 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $key ?></b>
-                        <p class="m-0 mt-1 p-0"><?= @$medis; ?></p>
-                    </div>
-                <?php endforeach ?>
+        <div class="d-flex flex-wrap mb-3">
+            <?php foreach ($informasiMedis as $key => $medis) : ?>
+            <div class="col-3 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <b><?= $key ?></b>
+                <p class="m-0 mt-1 p-0"><?= @$medis; ?></p>
             </div>
+            <?php endforeach ?>
+        </div>
         <?php endif; ?>
 
         <h5>Pemeriksaan Fisik</h5>
         <table class="table table-bordered mb-2">
             <tbody>
                 <tr>
-                    <td>
+                    <td width="25%">
                         <b>Tekanan Darah</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_atas'] . '/' . @$val['tensi_bawah']; ?> mmHg</p>
+                        <p class="m-0 mt-1 p-0">
+                            <?= (int) ($val['tensi_atas'] ?? 0)  ?>/<?= (int) ($val['tensi_bawah'] ?? 0); ?>
+                            mmHg</p>
+                        </p>
                     </td>
-                    <td>
+                    <td width="25%">
                         <b>Denyut Nadi</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['nadi']; ?> x/m</p>
+                        <p class="m-0 mt-1 p-0"><?= (int) ($val['nadi'] ?? 0) ?> x/m</p>
                     </td>
-                    <td>
+                    <td width="25%">
                         <b>Suhu Tubuh</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['suhu']; ?> &degC</p>
+                        <p class="m-0 mt-1 p-0"><?= (int) ($val['suhu'] ?? 0)  ?> °C</p>
                     </td>
-                    <td>
+                    <td width="25%">
                         <b>Respiration Rate</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['respirasi']; ?> x/m</p>
+                        <p class="m-0 mt-1 p-0"><?= (int) ($val['respiration'] ?? 0)  ?> x/m</p>
                     </td>
                 </tr>
                 <tr>
@@ -191,7 +205,7 @@
                     </td>
                     <td>
                         <b>BMI</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['bmi']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= number_format(@$val['bmi'], 2, '.', ''); ?></p>
                     </td>
                 </tr>
             </tbody>
@@ -235,35 +249,36 @@
 
         <h5>Keadaan Umum</h5>
         <?php if (isset($keadaanUmum)) : ?>
-            <div class="d-flex flex-wrap mb-3">
-                <?php foreach ($keadaanUmum as $key => $keadaan) : ?>
-                    <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $key ?></b>
-                        <p class="m-0 mt-1 p-0"><?= @$keadaan; ?></p>
-                    </div>
-                <?php endforeach ?>
+        <div class="d-flex flex-wrap mb-3">
+            <?php foreach ($keadaanUmum as $key => $keadaan) : ?>
+            <div class="col-4 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <b><?= $key ?></b>
+                <p class="m-0 mt-1 p-0"><?= @$keadaan; ?></p>
             </div>
+            <?php endforeach ?>
+        </div>
         <?php endif; ?>
         <h5>Diagnosis</h5>
-        <?php if (isset($diagnosa)) : ?>
-            <div class="d-flex flex-wrap mb-3">
-                <?php foreach ($diagnosa as $key => $diag) : ?>
-                    <div class="col-12 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <p class="m-0 mt-1 p-0"><?= @$diag['diagnosa_desc']; ?></p>
-                    </div>
-                <?php endforeach ?>
+        <?php if (isset($diagnosa)) : 
+            ?>
+        <div class="d-flex flex-wrap mb-3">
+            <?php foreach ($diagnosa as $key => $diag) : ?>
+            <div class="col-12 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <p class="m-0 mt-1 p-0"><?= @$diag['diagnosa_name']; ?></p>
             </div>
+            <?php endforeach ?>
+        </div>
         <?php endif; ?>
         <h5>Perencanaan Anestesi</h5>
         <?php if (isset($perencanaanAnestesi)) : ?>
-            <div class="d-flex flex-wrap mb-3">
-                <?php foreach ($perencanaanAnestesi as $key => $anestesi) : ?>
-                    <div class="col-3 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                        <b><?= $key ?></b>
-                        <p class="m-0 mt-1 p-0"><?= @$anestesi; ?></p>
-                    </div>
-                <?php endforeach ?>
+        <div class="d-flex flex-wrap mb-3">
+            <?php foreach ($perencanaanAnestesi as $key => $anestesi) : ?>
+            <div class="col-3 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                <b><?= $key ?></b>
+                <p class="m-0 mt-1 p-0"><?= @$anestesi; ?></p>
             </div>
+            <?php endforeach ?>
+        </div>
         <?php endif; ?>
         <h5>Perencanaan Pasca Anestesi</h5>
 
@@ -274,6 +289,7 @@
                 <div class="mb-1">
                     <div id="qrcode"></div>
                 </div>
+                <div id="qrcode-name"></div>
             </div>
             <div class="col"></div>
             <div class="col-auto" align="center">
@@ -281,6 +297,7 @@
                 <div class="mb-1">
                     <div id="qrcode1"></div>
                 </div>
+                <div id="qrcode1_name"></div>
             </div>
         </div>
     </div>
@@ -289,43 +306,110 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
 
 </body>
 
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `<?= $visit['fullname']; ?>`,
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
+const cropTransparentPNG = (base64, callback) => {
+
+
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        let top = null,
+            bottom = null,
+            left = null,
+            right = null;
+
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                const index = (y * canvas.width + x) * 4;
+                const alpha = data[index + 3];
+                if (alpha > 0) {
+                    if (top === null || y < top) top = y;
+                    if (bottom === null || y > bottom) bottom = y;
+                    if (left === null || x < left) left = x;
+                    if (right === null || x > right) right = x;
+                }
+            }
+        }
+
+        if (top === null) return callback(null); // tidak ada gambar
+
+        const width = right - left + 1;
+        const height = bottom - top + 1;
+
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = width;
+        croppedCanvas.height = height;
+
+        const croppedCtx = croppedCanvas.getContext('2d');
+        croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+        const croppedBase64 = croppedCanvas.toDataURL('image/png');
+        callback(croppedBase64);
+    };
+    img.src = base64;
+};
+const base64_ttd_dok = <?= json_encode($val['ttd_dok'] ?? '') ?>;
+if (base64_ttd_dok) {
+    $('#qrcode').html(
+        `<img src="${base64_ttd_dok}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+} else {
+    $('#qrcode').html('');
+}
+
+$('#qrcode-name').html(`<?= $val['ttd_dokter_name']?>;`)
+
+
+const base64_ttd_ps = <?= json_encode($val['ttd_pasien']?? '') ?>;
+// if (base64_ttd_ps) {
+//     $('#qrcode1').html(
+//         `<img src="${base64_ttd_ps}" alt="QR Code" style="width: 100%; max-width: 300px; height: auto;">`);
+// } else {
+//     $('#qrcode1').html('');
+// }
+if (base64_ttd_ps) {
+    cropTransparentPNG(base64_ttd_ps, (croppedImage) => {
+        if (croppedImage) {
+            $('#qrcode1').html(
+                `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+            );
+            $('#qrcode1_name').html('<?=$visit['diantar_oleh']?>')
+        } else {
+            $('#qrcode1').html('');
+        }
     });
-</script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: `<?= $visit['diantar_oleh']; ?>`,
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+} else {
+    $('#qrcode1').html('');
+}
 </script>
 
 <style>
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-        }
-
-        .container {
-            width: 210mm;
-            /* Sesuaikan dengan lebar kertas A4 */
-        }
+@media print {
+    @page {
+        margin: none;
+        scale: 85;
     }
+
+    .container {
+        width: 210mm;
+        /* Sesuaikan dengan lebar kertas A4 */
+    }
+}
 </style>
 <script type="text/javascript">
 

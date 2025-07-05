@@ -67,11 +67,11 @@ $db = db_connect();
                                                 </div>
                                                 <?php if (user()->checkPermission("patologi", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
                                                     <div class="col-md-10">
-                                                        <div class="form-group">
+                                                        <div class="form-group spppoli-to-hide">
                                                             <label for="">Pencarian Tarif</label>
                                                             <div class="input-group">
                                                                 <select id="searchTarifPatologi" class="form-control fit" style="width: 70%; height: 100%;"></select>
-                                                                <button type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillPatologi("searchTarifPatologi")'>
+                                                                <button id="searchTarifPatologiBtn" type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillPatologi("searchTarifPatologi")'>
                                                                     <i class="fa fa-plus"></i> Tambah
                                                                 </button>
                                                             </div>
@@ -100,7 +100,7 @@ $db = db_connect();
                                             <tbody id="patologiChargesBody" class="table-group-divider">
                                             </tbody>
                                         </table>
-                                        <div class="panel-footer text-end mb-4">
+                                        <div class="panel-footer text-end mb-4 spppoli-to-hide">
                                             <button type="button" id="formSaveBillPatologiBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <!-- <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button> -->
                                         </div>
@@ -120,7 +120,7 @@ $db = db_connect();
 
 
 <!-- Modal -->
-<div class="modal fade modal-xl" id="modalPatologi" aria-labelledby="modalPatologiLabel" aria-hidden="true">
+<div class="modal fade modal-xl" id="modalPatologi" aria-labelledby="modalPatologiLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -131,8 +131,8 @@ $db = db_connect();
                 <form action="" id="formModalPatologi" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="name_of_pasien" value="<?= $visit['diantar_oleh']; ?>">
                     <input type="hidden" name="age" value="<?= $visit['age']; ?>">
-                    <input type="hidden" name="contact_address" value="<?= $visit['contact_address']; ?>">
-                    <input type="hidden" name="gendername" value="<?= $visit['gendername']; ?>">
+                    <input type="hidden" name="visitor_address" value="<?= $visit['visitor_address']; ?>">
+                    <input type="hidden" name="gendername" value="<?= @$visit['gendername']; ?>">
                     <input type="hidden" name="no_registration" value="<?= $visit['no_registration']; ?>">
                     <input type="hidden" name="tarif_id" id="patologi_tarif_id">
                     <input type="hidden" name="bill_id" id="patologi_bill_id">
@@ -170,7 +170,7 @@ $db = db_connect();
                             <td width="20%">Umur</td>
                             <td width="1%">:</td>
                             <td><?= $visit['age']; ?></td>
-                            <td>LP: <?= $visit['gendername']; ?></td>
+                            <td>LP: <?= @$visit['gendername']; ?></td>
                             <td width="20%">Tanggal</td>
                             <td width="1%">:</td>
                             <td><?= date('d-m-Y') ?></td>
@@ -178,7 +178,7 @@ $db = db_connect();
                         <tr>
                             <td width="20%">Alamat</td>
                             <td width="1%">:</td>
-                            <td colspan="2"><?= $visit['contact_address']; ?></td>
+                            <td colspan="2"><?= $visit['visitor_address']; ?></td>
                             <td width="20%">Dokter</td>
                             <td width="1%">:</td>
                             <td id="doctor_patologi"></td>
