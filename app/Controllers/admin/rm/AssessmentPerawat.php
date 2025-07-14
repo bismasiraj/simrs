@@ -404,6 +404,7 @@ class AssessmentPerawat extends BaseController
         $body = json_decode($body, true);
         $document_id = $body['document_id'];
         $visit_id = $body['visit_id'];
+        $no_registration = @$body['no_registration'];
         $db = db_connect();
         $diagPerawat = $this->lowerKey($db->query("select * from pasien_diagnosa_nurse pdn inner join pasien_diagnosas_nurse pds on pdn.body_id = pds.body_id where pdn.document_id in ('$document_id') ")->getResultArray());
 
@@ -429,6 +430,8 @@ class AssessmentPerawat extends BaseController
         $hearing = $this->getHearing($document_id, $visit_id);
         $sleeping = $this->getSleeping($document_id, $visit_id);
         $social = $this->getSocial($document_id, $visit_id);
+        $pasienHistory = $this->getHistoryPasien($no_registration);
+
         return $this->response->setJSON([
             'gcs' => $gcs,
             'fallRisk' => $fallRisk,
@@ -450,8 +453,15 @@ class AssessmentPerawat extends BaseController
             'social' => @$social,
             'hearing' => @$hearing,
             'sleeping' => @$sleeping,
-            'diagPerawat' => @$diagPerawat
+            'diagPerawat' => @$diagPerawat,
+            'pasienHistory' => @$pasienHistory
         ]);
+    }
+    public function getHistoryPasien($no_registration)
+    {
+        $model = new PasienHistoryModel();
+        $select = $this->lowerKey($model->where("no_registration", $no_registration)->select("*")->findAll());
+        return $select;
     }
     public function getDiagPerawat()
     {

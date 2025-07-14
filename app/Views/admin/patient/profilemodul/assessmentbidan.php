@@ -601,6 +601,49 @@ if ($visit['clinic_id'] == 'P012') {
                                 <div class="row mb-4" id="accodrionExamInfo">
                                     <div class="">
                                         <h5 class="" id="arbheadingVitalSign">
+                                            <b>Riwayat Hamil:</b>
+                                        </h5>
+                                        <hr>
+                                        <div class="panel-group table-responsive" id="table-Riwayat-hamil-Asbid">
+                                            <table class="table table-bordered table-hover table-centered" style="text-align: center"
+                                                id="tableDat-riwayat-hamil-Asbid">
+                                                <thead class="table-primary">
+                                                    <tr>
+                                                        <th scope="row" class="w-auto text-nowrap">No.</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Tgl/Tahun Partus</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Tempat Partus</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Umur Hamil</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Jenis Persalinan</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Penolong Persalinan</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Penyulit</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Anak JK/ BB</th>
+                                                        <th scope="row" class="w-auto text-nowrap">Keadaan Sekarang</th>
+                                                        <th scope="row" class="w-auto text-nowrap"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="bodydataRiwayatHamil-Asbid" class="table-group-divider">
+
+                                                    <tr>
+                                                        <td colspan="300">Data Kosong</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="" class="col-12" aria-labelledby="">
+                                            <div class="text-muted">
+                                                <div class="row">
+                                                    <div id="bodyAddRiwayatHamil" class="col-md-12 text-center">
+                                                        <a id="arbAddRiwayatHamil" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px">
+                                                            <i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-4" id="accodrionExamInfo">
+                                    <div class="">
+                                        <h5 class="" id="arbheadingVitalSign">
                                             <b>Diagnosa Bidan:</b>
                                         </h5>
                                         <hr>

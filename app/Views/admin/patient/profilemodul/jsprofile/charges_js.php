@@ -771,11 +771,13 @@
                 var counter = 'penunjangmedis' + i;
                 addRowBill("penunjangChargesBody", "apenunjangmedis", key, i, counter);
             } else {
-                var i = $('#billPoliChargesBody tr').length + 1;
-                var counter = 'billpoli' + i
-                $("#notaNoPoli").append(new Option(billJson[key].nota_no, billJson[key]
-                    .nota_no))
-                addRowBill("billPoliChargesBody", "abillpoli", key, i, counter)
+                if (billJson[key].brand_id == '' || billJson[key].brand_id == null) {
+                    var i = $('#billPoliChargesBody tr').length + 1;
+                    var counter = 'billpoli' + i
+                    $("#notaNoPoli").append(new Option(billJson[key].nota_no, billJson[key]
+                        .nota_no))
+                    addRowBill("billPoliChargesBody", "abillpoli", key, i, counter)
+                }
             }
             var i = $('#chargesBody .bill').length + 1;
             var counter = 'charge' + i

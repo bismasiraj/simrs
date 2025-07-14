@@ -428,7 +428,7 @@ foreach ($aValue as $key => $value) {
         $("#addSocialButton").html(`<a onclick="addSocial(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addHearingButton").html(`<a onclick="addHearing(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
         $("#addSleepingButton").html(`<a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
-
+        $('#arbcollapseRiwayatARB').collapse('show');
 
 
         // const date = new Date();
@@ -569,6 +569,7 @@ foreach ($aValue as $key => $value) {
         fillRiwayatArb()
 
         generateSatelite()
+        groupeActionPrgInAssBid()
 
         // $("#formaddarb").find('input, select, textarea').each(function() {
         // const key=$(this).attr('id'); // Use ID or placeholder as key
@@ -606,6 +607,7 @@ foreach ($aValue as $key => $value) {
         $("#arbcollapseVitalSign").find("input").each(function() {
             $(this).trigger("change")
         })
+        $('#arbcollapseRiwayatARB').collapse('show');
         // flatpickrInstances["flatarbexamination_date"].setDate(
         //     formatedDatetimeFlat(ex.examination_date)
         // );
@@ -613,6 +615,7 @@ foreach ($aValue as $key => $value) {
         $("#arbexamination_date").val(ex.examination_date)
 
         getSateliteBidan(ex)
+        groupeActionPrgInAssBid()
 
         await checkSignSignature("formaddarb", "arbbody_id", "formsavearbbtnid", 3)
 
@@ -627,7 +630,8 @@ foreach ($aValue as $key => $value) {
             document_id: ex.body_id,
             visit_id: ex.visit_id,
             specialist_type_id: ex.specialist_type_id,
-            clinic_id: ex.specialist_type_id
+            clinic_id: ex.specialist_type_id,
+            no_registration: ex.no_registration
         }, 'admin/rm/assessmentperawat/getSatelitePerawat', (res) => {
             $("#bodyGcsBidan").html("")
             $("#bodyFallRiskBidan").html("")
@@ -649,7 +653,10 @@ foreach ($aValue as $key => $value) {
             $("#bodySocial").html("")
             $("#bodyHearing").html("")
             $("#bodySleeping").html("")
-
+            if (res.pasienHistory) {
+                riwayatAll = res?.pasienHistory;
+                fillRiwayatArb()
+            }
             if (res.diagBidan) {
                 $.each(res.diagBidan, function(key, value) {
                     addRowDiagBidanBasic('bodyDiagBidan', '', value.diagnosan_id, value.diag_notes, 'arbModal')

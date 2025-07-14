@@ -136,13 +136,13 @@
                     <span id=""><?= @$data['contact_address'] ?></span>
                 </div>
             </div>
-            <div class="row mb-2">
+            <!-- <div class="row mb-2">
                 <label for="" class="col-sm-3 col-form-label">Pekerjaan</label>
                 <label for="" class="col-sm-auto col-form-label">:</label>
                 <div class="col">
                     <span id=""><?= @$data['name_of_job'] ?></span>
                 </div>
-            </div>
+            </div> -->
             <div class="row mb-2">
                 <label for="" class="col-sm-3 col-form-label">Dengan kebutuhan / Diagnosa</label>
                 <label for="" class="col-sm-auto col-form-label">:</label>
@@ -212,35 +212,138 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
 </body>
+<script type="text/javascript">
+    const cropTransparentPNG = (base64, callback) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
 
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            let top = null,
+                bottom = null,
+                left = null,
+                right = null;
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const index = (y * canvas.width + x) * 4;
+                    const alpha = data[index + 3];
+                    if (alpha > 0) {
+                        if (top === null || y < top) top = y;
+                        if (bottom === null || y > bottom) bottom = y;
+                        if (left === null || x < left) left = x;
+                        if (right === null || x > right) right = x;
+                    }
+                }
+            }
+
+            if (top === null) return callback(null); // tidak ada gambar
+
+            const width = right - left + 1;
+            const height = bottom - top + 1;
+
+            const croppedCanvas = document.createElement('canvas');
+            croppedCanvas.width = width;
+            croppedCanvas.height = height;
+
+            const croppedCtx = croppedCanvas.getContext('2d');
+            croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+            const croppedBase64 = croppedCanvas.toDataURL('image/png');
+            callback(croppedBase64);
+        };
+        img.src = base64;
+    };
+</script>
 <script>
     let sign = <?= json_encode($sign); ?>;
 
     sign = JSON.parse(sign)
     $.each(sign, function(key, value) {
-        console.log(value)
         if (value.user_type == 1 && value.isvalid == 1) {
-            var qrcode = new QRCode(document.getElementById("qrcode"), {
-                text: value.sign_path,
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
-            });
-            $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
+            $("#qrcode_name").html(`(<?= $visit['fullname']; ?>)`)
+            $("#qrcode").html('<img class="mt-3" src="data:image/png;base64,' + value.sign_file +
+                '" width="400px">')
+
         } else if (value.user_type == 2 && value.isvalid == 1) {
-            var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
-                text: value.sign_path,
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
-            });
-            // $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+            const base64ttd_cetak_resumePulang_pasien1 = `data:image/gif;base64,${value.sign_file}`
+
+            if (base64ttd_cetak_resumePulang_pasien1) {
+
+                cropTransparentPNG(base64ttd_cetak_resumePulang_pasien1, (croppedImage) => {
+                    if (croppedImage) {
+                        $('#qrcode1').html(
+                            `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+                        );
+                    } else {
+                        $('#qrcode1').html('');
+                    }
+                });
+            } else {
+                $('#qrcode1').html('');
+            }
+
+            // $("#qrcode1").html('<img class="mt-3" src="data:image/gif;base64,' + value.sign_file +
+            //     '" width="400px">')
+
+        } else if (value.user_type == 3 && value.isvalid == 1) {
+
+            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+
+            const base64ttd_cetak_resumePulang_pasien2 = `data:image/gif;base64,${value.sign_file}`
+
+            if (base64ttd_cetak_resumePulang_pasien2) {
+                cropTransparentPNG(base64ttd_cetak_resumePulang_pasien2, (croppedImage) => {
+                    if (croppedImage) {
+                        $('#qrcode1').html(
+                            `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+                        );
+                    } else {
+                        $('#qrcode1').html('');
+                    }
+                });
+            } else {
+                $('#qrcode1').html('');
+            }
+
+            // $("#qrcode1").html('<img class="mt-3" src="data:image/gif;base64,' + value.sign_file +
+            //     '" width="400px">')
+
         }
     })
+    // $.each(sign, function(key, value) {
+    //     console.log(value)
+    //     if (value.user_type == 1 && value.isvalid == 1) {
+    //         var qrcode = new QRCode(document.getElementById("qrcode"), {
+    //             text: value.sign_path,
+    //             width: 150,
+    //             height: 150,
+    //             colorDark: "#000000",
+    //             colorLight: "#ffffff",
+    //             correctLevel: QRCode.CorrectLevel.H // High error correction
+    //         });
+    //         $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
+    //     } else if (value.user_type == 2 && value.isvalid == 1) {
+    //         var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
+    //             text: value.sign_path,
+    //             width: 150,
+    //             height: 150,
+    //             colorDark: "#000000",
+    //             colorLight: "#ffffff",
+    //             correctLevel: QRCode.CorrectLevel.H // High error correction
+    //         });
+    //         // $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+    //     }
+    // })
 </script>
 <style>
     @media print {

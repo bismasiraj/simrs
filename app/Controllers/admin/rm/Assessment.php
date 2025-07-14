@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin\rm;
 
+use App\Controllers\Admin\PasienKonsulan;
 use App\Controllers\BaseController;
 use App\Models\Assessment\ADLModel;
 use App\Models\Assessment\AnakModel;
@@ -56,6 +57,7 @@ use App\Models\OrganizationunitModel;
 use App\Models\PasienDiagnosaModel;
 use App\Models\PasienDiagnosasModel;
 use App\Models\PasienHistoryModel;
+use App\Models\PasienKonsulanModel;
 use App\Models\PasienModel;
 use App\Models\PasienPenunjangModel;
 use App\Models\PasienProceduresModel;
@@ -316,12 +318,17 @@ class Assessment extends BaseController
 
         $visit = $body['visit_id'];
         $bodyId = $body['body_id'];
+        $no_registration = $body['nomor'];
+        $class_room_id = $body['class_room_id'];
 
         $db = db_connect();
         if ($bodyId != '') {
-            $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = '$visit' and document_id = '$bodyId'  ")->getResultArray());
+            $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = ? and document_id = ?  ", [$visit, $bodyId])->getResultArray());
         } else {
-            $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = '$visit'")->getResultArray());
+            if ($class_room_id == '' || is_null($class_room_id))
+                $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where no_registration = ? and (class_room_id is null or class_room_id = '')", [$no_registration])->getResultArray());
+            else
+                $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = ?", [$visit])->getResultArray());
         }
 
         $queryDetil = "select * from assessment_pain_detail where body_id in (";
@@ -2061,10 +2068,11 @@ class Assessment extends BaseController
                 $primaryPD = substr($primaryPD, 0, -1);
                 $where = "and (visit_id in($primaryPD))";
                 $selectexd = $this->lowerKey($db->query("
-                    select top($top) 
+                    select
                     *
                     from examination_detail exd
-                    where exd.no_registration = '$no_registration' $where
+                    where exd.no_registration = '$no_registration'
+                    and exd.examination_date > '2025-03-01'
                     order by examination_date desc
                     ")->getResultArray());
             }
@@ -4658,29 +4666,11 @@ class Assessment extends BaseController
         $exd = new ExaminationDetailModel();
         $exd->save($dataexam);
 
-        $pasienHistory = new PasienHistoryModel();
+        // $pasienHistory = new PasienHistoryModel();
 
         $db = db_connect();
 
-        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'GEN0009'")->getResultArray());
-        $db->query("delete from pasien_history where no_registration = '$no_registration'");
-        $i = 0;
-        foreach ($select as $key => $value) {
-            if (isset(${$value['value_id']})) {
-                $i++;
-                $data = [
-                    'org_unit_code' => $org_unit_code,
-                    'no_registration' => $no_registration,
-                    'item_id' => $i,
-                    'value_id' => $value['value_id'],
-                    'value_desc' => $value['value_desc'],
-                    'histories' => ${$value['value_id']},
-                    'modified_by' => user()->username
-                ];
-                // $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
-                $pasienHistory->insert($data);
-            }
-        }
+
 
         $pdn = new PasienDiagnosaPerawatModel();
         $org = new OrganizationunitModel();
@@ -4700,7 +4690,7 @@ class Assessment extends BaseController
             'bed_id' => $bed_id,
             'no_registration' => $no_registration,
             'examination_date' => str_replace("T", " ", $examination_date),
-            'employee_id' => $employee_id,
+            'employee_id' => @$employee_id,
             'petugas_id' => user()->username,
             'descriptions' => null,
             'modified_by' => $modified_by,
@@ -4741,7 +4731,7 @@ class Assessment extends BaseController
                     'validation' => 0,
                     'terlayani' => 0,
                     'iscito' => 0,
-                    'employee_id' => $employee_id,
+                    'employee_id' => @$employee_id,
                     'treat_date' => str_replace("T", " ", $examination_date),
                     'diagnosa_desc' => $teraphy_desc,
                     'descriptions' => $pengantartext,
@@ -4758,18 +4748,58 @@ class Assessment extends BaseController
                     'class_room_id' => $class_room_id,
                     'bed_id' => $bed_id,
                     'keluar_id' => $keluar_id,
-                    'perujuk' => $employee_id,
+                    'perujuk' => @$employee_id,
                     'modified_by' => user()->username,
                     'modified_from' => $clinic_id,
                     'valid_user' => $valid_user,
                     'valid_pasien' => $valid_pasien,
                     'nota_no'  => $body_id,
                     'clinic_id_from' => $clinic_id,
-                    'employee_id_from' => $employee_id,
+                    'employee_id_from' => @$employee_id,
                 ];
                 $modelpenunjang->save($datasurat);
                 // dd($datasurat['nota_no']);
             }
+        }
+
+        if ($petugas_type == '11') {
+            $type = '0';
+            $pkModel = new PasienKonsulanModel();
+            // return $this->response->setJSON($visit_id);
+            $pkselect = $pkModel->where("visit_id", $visit_id)->select("employee_id, employee_id_to,consul_type")->findAll();
+            // $pkselect = $this->lowerKey($query);
+            if (count($pkselect) > 0) {
+                $pkfilter = array_filter($pkselect, function ($pkitem) use ($employee_id) {
+                    return $pkitem['employee_id'] == $employee_id;
+                });
+                if (count($pkfilter) > 0) {
+                    $cekraber = array_filter($pkfilter, function ($filteritem) {
+                        return $filteritem['consul_type'] == '2';
+                    });
+                    if (count($cekraber) > 0) {
+                        $type = '2';
+                    } else {
+                        $type = '0';
+                    }
+                } else {
+                    $cekraber = array_filter($pkselect, function ($pkitem) use ($employee_id) {
+                        return $pkitem['employee_id_to'] == $employee_id;
+                    });
+                    if (count($cekraber) > 0) {
+                        $ceklagi = array_filter($cekraber, function ($filteritem) {
+                            return $filteritem['consul_type'] == '2';
+                        });
+                        if (count($ceklagi) > 0)
+                            $type = '2';
+                        else
+                            $type = $cekraber[0]['consul_type'];
+                    }
+                }
+            }
+            $datapk = [
+                "consul_type" => $type
+            ];
+            $ex->where("body_id", $dataexam['body_id'])->set($datapk)->update();
         }
 
         return json_encode($dataexam);
@@ -5592,7 +5622,7 @@ class Assessment extends BaseController
                 'class_id' => @$visit['class_id'],
                 'class_id_plafond' => @$visit['class_id_plafond'],
                 'status_pasien_id' => @$visit['status_pasien_id'],
-                'visit_date' => @$visit['visit_date'],
+                'visit_date' => @$date_of_birth,
                 'booked_date' => @$visit['booked_date'],
                 'kdpoli_eks' => @$visit['kdpoli_eks'],
                 'isnew' => @$visit['isnew'],

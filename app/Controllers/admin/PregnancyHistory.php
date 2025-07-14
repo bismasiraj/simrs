@@ -19,8 +19,8 @@ class PregnancyHistory extends \App\Controllers\BaseController
         $model = new BirthHistoryModel();
         $data = $this->lowerKey(
             $model->where('org_unit_code', $formData['org_unit_code'])
-                  ->where('no_registration', $formData['no_registration'])
-                  ->findAll()
+                ->where('no_registration', $formData['no_registration'])
+                ->findAll()
         );
 
         $location = $this->lowerKey($db->query("SELECT birthplace as result from BIRTH_PLACE ORDER BY birthplace ASC")->getResultArray());
@@ -29,23 +29,26 @@ class PregnancyHistory extends \App\Controllers\BaseController
         $penyulit = $this->lowerKey($db->query(" SELECT anomali as result from BIRTH_ANOMALI")->getResultArray());
 
 
-        $result =  ['dataAll' =>$data,
-                    'filterOption'=>[
-                    'location'=>$location,
-                    'type' =>$type,
-                    'helper'=>$helper, 'penyulit'=>$penyulit]
-                    ];
-    
+        $result =  [
+            'dataAll' => $data,
+            'filterOption' => [
+                'location' => $location,
+                'type' => $type,
+                'helper' => $helper,
+                'penyulit' => $penyulit
+            ]
+        ];
+
         if (empty($result)) {
             return $this->response->setJSON([
                 'message' => 'Data Kosong',
                 'respon' => false
             ]);
-        }else{
+        } else {
             return $this->response->setJSON([
                 'message' => 'Success',
                 'respon' => true,
-                'value'=>['data'=>$result] 
+                'value' => ['data' => $result]
             ]);
         }
     }
@@ -63,6 +66,9 @@ class PregnancyHistory extends \App\Controllers\BaseController
             }
         }
 
+        $data['partus_date'] = str_replace("T", " ", $data['partus_date']);
+
+        // return json_encode($data);
         if (!isset($data['body_id'])) {
             return $this->response->setJSON([
                 'message' => 'body_id is required.',
@@ -103,7 +109,7 @@ class PregnancyHistory extends \App\Controllers\BaseController
     }
 
     public function kopprint()
-    {   
+    {
         $db = db_connect();
         $query = $db->query("select * from ORGANIZATIONUNIT");
         $orgUnits = $this->lowerKey($query->getResultArray());

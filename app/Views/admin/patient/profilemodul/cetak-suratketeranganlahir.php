@@ -186,7 +186,7 @@ $usia = sprintf('%dth %dbln %dhr', $selisih->y, $selisih->m, $selisih->d);
                             </td class="p-1">
                             <td class="p-1" style="width:33.3%">
                                 <b>Tanggal Masuk</b>
-                                <p class="m-0 mt-1 p-0"><?= tanggal_indo(date('Y-m-d')) ?></p>
+                                <p class="m-0 mt-1 p-0"><?= tanggal_indo(substr(@$visit['visit_date'], 0, 10)) ?></p>
                             </td>
                         </tr>
                         <tr>

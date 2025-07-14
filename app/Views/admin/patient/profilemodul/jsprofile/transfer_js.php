@@ -28,23 +28,29 @@
         if (props == 4) {
             $("#atransferisinternal").html(` <?php if (user()->checkPermission("assessmentmedis", "c")) {
                                                     if (true) { ?>
-                                                    <option value="4">PERAWATAN JALAN (KONTROL)</option>
-                                                    <option value="2">RUJUK EKSTERNAL</option>
-                                                    <option value="5">RAWAT INAP</option>
-                                                    <option value="10">TRANSFER INTERNAL</option>
-                                                    <option value="11">Pengobatan Selesai</option>
-                                                    <option value="12">D.O.A</option>
-                                                    <option value="13">Meninggal di IGD</option>
-                                                    <option value="14">Meninggal < 24 Jam</option>
-                                                    <option value="15">Meninggal < 48 Jam</option>
-                                                    <option value="16">Meninggal > 48 Jam</option>
-                                                    <option value="17">APS</option>
+                                                        <option value="4">PERAWATAN JALAN (KONTROL)</option>
+                                                        <option value="2">RUJUK EKSTERNAL</option>
+                                                        <option value="3">RUJUK INTERNAL</option>
+                                                        <option value="7">ITER</option>
+                                                        <option value="6">KONSUL INTERNAL</option>
+                                                        <option value="5">RAWAT INAP</option>
+                                                        <option value="10">TRANSFER INTERNAL</option>
+                                                        <option value="11">Pengobatan Selesai</option>
+                                                        <option value="12">D.O.A</option>
+                                                        <option value="13">Meninggal di IGD</option>
+                                                        <option value="14">Meninggal < 24 Jam</option>
+                                                        <option value="15">Meninggal < 48 Jam</option>
+                                                        <option value="16">Meninggal > 48 Jam</option>
+                                                        <option value="17">APS</option>
                                                 <?php }
                                                 } else {
                                                 ?>
-                                                <option value="4" disabled>PERAWATAN JALAN (KONTROL)</option>
-                                                <option value="2" disabled>RUJUK EKSTERNAL</option>
-                                                <option value="5" disabled>RAWAT INAP</option>
+                                                <option value="4">PERAWATAN JALAN (KONTROL)</option>
+                                                <option value="2">RUJUK EKSTERNAL</option>
+                                                <option value="3">RUJUK INTERNAL</option>
+                                                <option value="7">ITER</option>
+                                                <option value="6">KONSUL INTERNAL</option>
+                                                <option value="5">RAWAT INAP</option>
                                                 <option value="10">TRANSFER INTERNAL</option>
                                                 <option value="11">Pengobatan Selesai</option>
                                                 <option value="12">D.O.A</option>
@@ -394,7 +400,7 @@
         e.preventDefault();
         clicked_submit_btn.html('<i class="spinner-border spinner-border-sm"></i>')
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/tindaklanjut/saveTransfer',
+            url: '<?php echo base_url(); ?>admin/rm/assessment/saveTransfer',
             type: "POST",
             data: new FormData(this),
             dataType: 'json',
@@ -480,7 +486,7 @@
 
     const getTindakLanjut = () => {
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/tindaklanjut/getTransfer',
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getTransfer',
             type: "POST",
             data: JSON.stringify({
                 'visit_id': visit.visit_id,

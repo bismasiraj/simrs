@@ -456,7 +456,7 @@
                                 $selectlokalis[$key]['filedata64'] = $filedata64;
 
                                 echo '<tr>';
-                                echo '<th>' . $value['nama_lokalis'] . '</th>';
+                                echo '<th><p>' . $value['nama_lokalis'] . '</p><p>' . $value['value_desc'] . '</p></th>';
                                 echo '<td style="width: 50%;">';
                                 echo '<img class="mt-3" src="data:image/jpeg;base64,' . $filedata64 . '" width="400px">';
                                 echo '</td>';
@@ -772,7 +772,7 @@
 <script>
     $.each(sign, function(key, value) {
         if (value.user_type == 1 && value.isvalid == 1) {
-            $("#qrcode_name").html(`(<?= @$visit['fullname']; ?>)`)
+            $("#qrcode_name").html(`(${value.fullname})`)
             $("#qrcode").html('<img class="mt-3" src="data:image/png;base64,' + value.sign_file + '" width="400px">')
 
         } else if (value.user_type == 2 && value.isvalid == 1) {

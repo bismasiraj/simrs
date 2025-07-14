@@ -163,7 +163,8 @@
         };
 
         const filterByInfus = (data) => {
-            return data.filter(item => item.fluid_type === "G0230309");
+            // return data.filter(item => item.fluid_type === "G0230309");
+            return data
         };
 
         const groupByAwarenessAndType = (data) => {

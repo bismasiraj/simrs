@@ -28,24 +28,33 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
         $model = new FisioterapiModel();
         $modelSchedule = new FisioterapiScheduleModel();
         $modelDetail = new FisioterapiDetailModel();
-
-        $data = $this->lowerKey(
-            $model->where('visit_id', $formData['visit_id'])
-                ->orderBy('vactination_date', 'DESC')
-                ->findAll()
-        );
+        if ($formData['isrj'] === "1" || $formData['isrj'] === 1){
+            $data = $this->lowerKey(
+                $model->where('no_registration ', $formData['no_registration'])
+                    ->where('isrj ', '1')
+                    ->orderBy('vactination_date', 'DESC')
+                    ->findAll()
+            );
+        }else{
+            $data = $this->lowerKey(
+                $model->where('visit_id', $formData['visit_id'])
+                    ->orderBy('vactination_date', 'DESC')
+                    ->findAll()
+            );
+        }
+       
 
         $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
         $ttdDir = $this->imageloc . "uploads/dokter/";
         $ttdDirPasien = $this->imageloc . "uploads/signatures/";
-
+        
         foreach ($data as &$pasien1) {
             $ttdBase64 = null;
             $ttdBase64Pasien = null;
-
+        
             $employeeId = $pasien1['employee_id'] ?? null;
             $no_rmId = $pasien1['no_registration'] ?? null;
-
+        
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $filePath = $ttdDir . $employeeId . '.' . $ext;
@@ -57,12 +66,12 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                     }
                 }
             }
-
+        
             if (!empty($no_rmId)) {
                 foreach ($allowedExtensions as $extPasien) {
                     $pattern = $ttdDirPasien . $no_rmId . '*.' . $extPasien;
                     $files = glob($pattern);
-
+                    
                     if (!empty($files)) {
                         $filePathPasien = $files[0];
                         if (file_exists($filePathPasien)) {
@@ -74,14 +83,14 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                     }
                 }
             }
-
+        
             $pasien1['ttd_dok'] = $ttdBase64;
-            $pasien1['ttd_pasien'] = $ttdBase64Pasien;
+            $pasien1['ttd_pasien'] = $ttdBase64Pasien; 
         }
-        unset($pasien1);
+        unset($pasien1); 
+        
 
-
-
+        
         $dataSchedule = [];
         foreach ($data as $key => $row) {
             $dataSchedule[$row['vactination_id']] = $this->lowerKey($modelSchedule
@@ -144,20 +153,15 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
 
         return $this->response->setStatusCode(200)->setJSON([
             'success' => $success,
-            'value'   => [
-                'fisioterapi' => $data,
-                'diagnosa' => $diagnosa,
-                'kop' => $kopprint,
-                'fioterapi_detail' => $dataDetail,
-                'fisioterapi_schedule' => $dataSchedule,
-                'monitoring_nyeri' => $pain,
-                'clinic_cover' => $clinic,
-                'employee' => $employee
-            ],
+            'value'   => ['fisioterapi' => $data, 'diagnosa' => $diagnosa, 
+            'kop' => $kopprint, 
+            'fioterapi_detail' => $dataDetail,
+            'fisioterapi_schedule' => $dataSchedule, 'monitoring_nyeri' => $pain,
+            'clinic_cover'=>$clinic, 'employee'=> $employee],
+             
 
 
-
-        ]);
+        ]); // baru havin 26 09
     }
 
     public function insertOrUpdateDataFisio()
@@ -169,7 +173,7 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
         $data = [];
 
         foreach ($formData as $key => $value) {
-            $data[$key] = $value;
+                $data[$key] = $value;
         }
 
         if (!isset($data['vactination_id'])) {
@@ -290,13 +294,13 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                         'start_date' => (!empty($program['vactination_date']) && !empty($program['start'])) ? $program['vactination_date'] . ' ' . $program['start'] : null,
                         'end_date' => (!empty($program['vactination_date']) && !empty($program['end'])) ? $program['vactination_date'] . ' ' . $program['end'] : null,
                         'examination_date' => date("Y-m-d H:i:s"),
-                        'treatment_description' => $program['treatment_description'],
-                        'schedule_type' => $program['schedule_type'],
+                        'treatment_description'=> $program['treatment_description'],
+                        'schedule_type'=> $program['schedule_type'],
                         'valid_user'  => $program['valid_user'] !== "" ? $program['valid_user'] : null,
                         'valid_pasien' => $program['valid_pasien'] !== "" ? $program['valid_pasien'] : null,
                         'valid_other'  => $program['valid_other'] !== "" ? $program['valid_other'] : null,
 
-
+                        
                     ];
                 }
 

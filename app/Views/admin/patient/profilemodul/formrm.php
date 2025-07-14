@@ -247,4 +247,12 @@ $permission = user()->getPermissions();
         '<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/icuncppt_preview/' . base64_encode(json_encode($visit)); ?>' +
         '/' + $("#armbody_id").val() +
         '" target="_blank">ICU Perawat & CPPT</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/pengobatan_oral/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank">Daftar Pengobatan Oral</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/pengobatan_parenteral/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank">Daftar Pengobatan Parenteral</a></li>')
 </script>

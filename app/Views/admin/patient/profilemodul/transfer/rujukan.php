@@ -12,7 +12,7 @@
     </div>
     <div id="ardirujukkegroup" class="col-sm-12 col-md-8">
         <div class="mb-3">
-            <div class="form-group"><label for="diag_awal">Dirujuk Ke</label>
+            <div class="form-group"><label for="diag_awal">RS Tujuan</label>
                 <div class="select2-full-width" style="width:100%">
                     <select class="form-control  patient_list_ajax" name='dirujukke' id="ardirujukke" style="width: 100%">
                     </select>
@@ -51,7 +51,7 @@
     <div id="arkdpoli_kontrolgroup" class="col-sm-4 col-md-4">
         <div class="mb-3">
             <div class="form-group">
-                <label>Ke Poli</label>
+                <label>Dokter yang Dituju</label>
                 <input type="text" name="nmpoli_kontrol" id="arnmpoli_kontrol" class="form-control" />
                 <!-- <select name="kdpoli_kontrol" id="arkdpoli_kontrol" class="form-control ">
                                             <?php $cliniclist = array();

@@ -23,7 +23,7 @@
     }
 
     const templateNeurologi = (props) => {
-        console.log(props)
+        console.warn(props)
         const contentShow = [{
                 label: "",
                 type: "hidden",
@@ -469,9 +469,10 @@
                 org_unit_code: props?.visit?.org_unit_code,
                 session_id: props?.visit?.session_id,
             }, 'admin/AssNeurology/getData', (res) => {
-                templateNeurologi({
-                    data: res?.value?.data?.dataAll
-                })
+                if (res?.value?.data?.dataAll.length > 0)
+                    templateNeurologi({
+                        data: res?.value?.data?.dataAll
+                    })
             }, (beforesend) => {
                 getLoadingGlobalServices('bodydatapemeriksaanSaraf')
             })

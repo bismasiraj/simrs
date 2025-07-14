@@ -583,18 +583,18 @@ class lainnya extends \App\Controllers\BaseController
             $db = db_connect();
 
             // $visit = json_decode($visit, true);
-
+            
             if ($data === false) {
                 return "Invalid visit data received!";
             }
-
+            
             $data = json_decode($data, true);
-
+            
             $pv = new PasienVisitationModel();
             $visit = $this->lowerKey($pv->find($data['visit_id']));
-            $psMobile = $this->lowerKey($db->query("SELECT MOBILE FROM PASIEN where NO_REGISTRATION = ?", $data['no_registration'])->getRowArray());
+            $psMobile = $this->lowerKey($db->query("SELECT MOBILE FROM PASIEN where NO_REGISTRATION = ?",$data['no_registration'])->getRowArray());
             $visit['mobile'] = $psMobile['mobile'] ?? null;
-
+            
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return "JSON decode error: " . json_last_error_msg();
             }
@@ -606,22 +606,57 @@ class lainnya extends \App\Controllers\BaseController
 
             $kopprintData = $this->kopprint();
 
-            $dataTables = $this->lowerKey($db->query("SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound, h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi,
-                                                        PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, null as kode,
-                                                        reg_date AS tgl_hasil, norm, k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, 
-                                                        k.pengirim_name, k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl,k.diagnosa_desc,h.valid_user, h.valid_date,k.indication_desc
-                                                        FROM sharelis.dbo.hasillis h
-                                                        LEFT OUTER JOIN sharelis.dbo.kirimlis k ON h.norm COLLATE database_default = k.no_pasien COLLATE 
-                                                        database_default AND H.kode_kunjungan = K.Kode_Kunjungan
-                                                        WHERE H.kode_kunjungan LIKE '" . $data['nolist'] . "'
-                                                        AND No_Pasien LIKE '" . $data['no_pasien'] . "'
-                                                        AND reg_date BETWEEN DATEADD(hour, 0, '" . $data['start_request'] . "')
-                                                        AND DATEADD(hour, 24, COALESCE('" . $data['end_request'] . "', GETDATE()))
-                                                        GROUP BY H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound,
-                                                        PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, k.Tgl_Periksa, reg_date, norm,
-                                                        k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name,
-                                                         h.flag_hl,h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi,k.diagnosa_desc,h.valid_user, h.valid_date,k.indication_desc
-                                                        ORDER BY urut_bound, kode_kunjungan, tarif_id")->getResultArray());
+            $dataTables = $this->lowerKey($db->query("SELECT DISTINCT
+                            H.nolab_lis,
+                            H.kode_kunjungan,
+                            H.tarif_id,
+                            H.tarif_name,
+                            H.kel_pemeriksaan,
+                            H.urut_bound,
+                            H.TGL_HASIL_SELESAI,
+                            H.Catatan,
+                            H.Rekomendasi,
+                            H.PARAMETER_NAME,
+                            H.hasil,
+                            H.satuan,
+                            H.NILAI_RUJUKAN,
+                            H.METODE_PERIKSA,
+                            NULL AS kode,
+                            H.reg_date AS tgl_hasil,
+                            H.norm,
+                            K.nama,
+                            K.alamat,
+                            K.date_of_birth,
+                            K.cara_bayar_name,
+                            K.pengirim_name,
+                            K.ruang_name,
+                            K.kelas_name,
+                            K.Tgl_Periksa,
+                            H.flag_hl,
+                            K.diagnosa_desc,
+                            H.valid_user,
+                            H.valid_date,
+                            K.indication_desc
+                        FROM sharelis.dbo.hasillis H
+                        JOIN (
+                            SELECT no_pasien, kode_kunjungan, MAX(tgl_periksa) AS max_tgl
+                            FROM sharelis.dbo.kirimlis
+                            GROUP BY no_pasien, kode_kunjungan
+                        ) k_max
+                            ON H.norm COLLATE database_default = k_max.no_pasien COLLATE database_default
+                            AND H.kode_kunjungan = k_max.kode_kunjungan
+                        JOIN sharelis.dbo.kirimlis K
+                            ON H.norm COLLATE database_default = K.no_pasien COLLATE database_default
+                            AND H.kode_kunjungan = K.kode_kunjungan
+                            AND K.tgl_periksa = k_max.max_tgl
+                        WHERE H.kode_kunjungan LIKE '" . $data['nolist'] . "'
+                        AND H.norm LIKE '" . $data['no_pasien'] . "'
+                        AND H.reg_date BETWEEN 
+                            DATEADD(hour, 0, '" . $data['start_request'] . "') 
+                            AND DATEADD(hour, 24, COALESCE('" . $data['end_request'] . "', GETDATE()))
+                        ORDER BY H.urut_bound, H.kode_kunjungan, H.tarif_id
+                    ")->getResultArray());
+        
 
             $doctor = $this->lowerKey($db->query("SELECT fullname from EMPLOYEE_ALL where NONACTIVE= 0 and employee_id in (select employee_id from DOCTOR_SCHEDULE where clinic_id ='P013')")->getRowArray());
             $username_valid = $this->lowerKey($db->query("SELECT users.username,
@@ -637,7 +672,7 @@ class lainnya extends \App\Controllers\BaseController
             $datefollowup = $this->lowerKey($db->query("SELECT * FROM PASIEN_TRANSFER where VISIT_ID = '" . $visit['visit_id'] . "' AND NO_REGISTRATION = '" . $visit['no_registration'] . "' 
                                         AND ISINTERNAL = 4  ORDER BY EXAMINATION_DATE DESC
                                     ")->getRowArray());
-
+            
             if ($username_valid) {
                 $visit['valid_users_p'] = $username_valid['fullname'];
             }
@@ -657,17 +692,17 @@ class lainnya extends \App\Controllers\BaseController
                 $row = &$dataTables[0];
                 $ttdBase64 = null;
                 $validUser = $row['valid_user'] ?? '';
-
+            
                 if (!empty($validUser)) {
                     $dokterValidasi = $this->lowerKey($db->query("
                         SELECT employee_id 
                         FROM EMPLOYEE_ALL 
                         WHERE NONACTIVE = 0 AND fullname like  ?
                     ", ['%' . $validUser . '%'])->getRowArray());
-
+            
                     if ($dokterValidasi && isset($dokterValidasi['employee_id'])) {
                         $employeeId = $dokterValidasi['employee_id'];
-
+            
                         foreach ($allowedExtensions as $ext) {
                             $filePath = $ttdDir . $employeeId . '.' . $ext;
                             if (file_exists($filePath)) {
@@ -679,10 +714,10 @@ class lainnya extends \App\Controllers\BaseController
                         }
                     }
                 }
-
+            
                 $row['ttd_dokter_validasi'] = $ttdBase64;
             }
-
+            
 
             if (isset($dataTables)) {
                 return view("admin/patient/profilemodul/formrm/rm/hasil-pemeriksaan-laboratorium.php", [

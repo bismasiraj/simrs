@@ -114,8 +114,8 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Data Istri</th>
-                    <th>Data Suami</th>
+                    <th style="width: 50%;">Data Istri</th>
+                    <th style="width: 50%;">Data Suami</th>
                 </tr>
             </thead>
             <tbody>
@@ -380,6 +380,19 @@
             </tbody>
         </table>
         <div class="row">
+            <h5 class="text-start">Diagnosis Kebidanan</h5>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td class="p-1">
+                        <b>Diagnosis</b>
+                        <p class="m-0 mt-1 p-0"><?= @$val['asesmen']; ?></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
             <h5 class="text-start">Rencana Asuhan dan Terapi</h5>
         </div>
         <table class="table table-bordered">
@@ -431,19 +444,6 @@
             </tbody>
         </table>
 
-        <div class="row">
-            <h5 class="text-start">Diagnosis Kebidanan</h5>
-        </div>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <td class="p-1">
-                        <b>Diagnosis</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['asesmen']; ?></p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 
 
         <div class="row">

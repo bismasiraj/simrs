@@ -556,65 +556,65 @@ $permission = user()->getPermissions();
     })
 
     $("#reportEKlaimTab").off("click").on("click", async function(e) {
-        $("#ranapFile_url").html("")
-        $("#rajalFile_url").html("")
-        $("#rajalFileIgd_url").html("")
-        $("#kronis_url").html("")
-
-        postData({
-            no_regis: visit?.no_registration
-        }, 'admin/reklaim/CetakReklaim/filterObat', (res) => {
-            if (res?.value.length > 1) {
-                let result = `<option value="semua">Semua</option>`;
-                res?.value?.map((e) => {
-                    result += `<option value="${e?.description}">${e?.description}</option>`
-                })
-                $("#nama-obat-kronis-select").html(result)
-
-            }
-        })
-
-        postData({
-            no_regis: visit?.no_registration,
-            trans_id: visit?.trans_id
-        }, 'admin/reklaim/CetakReklaim/labRequestHasilSelect', (res) => {
-            if (res?.value.length > 0) {
-                let result = `<option value="semua">Pilih Semua</option>`; // Opsi Pilih Semua
-                res?.value?.forEach((e) => {
-                    result += `<option value="${e?.kode_kunjungan}">${e?.tarif_names}</option>`;
-                });
-
-                $("#selectmultiLabKron").html(result).trigger("change");
-
-                // Pastikan event hanya didaftarkan sekali
-                $("#selectmultiLabKron").off("select2:select select2:unselect").on("select2:select",
-                    function(e) {
-                        if (e.params.data.id === "semua") {
-                            let allValues = $("#selectmultiLabKron option").map(function() {
-                                return $(this).val();
-                            }).get();
-                            $("#selectmultiLabKron").val(allValues).trigger("change");
-                        }
-                    }).on("select2:unselect", function(e) {
-                    if (e.params.data.id === "semua") {
-                        $("#selectmultiLabKron").val(null).trigger("change");
-                    }
-                });
-            }
-        });
-
-
         let newDate = ""
         postData({
             no_regis: visit?.no_registration,
             trans_id: visit?.trans_id
         }, 'admin/reklaim/CetakReklaim/getdateexit', (res) => {
-            console.log(res);
-            if (res?.status === true) {
-                newDate = res?.value?.examination_date
-            } else {
-                newDate = ""
-            }
+            newDate = res?.status === true ? res?.value?.examination_date : "";
+
+            $("#ranapFile_url").html("")
+            $("#rajalFile_url").html("")
+            $("#rajalFileIgd_url").html("")
+            $("#kronis_url").html("")
+
+            postData({
+                no_regis: visit?.no_registration
+            }, 'admin/reklaim/CetakReklaim/filterObat', (res) => {
+                if (res?.value.length > 1) {
+                    let result = `<option value="semua">Semua</option>`;
+                    res?.value?.map((e) => {
+                        result +=
+                            `<option value="${e?.description}">${e?.description}</option>`
+                    })
+                    $("#nama-obat-kronis-select").html(result)
+
+                }
+            })
+
+            postData({
+                no_regis: visit?.no_registration,
+                trans_id: visit?.trans_id
+            }, 'admin/reklaim/CetakReklaim/labRequestHasilSelect', (res) => {
+                if (res?.value.length > 0) {
+                    let result =
+                        `<option value="semua">Pilih Semua</option>`; // Opsi Pilih Semua
+                    res?.value?.forEach((e) => {
+                        result +=
+                            `<option value="${e?.kode_kunjungan}">${e?.tarif_names}</option>`;
+                    });
+
+                    $("#selectmultiLabKron").html(result).trigger("change");
+
+                    $("#selectmultiLabKron").off("select2:select select2:unselect").on(
+                        "select2:select",
+                        function(e) {
+                            if (e.params.data.id === "semua") {
+                                let allValues = $("#selectmultiLabKron option").map(
+                                    function() {
+                                        return $(this).val();
+                                    }).get();
+                                $("#selectmultiLabKron").val(allValues).trigger("change");
+                            }
+                        }).on("select2:unselect", function(e) {
+                        if (e.params.data.id === "semua") {
+                            $("#selectmultiLabKron").val(null).trigger("change");
+                        }
+                    });
+                }
+            });
+
+
             renderArcodEklaim({
                 newDate: newDate
             })

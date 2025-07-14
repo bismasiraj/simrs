@@ -257,9 +257,11 @@
                 org_unit_code: props?.visit?.org_unit_code,
                 session_id: props?.visit?.session_id,
             }, 'admin/AssDermatovenerologi/getData', (res) => {
-                templateDermatovenerologi({
-                    data: res?.value?.data?.dataAll
-                })
+
+                if (res?.value?.data?.dataAll.length > 0)
+                    templateDermatovenerologi({
+                        data: res?.value?.data?.dataAll
+                    })
                 // renderDataTabelsAssessmenDermatovenerologi({
                 //     data: res?.value?.data?.dataAll
                 // })

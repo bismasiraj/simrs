@@ -40,7 +40,11 @@
                 </tr>
                 <tr>
                     <td class="bolds">Alamat</td>
-                    <td><?php echo ($visit['visitor_address']); ?></td>
+                    <td><?php echo (@$visit['visitor_address']); ?></td>
+                </tr>
+                <tr>
+                    <td class="bolds">No HP</td>
+                    <td><?php echo (@$visit['phone_number']); ?></td>
                 </tr>
                 <tr>
                     <td class="bolds">NIK</td>
@@ -94,8 +98,12 @@
                     <?php } ?>
                 </tr>
                 <tr>
-                    <td class="bolds">Alergi</td>
-                    <td class="alergi"> - </td>
+                    <td class="bolds">Alergi Obat</td>
+                    <td class="alergi_obat"> <?= @$visit['alergi_obat'] ?? "-"; ?> </td>
+                </tr>
+                <tr>
+                    <td class="bolds">Alergi Non Obat</td>
+                    <td class="alergi_non"> <?= @$visit['alergi_non'] ?? "-"; ?> </td>
                 </tr>
             </table>
             <hr>

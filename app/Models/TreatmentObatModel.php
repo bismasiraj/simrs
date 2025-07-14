@@ -74,7 +74,8 @@ class TreatmentObatModel extends Model
         'sold_status',
         'measure_dosis',
         'body_id',
-        'status_tarif'
+        'status_tarif',
+        'status_pasien_id'
     ];
 
     // Dates

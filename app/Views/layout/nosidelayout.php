@@ -203,6 +203,8 @@
             });
 
             setTimeout(function() {
+                console.log("timeout 123")
+
                 $('#loading-indicator').hide();
                 $('#layout-wrapper').fadeIn(200);
             }, 3000);

@@ -1,1157 +1,971 @@
 <style>
-.outline-white-bg {
-    /* box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.5); */
-    background-color: #fff
-}
+    .outline-white-bg {
+        /* box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.5); */
+        background-color: #fff
+    }
 
-.outline-warning-bg {
-    /* box-shadow: inset 0 0 0 3px rgba(255, 193, 7, 0.7); */
-    background-color: #fff5cc;
-}
+    .outline-warning-bg {
+        /* box-shadow: inset 0 0 0 3px rgba(255, 193, 7, 0.7); */
+        background-color: #fff5cc;
+    }
 
-.outline-danger-bg {
-    background-color: #ffcccc
-        /* box-shadow: inset 0 0 0 3px rgba(220, 53, 69, 0.7); */
-}
+    .outline-danger-bg {
+        background-color: #ffcccc
+            /* box-shadow: inset 0 0 0 3px rgba(220, 53, 69, 0.7); */
+    }
 </style>
 
 
 
 
 <script type="text/javascript">
-let treatmentData = [];
-let tarif_id_oprs = []
-let historyPasien = [];
-let pasienOperasiValue = [];
-let pasienOperasiSelected = [];
-let genBodyID = ''; //new
-let checkKeselamatanBodyID = ''; //new
-let checkAnestesiBodyID = ''; //new
-let informasiPostOperasiBodyID = ''; //new
-let anestesiValID = ''; //new
-let kopTemplateOprs = [];
-(function() {
-    $(document).ready(function() {
+    let treatmentData = [];
+    let tarif_id_oprs = []
+    let historyPasien = [];
+    let pasienOperasiValue = [];
+    let pasienOperasiSelected = [];
+    let genBodyID = ''; //new
+    let checkKeselamatanBodyID = ''; //new
+    let checkAnestesiBodyID = ''; //new
+    let informasiPostOperasiBodyID = ''; //new
+    let anestesiValID = ''; //new
+    let kopTemplateOprs = [];
+    (function() {
+        $(document).ready(function() {
 
 
-        getDataTableOperation(visit);
+            getDataTableOperation(visit);
 
 
-        $('#container-tab').attr('hidden', true) //update
+            $('#container-tab').attr('hidden', true) //update
 
-    });
-    let quillInstances = {}
-    let quillInstancesModal = {}
-    let tasksValue = []
-    let employesValue = []
-    let InstrumenValue = []
-    let dataDrain = []
-    let globalBodyId = '';
+        });
+        let quillInstances = {}
+        let quillInstancesModal = {}
+        let tasksValue = []
+        let employesValue = []
+        let InstrumenValue = []
+        let dataDrain = []
+        let globalBodyId = '';
 
-    // OPTIONS & SUPPORT
-    const generateCode = () => {
-        let now = new Date();
-        let code = "" + now.getFullYear() +
-            ('0' + (now.getMonth() + 1)).slice(-2) +
-            ('0' + now.getDate()).slice(-2) +
-            ('0' + now.getHours()).slice(-2) +
-            ('0' + now.getMinutes()).slice(-2) +
-            ('0' + now.getSeconds()).slice(-2);
-        let randomDigits = ('00' + Math.floor(Math.random() * 1000)).slice(-3);
+        // OPTIONS & SUPPORT
+        const generateCode = () => {
+            let now = new Date();
+            let code = "" + now.getFullYear() +
+                ('0' + (now.getMonth() + 1)).slice(-2) +
+                ('0' + now.getDate()).slice(-2) +
+                ('0' + now.getHours()).slice(-2) +
+                ('0' + now.getMinutes()).slice(-2) +
+                ('0' + now.getSeconds()).slice(-2);
+            let randomDigits = ('00' + Math.floor(Math.random() * 1000)).slice(-3);
 
-        return code + randomDigits;
-    };
+            return code + randomDigits;
+        };
 
-    const initializeSelect2 = () => {
-        $('.select2-oprs').each(function() {
-            const dropdownParent = $(this).closest('.modal').length > 0 ?
-                $(this).closest('.modal') :
-                $(this).parent();
+        const initializeSelect2 = () => {
+            $('.select2-oprs').each(function() {
+                const dropdownParent = $(this).closest('.modal').length > 0 ?
+                    $(this).closest('.modal') :
+                    $(this).parent();
 
-            $(this).select2({
-                // placeholder: "Select an option",
-                dropdownParent: dropdownParent,
-                width: '100%',
+                $(this).select2({
+                    // placeholder: "Select an option",
+                    dropdownParent: dropdownParent,
+                    width: '100%',
+                });
             });
-        });
-    };
+        };
 
 
-    const getShiftIdForDropdown = (dropdownType) => {
-        switch (dropdownType) {
-            case 'Operator':
-                return 1;
-            case 'Anestesi':
-                return 2;
-            case 'Instrumen':
-            case 'Sirkuler':
-            case 'Perawat':
-                return 3;
-            case 'Dokter':
-                return null;
-            default:
-                return 4;
-        }
-    };
-
-    const groupTasks = (data) => {
-        return data.reduce((acc, item) => {
-            const taskGroupName = item.task.split(' ')[0];
-            if (!acc[taskGroupName]) acc[taskGroupName] = [];
-            acc[taskGroupName].push(item);
-            return acc;
-        }, {});
-    };
-
-    const manipulationsTextCheckbox = (ids) => {
-        ids.forEach(id => {
-            let initialInput = document.getElementById(id);
-
-            if (!initialInput) return;
-            if (initialInput.value.trim() !== '') {
-                initialInput.style.display = 'block';
-                return;
+        const getShiftIdForDropdown = (dropdownType) => {
+            switch (dropdownType) {
+                case 'Operator':
+                    return 1;
+                case 'Anestesi':
+                    return 2;
+                case 'Instrumen':
+                case 'Sirkuler':
+                case 'Perawat':
+                    return 3;
+                case 'Dokter':
+                    return null;
+                default:
+                    return 4;
             }
+        };
 
-            let checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'form-check-input';
-            checkbox.id = `checkbox_${id}`;
-            checkbox.name = 'sedation';
-            checkbox.value = '';
+        const groupTasks = (data) => {
+            return data.reduce((acc, item) => {
+                const taskGroupName = item.task.split(' ')[0];
+                if (!acc[taskGroupName]) acc[taskGroupName] = [];
+                acc[taskGroupName].push(item);
+                return acc;
+            }, {});
+        };
 
-            initialInput.parentNode.insertBefore(checkbox, initialInput);
+        const manipulationsTextCheckbox = (ids) => {
+            ids.forEach(id => {
+                let initialInput = document.getElementById(id);
 
-            function toggleInput() {
-                if (checkbox.checked) {
-
+                if (!initialInput) return;
+                if (initialInput.value.trim() !== '') {
                     initialInput.style.display = 'block';
-                    checkbox.style.display = 'none';
-                    initialInput.classList.remove('hidden');
-                    initialInput.focus();
+                    return;
+                }
+
+                let checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'form-check-input';
+                checkbox.id = `checkbox_${id}`;
+                checkbox.name = 'sedation';
+                checkbox.value = '';
+
+                initialInput.parentNode.insertBefore(checkbox, initialInput);
+
+                function toggleInput() {
+                    if (checkbox.checked) {
+
+                        initialInput.style.display = 'block';
+                        checkbox.style.display = 'none';
+                        initialInput.classList.remove('hidden');
+                        initialInput.focus();
+                    } else {
+
+                        initialInput.style.display = 'none';
+                        checkbox.style.display = 'block';
+                        initialInput.classList.add('hidden');
+                    }
+                }
+
+                checkbox.addEventListener('change', toggleInput);
+
+                initialInput.style.display = 'none';
+                checkbox.style.display = 'block';
+            });
+        };
+
+        const renderDropdownTreatment = () => {
+            let data = treatmentData;
+
+            let result = "";
+            data.forEach((item) => {
+                result +=
+                    `<option value="${item.tarif_id}" data-operation-type="${item.operation_type}">${item.tarif_name} (${item?.name_of_class} - ${formatToIDRResult(item?.amount_paid ?? 0)})</option>`;
+            });
+
+            $("#bill_id-permintaan_operasi").html(
+                `<option selected  value="">Pilih Tindakan</option>` +
+                result);
+        };
+
+        // ACTIONS & BTN
+        const actionDropdownSpesialisas = () => {
+            $("#bill_id-permintaan_operasi").off().on("change", function(e) {
+                let selectedOption = $(this).find('option:selected');
+                let operationType = selectedOption.data('operation-type');
+                $("#operation_type-permintaan_operasi").val(operationType);
+                const foundData = treatmentData.find(item => item.operation_type ===
+                    `${operationType}`);
+                $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
+            });
+        }
+
+
+        const getDataTableOperation = (props) => {
+
+            $("#patientOperationRequestTab").off().on("click", function(e) {
+
+                if (!(visit?.locked === '0' || visit?.locked === null)) {
+                    $(".spppoli-to-hide").remove();
+                }
+
+                // getDataTreatment()
+                getLoadingscreen("contentToHide-requestOperation", "load-content-requestOperation")
+                e.preventDefault();
+                getDataList(
+                    'admin/PatientOperationRequest/getTreatment',
+                    (res) => {
+
+                        treatmentData = res?.bill_id;
+                        tarif_id_oprs = res?.tarif_id
+                        kopTemplateOprs = res?.kop
+                        dr_oprtOprs = res?.dr_oprt
+
+                        $('.kop-name-oprs').text(res?.kop?.name_of_org_unit || '');
+                        $('.kop-address-oprs').html(res?.kop?.contact_address + ',' + res?.kop?.phone +
+                            ', Fax:' +
+                            res?.kop?.fax + ',' + res?.kop?.kota +
+                            '<br>' + res?.kop?.sk
+                        );
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
+                        })
+                        $("#container-tab").slideUp();
+                        actionButtonAddOperation(props);
+                    },
+                    () => {
+                        // console.log('Before send callback');
+                    }
+                );
+
+
+
+            })
+        };
+
+
+        const initializeFlatpickrOperasi = () => {
+            $(".datetimeflatpickr-oprs").each(function() {
+                const inputVal = $(this).val();
+
+                let initialDate = '';
+
+                if (inputVal) {
+                    if (moment(inputVal, moment.ISO_8601, true).isValid()) {
+                        initialDate = moment(inputVal).format("DD/MM/YYYY HH:mm");
+                    } else if (moment(inputVal, "DD/MM/YYYY HH:mm", true).isValid()) {
+                        initialDate = moment(inputVal, "DD/MM/YYYY HH:mm").format("DD/MM/YYYY HH:mm");
+                    } else if (moment(inputVal, "DD-MM-YYYY HH:mm", true).isValid()) {
+                        initialDate = moment(inputVal, "DD-MM-YYYY HH:mm").format("DD/MM/YYYY HH:mm");
+                    } else {
+                        initialDate = moment().format(
+                            "DD/MM/YYYY HH:mm");
+                    }
                 } else {
+                    initialDate = moment().format("DD/MM/YYYY HH:mm");
 
-                    initialInput.style.display = 'none';
-                    checkbox.style.display = 'block';
-                    initialInput.classList.add('hidden');
                 }
-            }
 
-            checkbox.addEventListener('change', toggleInput);
+                flatpickr(this, {
+                    enableTime: true,
+                    dateFormat: "d/m/Y H:i",
+                    time_24hr: true,
+                    defaultDate: initialDate,
+                    allowInput: true
+                });
+            });
 
-            initialInput.style.display = 'none';
-            checkbox.style.display = 'block';
-        });
-    };
+            $(".datetimeflatpickr-oprs").prop("readonly", false);
 
-    const renderDropdownTreatment = () => {
-        let data = treatmentData;
-
-        let result = "";
-        data.forEach((item) => {
-            result +=
-                `<option value="${item.tarif_id}" data-operation-type="${item.operation_type}">${item.tarif_name} (${item?.name_of_class} - ${formatToIDRResult(item?.amount_paid ?? 0)})</option>`;
-        });
-
-        $("#bill_id-permintaan_operasi").html(
-            `<option selected  value="">Pilih Tindakan</option>` +
-            result);
-    };
-
-    // ACTIONS & BTN
-    const actionDropdownSpesialisas = () => {
-        $("#bill_id-permintaan_operasi").off().on("change", function(e) {
-            let selectedOption = $(this).find('option:selected');
-            let operationType = selectedOption.data('operation-type');
-            $("#operation_type-permintaan_operasi").val(operationType);
-            const foundData = treatmentData.find(item => item.operation_type ===
-                `${operationType}`);
-            $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
-        });
-    }
-
-
-    const getDataTableOperation = (props) => {
-
-        $("#patientOperationRequestTab").off().on("click", function(e) {
-
-            if (!(visit?.locked === '0' || visit?.locked === null)) {
-                $(".spppoli-to-hide").remove();
-            }
-
-            // getDataTreatment()
-            getLoadingscreen("contentToHide-requestOperation", "load-content-requestOperation")
-            e.preventDefault();
-            getDataList(
-                'admin/PatientOperationRequest/getTreatment',
-                (res) => {
-
-                    treatmentData = res?.bill_id;
-                    tarif_id_oprs = res?.tarif_id
-                    kopTemplateOprs = res?.kop
-                    dr_oprtOprs = res?.dr_oprt
-
-                    $('.kop-name-oprs').text(res?.kop?.name_of_org_unit || '');
-                    $('.kop-address-oprs').html(res?.kop?.contact_address + ',' + res?.kop?.phone +
-                        ', Fax:' +
-                        res?.kop?.fax + ',' + res?.kop?.kota +
-                        '<br>' + res?.kop?.sk
-                    );
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
-                    })
-                    $("#container-tab").slideUp();
-                    actionButtonAddOperation(props);
-                },
-                () => {
-                    // console.log('Before send callback');
+            $(".datetimeflatpickr-oprs").on("change", function() {
+                let theid = $(this).attr("id");
+                if (String(theid)?.includes("flat")) {
+                    theid = theid.replace("flat", "");
                 }
-            );
+                let thevalue = $(this).val();
 
-
-
-        })
-    };
-
-
-    const initializeFlatpickrOperasi = () => {
-        $(".datetimeflatpickr-oprs").each(function() {
-            const inputVal = $(this).val();
-
-            let initialDate = '';
-
-            if (inputVal) {
-                if (moment(inputVal, moment.ISO_8601, true).isValid()) {
-                    initialDate = moment(inputVal).format("DD/MM/YYYY HH:mm");
-                } else if (moment(inputVal, "DD/MM/YYYY HH:mm", true).isValid()) {
-                    initialDate = moment(inputVal, "DD/MM/YYYY HH:mm").format("DD/MM/YYYY HH:mm");
-                } else if (moment(inputVal, "DD-MM-YYYY HH:mm", true).isValid()) {
-                    initialDate = moment(inputVal, "DD-MM-YYYY HH:mm").format("DD/MM/YYYY HH:mm");
+                if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
+                    let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm");
+                    $("#" + theid).val(formattedDate);
+                } else if (moment(thevalue, "YYYY-MM-DD HH:mm", true).isValid()) {
+                    let formattedDate = moment(thevalue, "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm");
+                    $("#" + theid).val(formattedDate);
                 } else {
-                    initialDate = moment().format(
-                        "DD/MM/YYYY HH:mm");
+                    console.warn("Invalid date entered:", thevalue);
                 }
-            } else {
-                initialDate = moment().format("DD/MM/YYYY HH:mm");
+            });
 
-            }
+            $(".datetimeflatpickr-oprs").trigger("change");
 
-            flatpickr(this, {
+
+            flatpickr(".datetimeflatpickr-oprs-anes", {
                 enableTime: true,
                 dateFormat: "d/m/Y H:i",
                 time_24hr: true,
-                defaultDate: initialDate,
-                allowInput: true
-            });
-        });
-
-        $(".datetimeflatpickr-oprs").prop("readonly", false);
-
-        $(".datetimeflatpickr-oprs").on("change", function() {
-            let theid = $(this).attr("id");
-            if (String(theid)?.includes("flat")) {
-                theid = theid.replace("flat", "");
-            }
-            let thevalue = $(this).val();
-
-            if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
-                let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm");
-                $("#" + theid).val(formattedDate);
-            } else if (moment(thevalue, "YYYY-MM-DD HH:mm", true).isValid()) {
-                let formattedDate = moment(thevalue, "YYYY-MM-DD HH:mm").format("YYYY-MM-DD HH:mm");
-                $("#" + theid).val(formattedDate);
-            } else {
-                console.warn("Invalid date entered:", thevalue);
-            }
-        });
-
-        $(".datetimeflatpickr-oprs").trigger("change");
-
-
-        flatpickr(".datetimeflatpickr-oprs-anes", {
-            enableTime: true,
-            dateFormat: "d/m/Y H:i",
-            time_24hr: true,
-            onChange: function(selectedDates, dateStr, instance) {}
-        });
-
-        $(".datetimeflatpickr-oprs-anes").prop("readonly", false)
-
-    };
-
-
-
-
-    const btnSaveActionRequestOperation = (props) => {
-        $("#btn-save-permintaan-operasi-modal").off().on("click", function(e) {
-            e.preventDefault();
-
-            // if ($('#bill_id-permintaan_operasi').val() === '' || $('#bill_id-permintaan_operasi')
-            //     .val() ===
-            //     null) {
-            //     $('#bill_id-permintaan_operasi').select2('open');
-            //     return;
-            // }
-
-            $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
-                $(this).removeAttr('disabled');
+                onChange: function(selectedDates, dateStr, instance) {}
             });
 
-            let formElement = document.getElementById('formDokumentPermintaanOperasi');
-            let dataSend = new FormData(formElement);
-            let jsonObj = {};
+            $(".datetimeflatpickr-oprs-anes").prop("readonly", false)
 
-            dataSend.forEach((value, key) => {
-                jsonObj[key] = value;
-            });
+        };
 
 
-            $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
-                $(this).attr('disabled', 'disabled');
-            });
 
-            let isChecked = parseInt($('input[name="patient_category_id_oprs"]:checked').val(), 10)
-            let isCheckedKode = parseInt($('input[name="kode_operasi_oprs"]:checked').val(), 10)
 
-
-            jsonObj['patient_category_id'] = isChecked;
-            jsonObj['kode_operasi'] = isCheckedKode;
-            jsonObj['terlayani'] = "0";
-            let operationType = $("#operation_type-permintaan_operasi").val();
-            jsonObj['operation_type'] = operationType;
-
-            postData(jsonObj, 'admin/PatientOperationRequest/insertData', (res) => {
-                if (res.respon === true) {
-                    successSwal('Data berhasil disimpan.');
-
-                    $("#create-modal-permintaan-operasi").modal("hide");
-                    $('#formDokumentPermintaanOperasi')[0].reset();
-
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
-                    });
-                }
-            });
-        });
-    };
-
-    const btnUpdateDataRequestOperation = (props) => {
-        $('#btn-edit-permintaan-operasi-modal').off().on('click', function(e) {
-            e.preventDefault();
-
-            $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
-                $(this).removeAttr('disabled');
-            });
-
-            let formElement = document.getElementById('formDokumentPermintaanOperasi');
-            let dataSend = new FormData(formElement);
-            let jsonObj = {};
-
-
-            dataSend.forEach((value, key) => {
-                jsonObj[key] = value;
-            });
-
-            let isChecked = $('input[name="patient_category_id_oprs"]:checked').length ? parseInt($(
-                'input[name="patient_category_id_oprs"]:checked').val(), 10) : null;
-
-            let isCheckedKode = $('input[name="kode_operasi_oprs"]:checked').length ? parseInt($(
-                'input[name="kode_operasi_oprs"]:checked').val(), 10) : null;
-
-            jsonObj['patient_category_id'] = isChecked;
-            jsonObj['kode_operasi'] = isCheckedKode;
-
-            let operationType = $("#operation_type-permintaan_operasi").val();
-            jsonObj['operation_type'] = operationType;
-
-            postData(jsonObj, 'admin/PatientOperationRequest/updateData', (res) => {
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-
-                    $("#create-modal-permintaan-operasi").modal("hide");
-                    $('#formDokumentPermintaanOperasi')[0].reset();
-
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
-                    });
-                }
-            });
-        });
-    };
-
-    const deleteModalDataRequestOperation = () => {
-        $('.btn-show-delete-requestOperation').off().on('click', function(e) {
-
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success ms-2",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: "Apa anda yakin?",
-                text: "Anda tidak akan dapat mengembalikannya!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Ya, Hapus!",
-                cancelButtonText: "Batal!",
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteActionRequestOperation({
-                        vactination_id: $(this).data('id'),
-                        visit_id: $(this).data('visit_id'),
-                        no_registration: $(this).data('noregis'),
-                        trans_id: $(this).data('trans_id')
-                    });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
-                        title: "Dibatalkan",
-                        text: "File Anda aman :)",
-                        icon: "error"
-                    });
-                }
-            });
-
-
-        });
-    };
-
-    const btnSavepraOprasi = (props) => {
-        $("#btn-save-catatan-keperawatan").off().on("click", function(e) {
-            e.preventDefault();
-
-
-            let jsonObj = {
-                instrumen: [],
-                instrumen2: [],
-                drain: [],
-                diagnosas: [],
-                bromage: [],
-                aldrete: [],
-                steward: [],
-                vitailsign: {}
-            };
-
-            const selects = document.querySelectorAll('#bromageContainer select');
-            selects.forEach(select => {
-                const selectedOptions = select.selectedOptions;
-                Array.from(selectedOptions).forEach(option => {
-                    let entry = {
-                        document_id: props?.vactination_id,
-                        value_id: option.value,
-                        p_type: 'OPRS024',
-                        parameter_id: option.getAttribute('data-parameter'),
-                        value_score: option.getAttribute('data-score'),
-                        value_desc: option.getAttribute('data-desc')
-                    };
-                    jsonObj.bromage.push(entry);
-                });
-            });
-
-            $('#form-catatan-keperawatan').find(':disabled').removeAttr('disabled');
-            let formElement = document.getElementById('form-catatan-keperawatan');
-            let dataSend = new FormData(formElement);
-
-
-            dataSend.forEach((value, key) => {
-                if (value) {
-                    if (!jsonObj[key]) {
-                        jsonObj[key] = value;
-                    }
-                }
-            });
-
-            jsonObj['body_id'] = props?.vactination_id;
-            jsonObj['document_id'] = props?.vactination_id;
-
-            let quantity_before = dataSend.getAll('quantity_before[]');
-            let quantity_intra = dataSend.getAll('quantity_intra[]');
-            let quantity_additional = dataSend.getAll('quantity_additional[]');
-            let quantity_after = dataSend.getAll('quantity_after[]');
-            let brand_name = dataSend.getAll('brand_name[]');
-            let arrInstrument = ['Instrumen', 'Kassa', 'Jarum'];
-            let brand_id = dataSend.getAll('brand_id[]');
-
-            for (let i = 0; i < brand_id.length; i++) {
-                let entry = {
-                    brand_id: brand_id[i],
-                    brand_name: brand_name[i] ?? arrInstrument[i],
-                    quantity_before: quantity_before[i],
-                    quantity_intra: quantity_intra[i],
-                    quantity_additional: quantity_additional[i],
-                    quantity_after: quantity_after[i],
-                };
-                jsonObj.instrumen.push(entry);
-            }
-
-
-            let quantity_before2 = dataSend.getAll('quantity_before2[]');
-            let quantity_intra2 = dataSend.getAll('quantity_intra2[]');
-            let quantity_additional2 = dataSend.getAll('quantity_additional2[]');
-            let quantity_after2 = dataSend.getAll('quantity_after2[]');
-            let brand_name2 = dataSend.getAll('brand_name2[]');
-            let brand_id2 = dataSend.getAll('brand_id2[]');
-            for (let i = 0; i < brand_id2.length; i++) {
-                let entry = {
-                    brand_id: brand_id2[i],
-                    brand_name: brand_name2[i],
-                    quantity_before: quantity_before2[i],
-                    quantity_intra: quantity_intra2[i],
-                    quantity_additional: quantity_additional2[i],
-                    quantity_after: quantity_after2[i],
-                };
-                jsonObj.instrumen2.push(entry);
-            }
-
-
-            let xrayValue = document.querySelector('input[name="xray"]:checked').value;
-            jsonObj.xray = parseInt(xrayValue, 10);
-
-
-            let drain_type = dataSend.getAll('drain_type_drain[]');
-            let drain_kinds = dataSend.getAll('drain_kinds_drain[]');
-            let drain_id = dataSend.getAll('drain_id_drain[]');
-            let size = dataSend.getAll('size_drain[]');
-            let description = dataSend.getAll('description_drain[]');
-            let body_id = dataSend.getAll('body_id_drain[]');
-            let visit_id = dataSend.getAll('visit_id_drain[]');
-            let trans_id = dataSend.getAll('trans_id_drain[]');
-            let org_unit_code = dataSend.getAll('org_unit_code_drain[]');
-            let document_id = dataSend.getAll('document_id_drain[]');
-
-            for (let i = 0; i < drain_type.length; i++) {
-                let entry = {
-                    drain_type: drain_type[i],
-                    drain_kinds: drain_kinds[i],
-                    size: size[i],
-                    drain_id: drain_id[i],
-                    description: description[i],
-                    body_id: body_id[i],
-                    visit_id: visit_id[i],
-                    trans_id: trans_id[i],
-                    org_unit_code: org_unit_code[i],
-                    document_id: props?.vactination_id,
-                };
-                jsonObj.drain.push(entry);
-            }
-
-
-            let diag_ids = dataSend.getAll('diagnosan_id[]');
-            let diag_notes = dataSend.getAll('diag_notes[]');
-            let diag_cats = dataSend.getAll('diag_cat[]');
-
-            for (let i = 0; i < diag_ids.length; i++) {
-                let entry = {
-                    diagnosa_id: diag_ids[i],
-                    diag_notes: diag_notes[i],
-                    diag_cat: diag_cats[i]
-                };
-                jsonObj.diagnosas.push(entry);
-            }
-
-
-
-            $('#bodyAldreteoprs023').find('tr').each(function(rowIndex, tr) {
-                let row = $(tr);
-                let AldreteBodyId = get_bodyid();
-
-                row.find('select[name^="parameter_oprs023_"]').each(function(selectIndex,
-                    select) {
-                    let selectElement = $(select);
-                    let parameterId = selectElement.attr('name').split('_').pop();
-                    let valueScore = selectElement.find('option:selected').data(
-                        'score');
-                    let valueDesc = selectElement.find('option:selected').text()
-                        .trim();
-                    let observationDate = row.find('.datetime-input').val();
-
-                    valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
-
-                    if (selectElement) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: AldreteBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS023',
-                            parameter_id: parameterId,
-                            value_score: valueScore,
-                            value_desc: valueDesc,
-                            observation_date: observationDate,
-                            modified_date: moment().format(
-                                'YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: selectElement.val()
-                        };
-
-                        jsonObj.aldrete.push(entry);
-                    } else {
-                        console.log(
-                            "  Skipped entry due to missing parameterId or valueScore"
-                        );
-                    }
-                });
-            });
-
-            $('#stewardContainer').find('tr').each(function(rowIndex, tr) {
-                let row = $(tr);
-                let StewardBodyId = get_bodyid();
-
-                row.find('select[name^="parameter_oprs025_"]').each(function(selectIndex,
-                    select) {
-                    let selectElement = $(select);
-                    let parameterId = selectElement.attr('name').split('_').pop();
-                    let valueScore = selectElement.find('option:selected').data(
-                        'score');
-                    let valueDesc = selectElement.find('option:selected').text()
-                        .trim();
-                    let observationDate = row.find('.datetime-input').val();
-
-                    valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
-
-                    if (selectElement) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: StewardBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS025',
-                            parameter_id: parameterId,
-                            value_score: valueScore,
-                            value_desc: valueDesc,
-                            observation_date: observationDate,
-                            modified_date: moment().format(
-                                'YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: selectElement.val()
-                        };
-
-                        jsonObj.steward.push(entry);
-                    } else {
-                        console.log(
-                            "  Skipped entry due to missing parameterId or valueScore"
-                        );
-                    }
-                });
-            });
-            if ($('#vitalSignKeperawatan').is(':visible')) {
-                const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
-                    'saturasi', 'temperature',
-                    'tension_below', 'tension_upper', 'examination_date', 'pemeriksaan',
-                    'weight',
-                    'oxygen_usage'
-                ];
-
-                jsonObj.vitailsign = jsonObj.vitailsign || {};
-                vitailSignKeys.forEach(key => {
-                    jsonObj.vitailsign[key] = jsonObj[key];
-                    delete jsonObj[key];
-                });
-
-                jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
-                jsonObj.vitailsign['clinic_id'] = 'P002';
-                jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
-                jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
-                jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
-                jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
-                jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
-                jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
-                jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
-                jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
-                jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
-                jsonObj.vitailsign['theid'] = dataSend.get('theid');
-                jsonObj.vitailsign['thename'] = dataSend.get('thename');
-                jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
-                jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
-                jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
-                jsonObj.vitailsign['gender'] = dataSend.get('gender');
-                jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
-                jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
-                jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
-                jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
-                jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
-                if (jsonObj['body_id'] !== "undefined" || props?.vactination_id !== undefined) {
-                    jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'] ?? props
-                        ?.vactination_id;
-                }
-            }
-
-            jsonObj.bromage['org_unit_code'] = dataSend.get('org_unit_code')
-            jsonObj.bromage['visit_id'] = dataSend.get('visit_id')
-            jsonObj.bromage['trans_id'] = dataSend.get('trans_id')
-
-
-            $("#loading-indicator").show();
-            postData(jsonObj, 'admin/PatientOperationRequest/insertDataPraOprasi', (res) => {
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-
-                    $("#create-modal-permintaan-operasi").modal("hide");
-
-
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
-                    });
-
-                    $("#loading-indicator").hide();
-                } else {
-                    errorSwal('Data gagal diperbarui. Silakan coba lagi.');
-                    $("#loading-indicator").hide();
-                }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
-            }, (error) => {
-                console.error("Error occurred:", error);
-                errorSwal('Terjadi kesalahan. Silakan coba lagi.');
-                $("#loading-indicator").hide();
-            });
-        });
-
-
-        $("#btn-save-vitalSignAcKeperawatan").off().on("click", function(e) {
-            e.preventDefault();
-            let jsonObj = {
-                vitailsign: {}
-            };
-
-            let formElement = document.getElementById('form-catatan-keperawatan');
-            let dataSend = new FormData(formElement);
-
-
-            dataSend.forEach((value, key) => {
-                if (value) {
-                    if (!jsonObj[key]) {
-                        jsonObj[key] = value;
-                    }
-                }
-            });
-
-            jsonObj['pasien_diagnosa_id'] = props?.vactination_id;
-
-            if ($('#vitalSignKeperawatan').is(':visible')) {
-                const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
-                    'saturasi', 'temperature',
-                    'tension_below', 'tension_upper', 'examination_date', 'pemeriksaan',
-                    'weight',
-                    'oxygen_usage'
-                ];
-
-                jsonObj.vitailsign = jsonObj.vitailsign || {};
-                vitailSignKeys.forEach(key => {
-                    jsonObj.vitailsign[key] = jsonObj[key];
-                    delete jsonObj[key];
-                })
-
-                jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
-                jsonObj.vitailsign['clinic_id'] = 'P002';
-                jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
-                jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
-                jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
-                jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
-                jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
-                jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
-                jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
-                jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
-                jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
-                jsonObj.vitailsign['theid'] = dataSend.get('theid');
-                jsonObj.vitailsign['thename'] = dataSend.get('thename');
-                jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
-                jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
-                jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
-                jsonObj.vitailsign['gender'] = dataSend.get('gender');
-                jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
-                jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
-                jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
-                jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
-                jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
-                jsonObj.vitailsign['account_id'] = '10'
-
-                if (jsonObj['body_id'] !== "undefined" || props?.vactination_id !== undefined) {
-                    jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'] ?? props
-                        ?.vactination_id;
-                }
-            }
-
-
-            postData(jsonObj, 'admin/PatientOperationRequest/insertVt', (res) => {
-
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-                    getVitalSignLaporanAnesthesiLengkap(
-                        'vitalSignBodyLaporanAnesthesiLengkap',
-                        '11');
-                    getVitalSignLaporanAnesthesiLengkap(
-                        'vitalSignBodyLaporanAnesthesiLengkap2',
-                        '12');
-                    getVitalSignLaporanAnesthesiLengkap2(
-                        'vitalSignBodyLaporanAnesthesiLengkap3', '13');
-                    getVitalSignKeperawatan()
-
-                } else {
-                    errorSwal('Data gagal diperbarui. Silakan coba lagi.');
-                    //     $("#loading-indicator").hide();
-                }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
-            }, (error) => {
-                console.error("Error occurred:", error);
-                errorSwal('Terjadi kesalahan. Silakan coba lagi.');
-                // $("#loading-indicator").hide();
-            });
-
-
-
-        })
-    };
-
-    const btnSaveLaporanPembedahan = (props) => {
-        $("#btn-save-laporan-pembedahan").off().on('click', function(e) {
-            e.preventDefault();
-
-
-            $('#form-laporan-pembedahan').find(':disabled').removeAttr('disabled');
-
-            let formElement = document.getElementById('form-laporan-pembedahan');
-            let dataSend = new FormData(formElement);
-            let jsonObj = {
-                diagnosas: [],
-            };
-
-
-            dataSend.forEach((value, key) => {
-                jsonObj[key] = value;
-            });
-
-
-            jsonObj.operation_desc = jsonObj.operation_desc_oprs008;
-            delete jsonObj.operation_desc_oprs008;
-
-            let diag_cats = dataSend.getAll('diag_cat[]');
-            let diag_id = dataSend.getAll('diag_id[]');
-
-            let diag_descs = dataSend.getAll('diag_desc[]');
-            let diag_names = dataSend.getAll('diag_name[]');
-            let suffer_type = dataSend.getAll('suffer_type[]');
-
-            for (let i = 0; i < diag_cats.length; i++) {
-                let entry = {
-                    diagnosa_cat: diag_cats[i],
-                    diagnosa_id: diag_id[i],
-                    diagnosa_desc: diag_descs[i],
-                    diagnosa_name: diag_names[i],
-                    suffer_type: suffer_type[i],
-                };
-                jsonObj.diagnosas.push(entry);
-            }
-            postData(jsonObj, 'admin/PatientOperationRequest/insertLaporanPembedahan', (
-                res) => {
-
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-
-                    // $("#create-modal-permintaan-operasi").modal("hide");
-                    // $('#form-operasi')[0].reset();
-
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
-                    });
-                } else {
-                    errorSwal(res?.error ?? "Data Tidak berhasil Tersimpanx")
-                }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
-            });
-        })
-    }
-
-    const groupingGetAllArcodions = (data) => {
-        $('.btn-show-assesment-requestOperation').on('click', function(e) {
-
-            if (e.event !== "trigger") {
-                getLoadingscreen("contentToHide-requestOperation-tab",
-                    "load-content-requestOperation-tab")
-            }
-
-            $("#vitalSignKeperawatan").hide()
-            $("#vitalSignLaporanAnesthesi").hide()
-            $("#vitalSignLaporanAnesthesiLengkap2").hide()
-            $("#vitalSignLaporanAnesthesiLengkap3").hide()
-            // ====== Btn hide====
-            $("#sembunyikanVtKeperawatanShow").hide()
-            $("#sembunyikanVtLaporanAnesthesiShow").hide()
-            $("#sembunyikanVtLaporanAnesthesiLengkap2Show").hide()
-            $("#sembunyikanVtLaporanAnesthesiLengkap3Show").hide()
-            // ====== Btn Show====
-            $("#tambahVtKeperawatanShow").show()
-            $("#tambahVtLaporanAnesthesiShow").show()
-            $("#tambahVtLaporanAnesthesiLengkap2Show").show()
-            $("#tambahVtLaporanAnesthesiLengkap3Show").show()
-
-
-            quillInstances = {};
-            dataDrain = [];
-            globalBodyId = '';
-            let index = $(this).data('index');
-            let item = pasienOperasiValue[index];
-            pasienOperasiSelected = item;
-
-
-            $('#bodydataRequestOperation > tr').removeClass('table-primary');
-            $(this).closest('tr').addClass('table-primary')
-
-            // console.log(data);
-
-
-            // $(".nav-link-oprs").on('click', e => {
-
-            //     $(`#btn-show-assesment-requestOperation${item?.vactination_id}`).trigger(
-            //         "click")
-            // })
-
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-praoperasi2',
-                method: 'cetak_pra_operasi'
-            })
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-laporan-anesthesi',
-                method: 'cetak_laporan_anesthesi'
-            })
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-anestesi-lengkap',
-                method: 'cetak_anesthesi_lengkap'
-            })
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-checklist-anestesi',
-                method: 'cetak_checklist_anestesi'
-            })
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-catatan-keperawatan',
-                method: 'cetak_catatan_keperawatan'
-            })
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-checklist-keselamatan',
-                method: 'cetak_checklist_keselamatan'
-            })
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-post-operasi',
-                method: 'cetak_post_operasi'
-            })
-            cetakOperasi({
-                vactination_id: item?.vactination_id,
-                element_id: '#btn-print-laporan-pembedahan',
-                method: 'cetak_laporan_pembedahan',
-            })
-
-            postData({
-                id: `${item?.vactination_id}`,
-                visit_id: `${item?.visit_id}`
-            }, 'admin/PatientOperationRequest/getAllArcodions', (res) => {
-
-                if (res.respon) {
-                    let result = res?.data
-
-                    $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(result
-                        ?.assessment_anesthesia?.body_id); //new
-
-                    checklistKeselamatan({
-                        data: result?.assessment_operation_check,
-                    });
-
-                    anestesi({
-                        data: {
-                            assessment_operation: result?.assessment_operation,
-                            assessment_anesthesia_checklist: result
-                                ?.assessment_anesthesia_checklist,
-                            ori: item
-                        }
-                    });
-
-                    catatanKeperawatanPraOperasi({
-                        data: result?.assessment_operation,
-                        assessment_anesthesia_recovery: result
-                            ?.assessment_anesthesia_recovery,
-                        exam_info: result?.exam_info
-
-                    })
-
-                    getDataKeperawatanOPRS001({
-                        data: result?.assessment_operation_pra,
-                        blood_request: result?.treatmentobat.blood_request,
-                        diagnosas: result?.diagnosas,
-                        blood_request_history: result?.blood_history,
-
-                    })
-
-                    pembedahan({
-                        data: item,
-                        diagnosas: result?.diagnosas,
-                        ori: item
-                    });
-
-                    LaporanAnesthesi({
-                        data: result?.assessment_anesthesia,
-                        exam_info: result?.exam_info,
-                        diagnosas: result?.diagnosas,
-                        ori: item,
-                        assessment_anesthesia_recovery: result
-                            ?.assessment_anesthesia_recovery,
-                    })
-
-
-                    laporanAnesthesiLengkap({
-                        data: {
-                            assessment_anesthesia_checklist: result
-                                ?.assessment_anesthesia_checklist,
-                            assessment_anesthesia: result
-                                ?.assessment_anesthesia,
-                            assessment_anesthesia_post: result
-                                ?.assessment_anesthesia_post,
-                            assessment_anesthesia_recovery: result
-                                ?.assessment_anesthesia_recovery,
-                        },
-                        exam_info: result?.exam_info
-                    })
-
-                    templateOprasiPembedahan({
-                        data: {
-                            operation_team: result?.operation_team,
-                            operation_task: result?.operation_task
-
-                        }
-                    })
-
-                    templateOprasiPembedahanAnesthesiLengkap({
-                        data: {
-                            operation_team: result?.operation_team,
-                            operation_task: result?.operation_task
-
-                        }
-                    })
-
-                    renderDataTreatmentObat({
-                        data: result?.treatmentobat
-                    })
-
-
-                    getDataDrain({
-                        data: result?.assessment_operation_drain,
-                        assessment_anesthesia_recovery: result
-                            ?.assessment_anesthesia_recovery,
-
-                    });
-
-                    getInstrumen({
-                        data: result?.assessment_instrument
-                    });
-
-                    postOperasi({
-                        data: item,
-                        obat: result?.treatmentobat
-
-                    });
-                }
-            })
-
-
-            $(".nav-link-oprs").off().on("click", function(e) {
-
+        const btnSaveActionRequestOperation = (props) => {
+            $("#btn-save-permintaan-operasi-modal").off().on("click", function(e) {
                 e.preventDefault();
-                const $this = $(this);
 
-                if ($this.hasClass("clicked"))
+                // if ($('#bill_id-permintaan_operasi').val() === '' || $('#bill_id-permintaan_operasi')
+                //     .val() ===
+                //     null) {
+                //     $('#bill_id-permintaan_operasi').select2('open');
+                //     return;
+                // }
 
-                    $this.addClass("clicked");
-                $this.addClass("disabled");
-                const href = $(this).attr("href");
-                let item = pasienOperasiValue[index];
-                pasienOperasiSelected = item;
-                quillInstances = {};
-                dataDrain = [];
+                $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
+                    $(this).removeAttr('disabled');
+                });
 
-                postData({
-                    diag_id: `${item?.vactination_id}`
-                }, 'admin/PatientOperationRequest/getDiag', (res) => {
-                    if (res?.success === true) {
-                        res?.data?.forEach((item, index) => {
+                let formElement = document.getElementById('formDokumentPermintaanOperasi');
+                let dataSend = new FormData(formElement);
+                let jsonObj = {};
 
-                            addRowDiagDokterOprs('bodyDiagPraOperation2-',
-                                pasienOperasiSelected
-                                ?.vactination_id,
-                                item?.diagnosa_id, item
-                                ?.diagnosa_name ??
-                                item?.diagnosa_desc, item
-                                ?.diag_cat);
-
-                            if (item.diag_cat == 13) {
-                                addRowDiagDokterOprs(
-                                    'bodyDiagPraOperation-',
-                                    pasienOperasiSelected
-                                    ?.vactination_id,
-                                    item?.diagnosa_id, item
-                                    ?.diagnosa_name ?? item
-                                    ?.diagnosa_desc,
-                                    item
-                                    ?.diag_cat, item?.diag_suffer);
-                            } else {
-                                addRowDiagDokterOprs(
-                                    'bodyDiagPascaOperation-',
-                                    pasienOperasiSelected
-                                    ?.vactination_id,
-                                    item?.diagnosa_id, item
-                                    ?.diagnosa_name ?? item
-                                    ?.diagnosa_desc,
-                                    item
-                                    ?.diag_cat, item?.diag_suffer);
-                            }
+                dataSend.forEach((value, key) => {
+                    jsonObj[key] = value;
+                });
 
 
-                            addRowDiagDokterOprs(
-                                'bodyDiagLaporanAnesthesi-',
-                                pasienOperasiSelected
-                                ?.vactination_id,
-                                item?.diagnosa_id, item
-                                ?.diagnosa_name ??
-                                item?.diagnosa_desc, item
-                                ?.diag_cat, item?.suffer_type);
+                $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
+                    $(this).attr('disabled', 'disabled');
+                });
+
+                let isChecked = parseInt($('input[name="patient_category_id_oprs"]:checked').val(), 10)
+                let isCheckedKode = parseInt($('input[name="kode_operasi_oprs"]:checked').val(), 10)
 
 
-                            addRowDiagDokterOprs(
-                                'bodyDiagLaporanAnesthesiLengkap-',
-                                pasienOperasiSelected
-                                ?.vactination_id,
-                                item?.diagnosa_id, item
-                                ?.diagnosa_name ??
-                                item?.diagnosa_desc, item
-                                ?.diag_cat, item?.suffer_type);
+                jsonObj['patient_category_id'] = isChecked;
+                jsonObj['kode_operasi'] = isCheckedKode;
+                jsonObj['terlayani'] = "0";
+                let operationType = $("#operation_type-permintaan_operasi").val();
+                jsonObj['operation_type'] = operationType;
 
+                postData(jsonObj, 'admin/PatientOperationRequest/insertData', (res) => {
+                    if (res.respon === true) {
+                        successSwal('Data berhasil disimpan.');
+
+                        $("#create-modal-permintaan-operasi").modal("hide");
+                        $('#formDokumentPermintaanOperasi')[0].reset();
+
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
                         });
                     }
-
-
-
                 });
+            });
+        };
+
+        const btnUpdateDataRequestOperation = (props) => {
+            $('#btn-edit-permintaan-operasi-modal').off().on('click', function(e) {
+                e.preventDefault();
+
+                $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
+                    $(this).removeAttr('disabled');
+                });
+
+                let formElement = document.getElementById('formDokumentPermintaanOperasi');
+                let dataSend = new FormData(formElement);
+                let jsonObj = {};
+
+
+                dataSend.forEach((value, key) => {
+                    jsonObj[key] = value;
+                });
+
+                let isChecked = $('input[name="patient_category_id_oprs"]:checked').length ? parseInt($(
+                    'input[name="patient_category_id_oprs"]:checked').val(), 10) : null;
+
+                let isCheckedKode = $('input[name="kode_operasi_oprs"]:checked').length ? parseInt($(
+                    'input[name="kode_operasi_oprs"]:checked').val(), 10) : null;
+
+                jsonObj['patient_category_id'] = isChecked;
+                jsonObj['kode_operasi'] = isCheckedKode;
+
+                let operationType = $("#operation_type-permintaan_operasi").val();
+                jsonObj['operation_type'] = operationType;
+
+                postData(jsonObj, 'admin/PatientOperationRequest/updateData', (res) => {
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+
+                        $("#create-modal-permintaan-operasi").modal("hide");
+                        $('#formDokumentPermintaanOperasi')[0].reset();
+
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
+                        });
+                    }
+                });
+            });
+        };
+
+        const deleteModalDataRequestOperation = () => {
+            $('.btn-show-delete-requestOperation').off().on('click', function(e) {
+
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success ms-2",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Apa anda yakin?",
+                    text: "Anda tidak akan dapat mengembalikannya!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal!",
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteActionRequestOperation({
+                            vactination_id: $(this).data('id'),
+                            visit_id: $(this).data('visit_id'),
+                            no_registration: $(this).data('noregis'),
+                            trans_id: $(this).data('trans_id')
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        swalWithBootstrapButtons.fire({
+                            title: "Dibatalkan",
+                            text: "File Anda aman :)",
+                            icon: "error"
+                        });
+                    }
+                });
+
+
+            });
+        };
+
+        const btnSavepraOprasi = (props) => {
+            $("#btn-save-catatan-keperawatan").off().on("click", function(e) {
+                e.preventDefault();
+
+
+                let jsonObj = {
+                    instrumen: [],
+                    instrumen2: [],
+                    drain: [],
+                    diagnosas: [],
+                    bromage: [],
+                    aldrete: [],
+                    steward: [],
+                    vitailsign: {}
+                };
+
+                const selects = document.querySelectorAll('#bromageContainer select');
+                selects.forEach(select => {
+                    const selectedOptions = select.selectedOptions;
+                    Array.from(selectedOptions).forEach(option => {
+                        let entry = {
+                            document_id: props?.vactination_id,
+                            value_id: option.value,
+                            p_type: 'OPRS024',
+                            parameter_id: option.getAttribute('data-parameter'),
+                            value_score: option.getAttribute('data-score'),
+                            value_desc: option.getAttribute('data-desc')
+                        };
+                        jsonObj.bromage.push(entry);
+                    });
+                });
+
+                $('#form-catatan-keperawatan').find(':disabled').removeAttr('disabled');
+                let formElement = document.getElementById('form-catatan-keperawatan');
+                let dataSend = new FormData(formElement);
+
+
+                dataSend.forEach((value, key) => {
+                    if (value) {
+                        if (!jsonObj[key]) {
+                            jsonObj[key] = value;
+                        }
+                    }
+                });
+
+                jsonObj['body_id'] = props?.vactination_id;
+                jsonObj['document_id'] = props?.vactination_id;
+
+                let quantity_before = dataSend.getAll('quantity_before[]');
+                let quantity_intra = dataSend.getAll('quantity_intra[]');
+                let quantity_additional = dataSend.getAll('quantity_additional[]');
+                let quantity_after = dataSend.getAll('quantity_after[]');
+                let brand_name = dataSend.getAll('brand_name[]');
+                let arrInstrument = ['Instrumen', 'Kassa', 'Jarum', 'TAMPON KASSA THT',
+                    'TAMPON KASSA BIASA', 'TAMPON KASSA ROLL OBSGYN'
+                ];
+                let brand_id = dataSend.getAll('brand_id[]');
+
+                for (let i = 0; i < brand_id.length; i++) {
+                    let entry = {
+                        brand_id: brand_id[i],
+                        brand_name: brand_name[i] ?? arrInstrument[i],
+                        quantity_before: quantity_before[i],
+                        quantity_intra: quantity_intra[i],
+                        quantity_additional: quantity_additional[i],
+                        quantity_after: quantity_after[i],
+                    };
+                    jsonObj.instrumen.push(entry);
+                }
+
+
+                let quantity_before2 = dataSend.getAll('quantity_before2[]');
+                let quantity_intra2 = dataSend.getAll('quantity_intra2[]');
+                let quantity_additional2 = dataSend.getAll('quantity_additional2[]');
+                let quantity_after2 = dataSend.getAll('quantity_after2[]');
+                let brand_name2 = dataSend.getAll('brand_name2[]');
+                let brand_id2 = dataSend.getAll('brand_id2[]');
+                for (let i = 0; i < brand_id2.length; i++) {
+                    let entry = {
+                        brand_id: brand_id2[i],
+                        brand_name: brand_name2[i],
+                        quantity_before: quantity_before2[i],
+                        quantity_intra: quantity_intra2[i],
+                        quantity_additional: quantity_additional2[i],
+                        quantity_after: quantity_after2[i],
+                    };
+                    jsonObj.instrumen2.push(entry);
+                }
+
+
+                let xrayValue = document.querySelector('input[name="xray"]:checked').value;
+                jsonObj.xray = parseInt(xrayValue, 10);
+
+
+                let drain_type = dataSend.getAll('drain_type_drain[]');
+                let drain_kinds = dataSend.getAll('drain_kinds_drain[]');
+                let drain_id = dataSend.getAll('drain_id_drain[]');
+                let size = dataSend.getAll('size_drain[]');
+                let description = dataSend.getAll('description_drain[]');
+                let body_id = dataSend.getAll('body_id_drain[]');
+                let visit_id = dataSend.getAll('visit_id_drain[]');
+                let trans_id = dataSend.getAll('trans_id_drain[]');
+                let org_unit_code = dataSend.getAll('org_unit_code_drain[]');
+                let document_id = dataSend.getAll('document_id_drain[]');
+
+                for (let i = 0; i < drain_type.length; i++) {
+                    let entry = {
+                        drain_type: drain_type[i],
+                        drain_kinds: drain_kinds[i],
+                        size: size[i],
+                        drain_id: drain_id[i],
+                        description: description[i],
+                        body_id: body_id[i],
+                        visit_id: visit_id[i],
+                        trans_id: trans_id[i],
+                        org_unit_code: org_unit_code[i],
+                        document_id: props?.vactination_id,
+                    };
+                    jsonObj.drain.push(entry);
+                }
+
+
+                let diag_ids = dataSend.getAll('diagnosan_id[]');
+                let diag_notes = dataSend.getAll('diag_notes[]');
+                let diag_cats = dataSend.getAll('diag_cat[]');
+
+                for (let i = 0; i < diag_ids.length; i++) {
+                    let entry = {
+                        diagnosa_id: diag_ids[i],
+                        diag_notes: diag_notes[i],
+                        diag_cat: diag_cats[i]
+                    };
+                    jsonObj.diagnosas.push(entry);
+                }
+
+
+
+                $('#bodyAldreteoprs023').find('tr').each(function(rowIndex, tr) {
+                    let row = $(tr);
+                    let AldreteBodyId = get_bodyid();
+
+                    row.find('select[name^="parameter_oprs023_"]').each(function(selectIndex,
+                        select) {
+                        let selectElement = $(select);
+                        let parameterId = selectElement.attr('name').split('_').pop();
+                        let valueScore = selectElement.find('option:selected').data(
+                            'score');
+                        let valueDesc = selectElement.find('option:selected').text()
+                            .trim();
+                        let observationDate = row.find('.datetime-input').val();
+
+                        valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
+
+                        if (selectElement) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: AldreteBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS023',
+                                parameter_id: parameterId,
+                                value_score: valueScore,
+                                value_desc: valueDesc,
+                                observation_date: observationDate,
+                                modified_date: moment().format(
+                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: selectElement.val()
+                            };
+
+                            jsonObj.aldrete.push(entry);
+                        } else {
+                            console.log(
+                                "  Skipped entry due to missing parameterId or valueScore"
+                            );
+                        }
+                    });
+                });
+
+                $('#stewardContainer').find('tr').each(function(rowIndex, tr) {
+                    let row = $(tr);
+                    let StewardBodyId = get_bodyid();
+
+                    row.find('select[name^="parameter_oprs025_"]').each(function(selectIndex,
+                        select) {
+                        let selectElement = $(select);
+                        let parameterId = selectElement.attr('name').split('_').pop();
+                        let valueScore = selectElement.find('option:selected').data(
+                            'score');
+                        let valueDesc = selectElement.find('option:selected').text()
+                            .trim();
+                        let observationDate = row.find('.datetime-input').val();
+
+                        valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
+
+                        if (selectElement) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: StewardBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS025',
+                                parameter_id: parameterId,
+                                value_score: valueScore,
+                                value_desc: valueDesc,
+                                observation_date: observationDate,
+                                modified_date: moment().format(
+                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: selectElement.val()
+                            };
+
+                            jsonObj.steward.push(entry);
+                        } else {
+                            console.log(
+                                "  Skipped entry due to missing parameterId or valueScore"
+                            );
+                        }
+                    });
+                });
+                if ($('#vitalSignKeperawatan').is(':visible')) {
+                    const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
+                        'saturasi', 'temperature',
+                        'tension_below', 'tension_upper', 'examination_date', 'pemeriksaan',
+                        'weight',
+                        'oxygen_usage'
+                    ];
+
+                    jsonObj.vitailsign = jsonObj.vitailsign || {};
+                    vitailSignKeys.forEach(key => {
+                        jsonObj.vitailsign[key] = jsonObj[key];
+                        delete jsonObj[key];
+                    });
+
+                    jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
+                    jsonObj.vitailsign['clinic_id'] = 'P002';
+                    jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
+                    jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
+                    jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
+                    jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
+                    jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
+                    jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
+                    jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
+                    jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
+                    jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
+                    jsonObj.vitailsign['theid'] = dataSend.get('theid');
+                    jsonObj.vitailsign['thename'] = dataSend.get('thename');
+                    jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
+                    jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
+                    jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
+                    jsonObj.vitailsign['gender'] = dataSend.get('gender');
+                    jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
+                    jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
+                    jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
+                    jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
+                    jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
+                    if (jsonObj['body_id'] !== "undefined" || props?.vactination_id !== undefined) {
+                        jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'] ?? props
+                            ?.vactination_id;
+                    }
+                }
+
+                jsonObj.bromage['org_unit_code'] = dataSend.get('org_unit_code')
+                jsonObj.bromage['visit_id'] = dataSend.get('visit_id')
+                jsonObj.bromage['trans_id'] = dataSend.get('trans_id')
+
+
+                $("#loading-indicator").show();
+                postData(jsonObj, 'admin/PatientOperationRequest/insertDataPraOprasi', (res) => {
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+
+                        $("#create-modal-permintaan-operasi").modal("hide");
+
+
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
+                        });
+
+                        $("#loading-indicator").hide();
+                    } else {
+                        errorSwal('Data gagal diperbarui. Silakan coba lagi.');
+                        $("#loading-indicator").hide();
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                }, (error) => {
+                    console.error("Error occurred:", error);
+                    errorSwal('Terjadi kesalahan. Silakan coba lagi.');
+                    $("#loading-indicator").hide();
+                });
+            });
+
+
+            $("#btn-save-vitalSignAcKeperawatan").off().on("click", function(e) {
+                e.preventDefault();
+                let jsonObj = {
+                    vitailsign: {}
+                };
+
+                let formElement = document.getElementById('form-catatan-keperawatan');
+                let dataSend = new FormData(formElement);
+
+
+                dataSend.forEach((value, key) => {
+                    if (value) {
+                        if (!jsonObj[key]) {
+                            jsonObj[key] = value;
+                        }
+                    }
+                });
+
+                jsonObj['pasien_diagnosa_id'] = props?.vactination_id;
+
+                if ($('#vitalSignKeperawatan').is(':visible')) {
+                    const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
+                        'saturasi', 'temperature',
+                        'tension_below', 'tension_upper', 'examination_date', 'pemeriksaan',
+                        'weight',
+                        'oxygen_usage'
+                    ];
+
+                    jsonObj.vitailsign = jsonObj.vitailsign || {};
+                    vitailSignKeys.forEach(key => {
+                        jsonObj.vitailsign[key] = jsonObj[key];
+                        delete jsonObj[key];
+                    })
+
+                    jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
+                    jsonObj.vitailsign['clinic_id'] = 'P002';
+                    jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
+                    jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
+                    jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
+                    jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
+                    jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
+                    jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
+                    jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
+                    jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
+                    jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
+                    jsonObj.vitailsign['theid'] = dataSend.get('theid');
+                    jsonObj.vitailsign['thename'] = dataSend.get('thename');
+                    jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
+                    jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
+                    jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
+                    jsonObj.vitailsign['gender'] = dataSend.get('gender');
+                    jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
+                    jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
+                    jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
+                    jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
+                    jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
+                    jsonObj.vitailsign['account_id'] = '10'
+
+                    if (jsonObj['body_id'] !== "undefined" || props?.vactination_id !== undefined) {
+                        jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'] ?? props
+                            ?.vactination_id;
+                    }
+                }
+
+
+                postData(jsonObj, 'admin/PatientOperationRequest/insertVt', (res) => {
+
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+                        getVitalSignLaporanAnesthesiLengkap(
+                            'vitalSignBodyLaporanAnesthesiLengkap',
+                            '11');
+                        getVitalSignLaporanAnesthesiLengkap(
+                            'vitalSignBodyLaporanAnesthesiLengkap2',
+                            '12');
+                        getVitalSignLaporanAnesthesiLengkap2(
+                            'vitalSignBodyLaporanAnesthesiLengkap3', '13');
+                        getVitalSignKeperawatan()
+
+                    } else {
+                        errorSwal('Data gagal diperbarui. Silakan coba lagi.');
+                        //     $("#loading-indicator").hide();
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                }, (error) => {
+                    console.error("Error occurred:", error);
+                    errorSwal('Terjadi kesalahan. Silakan coba lagi.');
+                    // $("#loading-indicator").hide();
+                });
+
+
+
+            })
+        };
+
+        const btnSaveLaporanPembedahan = (props) => {
+            $("#btn-save-laporan-pembedahan").off().on('click', function(e) {
+                e.preventDefault();
+
+
+                $('#form-laporan-pembedahan').find(':disabled').removeAttr('disabled');
+
+                let formElement = document.getElementById('form-laporan-pembedahan');
+                let dataSend = new FormData(formElement);
+                let jsonObj = {
+                    diagnosas: [],
+                };
+
+
+                dataSend.forEach((value, key) => {
+                    jsonObj[key] = value;
+                });
+
+                console.log(jsonObj);
+
+                jsonObj.operation_desc = jsonObj.operation_desc_oprs008;
+                delete jsonObj.operation_desc_oprs008;
+
+                let diag_cats = dataSend.getAll('diag_cat[]');
+                let diag_id = dataSend.getAll('diag_id[]');
+
+                let diag_descs = dataSend.getAll('diag_desc[]');
+                let diag_names = dataSend.getAll('diag_name[]');
+                let suffer_type = dataSend.getAll('suffer_type[]');
+
+                for (let i = 0; i < diag_cats.length; i++) {
+                    let entry = {
+                        diagnosa_cat: diag_cats[i],
+                        diagnosa_id: diag_id[i],
+                        diagnosa_desc: diag_descs[i],
+                        diagnosa_name: diag_names[i],
+                        suffer_type: suffer_type[i],
+                    };
+                    jsonObj.diagnosas.push(entry);
+                }
+                postData(jsonObj, 'admin/PatientOperationRequest/insertLaporanPembedahan', (
+                    res) => {
+
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+
+                        // $("#create-modal-permintaan-operasi").modal("hide");
+                        // $('#form-operasi')[0].reset();
+
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
+                        });
+                    } else {
+                        errorSwal(res?.error ?? "Data Tidak berhasil Tersimpanx")
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                });
+            })
+        }
+
+        const groupingGetAllArcodions = (data) => {
+            $('.btn-show-assesment-requestOperation').on('click', function(e) {
+
+                if (e.event !== "trigger") {
+                    getLoadingscreen("contentToHide-requestOperation-tab",
+                        "load-content-requestOperation-tab")
+                }
+
+                $("#vitalSignKeperawatan").hide()
+                $("#vitalSignLaporanAnesthesi").hide()
+                $("#vitalSignLaporanAnesthesiLengkap2").hide()
+                $("#vitalSignLaporanAnesthesiLengkap3").hide()
+                // ====== Btn hide====
+                $("#sembunyikanVtKeperawatanShow").hide()
+                $("#sembunyikanVtLaporanAnesthesiShow").hide()
+                $("#sembunyikanVtLaporanAnesthesiLengkap2Show").hide()
+                $("#sembunyikanVtLaporanAnesthesiLengkap3Show").hide()
+                // ====== Btn Show====
+                $("#tambahVtKeperawatanShow").show()
+                $("#tambahVtLaporanAnesthesiShow").show()
+                $("#tambahVtLaporanAnesthesiLengkap2Show").show()
+                $("#tambahVtLaporanAnesthesiLengkap3Show").show()
+
+
+                quillInstances = {};
+                dataDrain = [];
+                globalBodyId = '';
+                let index = $(this).data('index');
+                let item = pasienOperasiValue[index];
+                pasienOperasiSelected = item;
+
+
+                $('#bodydataRequestOperation > tr').removeClass('table-primary');
+                $(this).closest('tr').addClass('table-primary')
+
+                // console.log(data);
+
+
+                // $(".nav-link-oprs").on('click', e => {
+
+                //     $(`#btn-show-assesment-requestOperation${item?.vactination_id}`).trigger(
+                //         "click")
+                // })
+
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-praoperasi2',
+                    method: 'cetak_pra_operasi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-laporan-anesthesi',
+                    method: 'cetak_laporan_anesthesi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-anestesi-lengkap',
+                    method: 'cetak_anesthesi_lengkap'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-checklist-anestesi',
+                    method: 'cetak_checklist_anestesi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-catatan-keperawatan',
+                    method: 'cetak_catatan_keperawatan'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-checklist-keselamatan',
+                    method: 'cetak_checklist_keselamatan'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-post-operasi',
+                    method: 'cetak_post_operasi'
+                })
+                cetakOperasi({
+                    vactination_id: item?.vactination_id,
+                    element_id: '#btn-print-laporan-pembedahan',
+                    method: 'cetak_laporan_pembedahan',
+                })
 
                 postData({
                     id: `${item?.vactination_id}`,
@@ -1163,279 +977,468 @@ let kopTemplateOprs = [];
 
                         $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(result
                             ?.assessment_anesthesia?.body_id); //new
-                        if (href === '#checklist-keselamatan') {
-                            checklistKeselamatan({
-                                data: result?.assessment_operation_check,
-                            });
-                            getInstrumen({
-                                data: result?.assessment_instrument
-                            });
-                        }
-                        if (href === '#checklist-anestesi') {
-                            anestesi({
-                                data: {
-                                    assessment_operation: result
-                                        ?.assessment_operation,
-                                    assessment_anesthesia_checklist: result
-                                        ?.assessment_anesthesia_checklist,
-                                    ori: item
-                                }
-                            });
 
-                        }
+                        checklistKeselamatan({
+                            data: result?.assessment_operation_check,
+                        });
 
-                        if (href === '#catatan-keperawatan') {
-                            catatanKeperawatanPraOperasi({
-                                data: result?.assessment_operation,
-                                assessment_anesthesia_recovery: result
-                                    ?.assessment_anesthesia_recovery,
-                                exam_info: result?.exam_info
-
-                            })
-                            getDataKeperawatanOPRS001({
-                                data: result?.assessment_operation_pra,
-                                blood_request: result?.treatmentobat
-                                    .blood_request,
-                                diagnosas: result?.diagnosas,
-                                blood_request_history: result?.blood_history,
-
-                            })
-                            getInstrumen({
-                                data: result?.assessment_instrument
-                            });
-                            getDataDrain({
-                                data: result?.assessment_operation_drain,
-                                assessment_anesthesia_recovery: result
-                                    ?.assessment_anesthesia_recovery,
-
-                            });
-                        }
-
-
-                        if (href === '#laporan-pembedahan') {
-                            pembedahan({
-                                data: item,
-                                diagnosas: result?.diagnosas,
+                        anestesi({
+                            data: {
+                                assessment_operation: result?.assessment_operation,
+                                assessment_anesthesia_checklist: result
+                                    ?.assessment_anesthesia_checklist,
                                 ori: item
-                            });
-                            templateOprasiPembedahan({
-                                data: {
-                                    operation_team: result?.operation_team,
-                                    operation_task: result?.operation_task
+                            }
+                        });
 
-                                }
-                            })
-                        }
-                        if (href === '#laporan-anesthesi') {
-                            LaporanAnesthesi({
-                                data: result?.assessment_anesthesia,
-                                exam_info: result?.exam_info,
-                                diagnosas: result?.diagnosas,
-                                ori: item,
+                        catatanKeperawatanPraOperasi({
+                            data: result?.assessment_operation,
+                            assessment_anesthesia_recovery: result
+                                ?.assessment_anesthesia_recovery,
+                            exam_info: result?.exam_info
+
+                        })
+
+                        getDataKeperawatanOPRS001({
+                            data: result?.assessment_operation_pra,
+                            blood_request: result?.treatmentobat.blood_request,
+                            diagnosas: result?.diagnosas,
+                            blood_request_history: result?.blood_history,
+
+                        })
+
+                        pembedahan({
+                            data: item,
+                            diagnosas: result?.diagnosas,
+                            ori: item
+                        });
+
+                        LaporanAnesthesi({
+                            data: result?.assessment_anesthesia,
+                            exam_info: result?.exam_info,
+                            diagnosas: result?.diagnosas,
+                            ori: item,
+                            assessment_anesthesia_recovery: result
+                                ?.assessment_anesthesia_recovery,
+                        })
+
+
+                        laporanAnesthesiLengkap({
+                            data: {
+                                assessment_anesthesia_checklist: result
+                                    ?.assessment_anesthesia_checklist,
+                                assessment_anesthesia: result
+                                    ?.assessment_anesthesia,
+                                assessment_anesthesia_post: result
+                                    ?.assessment_anesthesia_post,
                                 assessment_anesthesia_recovery: result
                                     ?.assessment_anesthesia_recovery,
-                            })
-                        }
-                        if (href === '#anesthesi-lengkap') {
-                            laporanAnesthesiLengkap({
-                                data: {
-                                    assessment_anesthesia_checklist: result
-                                        ?.assessment_anesthesia_checklist,
-                                    assessment_anesthesia: result
-                                        ?.assessment_anesthesia,
-                                    assessment_anesthesia_post: result
-                                        ?.assessment_anesthesia_post,
-                                    assessment_anesthesia_recovery: result
-                                        ?.assessment_anesthesia_recovery,
-                                },
-                                exam_info: result?.exam_info
-                            })
-                            templateOprasiPembedahan({
-                                data: {
-                                    operation_team: result?.operation_team,
-                                    operation_task: result?.operation_task
+                            },
+                            exam_info: result?.exam_info
+                        })
 
-                                }
-                            })
-                            templateOprasiPembedahanAnesthesiLengkap({
-                                data: {
-                                    operation_team: result?.operation_team,
-                                    operation_task: result?.operation_task
+                        templateOprasiPembedahan({
+                            data: {
+                                operation_team: result?.operation_team,
+                                operation_task: result?.operation_task
 
-                                }
-                            })
-                            renderDataTreatmentObat({
-                                data: result?.treatmentobat
-                            })
-                            getDataDrain({
-                                data: result?.assessment_operation_drain,
-                                assessment_anesthesia_recovery: result
-                                    ?.assessment_anesthesia_recovery,
+                            }
+                        })
 
-                            });
-                        }
+                        templateOprasiPembedahanAnesthesiLengkap({
+                            data: {
+                                operation_team: result?.operation_team,
+                                operation_task: result?.operation_task
+
+                            }
+                        })
+
+                        renderDataTreatmentObat({
+                            data: result?.treatmentobat
+                        })
 
 
-                        if (href === "#informasi-post-operasi") {
-                            postOperasi({
-                                data: item,
-                                obat: result?.treatmentobat
+                        getDataDrain({
+                            data: result?.assessment_operation_drain,
+                            assessment_anesthesia_recovery: result
+                                ?.assessment_anesthesia_recovery,
 
-                            });
-                        }
+                        });
+
+                        getInstrumen({
+                            data: result?.assessment_instrument
+                        });
+
+                        postOperasi({
+                            data: item,
+                            obat: result?.treatmentobat
+
+                        });
                     }
-                    $this.removeClass("clicked disabled");
-
                 })
-            })
-
-            // appendLokalisOperation("accordionPraOperasiSurgeryBody")
-            $("#container-tab").attr("hidden", false);
-            $("#nama-tindakan-operasi").text($(this).data('treatname') + ' (' + $(this).data(
-                    'date') +
-                ')');
-            $('#operation_planning').html(item?.tarif_id);
-            $("#document_id_checklist_keselamatan").val($(this).data('id')); //new
-            $("#document_id_checklist_anestesi").val($(this).data('id')); //new
-            $("#document_id_informasi-post-operasi").val($(this).data('id')); //new
-            $("#apobody_id").val($(this).data('id')); //new
-
-            // $("#apostart_operation").val(moment(item?.start_operation).format("DD/MM/YYYY HH:mm"))
-
-            assessmentPraOperasi({
-                vactination_id: $(this).data('id')
-            })
 
 
-            $("#container-tab").slideUp();
-            $("#container-tab").slideDown();
-            initializeFlatpickrOperasi()
-        });
-    };
+                $(".nav-link-oprs").off().on("click", function(e) {
 
+                    e.preventDefault();
+                    const $this = $(this);
 
-    const cetakOperasi = (props) => {
-        $(props.element_id).off().on('click', function() {
-            var visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
-            var idEncoded = props.vactination_id;
-            var url = '<?= base_url() . '/admin/cetak/'; ?>' + props.method + '/' + visitEncoded +
-                '/' +
-                idEncoded;
+                    if ($this.hasClass("clicked"))
 
-            window.open(url, '_blank');
-        });
-    }
+                        $this.addClass("clicked");
+                    $this.addClass("disabled");
+                    const href = $(this).attr("href");
+                    let item = pasienOperasiValue[index];
+                    pasienOperasiSelected = item;
+                    quillInstances = {};
+                    dataDrain = [];
 
-    const actionBtnUpdateAndInsert = (props) => {
-        $('#btn-updateAndInsert-permintaan-operasi-modal').off().on('click', function(e) {
-            e.preventDefault();
+                    postData({
+                        diag_id: `${item?.vactination_id}`
+                    }, 'admin/PatientOperationRequest/getDiag', (res) => {
+                        if (res?.success === true) {
+                            res?.data?.forEach((item, index) => {
 
-            $('#formDokumentPermintaanOperasi').find(':disabled').removeAttr('disabled');
+                                addRowDiagDokterOprs('bodyDiagPraOperation2-',
+                                    pasienOperasiSelected
+                                    ?.vactination_id,
+                                    item?.diagnosa_id, item
+                                    ?.diagnosa_name ??
+                                    item?.diagnosa_desc, item
+                                    ?.diag_cat);
 
-            let formElement = document.getElementById('formDokumentPermintaanOperasi');
-            let formData = new FormData(formElement);
-
-            let groupedTasksKeys = Object.keys(window.groupedTasks || {});
-
-            let jsonObj = {};
-
-
-            groupedTasksKeys.forEach(key => {
-                jsonObj[key] = [];
-            });
-
-
-            formData.forEach((value, key) => {
-                if (!key.includes('employee_option') && !key.includes(
-                        'groupedTasks_option')) {
-                    jsonObj[key] = value;
-                }
-            });
-
-
-            let isChecked = $('input[name="patient_category_id_oprs"]:checked').length ? parseInt($(
-                'input[name="patient_category_id_oprs"]:checked').val(), 10) : null;
-            let isCheckedKode = $('input[name="kode_operasi_oprs"]:checked').length ? parseInt($(
-                'input[name="kode_operasi_oprs"]:checked').val(), 10) : null;
-            jsonObj['patient_category_id'] = isChecked;
-            jsonObj['kode_operasi'] = isCheckedKode;
-
-            let operationType = $("#operation_type-permintaan_operasi").val();
-            jsonObj['operation_type'] = operationType;
-
-
-            groupedTasksKeys.forEach(key => {
-                let tasks = window.groupedTasks[key] || [];
-                let employees = window.employees.data || [];
-
-                let employeeIds = formData.getAll(`employee_option[]`);
-                let taskIds = formData.getAll(`groupedTasks_option[]`);
-
-                employeeIds.forEach((employee_id, index) => {
-                    if (employee_id) {
-                        let employeeData = employees.find(emp => emp
-                            .employee_id ===
-                            employee_id);
-                        if (employeeData) {
-                            let entry = {
-                                [`EMPLOYEE_ID`]: employeeData.employee_id,
-                                [`DOCTOR`]: employeeData.fullname
-                            };
-
-                            let task_id = taskIds[index];
-                            if (task_id) {
-                                let taskData = tasks.find(task => task
-                                    .task_id ===
-                                    parseInt(task_id, 10));
-                                if (taskData) {
-                                    entry[`TASK_ID`] = taskData.task_id;
-                                    entry[`COEFFICIENT`] = taskData.coefisient;
-                                    entry[`ONCALL`] = taskData.oncall;
-                                    jsonObj[key].push(entry);
+                                if (item.diag_cat == 13) {
+                                    addRowDiagDokterOprs(
+                                        'bodyDiagPraOperation-',
+                                        pasienOperasiSelected
+                                        ?.vactination_id,
+                                        item?.diagnosa_id, item
+                                        ?.diagnosa_name ?? item
+                                        ?.diagnosa_desc,
+                                        item
+                                        ?.diag_cat, item?.diag_suffer);
+                                } else {
+                                    addRowDiagDokterOprs(
+                                        'bodyDiagPascaOperation-',
+                                        pasienOperasiSelected
+                                        ?.vactination_id,
+                                        item?.diagnosa_id, item
+                                        ?.diagnosa_name ?? item
+                                        ?.diagnosa_desc,
+                                        item
+                                        ?.diag_cat, item?.diag_suffer);
                                 }
+
+
+                                addRowDiagDokterOprs(
+                                    'bodyDiagLaporanAnesthesi-',
+                                    pasienOperasiSelected
+                                    ?.vactination_id,
+                                    item?.diagnosa_id, item
+                                    ?.diagnosa_name ??
+                                    item?.diagnosa_desc, item
+                                    ?.diag_cat, item?.suffer_type);
+
+
+                                addRowDiagDokterOprs(
+                                    'bodyDiagLaporanAnesthesiLengkap-',
+                                    pasienOperasiSelected
+                                    ?.vactination_id,
+                                    item?.diagnosa_id, item
+                                    ?.diagnosa_name ??
+                                    item?.diagnosa_desc, item
+                                    ?.diag_cat, item?.suffer_type);
+
+                            });
+                        }
+
+
+
+                    });
+
+                    postData({
+                        id: `${item?.vactination_id}`,
+                        visit_id: `${item?.visit_id}`
+                    }, 'admin/PatientOperationRequest/getAllArcodions', (res) => {
+
+                        if (res.respon) {
+                            let result = res?.data
+
+                            $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(result
+                                ?.assessment_anesthesia?.body_id); //new
+                            if (href === '#checklist-keselamatan') {
+                                checklistKeselamatan({
+                                    data: result?.assessment_operation_check,
+                                });
+                                getInstrumen({
+                                    data: result?.assessment_instrument
+                                });
+                            }
+                            if (href === '#checklist-anestesi') {
+                                anestesi({
+                                    data: {
+                                        assessment_operation: result
+                                            ?.assessment_operation,
+                                        assessment_anesthesia_checklist: result
+                                            ?.assessment_anesthesia_checklist,
+                                        ori: item
+                                    }
+                                });
+
                             }
 
+                            if (href === '#catatan-keperawatan') {
+                                catatanKeperawatanPraOperasi({
+                                    data: result?.assessment_operation,
+                                    assessment_anesthesia_recovery: result
+                                        ?.assessment_anesthesia_recovery,
+                                    exam_info: result?.exam_info
+
+                                })
+                                getDataKeperawatanOPRS001({
+                                    data: result?.assessment_operation_pra,
+                                    blood_request: result?.treatmentobat
+                                        .blood_request,
+                                    diagnosas: result?.diagnosas,
+                                    blood_request_history: result?.blood_history,
+
+                                })
+                                getInstrumen({
+                                    data: result?.assessment_instrument
+                                });
+                                getDataDrain({
+                                    data: result?.assessment_operation_drain,
+                                    assessment_anesthesia_recovery: result
+                                        ?.assessment_anesthesia_recovery,
+
+                                });
+                            }
+
+
+                            if (href === '#laporan-pembedahan') {
+                                pembedahan({
+                                    data: item,
+                                    diagnosas: result?.diagnosas,
+                                    ori: item
+                                });
+                                templateOprasiPembedahan({
+                                    data: {
+                                        operation_team: result?.operation_team,
+                                        operation_task: result?.operation_task
+
+                                    }
+                                })
+                            }
+                            if (href === '#laporan-anesthesi') {
+                                LaporanAnesthesi({
+                                    data: result?.assessment_anesthesia,
+                                    exam_info: result?.exam_info,
+                                    diagnosas: result?.diagnosas,
+                                    ori: item,
+                                    assessment_anesthesia_recovery: result
+                                        ?.assessment_anesthesia_recovery,
+                                })
+                            }
+                            if (href === '#anesthesi-lengkap') {
+                                laporanAnesthesiLengkap({
+                                    data: {
+                                        assessment_anesthesia_checklist: result
+                                            ?.assessment_anesthesia_checklist,
+                                        assessment_anesthesia: result
+                                            ?.assessment_anesthesia,
+                                        assessment_anesthesia_post: result
+                                            ?.assessment_anesthesia_post,
+                                        assessment_anesthesia_recovery: result
+                                            ?.assessment_anesthesia_recovery,
+                                    },
+                                    exam_info: result?.exam_info
+                                })
+                                templateOprasiPembedahan({
+                                    data: {
+                                        operation_team: result?.operation_team,
+                                        operation_task: result?.operation_task
+
+                                    }
+                                })
+                                templateOprasiPembedahanAnesthesiLengkap({
+                                    data: {
+                                        operation_team: result?.operation_team,
+                                        operation_task: result?.operation_task
+
+                                    }
+                                })
+                                renderDataTreatmentObat({
+                                    data: result?.treatmentobat
+                                })
+                                getDataDrain({
+                                    data: result?.assessment_operation_drain,
+                                    assessment_anesthesia_recovery: result
+                                        ?.assessment_anesthesia_recovery,
+
+                                });
+                            }
+
+
+                            if (href === "#informasi-post-operasi") {
+                                postOperasi({
+                                    data: item,
+                                    obat: result?.treatmentobat
+
+                                });
+                            }
                         }
+                        $this.removeClass("clicked disabled");
+
+                    })
+                })
+
+                // appendLokalisOperation("accordionPraOperasiSurgeryBody")
+                $("#container-tab").attr("hidden", false);
+                $("#nama-tindakan-operasi").text($(this).data('treatname') + ' (' + $(this).data(
+                        'date') +
+                    ')');
+                $('#operation_planning').html(item?.tarif_id);
+                $("#document_id_checklist_keselamatan").val($(this).data('id')); //new
+                $("#document_id_checklist_anestesi").val($(this).data('id')); //new
+                $("#document_id_informasi-post-operasi").val($(this).data('id')); //new
+                $("#apobody_id").val($(this).data('id')); //new
+
+                // $("#apostart_operation").val(moment(item?.start_operation).format("DD/MM/YYYY HH:mm"))
+
+                assessmentPraOperasi({
+                    vactination_id: $(this).data('id')
+                })
+
+
+                $("#container-tab").slideUp();
+                $("#container-tab").slideDown();
+                initializeFlatpickrOperasi()
+            });
+        };
+
+
+        const cetakOperasi = (props) => {
+            $(props.element_id).off().on('click', function() {
+                var visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
+                var idEncoded = props.vactination_id;
+                var url = '<?= base_url() . '/admin/cetak/'; ?>' + props.method + '/' + visitEncoded +
+                    '/' +
+                    idEncoded;
+
+                window.open(url, '_blank');
+            });
+        }
+
+        const actionBtnUpdateAndInsert = (props) => {
+            $('#btn-updateAndInsert-permintaan-operasi-modal').off().on('click', function(e) {
+                e.preventDefault();
+
+                $('#formDokumentPermintaanOperasi').find(':disabled').removeAttr('disabled');
+
+                let formElement = document.getElementById('formDokumentPermintaanOperasi');
+                let formData = new FormData(formElement);
+
+                let groupedTasksKeys = Object.keys(window.groupedTasks || {});
+
+                let jsonObj = {};
+
+
+                groupedTasksKeys.forEach(key => {
+                    jsonObj[key] = [];
+                });
+
+
+                formData.forEach((value, key) => {
+                    if (!key.includes('employee_option') && !key.includes(
+                            'groupedTasks_option')) {
+                        jsonObj[key] = value;
                     }
                 });
-            });
 
 
+                let isChecked = $('input[name="patient_category_id_oprs"]:checked').length ? parseInt($(
+                    'input[name="patient_category_id_oprs"]:checked').val(), 10) : null;
+                let isCheckedKode = $('input[name="kode_operasi_oprs"]:checked').length ? parseInt($(
+                    'input[name="kode_operasi_oprs"]:checked').val(), 10) : null;
+                jsonObj['patient_category_id'] = isChecked;
+                jsonObj['kode_operasi'] = isCheckedKode;
 
-            postData(jsonObj, 'admin/PatientOperationRequest/updateDataAndInsert', (res) => {
-
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-
-                    $("#create-modal-permintaan-operasi").modal("hide");
-                    $('#formDokumentPermintaanOperasi')[0].reset();
+                let operationType = $("#operation_type-permintaan_operasi").val();
+                jsonObj['operation_type'] = operationType;
 
 
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
+                groupedTasksKeys.forEach(key => {
+                    let tasks = window.groupedTasks[key] || [];
+                    let employees = window.employees.data || [];
+
+                    let employeeIds = formData.getAll(`employee_option[]`);
+                    let taskIds = formData.getAll(`groupedTasks_option[]`);
+
+                    employeeIds.forEach((employee_id, index) => {
+                        if (employee_id) {
+                            let employeeData = employees.find(emp => emp
+                                .employee_id ===
+                                employee_id);
+                            if (employeeData) {
+                                let entry = {
+                                    [`EMPLOYEE_ID`]: employeeData.employee_id,
+                                    [`DOCTOR`]: employeeData.fullname
+                                };
+
+                                let task_id = taskIds[index];
+                                if (task_id) {
+                                    let taskData = tasks.find(task => task
+                                        .task_id ===
+                                        parseInt(task_id, 10));
+                                    if (taskData) {
+                                        entry[`TASK_ID`] = taskData.task_id;
+                                        entry[`COEFFICIENT`] = taskData.coefisient;
+                                        entry[`ONCALL`] = taskData.oncall;
+                                        jsonObj[key].push(entry);
+                                    }
+                                }
+
+                            }
+                        }
                     });
-                }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
+                });
+
+
+
+                postData(jsonObj, 'admin/PatientOperationRequest/updateDataAndInsert', (res) => {
+
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+
+                        $("#create-modal-permintaan-operasi").modal("hide");
+                        $('#formDokumentPermintaanOperasi')[0].reset();
+
+
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
+                        });
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                });
             });
-        });
-    };
+        };
 
-    const actionDropdownContentTindakan = () => {
-        $('#dropdown-param-tindakan-operasi').off('click', '.add-dropdown').on('click', '.add-dropdown',
-            function() {
+        const actionDropdownContentTindakan = () => {
+            $('#dropdown-param-tindakan-operasi').off('click', '.add-dropdown').on('click', '.add-dropdown',
+                function() {
 
-                const dropdownType = $(this).closest('table').attr('id').replace('dropdown-', '');
-                const tasks = window.groupedTasks[dropdownType];
+                    const dropdownType = $(this).closest('table').attr('id').replace('dropdown-', '');
+                    const tasks = window.groupedTasks[dropdownType];
 
-                if (tasks && tasks.length > 0) {
-                    const options = tasks.map(task => `
+                    if (tasks && tasks.length > 0) {
+                        const options = tasks.map(task => `
                     <option value="${task.task_id}">${task.task}</option>
                 `).join('');
 
-                    const template = `
+                        const template = `
                     <tr>
                         <td>
                             <select class="form-control select2-oprs groupedTasks-dropdown" name="groupedTasks_option_${dropdownType}[]">
@@ -1454,467 +1457,467 @@ let kopTemplateOprs = [];
                         </td>
                     </tr>
                 `;
-                    $(this).closest('table').find('tbody').append(template);
-                    initializeSelect2();
-                } else {
-                    console.error(
-                        `Tasks for dropdown type '${dropdownType}' are undefined or empty.`);
-                }
-            });
-
-        $('#dropdown-param-tindakan-operasi').off('click', '.delete-dropdown').on('click',
-            '.delete-dropdown',
-            function() {
-                $(this).closest('tr').prev().remove();
-                $(this).closest('tr').remove();
-            });
-    };
-
-    const btnSaveLaporanAnestesi = (props) => {
-        $("#btn-save-laporan-anesthesi").off().on("click", function(e) {
-            e.preventDefault();
-
-            $('#form-laporan-anesthesi').find(':disabled').removeAttr('disabled');
-            let formElement = document.getElementById('form-laporan-anesthesi');
-            let dataSend = new FormData(formElement);
-
-            let jsonObj = {};
-
-            dataSend.forEach((value, key) => {
-                if (value) {
-                    jsonObj[key] = value;
-                }
-            });
-            jsonObj['document_id'] = props.vactination_id
-
-            jsonObj.diagnosas = [];
-            let diag_cats = dataSend.getAll('diag_cat[]');
-            let diag_id = dataSend.getAll('diag_id[]');
-
-            let diag_descs = dataSend.getAll('diag_desc[]');
-            let diag_names = dataSend.getAll('diag_name[]');
-            let suffer_type = dataSend.getAll('suffer_type[]');
-
-            for (let i = 0; i < diag_cats.length; i++) {
-                let entry = {
-                    diagnosa_cat: diag_cats[i],
-                    diagnosa_id: diag_id[i],
-                    diagnosa_desc: diag_descs[i],
-                    diagnosa_name: diag_names[i],
-                    suffer_type: suffer_type[i],
-                };
-                jsonObj.diagnosas.push(entry);
-            }
-
-
-            ['diag_cat[]', 'diag_desc[]', 'suffer_type[]'].forEach(key => {
-                dataSend.getAll(key).forEach((_, i) => {
-                    jsonObj[key.replace('[]', `[${i}]`)] =
-                        undefined;
-                });
-            });
-
-
-            if ($('#vitalSignLaporanAnesthesi').is(':visible')) {
-                const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
-                    'saturasi', 'temperature', 'tension_below', 'tension_upper',
-                    'examination_date',
-                    'pemeriksaan', 'weight', 'oxygen_usage'
-                ];
-
-                jsonObj.vitailsign = jsonObj.vitailsign || {};
-                vitailSignKeys.forEach(key => {
-                    jsonObj.vitailsign[key] = jsonObj[key];
-                    delete jsonObj[key];
+                        $(this).closest('table').find('tbody').append(template);
+                        initializeSelect2();
+                    } else {
+                        console.error(
+                            `Tasks for dropdown type '${dropdownType}' are undefined or empty.`);
+                    }
                 });
 
-                jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
-                jsonObj.vitailsign['clinic_id'] = 'P002';
-                jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
-                jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
-                jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
-                jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
-                jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
-                jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
-                jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
-                jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
-                jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
-                jsonObj.vitailsign['theid'] = dataSend.get('theid');
-                jsonObj.vitailsign['thename'] = dataSend.get('thename');
-                jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
-                jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
-                jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
-                jsonObj.vitailsign['gender'] = dataSend.get('gender');
-                jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
-                jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
-                jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
-                jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
-                jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
-                jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'];
-            }
+            $('#dropdown-param-tindakan-operasi').off('click', '.delete-dropdown').on('click',
+                '.delete-dropdown',
+                function() {
+                    $(this).closest('tr').prev().remove();
+                    $(this).closest('tr').remove();
+                });
+        };
+
+        const btnSaveLaporanAnestesi = (props) => {
+            $("#btn-save-laporan-anesthesi").off().on("click", function(e) {
+                e.preventDefault();
+
+                $('#form-laporan-anesthesi').find(':disabled').removeAttr('disabled');
+                let formElement = document.getElementById('form-laporan-anesthesi');
+                let dataSend = new FormData(formElement);
+
+                let jsonObj = {};
+
+                dataSend.forEach((value, key) => {
+                    if (value) {
+                        jsonObj[key] = value;
+                    }
+                });
+                jsonObj['document_id'] = props.vactination_id
+
+                jsonObj.diagnosas = [];
+                let diag_cats = dataSend.getAll('diag_cat[]');
+                let diag_id = dataSend.getAll('diag_id[]');
+
+                let diag_descs = dataSend.getAll('diag_desc[]');
+                let diag_names = dataSend.getAll('diag_name[]');
+                let suffer_type = dataSend.getAll('suffer_type[]');
+
+                for (let i = 0; i < diag_cats.length; i++) {
+                    let entry = {
+                        diagnosa_cat: diag_cats[i],
+                        diagnosa_id: diag_id[i],
+                        diagnosa_desc: diag_descs[i],
+                        diagnosa_name: diag_names[i],
+                        suffer_type: suffer_type[i],
+                    };
+                    jsonObj.diagnosas.push(entry);
+                }
 
 
-            let organBodyId = get_bodyid();
-            jsonObj.organ = [];
+                ['diag_cat[]', 'diag_desc[]', 'suffer_type[]'].forEach(key => {
+                    dataSend.getAll(key).forEach((_, i) => {
+                        jsonObj[key.replace('[]', `[${i}]`)] =
+                            undefined;
+                    });
+                });
 
-            $('#informasiMedis-laporan-2').find('[name^="oprs034"]').each(function() {
-                let $el = $(this);
-                let paramId = $el.attr('name').split('_')[1] || '';
-                let valueId = $el.val()?.trim() ?? "-";
-                let valueDesc = $el.find('option:selected').text() ?? valueId;
-                let valueScore = $el.find('option:selected').data('score') ?? "";
 
-                if ($el.is(':checkbox:checked') || $el.is(':radio:checked')) {
-                    jsonObj.organ.push(createEntry(paramId, valueId, valueDesc,
-                        valueScore));
-                } else if ($el.is('select')) {
-                    if (valueId !== "") {
+                if ($('#vitalSignLaporanAnesthesi').is(':visible')) {
+                    const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
+                        'saturasi', 'temperature', 'tension_below', 'tension_upper',
+                        'examination_date',
+                        'pemeriksaan', 'weight', 'oxygen_usage'
+                    ];
+
+                    jsonObj.vitailsign = jsonObj.vitailsign || {};
+                    vitailSignKeys.forEach(key => {
+                        jsonObj.vitailsign[key] = jsonObj[key];
+                        delete jsonObj[key];
+                    });
+
+                    jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
+                    jsonObj.vitailsign['clinic_id'] = 'P002';
+                    jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
+                    jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
+                    jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
+                    jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
+                    jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
+                    jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
+                    jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
+                    jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
+                    jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
+                    jsonObj.vitailsign['theid'] = dataSend.get('theid');
+                    jsonObj.vitailsign['thename'] = dataSend.get('thename');
+                    jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
+                    jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
+                    jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
+                    jsonObj.vitailsign['gender'] = dataSend.get('gender');
+                    jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
+                    jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
+                    jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
+                    jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
+                    jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
+                    jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'];
+                }
+
+
+                let organBodyId = get_bodyid();
+                jsonObj.organ = [];
+
+                $('#informasiMedis-laporan-2').find('[name^="oprs034"]').each(function() {
+                    let $el = $(this);
+                    let paramId = $el.attr('name').split('_')[1] || '';
+                    let valueId = $el.val()?.trim() ?? "-";
+                    let valueDesc = $el.find('option:selected').text() ?? valueId;
+                    let valueScore = $el.find('option:selected').data('score') ?? "";
+
+                    if ($el.is(':checkbox:checked') || $el.is(':radio:checked')) {
                         jsonObj.organ.push(createEntry(paramId, valueId, valueDesc,
                             valueScore));
+                    } else if ($el.is('select')) {
+                        if (valueId !== "") {
+                            jsonObj.organ.push(createEntry(paramId, valueId, valueDesc,
+                                valueScore));
+                        }
+                    } else if ($el.is(':input[type="text"], :input[type="hidden"]') &&
+                        valueId) {
+                        jsonObj.organ.push(createEntry(paramId, valueId, valueDesc, ""));
                     }
-                } else if ($el.is(':input[type="text"], :input[type="hidden"]') &&
-                    valueId) {
-                    jsonObj.organ.push(createEntry(paramId, valueId, valueDesc, ""));
-                }
-            });
-
-            function createEntry(paramId, valueId, valueDesc, valueScore) {
-                return {
-                    org_unit_code: dataSend.get('org_unit_code'),
-                    visit_id: dataSend.get('visit_id'),
-                    trans_id: dataSend.get('trans_id'),
-                    body_id: organBodyId,
-                    document_id: props?.vactination_id,
-                    p_type: 'OPRS034',
-                    parameter_id: paramId,
-                    value_score: valueScore,
-                    value_desc: valueDesc,
-                    observation_date: '',
-                    modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                    modified_by: dataSend.get('modified_by'),
-                    value_id: valueId
-                };
-            }
-
-            $("#loading-indicator").show();
-
-
-            postData(jsonObj, 'admin/PatientOperationRequest/insertLaporanAnestesia', (res) => {
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-                    $("#create-modal-permintaan-operasi").modal("hide");
-
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
-                    });
-                    $("#loading-indicator").hide();
-                } else {
-                    errorSwal('Data gagal diperbarui. Silakan coba lagi.');
-                    $("#loading-indicator").hide();
-                }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
-            }, (error) => {
-                console.error("Error occurred:", error);
-                errorSwal('Terjadi kesalahan. Silakan coba lagi.');
-                $("#loading-indicator").hide();
-            });
-        });
-
-
-
-        $("#btn-save-vt-laporan-anesthesi").off().on("click", function(e) {
-            e.preventDefault();
-            $('#form-laporan-anesthesi').find(':disabled').removeAttr('disabled');
-            let formElement = document.getElementById('form-laporan-anesthesi');
-            let dataSend = new FormData(formElement);
-
-            let jsonObj = {};
-
-            dataSend.forEach((value, key) => {
-                if (value) {
-                    jsonObj[key] = value;
-                }
-            });
-
-            jsonObj['document_id'] = props.vactination_id
-            jsonObj['pasien_diagnosa_id'] = jsonObj['body_id'];
-
-
-            if ($('#vitalSignLaporanAnesthesi').is(':visible')) {
-                const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
-                    'saturasi', 'temperature', 'tension_below', 'tension_upper',
-                    'examination_date',
-                    'pemeriksaan', 'weight', 'oxygen_usage'
-                ];
-
-                jsonObj.vitailsign = jsonObj.vitailsign || {};
-                vitailSignKeys.forEach(key => {
-                    jsonObj.vitailsign[key] = jsonObj[key];
-                    delete jsonObj[key];
                 });
 
-                jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
-                jsonObj.vitailsign['clinic_id'] = 'P002';
-                jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
-                jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
-                jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
-                jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
-                jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
-                jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
-                jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
-                jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
-                jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
-                jsonObj.vitailsign['theid'] = dataSend.get('theid');
-                jsonObj.vitailsign['thename'] = dataSend.get('thename');
-                jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
-                jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
-                jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
-                jsonObj.vitailsign['gender'] = dataSend.get('gender');
-                jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
-                jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
-                jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
-                jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
-                jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
-                jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'];
-                jsonObj.vitailsign['account_id'] = '11'
-
-            }
-
-            postData(jsonObj, 'admin/PatientOperationRequest/insertVt', (res) => {
-
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-
-                    getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesi',
-                        '11');
-                    getVitalSignLaporanAnesthesiLengkap(
-                        'vitalSignBodyLaporanAnesthesiLengkap',
-                        '11');
-                    getVitalSignLaporanAnesthesiLengkap(
-                        'vitalSignBodyLaporanAnesthesiLengkap2',
-                        '12');
-                    getVitalSignLaporanAnesthesiLengkap2(
-                        'vitalSignBodyLaporanAnesthesiLengkap3', '13');
-                    getVitalSignKeperawatan()
-
-                } else {
-                    errorSwal('Data gagal diperbarui. Silakan coba lagi.');
-                    //     $("#loading-indicator").hide();
+                function createEntry(paramId, valueId, valueDesc, valueScore) {
+                    return {
+                        org_unit_code: dataSend.get('org_unit_code'),
+                        visit_id: dataSend.get('visit_id'),
+                        trans_id: dataSend.get('trans_id'),
+                        body_id: organBodyId,
+                        document_id: props?.vactination_id,
+                        p_type: 'OPRS034',
+                        parameter_id: paramId,
+                        value_score: valueScore,
+                        value_desc: valueDesc,
+                        observation_date: '',
+                        modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                        modified_by: dataSend.get('modified_by'),
+                        value_id: valueId
+                    };
                 }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
-            }, (error) => {
-                console.error("Error occurred:", error);
-                errorSwal('Terjadi kesalahan. Silakan coba lagi.');
-                // $("#loading-indicator").hide();
+
+                $("#loading-indicator").show();
+
+
+                postData(jsonObj, 'admin/PatientOperationRequest/insertLaporanAnestesia', (res) => {
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+                        $("#create-modal-permintaan-operasi").modal("hide");
+
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
+                        });
+                        $("#loading-indicator").hide();
+                    } else {
+                        errorSwal('Data gagal diperbarui. Silakan coba lagi.');
+                        $("#loading-indicator").hide();
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                }, (error) => {
+                    console.error("Error occurred:", error);
+                    errorSwal('Terjadi kesalahan. Silakan coba lagi.');
+                    $("#loading-indicator").hide();
+                });
             });
 
-        })
 
 
-    }
+            $("#btn-save-vt-laporan-anesthesi").off().on("click", function(e) {
+                e.preventDefault();
+                $('#form-laporan-anesthesi').find(':disabled').removeAttr('disabled');
+                let formElement = document.getElementById('form-laporan-anesthesi');
+                let dataSend = new FormData(formElement);
 
-    const ChartMonitoringDurante = (props) => {
+                let jsonObj = {};
 
-        let rawData = props?.data || [];
-        let dataRendersTables = '';
-
-        let groupedData = {};
-
-        rawData.forEach(item => {
-            let dateTime = item?.examination_date ? moment(item?.examination_date).format(
-                'DD MMM YYYY HH:mm') : null;
-            if (dateTime && !groupedData[dateTime]) {
-                groupedData[dateTime] = {
-                    nadi: [],
-                    temperature: [],
-                    saturasi: [],
-                    tension_upper: [],
-                    tension_below: []
-                };
-            }
-            if (dateTime) {
-                groupedData[dateTime].nadi.push(parseInt(item?.nadi ?? 0));
-                groupedData[dateTime].temperature.push(parseInt(item?.temperature ?? 0));
-                groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 10));
-                groupedData[dateTime].tension_upper.push(parseInt(item?.tension_upper ?? 0));
-                groupedData[dateTime].tension_below.push(parseInt(item?.tension_below ?? 0));
-            }
-        });
-
-
-        let allDates = Object.keys(groupedData);
-        let dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format(
-            'DD MMM YYYY'))));
-        let times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
-
-        let labels = dates.flatMap(date => times.filter((_, index) => allDates[index].startsWith(date)));
-
-        let datasets = [{
-                label: 'Nadi',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
-                        groupedData[
-                            key]?.nadi.length || 1) : null;
-                }),
-                backgroundColor: 'rgba(235, 125, 52, 0.2)',
-                borderColor: '#eb7d34',
-                fill: true,
-                tension: 0.2,
-                yAxisID: 'yNadi'
-            },
-            {
-                label: 'Suhu',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.temperature.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.temperature.length || 1) : null;
-                }),
-                backgroundColor: 'rgba(52, 101, 235, 0.2)',
-                borderColor: '#3465eb',
-                fill: true,
-                tension: 0.2,
-                yAxisID: 'yTemperature'
-            },
-            {
-                label: 'SPO2',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.saturasi.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.saturasi.length || 1) : null;
-                }),
-                backgroundColor: 'rgba(18, 41, 105, 0.2)',
-                borderColor: '#122969',
-                fill: true,
-                tension: 0.2,
-                yAxisID: 'ySaturasi'
-            },
-            {
-                label: 'Sistole',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.tension_upper.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.tension_upper.length || 1) : null;
-                }),
-                backgroundColor: 'rgba(61, 235, 52, 0.2)',
-                borderColor: '#3deb34',
-                fill: true,
-                tension: 0.2,
-                yAxisID: 'yTension'
-            },
-            {
-                label: 'Diastole',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.tension_below.reduce((a, b) => a + b, 0) / (
-                        groupedData[key]?.tension_below.length || 1) : null;
-                }),
-                backgroundColor: 'rgba(61, 235, 52, 0.2)',
-                borderColor: '#3deb34',
-                fill: true,
-                tension: 0.2,
-                yAxisID: 'yTension'
-            },
-            {
-                label: 'Respirasi',
-                data: labels.map(dateTime => {
-                    let key = allDates.find(dt => dt.includes(dateTime));
-                    return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
-                        groupedData[
-                            key]?.nadi.length || 1) : null;
-                }),
-                backgroundColor: 'rgba(230, 242, 5, 0.2)',
-                borderColor: '#e6f205',
-                fill: true,
-                tension: 0.2,
-                yAxisID: 'yRespirasi'
-            }
-        ];
-
-        const ctxChart = document.getElementById(`${props?.body_requestChart}`).getContext('2d');
-        new Chart(ctxChart, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            options: {
-
-                plugins: {
-                    datalabels: false
-                },
-                scales: {
-                    yNadi: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Nadi'
-                        }
-                    },
-                    yTemperature: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Suhu'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    ySaturasi: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'SPO2'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    yTension: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Tekanan Darah'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    yRespirasi: {
-                        type: 'linear',
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Respirasi'
-                        },
-                        grid: {
-                            drawOnChartArea: false
-                        }
+                dataSend.forEach((value, key) => {
+                    if (value) {
+                        jsonObj[key] = value;
                     }
+                });
+
+                jsonObj['document_id'] = props.vactination_id
+                jsonObj['pasien_diagnosa_id'] = jsonObj['body_id'];
+
+
+                if ($('#vitalSignLaporanAnesthesi').is(':visible')) {
+                    const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
+                        'saturasi', 'temperature', 'tension_below', 'tension_upper',
+                        'examination_date',
+                        'pemeriksaan', 'weight', 'oxygen_usage'
+                    ];
+
+                    jsonObj.vitailsign = jsonObj.vitailsign || {};
+                    vitailSignKeys.forEach(key => {
+                        jsonObj.vitailsign[key] = jsonObj[key];
+                        delete jsonObj[key];
+                    });
+
+                    jsonObj.vitailsign['body_id'] = dataSend.get('body_id_vt');
+                    jsonObj.vitailsign['clinic_id'] = 'P002';
+                    jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
+                    jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
+                    jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
+                    jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
+                    jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
+                    jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
+                    jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
+                    jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
+                    jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
+                    jsonObj.vitailsign['theid'] = dataSend.get('theid');
+                    jsonObj.vitailsign['thename'] = dataSend.get('thename');
+                    jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
+                    jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
+                    jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
+                    jsonObj.vitailsign['gender'] = dataSend.get('gender');
+                    jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
+                    jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
+                    jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
+                    jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
+                    jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
+                    jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'];
+                    jsonObj.vitailsign['account_id'] = '11'
+
+                }
+
+                postData(jsonObj, 'admin/PatientOperationRequest/insertVt', (res) => {
+
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+
+                        getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesi',
+                            '11');
+                        getVitalSignLaporanAnesthesiLengkap(
+                            'vitalSignBodyLaporanAnesthesiLengkap',
+                            '11');
+                        getVitalSignLaporanAnesthesiLengkap(
+                            'vitalSignBodyLaporanAnesthesiLengkap2',
+                            '12');
+                        getVitalSignLaporanAnesthesiLengkap2(
+                            'vitalSignBodyLaporanAnesthesiLengkap3', '13');
+                        getVitalSignKeperawatan()
+
+                    } else {
+                        errorSwal('Data gagal diperbarui. Silakan coba lagi.');
+                        //     $("#loading-indicator").hide();
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                }, (error) => {
+                    console.error("Error occurred:", error);
+                    errorSwal('Terjadi kesalahan. Silakan coba lagi.');
+                    // $("#loading-indicator").hide();
+                });
+
+            })
+
+
+        }
+
+        const ChartMonitoringDurante = (props) => {
+
+            let rawData = props?.data || [];
+            let dataRendersTables = '';
+
+            let groupedData = {};
+
+            rawData.forEach(item => {
+                let dateTime = item?.examination_date ? moment(item?.examination_date).format(
+                    'DD MMM YYYY HH:mm') : null;
+                if (dateTime && !groupedData[dateTime]) {
+                    groupedData[dateTime] = {
+                        nadi: [],
+                        temperature: [],
+                        saturasi: [],
+                        tension_upper: [],
+                        tension_below: []
+                    };
+                }
+                if (dateTime) {
+                    groupedData[dateTime].nadi.push(parseInt(item?.nadi ?? 0));
+                    groupedData[dateTime].temperature.push(parseInt(item?.temperature ?? 0));
+                    groupedData[dateTime].saturasi.push(parseInt(item?.saturasi ?? 10));
+                    groupedData[dateTime].tension_upper.push(parseInt(item?.tension_upper ?? 0));
+                    groupedData[dateTime].tension_below.push(parseInt(item?.tension_below ?? 0));
+                }
+            });
+
+
+            let allDates = Object.keys(groupedData);
+            let dates = Array.from(new Set(allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format(
+                'DD MMM YYYY'))));
+            let times = allDates.map(dt => moment(dt, 'DD MMM YYYY HH:mm').format('HH:mm'));
+
+            let labels = dates.flatMap(date => times.filter((_, index) => allDates[index].startsWith(date)));
+
+            let datasets = [{
+                    label: 'Nadi',
+                    data: labels.map(dateTime => {
+                        let key = allDates.find(dt => dt.includes(dateTime));
+                        return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
+                            groupedData[
+                                key]?.nadi.length || 1) : null;
+                    }),
+                    backgroundColor: 'rgba(235, 125, 52, 0.2)',
+                    borderColor: '#eb7d34',
+                    fill: true,
+                    tension: 0.2,
+                    yAxisID: 'yNadi'
                 },
-                layout: {
-                    padding: {
-                        left: 10,
-                        right: 10,
-                        top: 10,
-                        bottom: 10
+                {
+                    label: 'Suhu',
+                    data: labels.map(dateTime => {
+                        let key = allDates.find(dt => dt.includes(dateTime));
+                        return key ? groupedData[key]?.temperature.reduce((a, b) => a + b, 0) / (
+                            groupedData[key]?.temperature.length || 1) : null;
+                    }),
+                    backgroundColor: 'rgba(52, 101, 235, 0.2)',
+                    borderColor: '#3465eb',
+                    fill: true,
+                    tension: 0.2,
+                    yAxisID: 'yTemperature'
+                },
+                {
+                    label: 'SPO2',
+                    data: labels.map(dateTime => {
+                        let key = allDates.find(dt => dt.includes(dateTime));
+                        return key ? groupedData[key]?.saturasi.reduce((a, b) => a + b, 0) / (
+                            groupedData[key]?.saturasi.length || 1) : null;
+                    }),
+                    backgroundColor: 'rgba(18, 41, 105, 0.2)',
+                    borderColor: '#122969',
+                    fill: true,
+                    tension: 0.2,
+                    yAxisID: 'ySaturasi'
+                },
+                {
+                    label: 'Sistole',
+                    data: labels.map(dateTime => {
+                        let key = allDates.find(dt => dt.includes(dateTime));
+                        return key ? groupedData[key]?.tension_upper.reduce((a, b) => a + b, 0) / (
+                            groupedData[key]?.tension_upper.length || 1) : null;
+                    }),
+                    backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                    borderColor: '#3deb34',
+                    fill: true,
+                    tension: 0.2,
+                    yAxisID: 'yTension'
+                },
+                {
+                    label: 'Diastole',
+                    data: labels.map(dateTime => {
+                        let key = allDates.find(dt => dt.includes(dateTime));
+                        return key ? groupedData[key]?.tension_below.reduce((a, b) => a + b, 0) / (
+                            groupedData[key]?.tension_below.length || 1) : null;
+                    }),
+                    backgroundColor: 'rgba(61, 235, 52, 0.2)',
+                    borderColor: '#3deb34',
+                    fill: true,
+                    tension: 0.2,
+                    yAxisID: 'yTension'
+                },
+                {
+                    label: 'Respirasi',
+                    data: labels.map(dateTime => {
+                        let key = allDates.find(dt => dt.includes(dateTime));
+                        return key ? groupedData[key]?.nadi.reduce((a, b) => a + b, 0) / (
+                            groupedData[
+                                key]?.nadi.length || 1) : null;
+                    }),
+                    backgroundColor: 'rgba(230, 242, 5, 0.2)',
+                    borderColor: '#e6f205',
+                    fill: true,
+                    tension: 0.2,
+                    yAxisID: 'yRespirasi'
+                }
+            ];
+
+            const ctxChart = document.getElementById(`${props?.body_requestChart}`).getContext('2d');
+            new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+
+                    plugins: {
+                        datalabels: false
+                    },
+                    scales: {
+                        yNadi: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Nadi'
+                            }
+                        },
+                        yTemperature: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Suhu'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        ySaturasi: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'SPO2'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        yTension: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Tekanan Darah'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        yRespirasi: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Respirasi'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 10,
+                            top: 10,
+                            bottom: 10
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        const tableBody = $(`#${props?.body_requestTabels}`);
-        if (tableBody.length) {
-            dataRendersTables = rawData.map(item => `
+            const tableBody = $(`#${props?.body_requestTabels}`);
+            if (tableBody.length) {
+                dataRendersTables = rawData.map(item => `
                                         <tr>
                                             <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
                                             <td>${item?.tension_upper ?? 0}</td>
@@ -1928,146 +1931,168 @@ let kopTemplateOprs = [];
                                         </tr>
                                     `).join('');
 
-            tableBody.html(dataRendersTables);
-        } else {
-            console.log("Table body element not found.");
-        }
-    };
+                tableBody.html(dataRendersTables);
+            } else {
+                console.log("Table body element not found.");
+            }
+        };
 
-    const btnSaveLaporanAnestesiLengkap = (props) => {
-        $("#btn-save-laporan-anesthesiLengkap").off().on("click", function(e) {
-            e.preventDefault();
-            let jsonObj = {
-                instrumen: [],
-                drain: [],
-                diagnosas: [],
-                bromage: [],
-                aldrete: [],
-                steward: [],
-                vitailsign: {},
-                vitailsign2: {},
-                obat: [],
-                boold: []
-            };
+        const btnSaveLaporanAnestesiLengkap = (props) => {
+            $("#btn-save-laporan-anesthesiLengkap").off().on("click", function(e) {
+                e.preventDefault();
+                let jsonObj = {
+                    instrumen: [],
+                    drain: [],
+                    diagnosas: [],
+                    bromage: [],
+                    aldrete: [],
+                    steward: [],
+                    vitailsign: {},
+                    vitailsign2: {},
+                    obat: [],
+                    boold: []
+                };
 
-            const selects = document.querySelectorAll('#bromageContainer1 select');
-            selects.forEach(select => {
-                const selectedOptions = select.selectedOptions;
-                Array.from(selectedOptions).forEach(option => {
-                    let entry = {
-                        document_id: props?.vactination_id,
-                        value_id: option.value,
-                        p_type: 'OPRS024',
-                        parameter_id: option.getAttribute('data-parameter'),
-                        value_score: option.getAttribute('data-score'),
-                        value_desc: option.getAttribute('data-desc')
-                    };
-                    jsonObj.bromage.push(entry);
+                const selects = document.querySelectorAll('#bromageContainer1 select');
+                selects.forEach(select => {
+                    const selectedOptions = select.selectedOptions;
+                    Array.from(selectedOptions).forEach(option => {
+                        let entry = {
+                            document_id: props?.vactination_id,
+                            value_id: option.value,
+                            p_type: 'OPRS024',
+                            parameter_id: option.getAttribute('data-parameter'),
+                            value_score: option.getAttribute('data-score'),
+                            value_desc: option.getAttribute('data-desc')
+                        };
+                        jsonObj.bromage.push(entry);
+                    });
                 });
-            });
 
 
-            $('#form-laporanAnesthesi-lengkap').find(':disabled').removeAttr('disabled');
-            let formElement = document.getElementById('form-laporanAnesthesi-lengkap');
-            let dataSend = new FormData(formElement);
+                $('#form-laporanAnesthesi-lengkap').find(':disabled').removeAttr('disabled');
+                let formElement = document.getElementById('form-laporanAnesthesi-lengkap');
+                let dataSend = new FormData(formElement);
 
-            dataSend.forEach((value, key) => {
-                if (value) {
-                    jsonObj[key] = value;
+                dataSend.forEach((value, key) => {
+                    if (value) {
+                        jsonObj[key] = value;
+                    }
+                    // if (moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm'], true).isValid()) {
+                    //     jsonObj[key] = moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm']).format('YYYY-MM-DDTHH:mm');
+                    // }
+                });
+
+                jsonObj['document_id'] = props.vactination_id;
+                let diag_cats = dataSend.getAll('diag_cat[]');
+                let diag_id = dataSend.getAll('diag_id[]');
+
+                let diag_descs = dataSend.getAll('diag_desc[]');
+                let diag_names = dataSend.getAll('diag_name[]');
+                let suffer_type = dataSend.getAll('suffer_type[]');
+
+                let date_obat = dataSend.getAll('dateobat[]');
+                let bill_obat = dataSend.getAll('billobat[]');
+
+
+                let date_obatBoold = dataSend.getAll('dateobatBoold[]');
+                let bill_obatBoold = dataSend.getAll('billobatBoold[]');
+
+
+
+
+                for (let i = 0; i < date_obat.length; i++) {
+                    let entry = {
+                        date: date_obat[i] ? moment(date_obat[i], "DD/MM/YYYY HH:mm").format(
+                            "YYYY-MM-DD HH:mm") : date_obat[i],
+                        bill: bill_obat[i],
+
+                    };
+                    jsonObj.obat.push(entry);
                 }
-                // if (moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm'], true).isValid()) {
-                //     jsonObj[key] = moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm']).format('YYYY-MM-DDTHH:mm');
-                // }
-            });
 
-            jsonObj['document_id'] = props.vactination_id;
-            let diag_cats = dataSend.getAll('diag_cat[]');
-            let diag_id = dataSend.getAll('diag_id[]');
-
-            let diag_descs = dataSend.getAll('diag_desc[]');
-            let diag_names = dataSend.getAll('diag_name[]');
-            let suffer_type = dataSend.getAll('suffer_type[]');
-
-            let date_obat = dataSend.getAll('dateobat[]');
-            let bill_obat = dataSend.getAll('billobat[]');
-
-
-            let date_obatBoold = dataSend.getAll('dateobatBoold[]');
-            let bill_obatBoold = dataSend.getAll('billobatBoold[]');
-
-
-
-
-            for (let i = 0; i < date_obat.length; i++) {
-                let entry = {
-                    date: date_obat[i] ? moment(date_obat[i], "DD/MM/YYYY HH:mm").format(
-                        "YYYY-MM-DD HH:mm") : date_obat[i],
-                    bill: bill_obat[i],
-
-                };
-                jsonObj.obat.push(entry);
-            }
-
-            for (let i = 0; i < date_obatBoold.length; i++) {
-                let entry = {
-                    date: date_obatBoold[i] ? moment(date_obatBoold[i], "DD/MM/YYYY HH:mm").format(
-                        "YYYY-MM-DD HH:mm") : date_obatBoold[i],
-                    key: bill_obatBoold[i],
-
-                };
-                jsonObj.boold.push(entry);
-            }
-
-
-
-            for (let i = 0; i < diag_cats.length; i++) {
-                let entry = {
-                    diagnosa_cat: diag_cats[i],
-                    diagnosa_id: diag_id[i],
-                    diagnosa_desc: diag_descs[i],
-                    diagnosa_name: diag_names[i],
-                    suffer_type: suffer_type[i],
-                };
-                jsonObj.diagnosas.push(entry);
-            }
-
-
-            ['diag_cat[]', 'diag_desc[]', 'suffer_type[]'].forEach(key => {
-                dataSend.getAll(key).forEach((_, i) => {
-                    jsonObj[key.replace('[]', `[${i}]`)] =
-                        undefined;
-                });
-            });
-
-            let InfusBodyId = get_bodyid();
-            jsonObj.infusion = [];
-
-
-            $('#recovery-room-oprs029').find('[name^="oprs029"]').each(function() {
-
-                if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                for (let i = 0; i < date_obatBoold.length; i++) {
                     let entry = {
-                        org_unit_code: dataSend.get('org_unit_code'),
-                        visit_id: dataSend.get('visit_id'),
-                        trans_id: dataSend.get('trans_id'),
-                        body_id: InfusBodyId,
-                        document_id: props?.vactination_id,
-                        p_type: 'OPRS029',
-                        parameter_id: $(this).attr('name').split('_')[1] || '',
-                        value_score: $(this).data('score'),
-                        value_desc: $(this).data('desc'),
-                        observation_date: '',
-                        modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                        modified_by: dataSend.get('modified_by'),
-                        value_id: $(this).val()
+                        date: date_obatBoold[i] ? moment(date_obatBoold[i], "DD/MM/YYYY HH:mm").format(
+                            "YYYY-MM-DD HH:mm") : date_obatBoold[i],
+                        key: bill_obatBoold[i],
+
                     };
-                    jsonObj.infusion.push(entry);
-                } else if ($(this).is('select')) {
-                    let selectName = $(this).attr('name')
-                    $(this).find('option:selected').each(function() {
-                        var option = $(this);
-                        var optionDataScore = option.data('score');
-                        if (optionDataScore) {
+                    jsonObj.boold.push(entry);
+                }
+
+
+
+                for (let i = 0; i < diag_cats.length; i++) {
+                    let entry = {
+                        diagnosa_cat: diag_cats[i],
+                        diagnosa_id: diag_id[i],
+                        diagnosa_desc: diag_descs[i],
+                        diagnosa_name: diag_names[i],
+                        suffer_type: suffer_type[i],
+                    };
+                    jsonObj.diagnosas.push(entry);
+                }
+
+
+                ['diag_cat[]', 'diag_desc[]', 'suffer_type[]'].forEach(key => {
+                    dataSend.getAll(key).forEach((_, i) => {
+                        jsonObj[key.replace('[]', `[${i}]`)] =
+                            undefined;
+                    });
+                });
+
+                let InfusBodyId = get_bodyid();
+                jsonObj.infusion = [];
+
+
+                $('#recovery-room-oprs029').find('[name^="oprs029"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                        let entry = {
+                            org_unit_code: dataSend.get('org_unit_code'),
+                            visit_id: dataSend.get('visit_id'),
+                            trans_id: dataSend.get('trans_id'),
+                            body_id: InfusBodyId,
+                            document_id: props?.vactination_id,
+                            p_type: 'OPRS029',
+                            parameter_id: $(this).attr('name').split('_')[1] || '',
+                            value_score: $(this).data('score'),
+                            value_desc: $(this).data('desc'),
+                            observation_date: '',
+                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            modified_by: dataSend.get('modified_by'),
+                            value_id: $(this).val()
+                        };
+                        jsonObj.infusion.push(entry);
+                    } else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: InfusBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS029',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.infusion.push(entry);
+                            }
+                        });
+                    } else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
                             let entry = {
                                 org_unit_code: dataSend.get('org_unit_code'),
                                 visit_id: dataSend.get('visit_id'),
@@ -2075,133 +2100,133 @@ let kopTemplateOprs = [];
                                 body_id: InfusBodyId,
                                 document_id: props?.vactination_id,
                                 p_type: 'OPRS029',
-                                parameter_id: selectName.split('_')[1] || '',
-                                value_score: optionDataScore,
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
                                 value_desc: $(this).data('desc'),
                                 observation_date: '',
-                                modified_date: moment().format(
-                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                                 modified_by: dataSend.get('modified_by'),
-                                value_id: $(this).val()
+                                value_id: inputValue
                             };
                             jsonObj.infusion.push(entry);
                         }
-                    });
-                } else if ($(this).is(':input[type="text"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: InfusBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS029',
-                            parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
-                            value_desc: $(this).data('desc'),
-                            observation_date: '',
-                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
-                        };
-                        jsonObj.infusion.push(entry);
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: InfusBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS029',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.infusion.push(entry);
+                        }
                     }
-                } else if ($(this).is(':input[type="hidden"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: InfusBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS029',
-                            parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
-                            value_desc: $(this).data('desc'),
-                            observation_date: '',
-                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
-                        };
-                        jsonObj.infusion.push(entry);
-                    }
-                }
 
-            });
-            let RegionalBodyId = get_bodyid();
-            jsonObj.regional = [];
+                });
+                let RegionalBodyId = get_bodyid();
+                jsonObj.regional = [];
 
-            $('#recovery-room-oprs033').find('[name^="oprs033"]').each(function() {
-                let $el = $(this);
-                let paramId = $el.attr('name').split('_')[1] || '';
-                let valueId = $el.val()?.trim() ?? "-";
-                let valueDesc = $el.find('option:selected').text() ?? valueId;
-                let valueScore = $el.find('option:selected').data('score') ?? "";
+                $('#recovery-room-oprs033').find('[name^="oprs033"]').each(function() {
+                    let $el = $(this);
+                    let paramId = $el.attr('name').split('_')[1] || '';
+                    let valueId = $el.val()?.trim() ?? "-";
+                    let valueDesc = $el.find('option:selected').text() ?? valueId;
+                    let valueScore = $el.find('option:selected').data('score') ?? "";
 
-                if ($el.is(':checkbox:checked') || $el.is(':radio:checked')) {
-                    jsonObj.regional.push(createEntry(paramId, valueId, valueDesc,
-                        valueScore));
-                } else if ($el.is('select')) {
-                    if (valueId !== "") {
+                    if ($el.is(':checkbox:checked') || $el.is(':radio:checked')) {
                         jsonObj.regional.push(createEntry(paramId, valueId, valueDesc,
                             valueScore));
+                    } else if ($el.is('select')) {
+                        if (valueId !== "") {
+                            jsonObj.regional.push(createEntry(paramId, valueId, valueDesc,
+                                valueScore));
+                        }
+                    } else if ($el.is(':input[type="text"], :input[type="hidden"]') &&
+                        valueId) {
+                        jsonObj.regional.push(createEntry(paramId, valueId, valueDesc, ""));
                     }
-                } else if ($el.is(':input[type="text"], :input[type="hidden"]') &&
-                    valueId) {
-                    jsonObj.regional.push(createEntry(paramId, valueId, valueDesc, ""));
-                }
-            });
+                });
 
-            function createEntry(paramId, valueId, valueDesc, valueScore) {
-                return {
-                    org_unit_code: dataSend.get('org_unit_code'),
-                    visit_id: dataSend.get('visit_id'),
-                    trans_id: dataSend.get('trans_id'),
-                    body_id: RegionalBodyId,
-                    document_id: props?.vactination_id,
-                    p_type: 'OPRS033',
-                    parameter_id: paramId,
-                    value_score: valueScore,
-                    value_desc: valueDesc,
-                    observation_date: '',
-                    modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                    modified_by: dataSend.get('modified_by'),
-                    value_id: valueId
-                };
-            }
-
-
-
-            let GeneralBodyId = get_bodyid();
-            jsonObj.general = [];
-
-            $('#recovery-room-oprs030').find('[name^="oprs030"]').each(function() {
-
-                if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
-                    let entry = {
+                function createEntry(paramId, valueId, valueDesc, valueScore) {
+                    return {
                         org_unit_code: dataSend.get('org_unit_code'),
                         visit_id: dataSend.get('visit_id'),
                         trans_id: dataSend.get('trans_id'),
-                        body_id: GeneralBodyId,
+                        body_id: RegionalBodyId,
                         document_id: props?.vactination_id,
-                        p_type: 'OPRS030',
-                        parameter_id: $(this).attr('name').split('_')[1] || '',
-                        value_score: $(this).data('score'),
-                        value_desc: $(this).data('desc'),
+                        p_type: 'OPRS033',
+                        parameter_id: paramId,
+                        value_score: valueScore,
+                        value_desc: valueDesc,
                         observation_date: '',
                         modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                         modified_by: dataSend.get('modified_by'),
-                        value_id: $(this).val()
+                        value_id: valueId
                     };
-                    jsonObj.general.push(entry);
-                } else if ($(this).is('select')) {
-                    let selectName = $(this).attr('name')
-                    $(this).find('option:selected').each(function() {
-                        var option = $(this);
-                        var optionDataScore = option.data('score');
-                        if (optionDataScore) {
+                }
+
+
+
+                let GeneralBodyId = get_bodyid();
+                jsonObj.general = [];
+
+                $('#recovery-room-oprs030').find('[name^="oprs030"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                        let entry = {
+                            org_unit_code: dataSend.get('org_unit_code'),
+                            visit_id: dataSend.get('visit_id'),
+                            trans_id: dataSend.get('trans_id'),
+                            body_id: GeneralBodyId,
+                            document_id: props?.vactination_id,
+                            p_type: 'OPRS030',
+                            parameter_id: $(this).attr('name').split('_')[1] || '',
+                            value_score: $(this).data('score'),
+                            value_desc: $(this).data('desc'),
+                            observation_date: '',
+                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            modified_by: dataSend.get('modified_by'),
+                            value_id: $(this).val()
+                        };
+                        jsonObj.general.push(entry);
+                    } else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: GeneralBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS030',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.general.push(entry);
+                            }
+                        });
+                    } else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
                             let entry = {
                                 org_unit_code: dataSend.get('org_unit_code'),
                                 visit_id: dataSend.get('visit_id'),
@@ -2209,90 +2234,91 @@ let kopTemplateOprs = [];
                                 body_id: GeneralBodyId,
                                 document_id: props?.vactination_id,
                                 p_type: 'OPRS030',
-                                parameter_id: selectName.split('_')[1] || '',
-                                value_score: optionDataScore,
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
                                 value_desc: $(this).data('desc'),
                                 observation_date: '',
-                                modified_date: moment().format(
-                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                                 modified_by: dataSend.get('modified_by'),
-                                value_id: $(this).val()
+                                value_id: inputValue
                             };
                             jsonObj.general.push(entry);
                         }
-                    });
-                } else if ($(this).is(':input[type="text"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: GeneralBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS030',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.general.push(entry);
+                        }
+                    }
+
+                });
+
+                let VentilasiBodyId = get_bodyid();
+                jsonObj.ventilasi = [];
+
+                $('#recovery-room-oprs031').find('[name^="oprs031"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
                         let entry = {
                             org_unit_code: dataSend.get('org_unit_code'),
                             visit_id: dataSend.get('visit_id'),
                             trans_id: dataSend.get('trans_id'),
-                            body_id: GeneralBodyId,
+                            body_id: VentilasiBodyId,
                             document_id: props?.vactination_id,
-                            p_type: 'OPRS030',
+                            p_type: 'OPRS031',
                             parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
+                            value_score: $(this).data('score'),
                             value_desc: $(this).data('desc'),
                             observation_date: '',
                             modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                             modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
+                            value_id: $(this).val()
                         };
-                        jsonObj.general.push(entry);
-                    }
-                } else if ($(this).is(':input[type="hidden"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: GeneralBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS030',
-                            parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
-                            value_desc: $(this).data('desc'),
-                            observation_date: '',
-                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
-                        };
-                        jsonObj.general.push(entry);
-                    }
-                }
+                        jsonObj.ventilasi.push(entry);
+                    } else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: VentilasiBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS031',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.ventilasi.push(entry);
+                            }
+                        });
+                    } else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
 
-            });
-
-            let VentilasiBodyId = get_bodyid();
-            jsonObj.ventilasi = [];
-
-            $('#recovery-room-oprs031').find('[name^="oprs031"]').each(function() {
-
-                if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
-                    let entry = {
-                        org_unit_code: dataSend.get('org_unit_code'),
-                        visit_id: dataSend.get('visit_id'),
-                        trans_id: dataSend.get('trans_id'),
-                        body_id: VentilasiBodyId,
-                        document_id: props?.vactination_id,
-                        p_type: 'OPRS031',
-                        parameter_id: $(this).attr('name').split('_')[1] || '',
-                        value_score: $(this).data('score'),
-                        value_desc: $(this).data('desc'),
-                        observation_date: '',
-                        modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                        modified_by: dataSend.get('modified_by'),
-                        value_id: $(this).val()
-                    };
-                    jsonObj.ventilasi.push(entry);
-                } else if ($(this).is('select')) {
-                    let selectName = $(this).attr('name')
-                    $(this).find('option:selected').each(function() {
-                        var option = $(this);
-                        var optionDataScore = option.data('score');
-                        if (optionDataScore) {
                             let entry = {
                                 org_unit_code: dataSend.get('org_unit_code'),
                                 visit_id: dataSend.get('visit_id'),
@@ -2300,94 +2326,93 @@ let kopTemplateOprs = [];
                                 body_id: VentilasiBodyId,
                                 document_id: props?.vactination_id,
                                 p_type: 'OPRS031',
-                                parameter_id: selectName.split('_')[1] || '',
-                                value_score: optionDataScore,
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
                                 value_desc: $(this).data('desc'),
                                 observation_date: '',
-                                modified_date: moment().format(
-                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                                 modified_by: dataSend.get('modified_by'),
-                                value_id: $(this).val()
+                                value_id: inputValue
                             };
                             jsonObj.ventilasi.push(entry);
                         }
-                    });
-                } else if ($(this).is(':input[type="text"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: VentilasiBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS031',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.ventilasi.push(entry);
+                        }
+                    }
 
+                });
+
+
+                let JalanNapasBodyId = get_bodyid();
+                jsonObj.jalan_napas = [];
+
+                $('#recovery-room-oprs032').find('[name^="oprs032"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
                         let entry = {
                             org_unit_code: dataSend.get('org_unit_code'),
                             visit_id: dataSend.get('visit_id'),
                             trans_id: dataSend.get('trans_id'),
-                            body_id: VentilasiBodyId,
+                            body_id: JalanNapasBodyId,
                             document_id: props?.vactination_id,
-                            p_type: 'OPRS031',
-                            parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
-                            value_desc: $(this).data('desc'),
+                            p_type: 'OPRS032',
+                            parameter_id: $(this).attr('name')?.split('_')[1] || '',
+                            value_score: $(this).is(':checked') ? $(this).data('score') : null,
+                            value_desc: $(this).is(':checked') ? $(this).data('desc') : null,
                             observation_date: '',
                             modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                             modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
+                            value_id: $(this).is(':checked') ? $(this).val() : null
                         };
-                        jsonObj.ventilasi.push(entry);
-                    }
-                } else if ($(this).is(':input[type="hidden"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: VentilasiBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS031',
-                            parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
-                            value_desc: $(this).data('desc'),
-                            observation_date: '',
-                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
-                        };
-                        jsonObj.ventilasi.push(entry);
-                    }
-                }
 
-            });
+                        jsonObj.jalan_napas.push(entry);
 
-
-            let JalanNapasBodyId = get_bodyid();
-            jsonObj.jalan_napas = [];
-
-            $('#recovery-room-oprs032').find('[name^="oprs032"]').each(function() {
-
-                if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
-                    let entry = {
-                        org_unit_code: dataSend.get('org_unit_code'),
-                        visit_id: dataSend.get('visit_id'),
-                        trans_id: dataSend.get('trans_id'),
-                        body_id: JalanNapasBodyId,
-                        document_id: props?.vactination_id,
-                        p_type: 'OPRS032',
-                        parameter_id: $(this).attr('name')?.split('_')[1] || '',
-                        value_score: $(this).is(':checked') ? $(this).data('score') : null,
-                        value_desc: $(this).is(':checked') ? $(this).data('desc') : null,
-                        observation_date: '',
-                        modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                        modified_by: dataSend.get('modified_by'),
-                        value_id: $(this).is(':checked') ? $(this).val() : null
-                    };
-
-                    jsonObj.jalan_napas.push(entry);
-
-                } else if ($(this).is('select')) {
-                    let selectName = $(this).attr('name')
-                    $(this).find('option:selected').each(function() {
-                        var option = $(this);
-                        var optionDataScore = option.data('score');
-                        if (optionDataScore) {
+                    } else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: JalanNapasBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS032',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.jalan_napas.push(entry);
+                            }
+                        });
+                    } else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
                             let entry = {
                                 org_unit_code: dataSend.get('org_unit_code'),
                                 visit_id: dataSend.get('visit_id'),
@@ -2395,309 +2420,128 @@ let kopTemplateOprs = [];
                                 body_id: JalanNapasBodyId,
                                 document_id: props?.vactination_id,
                                 p_type: 'OPRS032',
-                                parameter_id: selectName.split('_')[1] || '',
-                                value_score: optionDataScore,
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
                                 value_desc: $(this).data('desc'),
                                 observation_date: '',
-                                modified_date: moment().format(
-                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                                 modified_by: dataSend.get('modified_by'),
-                                value_id: $(this).val()
+                                value_id: inputValue
                             };
                             jsonObj.jalan_napas.push(entry);
                         }
-                    });
-                } else if ($(this).is(':input[type="text"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: JalanNapasBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS032',
-                            parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
-                            value_desc: $(this).data('desc'),
-                            observation_date: '',
-                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
-                        };
-                        jsonObj.jalan_napas.push(entry);
-                    }
-                } else if ($(this).is(':input[type="hidden"]')) {
-                    var inputValue = $(this).val().trim();
-                    if (inputValue && $(this).data('score')) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: JalanNapasBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS032',
-                            parameter_id: $(this).attr('name').split('_')[1] || '',
-                            value_score: '',
-                            value_desc: $(this).data('desc'),
-                            observation_date: '',
-                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: inputValue
-                        };
-                        jsonObj.jalan_napas.push(entry);
-                    }
-                }
-
-            });
-
-            $('#bodyAldreteoprs023-1').find('tr').each(function(rowIndex, tr) {
-                let row = $(tr);
-                let AldreteBodyId = get_bodyid();
-
-                row.find('select[name^="parameter_oprs023_"]').each(function(selectIndex,
-                    select) {
-                    let selectElement = $(select);
-                    let parameterId = selectElement.attr('name').split('_').pop();
-                    let valueScore = selectElement.find('option:selected').data(
-                        'score');
-                    let valueDesc = selectElement.find('option:selected').text()
-                        .trim();
-                    let observationDate = row.find('.datetime-input').val();
-
-                    valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
-
-                    if (selectElement) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: AldreteBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS023',
-                            parameter_id: parameterId,
-                            value_score: valueScore,
-                            value_desc: valueDesc,
-                            observation_date: observationDate,
-                            modified_date: moment().format(
-                                'YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: selectElement.val()
-                        };
-
-                        jsonObj.aldrete.push(entry);
-                    } else {
-                        console.log(
-                            "  Skipped entry due to missing parameterId or valueScore"
-                        );
-                    }
-                });
-            });
-
-            $('#stewardContainer1').find('tr').each(function(rowIndex, tr) {
-                let row = $(tr);
-                let StewardBodyId = get_bodyid();
-
-                row.find('select[name^="parameter_oprs025_"]').each(function(selectIndex,
-                    select) {
-                    let selectElement = $(select);
-                    let parameterId = selectElement.attr('name').split('_').pop();
-                    let valueScore = selectElement.find('option:selected').data(
-                        'score');
-                    let valueDesc = selectElement.find('option:selected').text()
-                        .trim();
-                    let observationDate = row.find('.datetime-input').val();
-
-                    valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
-
-                    if (selectElement) {
-                        let entry = {
-                            org_unit_code: dataSend.get('org_unit_code'),
-                            visit_id: dataSend.get('visit_id'),
-                            trans_id: dataSend.get('trans_id'),
-                            body_id: StewardBodyId,
-                            document_id: props?.vactination_id,
-                            p_type: 'OPRS025',
-                            parameter_id: parameterId,
-                            value_score: valueScore,
-                            value_desc: valueDesc,
-                            observation_date: observationDate,
-                            modified_date: moment().format(
-                                'YYYY-MM-DD HH:mm:ss'),
-                            modified_by: dataSend.get('modified_by'),
-                            value_id: selectElement.val()
-                        };
-
-                        jsonObj.steward.push(entry);
-                    } else {
-                        console.log(
-                            "  Skipped entry due to missing parameterId or valueScore"
-                        );
-                    }
-                });
-            });
-
-            if ($('#vitalSignLaporanAnesthesiLengkap2').is(':visible')) {
-                const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
-                    'saturasi', 'temperature', 'tension_below', 'tension_upper',
-                    'examination_date',
-                    'pemeriksaan', 'weight', 'oxygen_usage'
-                ];
-                jsonObj.vitailsign = jsonObj.vitailsign || {};
-                vitailSignKeys.forEach(key => {
-                    jsonObj.vitailsign[key] = jsonObj[key];
-                    delete jsonObj[key];
-                });
-
-                jsonObj.vitailsign['body_id'] = dataSend.get('body_id_durantee');
-                jsonObj.vitailsign['clinic_id'] = 'P002';
-                jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
-                jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
-                jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
-                jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
-                jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
-                jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
-                jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
-                jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
-                jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
-                jsonObj.vitailsign['theid'] = dataSend.get('theid');
-                jsonObj.vitailsign['thename'] = dataSend.get('thename');
-                jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
-                jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
-                jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
-                jsonObj.vitailsign['gender'] = dataSend.get('gender');
-                jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
-                jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
-                jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
-                jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
-                jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
-                jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id']
-            }
-
-            if ($('#vitalSignLaporanAnesthesiLengkap3').is(':visible')) {
-                jsonObj.vitailsign2 = jsonObj.vitailsign2 || {};
-                const vitailSignKeys2 = ['vs_status_id2', 'arm_diameter2', 'nadi2', 'nafas2',
-                    'height2',
-                    'saturasi2', 'temperature2', 'tension_below2', 'tension_upper2',
-                    'examination_date2',
-                    'pemeriksaan2', 'weight2', 'oxygen_usage2'
-                ];
-
-
-                vitailSignKeys2?.forEach(key => {
-                    let inputElement = document.querySelector(
-                        `#formvitalsign-laporanAnesthesi-lengkap3 [name="${key}"]`);
-                    if (inputElement) {
-                        if (inputElement.type === 'checkbox') {
-                            jsonObj.vitailsign2[key] = inputElement.checked;
-                        } else if (inputElement.type === 'radio') {
-                            if (inputElement.checked) {
-                                jsonObj.vitailsign2[key] = inputElement.value;
-                            }
-                        } else {
-                            jsonObj.vitailsign2[key] = inputElement.value;
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: JalanNapasBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS032',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.jalan_napas.push(entry);
                         }
-                    } else {
-                        console.warn(`Input element for key ${key} not found.`);
-                        jsonObj.vitailsign2[key] = null;
                     }
+
                 });
 
-                jsonObj.vitailsign2['body_id'] = dataSend.get('body_id');
-                jsonObj.vitailsign2['clinic_id'] = 'P002';
-                jsonObj.vitailsign2['class_room_id'] = dataSend.get('class_room_id');
-                jsonObj.vitailsign2['bed_id'] = dataSend.get('bed_id');
-                jsonObj.vitailsign2['keluar_id'] = dataSend.get('keluar_id');
-                jsonObj.vitailsign2['employee_id'] = dataSend.get('employee_id');
-                jsonObj.vitailsign2['no_registration'] = dataSend.get('no_registration');
-                jsonObj.vitailsign2['visit_id'] = dataSend.get('visit_id');
-                jsonObj.vitailsign2['org_unit_code'] = dataSend.get('org_unit_code');
-                jsonObj.vitailsign2['doctor'] = dataSend.get('doctor');
-                jsonObj.vitailsign2['kal_id'] = dataSend.get('kal_id');
-                jsonObj.vitailsign2['theid'] = dataSend.get('theid');
-                jsonObj.vitailsign2['thename'] = dataSend.get('thename');
-                jsonObj.vitailsign2['theaddress'] = dataSend.get('theaddress');
-                jsonObj.vitailsign2['status_pasien_id'] = dataSend.get('status_pasien_id');
-                jsonObj.vitailsign2['isrj'] = dataSend.get('isrj');
-                jsonObj.vitailsign2['gender'] = dataSend.get('gender');
-                jsonObj.vitailsign2['ageyear'] = dataSend.get('ageyear');
-                jsonObj.vitailsign2['agemonth'] = dataSend.get('agemonth');
-                jsonObj.vitailsign2['ageday'] = dataSend.get('ageday');
-                jsonObj.vitailsign2['modified_by'] = dataSend.get('modified_by');
-                jsonObj.vitailsign2['trans_id'] = dataSend.get('trans_id');
-                jsonObj.vitailsign2['pasien_diagnosa_id'] = jsonObj['body_id']
-            }
+                $('#bodyAldreteoprs023-1').find('tr').each(function(rowIndex, tr) {
+                    let row = $(tr);
+                    let AldreteBodyId = get_bodyid();
 
-            jsonObj.post_anesthesia = {};
+                    row.find('select[name^="parameter_oprs023_"]').each(function(selectIndex,
+                        select) {
+                        let selectElement = $(select);
+                        let parameterId = selectElement.attr('name').split('_').pop();
+                        let valueScore = selectElement.find('option:selected').data(
+                            'score');
+                        let valueDesc = selectElement.find('option:selected').text()
+                            .trim();
+                        let observationDate = row.find('.datetime-input').val();
 
-            const postAnesthesiaKeys = [
-                'bp_medicine', 'fasting', 'infus', 'infus_volume', 'meal', 'mealtime',
-                'oxygen', 'postan_position', 'respiratory_interval', 'transfusion',
-                'vomitus_medicine',
-                'postan_plan', 'oxygen_method', 'recovery_leave_time', 'patient_destination',
-                'pain', 'allergies'
-            ];
+                        valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
 
-            // Populate jsonObj.post_anesthesia with key-value pairs
-            postAnesthesiaKeys.forEach(key => {
-                jsonObj.post_anesthesia[key] = dataSend.get(key);
-                delete jsonObj[key];
-            });
+                        if (selectElement) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: AldreteBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS023',
+                                parameter_id: parameterId,
+                                value_score: valueScore,
+                                value_desc: valueDesc,
+                                observation_date: observationDate,
+                                modified_date: moment().format(
+                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: selectElement.val()
+                            };
 
-
-
-            $("#loading-indicator").show();
-
-
-            postData(jsonObj, 'admin/PatientOperationRequest/insertAnestesiaLengkap', (res) => {
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-                    $("#create-modal-permintaan-operasi").modal("hide");
-
-                    getDataTabelRequestOperation({
-                        no_registration: props?.no_registration,
-                        visit_id: props?.visit_id,
-                        trans_id: props?.trans_id
+                            jsonObj.aldrete.push(entry);
+                        } else {
+                            console.log(
+                                "  Skipped entry due to missing parameterId or valueScore"
+                            );
+                        }
                     });
-                    $("#loading-indicator").hide();
-                } else {
-                    errorSwal('Data gagal diperbarui. Silakan coba lagi.');
-                    $("#loading-indicator").hide();
-                }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
-            }, (error) => {
-                console.error("Error occurred:", error);
-                errorSwal('Terjadi kesalahan. Silakan coba lagi.');
-                $("#loading-indicator").hide();
-            });
-        });
+                });
 
+                $('#stewardContainer1').find('tr').each(function(rowIndex, tr) {
+                    let row = $(tr);
+                    let StewardBodyId = get_bodyid();
 
-        $(".btn-save-vitalSignLaporanAnesthesiLengkap2").off().on("click", function(e) {
-            e.preventDefault();
-            let jsonObj = {
-                vitailsign: {},
-            };
-            $('#form-laporanAnesthesi-lengkap').find(':disabled').removeAttr('disabled');
-            let formElement = document.getElementById('form-laporanAnesthesi-lengkap');
-            let dataSend = new FormData(formElement);
+                    row.find('select[name^="parameter_oprs025_"]').each(function(selectIndex,
+                        select) {
+                        let selectElement = $(select);
+                        let parameterId = selectElement.attr('name').split('_').pop();
+                        let valueScore = selectElement.find('option:selected').data(
+                            'score');
+                        let valueDesc = selectElement.find('option:selected').text()
+                            .trim();
+                        let observationDate = row.find('.datetime-input').val();
 
-            dataSend.forEach((value, key) => {
-                if (value) {
-                    jsonObj[key] = value;
-                }
-                // if (moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm'], true).isValid()) {
-                //     jsonObj[key] = moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm']).format('YYYY-MM-DDTHH:mm');
-                // }
-            });
+                        valueDesc = valueDesc.replace(/\s+/g, ' ').trim();
 
+                        if (selectElement) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: StewardBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS025',
+                                parameter_id: parameterId,
+                                value_score: valueScore,
+                                value_desc: valueDesc,
+                                observation_date: observationDate,
+                                modified_date: moment().format(
+                                    'YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: selectElement.val()
+                            };
 
-            if ($('#vitalSignLaporanAnesthesiLengkap2').closest('.collapse.show').length) {
+                            jsonObj.steward.push(entry);
+                        } else {
+                            console.log(
+                                "  Skipped entry due to missing parameterId or valueScore"
+                            );
+                        }
+                    });
+                });
 
                 if ($('#vitalSignLaporanAnesthesiLengkap2').is(':visible')) {
-                    const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas',
-                        'height',
+                    const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas', 'height',
                         'saturasi', 'temperature', 'tension_below', 'tension_upper',
                         'examination_date',
                         'pemeriksaan', 'weight', 'oxygen_usage'
@@ -2731,481 +2575,645 @@ let kopTemplateOprs = [];
                     jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
                     jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
                     jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id']
-                    jsonObj.vitailsign['account_id'] = '12'
                 }
 
-            }
-            if ($('#vitalSignLaporanAnesthesiLengkap3').closest('.collapse.show').length) {
                 if ($('#vitalSignLaporanAnesthesiLengkap3').is(':visible')) {
-                    jsonObj.vitailsign = jsonObj.vitailsign || {};
-
-                    const vitailSignKeys2 = [
-                        'vs_status_id2', 'arm_diameter2', 'nadi2', 'nafas2', 'height2',
+                    jsonObj.vitailsign2 = jsonObj.vitailsign2 || {};
+                    const vitailSignKeys2 = ['vs_status_id2', 'arm_diameter2', 'nadi2', 'nafas2',
+                        'height2',
                         'saturasi2', 'temperature2', 'tension_below2', 'tension_upper2',
-                        'examination_date2', 'pemeriksaan2', 'weight2', 'oxygen_usage2'
+                        'examination_date2',
+                        'pemeriksaan2', 'weight2', 'oxygen_usage2'
                     ];
 
-                    vitailSignKeys2.forEach(key => {
+
+                    vitailSignKeys2?.forEach(key => {
                         let inputElement = document.querySelector(
-                            `#formvitalsign-laporanAnesthesi-lengkap3 [name="${key}"]`
-                        );
+                            `#formvitalsign-laporanAnesthesi-lengkap3 [name="${key}"]`);
                         if (inputElement) {
-                            let newKey = key.replace(/2$/, '');
                             if (inputElement.type === 'checkbox') {
-                                jsonObj.vitailsign[newKey] = inputElement.checked;
+                                jsonObj.vitailsign2[key] = inputElement.checked;
                             } else if (inputElement.type === 'radio') {
                                 if (inputElement.checked) {
-                                    jsonObj.vitailsign[newKey] = inputElement.value;
+                                    jsonObj.vitailsign2[key] = inputElement.value;
                                 }
                             } else {
-                                jsonObj.vitailsign[newKey] = inputElement.value;
+                                jsonObj.vitailsign2[key] = inputElement.value;
                             }
                         } else {
                             console.warn(`Input element for key ${key} not found.`);
-                            jsonObj.vitailsign[key.replace(/2$/, '')] = null;
+                            jsonObj.vitailsign2[key] = null;
                         }
                     });
 
-                    jsonObj.vitailsign['body_id'] = dataSend.get('body_id');
-                    jsonObj.vitailsign['clinic_id'] = 'P002';
-                    jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
-                    jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
-                    jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
-                    jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
-                    jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
-                    jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
-                    jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
-                    jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
-                    jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
-                    jsonObj.vitailsign['theid'] = dataSend.get('theid');
-                    jsonObj.vitailsign['thename'] = dataSend.get('thename');
-                    jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
-                    jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
-                    jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
-                    jsonObj.vitailsign['gender'] = dataSend.get('gender');
-                    jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
-                    jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
-                    jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
-                    jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
-                    jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
-                    jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'];
-                    jsonObj.vitailsign['account_id'] = '13';
+                    jsonObj.vitailsign2['body_id'] = dataSend.get('body_id');
+                    jsonObj.vitailsign2['clinic_id'] = 'P002';
+                    jsonObj.vitailsign2['class_room_id'] = dataSend.get('class_room_id');
+                    jsonObj.vitailsign2['bed_id'] = dataSend.get('bed_id');
+                    jsonObj.vitailsign2['keluar_id'] = dataSend.get('keluar_id');
+                    jsonObj.vitailsign2['employee_id'] = dataSend.get('employee_id');
+                    jsonObj.vitailsign2['no_registration'] = dataSend.get('no_registration');
+                    jsonObj.vitailsign2['visit_id'] = dataSend.get('visit_id');
+                    jsonObj.vitailsign2['org_unit_code'] = dataSend.get('org_unit_code');
+                    jsonObj.vitailsign2['doctor'] = dataSend.get('doctor');
+                    jsonObj.vitailsign2['kal_id'] = dataSend.get('kal_id');
+                    jsonObj.vitailsign2['theid'] = dataSend.get('theid');
+                    jsonObj.vitailsign2['thename'] = dataSend.get('thename');
+                    jsonObj.vitailsign2['theaddress'] = dataSend.get('theaddress');
+                    jsonObj.vitailsign2['status_pasien_id'] = dataSend.get('status_pasien_id');
+                    jsonObj.vitailsign2['isrj'] = dataSend.get('isrj');
+                    jsonObj.vitailsign2['gender'] = dataSend.get('gender');
+                    jsonObj.vitailsign2['ageyear'] = dataSend.get('ageyear');
+                    jsonObj.vitailsign2['agemonth'] = dataSend.get('agemonth');
+                    jsonObj.vitailsign2['ageday'] = dataSend.get('ageday');
+                    jsonObj.vitailsign2['modified_by'] = dataSend.get('modified_by');
+                    jsonObj.vitailsign2['trans_id'] = dataSend.get('trans_id');
+                    jsonObj.vitailsign2['pasien_diagnosa_id'] = jsonObj['body_id']
                 }
+
+                jsonObj.post_anesthesia = {};
+
+                const postAnesthesiaKeys = [
+                    'bp_medicine', 'fasting', 'infus', 'infus_volume', 'meal', 'mealtime',
+                    'oxygen', 'postan_position', 'respiratory_interval', 'transfusion',
+                    'vomitus_medicine',
+                    'postan_plan', 'oxygen_method', 'recovery_leave_time', 'patient_destination',
+                    'pain', 'allergies'
+                ];
+
+                // Populate jsonObj.post_anesthesia with key-value pairs
+                postAnesthesiaKeys.forEach(key => {
+                    jsonObj.post_anesthesia[key] = dataSend.get(key);
+                    delete jsonObj[key];
+                });
+
+
+
+                $("#loading-indicator").show();
+
+
+                postData(jsonObj, 'admin/PatientOperationRequest/insertAnestesiaLengkap', (res) => {
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+                        $("#create-modal-permintaan-operasi").modal("hide");
+
+                        getDataTabelRequestOperation({
+                            no_registration: props?.no_registration,
+                            visit_id: props?.visit_id,
+                            trans_id: props?.trans_id
+                        });
+                        $("#loading-indicator").hide();
+                    } else {
+                        errorSwal('Data gagal diperbarui. Silakan coba lagi.');
+                        $("#loading-indicator").hide();
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                }, (error) => {
+                    console.error("Error occurred:", error);
+                    errorSwal('Terjadi kesalahan. Silakan coba lagi.');
+                    $("#loading-indicator").hide();
+                });
+            });
+
+
+            $(".btn-save-vitalSignLaporanAnesthesiLengkap2").off().on("click", function(e) {
+                e.preventDefault();
+                let jsonObj = {
+                    vitailsign: {},
+                };
+                $('#form-laporanAnesthesi-lengkap').find(':disabled').removeAttr('disabled');
+                let formElement = document.getElementById('form-laporanAnesthesi-lengkap');
+                let dataSend = new FormData(formElement);
+
+                dataSend.forEach((value, key) => {
+                    if (value) {
+                        jsonObj[key] = value;
+                    }
+                    // if (moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm'], true).isValid()) {
+                    //     jsonObj[key] = moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm']).format('YYYY-MM-DDTHH:mm');
+                    // }
+                });
+
+
+                if ($('#vitalSignLaporanAnesthesiLengkap2').closest('.collapse.show').length) {
+
+                    if ($('#vitalSignLaporanAnesthesiLengkap2').is(':visible')) {
+                        const vitailSignKeys = ['vs_status_id', 'arm_diameter', 'nadi', 'nafas',
+                            'height',
+                            'saturasi', 'temperature', 'tension_below', 'tension_upper',
+                            'examination_date',
+                            'pemeriksaan', 'weight', 'oxygen_usage'
+                        ];
+                        jsonObj.vitailsign = jsonObj.vitailsign || {};
+                        vitailSignKeys.forEach(key => {
+                            jsonObj.vitailsign[key] = jsonObj[key];
+                            delete jsonObj[key];
+                        });
+
+                        jsonObj.vitailsign['body_id'] = dataSend.get('body_id_durantee');
+                        jsonObj.vitailsign['clinic_id'] = 'P002';
+                        jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
+                        jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
+                        jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
+                        jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
+                        jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
+                        jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
+                        jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
+                        jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
+                        jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
+                        jsonObj.vitailsign['theid'] = dataSend.get('theid');
+                        jsonObj.vitailsign['thename'] = dataSend.get('thename');
+                        jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
+                        jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
+                        jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
+                        jsonObj.vitailsign['gender'] = dataSend.get('gender');
+                        jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
+                        jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
+                        jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
+                        jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
+                        jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
+                        jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id']
+                        jsonObj.vitailsign['account_id'] = '12'
+                    }
+
+                }
+                if ($('#vitalSignLaporanAnesthesiLengkap3').closest('.collapse.show').length) {
+                    if ($('#vitalSignLaporanAnesthesiLengkap3').is(':visible')) {
+                        jsonObj.vitailsign = jsonObj.vitailsign || {};
+
+                        const vitailSignKeys2 = [
+                            'vs_status_id2', 'arm_diameter2', 'nadi2', 'nafas2', 'height2',
+                            'saturasi2', 'temperature2', 'tension_below2', 'tension_upper2',
+                            'examination_date2', 'pemeriksaan2', 'weight2', 'oxygen_usage2'
+                        ];
+
+                        vitailSignKeys2.forEach(key => {
+                            let inputElement = document.querySelector(
+                                `#formvitalsign-laporanAnesthesi-lengkap3 [name="${key}"]`
+                            );
+                            if (inputElement) {
+                                let newKey = key.replace(/2$/, '');
+                                if (inputElement.type === 'checkbox') {
+                                    jsonObj.vitailsign[newKey] = inputElement.checked;
+                                } else if (inputElement.type === 'radio') {
+                                    if (inputElement.checked) {
+                                        jsonObj.vitailsign[newKey] = inputElement.value;
+                                    }
+                                } else {
+                                    jsonObj.vitailsign[newKey] = inputElement.value;
+                                }
+                            } else {
+                                console.warn(`Input element for key ${key} not found.`);
+                                jsonObj.vitailsign[key.replace(/2$/, '')] = null;
+                            }
+                        });
+
+                        jsonObj.vitailsign['body_id'] = dataSend.get('body_id');
+                        jsonObj.vitailsign['clinic_id'] = 'P002';
+                        jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
+                        jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
+                        jsonObj.vitailsign['keluar_id'] = dataSend.get('keluar_id');
+                        jsonObj.vitailsign['employee_id'] = dataSend.get('employee_id');
+                        jsonObj.vitailsign['no_registration'] = dataSend.get('no_registration');
+                        jsonObj.vitailsign['visit_id'] = dataSend.get('visit_id');
+                        jsonObj.vitailsign['org_unit_code'] = dataSend.get('org_unit_code');
+                        jsonObj.vitailsign['doctor'] = dataSend.get('doctor');
+                        jsonObj.vitailsign['kal_id'] = dataSend.get('kal_id');
+                        jsonObj.vitailsign['theid'] = dataSend.get('theid');
+                        jsonObj.vitailsign['thename'] = dataSend.get('thename');
+                        jsonObj.vitailsign['theaddress'] = dataSend.get('theaddress');
+                        jsonObj.vitailsign['status_pasien_id'] = dataSend.get('status_pasien_id');
+                        jsonObj.vitailsign['isrj'] = dataSend.get('isrj');
+                        jsonObj.vitailsign['gender'] = dataSend.get('gender');
+                        jsonObj.vitailsign['ageyear'] = dataSend.get('ageyear');
+                        jsonObj.vitailsign['agemonth'] = dataSend.get('agemonth');
+                        jsonObj.vitailsign['ageday'] = dataSend.get('ageday');
+                        jsonObj.vitailsign['modified_by'] = dataSend.get('modified_by');
+                        jsonObj.vitailsign['trans_id'] = dataSend.get('trans_id');
+                        jsonObj.vitailsign['pasien_diagnosa_id'] = jsonObj['body_id'];
+                        jsonObj.vitailsign['account_id'] = '13';
+                    }
+                }
+
+
+                postData(jsonObj, 'admin/PatientOperationRequest/insertVt', (res) => {
+
+                    if (res.respon === true) {
+                        successSwal('Data berhasil diperbarui.');
+                        getVitalSignLaporanAnesthesiLengkap(
+                            'vitalSignBodyLaporanAnesthesiLengkap',
+                            '11');
+                        getVitalSignLaporanAnesthesiLengkap(
+                            'vitalSignBodyLaporanAnesthesiLengkap2',
+                            '12');
+                        getVitalSignLaporanAnesthesiLengkap2(
+                            'vitalSignBodyLaporanAnesthesiLengkap3', '13');
+
+                    } else {
+                        errorSwal('Data gagal diperbarui. Silakan coba lagi.');
+                        //     $("#loading-indicator").hide();
+                    }
+                }, (beforesend) => {
+                    console.log("Request is being sent...");
+                }, (error) => {
+                    console.error("Error occurred:", error);
+                    errorSwal('Terjadi kesalahan. Silakan coba lagi.');
+                    // $("#loading-indicator").hide();
+                });
+            })
+
+        } // new 01/08
+
+
+
+        //new 1/08
+
+
+        // ALL RENDER & TEMPLATE
+        const renderDataVitailSign = (data, suffix) => {
+            if (!data) {
+                console.warn('No data available for rendering vitalsign.');
+                return;
             }
 
+            const baseMappings = {
+                examination_date: 'examination_date',
+                vs_status_id: 'vs_status_id',
+                arm_diameter: 'arm_diameter',
+                nadi: 'nadi',
+                nafas: 'nafas',
+                height: 'height',
+                saturasi: 'saturasi',
+                temperature: 'temperature',
+                tension_below: 'tension_below',
+                tension_upper: 'tension_upper',
+                pemeriksaan: 'pemeriksaan',
+                weight: 'weight',
+                oxygen_usage: 'oxygen_usage'
+            };
 
-            postData(jsonObj, 'admin/PatientOperationRequest/insertVt', (res) => {
+            Object.keys(baseMappings).forEach(key => {
+                const baseName = baseMappings[key];
+                const selector = `#avt${baseName}${suffix}`;
+                const value = data[key] || '';
 
-                if (res.respon === true) {
-                    successSwal('Data berhasil diperbarui.');
-                    getVitalSignLaporanAnesthesiLengkap(
-                        'vitalSignBodyLaporanAnesthesiLengkap',
-                        '11');
-                    getVitalSignLaporanAnesthesiLengkap(
-                        'vitalSignBodyLaporanAnesthesiLengkap2',
-                        '12');
-                    getVitalSignLaporanAnesthesiLengkap2(
-                        'vitalSignBodyLaporanAnesthesiLengkap3', '13');
-
-                } else {
-                    errorSwal('Data gagal diperbarui. Silakan coba lagi.');
-                    //     $("#loading-indicator").hide();
-                }
-            }, (beforesend) => {
-                console.log("Request is being sent...");
-            }, (error) => {
-                console.error("Error occurred:", error);
-                errorSwal('Terjadi kesalahan. Silakan coba lagi.');
-                // $("#loading-indicator").hide();
+                $(selector).val(value);
             });
-        })
-
-    } // new 01/08
+        }; //new update 30/07
 
 
+        const modalViewOperationAction = (data) => {
+            quillInstancesModal = {}
 
-    //new 1/08
+            let resultData = data;
+            let result = resultData.data[0];
+            const getEmp = getDataDropdownAllemployee({
+                vactination_id: result.vactination_id,
+                transaksi: result?.transaksi,
+                terlayani: result?.terlayani
+
+            })
+
+            const getClass = getDataColumnName({
+                table_name: 'class_room',
+                column_name: 'name_of_class',
+                column_id: 'class_room_id',
+                id: result.class_room_id,
+                element_id: 'class_room_id-permintaan_operasi_name'
+            })
+            const getClinic = getDataColumnName({
+                table_name: 'clinic',
+                column_name: 'name_of_clinic',
+                column_id: 'clinic_id',
+                id: result.clinic_id,
+                element_id: 'clinic_id_from-permintaan_operasi_name'
+            })
+
+            let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
+            let currentDateTimeEnd = moment(result?.end_operation ? new Date(result?.end_operation) :
+                    new Date())
+                .format("DD/MM/YYYY HH:mm");
+
+            $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
+            $("#formDate-tindakan-oprasi-1").html("").attr("class", "");
+            $.when(getEmp, getClass, getClinic).done(() => {
+                Swal.close();
+                $("#create-modal-permintaan-operasi").modal("show");
+            });
+            // $("#create-modal-permintaan-operasi").modal("show");
+            $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
+            $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
+            $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', false);
+            $('#cetak-oprs-permintaan').attr('hidden', false);
+
+            // Set the rest of the fields
+            $('#vactination_id-permintaan_operasi').val(result.vactination_id);
+            $("#trans_id-permintaan_operasi").val(result?.trans_id)
+
+            $('#org_unit_code-permintaan_operasi').val(result.org_unit_code);
+            $('#visit_id-permintaan_operasi').val(result.visit_id);
+            $('#no_registration-permintaan_operasi').val(result.no_registration);
+            $('#vactination_date-permintaan_operasi').val(moment(result.vactination_date).format(
+                "YYYY/MM/DD HH:mm"));
+            $('#description-permintaan_operasi').val(result.description);
+            const $select = $("#employee_id-permintaan_operasi");
+            $select.empty().append(`<option value="">Pilih Dokter</option>`);
+
+            dr_oprtOprs.forEach(emp => {
+                $select.append(
+                    `<option value="${emp.employee_id}">${emp.fullname}</option>`
+                );
+            });
+
+            $select.val(result.employee_id).trigger("change");
+            $('#doctor-permintaan_operasi').val(result.fullname ?? result.doctor);
+
+            $select.on("change", function() {
+                const selectedId = $(this).val();
+                const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
+                $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname : '');
+            });
+
+            $('#anestesi_type-permintaan_operasi').val(result.anestesi_type);
+            $('#modified_date-permintaan_operasi').val(moment(result.modified_date).format(
+                "YYYY/MM/DD HH:mm"));
+            $('#modified_by-permintaan_operasi').val(result.modified_by);
+            $('#validation-permintaan_operasi').val(result.validation);
+            $('#terlayani-permintaan_operasi').val(result.terlayani);
+            $('#thename-permintaan_operasi').val(result.thename);
+            $('#theaddress-permintaan_operasi').val(result.theaddress);
+            $('#theid-permintaan_operasi').val(result.theid);
+            $('#isrj-permintaan_operasi').val(result.isrj);
+            $('#status_pasien_id-permintaan_operasi').val(result.status_pasien_id);
+            $('#gender-permintaan_operasi').val(result.gender);
+            $('#ageyear-permintaan_operasi').val(result.ageyear);
+            $('#agemonth-permintaan_operasi').val(result.agemonth);
+            $('#ageday-permintaan_operasi').val(result.ageday);
+            $('#bed_id-permintaan_operasi').val(result.bed_id);
+            $('#keluar_id-permintaan_operasi').val(result.keluar_id);
+            $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
+            $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
 
 
-    // ALL RENDER & TEMPLATE
-    const renderDataVitailSign = (data, suffix) => {
-        if (!data) {
-            console.warn('No data available for rendering vitalsign.');
-            return;
-        }
+            $('#diagnosa_desc-permintaan_operasi').val(result.diagnosa_desc);
+            $('#quill_diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
+            $('#advice_doctor-permintaan_operasi').val(result.advice_doctor);
+            $('#quill_advice_doctor-permintaan_operasi').html(result.advice_doctor);
 
-        const baseMappings = {
-            examination_date: 'examination_date',
-            vs_status_id: 'vs_status_id',
-            arm_diameter: 'arm_diameter',
-            nadi: 'nadi',
-            nafas: 'nafas',
-            height: 'height',
-            saturasi: 'saturasi',
-            temperature: 'temperature',
-            tension_below: 'tension_below',
-            tension_upper: 'tension_upper',
-            pemeriksaan: 'pemeriksaan',
-            weight: 'weight',
-            oxygen_usage: 'oxygen_usage'
+            $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
+            $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
+            $('#result_id-permintaan_operasi').val(result.result_id);
+            $('#clinic_id-permintaan_operasi').val(result.clinic_id);
+            $('#layan-permintaan_operasi').val(result.layan);
+
+            $("#start_operation-permintaan_operasi").val(currentDateTime)
+            $("#end_operation-permintaan_operasi").val(currentDateTimeEnd)
+
+            $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
+            $("#flatend_operation-permintaan_operasi").val(currentDateTimeEnd).trigger("change");
+            $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
+            $('#class_room_id-permintaan_operasi').val(result.class_room_id);
+
+            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === "0" || result
+                .patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === "1" || result
+                .patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === "2" || result
+                .patient_category_id === 2);
+
+            $('#kode_operasi-sc').prop('checked', result?.kode_operasi === "1" || result?.kode_operasi === 1);
+            $('#kode_operasi-non_sc').prop('checked', result?.kode_operasi === "0" || result?.kode_operasi ===
+                0);
+
+            $('#operation_type-permintaan_operasi').val(result.operation_type);
+
+
+
+            let tarif_id_oprs_data = tarif_id_oprs;
+            const newTreatment = result?.tarif_id;
+
+            $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
+                //     console.log("66666666666666666666666666");
+                let treatmentData = renderDropdownTreatment();
+
+                $('#bill_id-permintaan_operasi').select2({
+                    data: treatmentData,
+                    disabled: false,
+                    dropdownParent: $('#create-modal-permintaan-operasi')
+                });
+
+                $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
+
+
+                const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
+                if (!isExistingValue) {
+                    tarif_id_oprs.push({
+                        id: newTreatment,
+                        text: newTreatment
+                    });
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            disabled: false,
+                            data: tarif_id_oprs,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
+                    }, 1000);
+                } else {
+                    let tarif_id_oprsresult = renderDropdownTarifId();
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            disabled: false,
+                            data: tarif_id_oprsresult,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger(
+                            'change');
+                    }, 1000);
+                }
+                $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                    const selectedValue = e.params.data.text;
+
+                    if (e.params.data.newOption) {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            disabled: false,
+                            dropdownParent: $(
+                                '#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+                    }
+                });
+
+                initializeFlatpickrOperasi()
+                initializeQuillEditors();
+            });
+
+
+            if (result?.rooms_id) {
+                let inputElementRoom = $("#rooms_id-permintaan_operasi");
+
+                let $selectElementRoom = $("<select>", {
+                    id: inputElementRoom.attr("id"),
+                    name: inputElementRoom.attr("name"),
+                    class: inputElementRoom.attr("class")
+                });
+
+                $selectElementRoom.append($("<option>", {
+                    value: '',
+                    text: 'Select',
+                    selected: true
+                }));
+
+                let options = ["VK", "Op Mayor", "Op Minor"];
+                options.forEach(optionText => {
+                    let option = $("<option>", {
+                        value: optionText,
+                        text: optionText,
+                        selected: optionText === result
+                            ?.rooms_id
+                    });
+                    $selectElementRoom.append(option);
+                });
+
+                inputElementRoom.replaceWith($selectElementRoom);
+            } else {
+                let inputElementRoom = $("#rooms_id-permintaan_operasi");
+
+                let $selectElementRoom = $("<select>", {
+                    id: inputElementRoom.attr("id"),
+                    name: inputElementRoom.attr("name"),
+                    class: inputElementRoom.attr("class")
+                });
+
+                $selectElementRoom.append($("<option>", {
+                    value: '',
+                    text: 'Select',
+                    selected: true
+                }));
+
+                let options = ["VK", "Op Mayor", "Op Minor"];
+                options.forEach(optionText => {
+                    let option = $("<option>", {
+                        value: optionText,
+                        text: optionText
+                    });
+                    $selectElementRoom.append(option);
+                });
+
+                inputElementRoom.replaceWith($selectElementRoom);
+            }
+
+            actionDropdownSpesialisas()
+            initializeQuillEditors();
+            actionBtnUpdateAndInsert(result);
+
+            getPrintDataPermintaan(result)
         };
 
-        Object.keys(baseMappings).forEach(key => {
-            const baseName = baseMappings[key];
-            const selector = `#avt${baseName}${suffix}`;
-            const value = data[key] || '';
+        const getPrintDataPermintaan = (props) => {
+            $("#cetak-oprs-permintaan").off().on("click", () => {
+                let resultTemplate = visit;
+                let nameValueVisit2 = [
+                    'diantar_oleh', 'age', 'no_registration',
+                    'contact_address', 'gendername',
+                ];
 
-            $(selector).val(value);
-        });
-    }; //new update 30/07
-
-
-    const modalViewOperationAction = (data) => {
-        quillInstancesModal = {}
-
-        let resultData = data;
-        let result = resultData.data[0];
-        getDataDropdownAllemployee({
-            vactination_id: result.vactination_id,
-            transaksi: result?.transaksi,
-            terlayani: result?.terlayani
-
-        })
-
-        let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
-        let currentDateTimeEnd = moment(result?.end_operation ? new Date(result?.end_operation) :
-                new Date())
-            .format("DD/MM/YYYY HH:mm");
-
-        $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
-        $("#formDate-tindakan-oprasi-1").html("").attr("class", "");
-
-        $("#create-modal-permintaan-operasi").modal("show");
-        $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
-        $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
-        $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', false);
-        $('#cetak-oprs-permintaan').attr('hidden', false);
-
-        // Set the rest of the fields
-        $('#vactination_id-permintaan_operasi').val(result.vactination_id);
-        $("#trans_id-permintaan_operasi").val(result?.trans_id)
-
-        $('#org_unit_code-permintaan_operasi').val(result.org_unit_code);
-        $('#visit_id-permintaan_operasi').val(result.visit_id);
-        $('#no_registration-permintaan_operasi').val(result.no_registration);
-        $('#vactination_date-permintaan_operasi').val(moment(result.vactination_date).format(
-            "YYYY/MM/DD HH:mm"));
-        $('#description-permintaan_operasi').val(result.description);
-        const $select = $("#employee_id-permintaan_operasi");
-        $select.empty().append(`<option value="">Pilih Dokter</option>`);
-
-        dr_oprtOprs.forEach(emp => {
-            $select.append(
-                `<option value="${emp.employee_id}">${emp.fullname}</option>`
-            );
-        });
-
-        $select.val(result.employee_id).trigger("change");
-        $('#doctor-permintaan_operasi').val(result.fullname ?? result.doctor);
-
-        $select.on("change", function() {
-            const selectedId = $(this).val();
-            const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
-            $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname : '');
-        });
-
-        $('#anestesi_type-permintaan_operasi').val(result.anestesi_type);
-        $('#modified_date-permintaan_operasi').val(moment(result.modified_date).format(
-            "YYYY/MM/DD HH:mm"));
-        $('#modified_by-permintaan_operasi').val(result.modified_by);
-        $('#validation-permintaan_operasi').val(result.validation);
-        $('#terlayani-permintaan_operasi').val(result.terlayani);
-        $('#thename-permintaan_operasi').val(result.thename);
-        $('#theaddress-permintaan_operasi').val(result.theaddress);
-        $('#theid-permintaan_operasi').val(result.theid);
-        $('#isrj-permintaan_operasi').val(result.isrj);
-        $('#status_pasien_id-permintaan_operasi').val(result.status_pasien_id);
-        $('#gender-permintaan_operasi').val(result.gender);
-        $('#ageyear-permintaan_operasi').val(result.ageyear);
-        $('#agemonth-permintaan_operasi').val(result.agemonth);
-        $('#ageday-permintaan_operasi').val(result.ageday);
-        $('#bed_id-permintaan_operasi').val(result.bed_id);
-        $('#keluar_id-permintaan_operasi').val(result.keluar_id);
-        $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
-        $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
-
-
-        $('#diagnosa_desc-permintaan_operasi').val(result.diagnosa_desc);
-        $('#quill_diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
-        $('#advice_doctor-permintaan_operasi').val(result.advice_doctor);
-        $('#quill_advice_doctor-permintaan_operasi').html(result.advice_doctor);
-
-        $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
-        $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
-        $('#result_id-permintaan_operasi').val(result.result_id);
-        $('#clinic_id-permintaan_operasi').val(result.clinic_id);
-        $('#layan-permintaan_operasi').val(result.layan);
-
-        $("#start_operation-permintaan_operasi").val(currentDateTime)
-        $("#end_operation-permintaan_operasi").val(currentDateTimeEnd)
-
-        $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
-        $("#flatend_operation-permintaan_operasi").val(currentDateTimeEnd).trigger("change");
-        $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
-        $('#class_room_id-permintaan_operasi').val(result.class_room_id);
-
-        $('#patient_category_id-elektif').prop('checked', result.patient_category_id === "0" || result
-            .patient_category_id === 0);
-        $('#patient_category_id-cyto').prop('checked', result.patient_category_id === "1" || result
-            .patient_category_id === 1);
-        $('#patient_category_id-emergency').prop('checked', result.patient_category_id === "2" || result
-            .patient_category_id === 2);
-
-        $('#kode_operasi-sc').prop('checked', result?.kode_operasi === "1" || result?.kode_operasi === 1);
-        $('#kode_operasi-non_sc').prop('checked', result?.kode_operasi === "0" || result?.kode_operasi ===
-            0);
-
-        $('#operation_type-permintaan_operasi').val(result.operation_type);
-
-        getDataColumnName({
-            table_name: 'class_room',
-            column_name: 'name_of_class',
-            column_id: 'class_room_id',
-            id: result.class_room_id,
-            element_id: 'class_room_id-permintaan_operasi_name'
-        })
-        getDataColumnName({
-            table_name: 'clinic',
-            column_name: 'name_of_clinic',
-            column_id: 'clinic_id',
-            id: result.clinic_id,
-            element_id: 'clinic_id_from-permintaan_operasi_name'
-        })
-
-        let tarif_id_oprs_data = tarif_id_oprs;
-        const newTreatment = result?.tarif_id;
-
-        $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
-            //     console.log("66666666666666666666666666");
-            let treatmentData = renderDropdownTreatment();
-
-            $('#bill_id-permintaan_operasi').select2({
-                data: treatmentData,
-                disabled: false,
-                dropdownParent: $('#create-modal-permintaan-operasi')
-            });
-
-            $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
-
-
-            const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
-            if (!isExistingValue) {
-                tarif_id_oprs.push({
-                    id: newTreatment,
-                    text: newTreatment
+                nameValueVisit2.forEach(name => {
+                    let id = `${name}-val2-oprs-latter`;
+                    let value = resultTemplate?.[name];
+                    if (value !== undefined) {
+                        $(`#${id}`).text(value);
+                    }
                 });
+
+                $("#tgl_lahir-val2-oprs-latter").text(moment(resultTemplate?.tgl_lahir).format(
+                    "DD/MM/YYYY"));
+                $("#tgl_date_oprs_cover").text(moment(resultTemplate?.visit_date).format("DD/MM/YYYY"));
+                $("#tgl-val2-oprs-latter").text(moment(props?.start_operation).format("DD/MM/YYYY"));
+                $("#desc_tarif-val2-oprs-latter").text(props?.tarif_id);
+                $("#diagnosa_desc-val2-oprs-latter").html(props?.diagnosa_desc);
+                $("#advice_doctor-val2-oprs-latter").html(props?.advice_doctor);
+
+                let qrContainer = document.createElement("div");
+                let qrcode = new QRCode(qrContainer, {
+                    text: `${props?.doctor ?? ""}`,
+                    width: 128,
+                    height: 128,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
                 setTimeout(() => {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        disabled: false,
-                        data: tarif_id_oprs,
-                        dropdownParent: $('#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
-
-                    });
-
-                    $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
-                }, 1000);
-            } else {
-                let tarif_id_oprsresult = renderDropdownTarifId();
-                setTimeout(() => {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        disabled: false,
-                        data: tarif_id_oprsresult,
-                        dropdownParent: $('#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
-
-                    });
-
-                    $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger(
-                        'change');
-                }, 1000);
-            }
-            $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
-                const selectedValue = e.params.data.text;
-
-                if (e.params.data.newOption) {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        disabled: false,
-                        dropdownParent: $(
-                            '#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
-
-                    });
-                }
+                    let qrImg = qrContainer.querySelector("canvas").toDataURL("image/png");
+                    $("#validator-ttd-oprs-conver-dokter").html(
+                        `<img src="${qrImg}" width="128" height="128">`);
+                    openPrintPreview("coverkopSuratPengantaroprs");
+                }, 500);
             });
+        };
 
-            initializeFlatpickrOperasi()
-            initializeQuillEditors();
-        });
+        function openPrintPreview(divId) {
+            let printContents = document.getElementById(divId).innerHTML;
+            let printWindow = window.open('', '_blank', 'width=800,height=600');
 
-
-        if (result?.rooms_id) {
-            let inputElementRoom = $("#rooms_id-permintaan_operasi");
-
-            let $selectElementRoom = $("<select>", {
-                id: inputElementRoom.attr("id"),
-                name: inputElementRoom.attr("name"),
-                class: inputElementRoom.attr("class")
-            });
-
-            $selectElementRoom.append($("<option>", {
-                value: '',
-                text: 'Select',
-                selected: true
-            }));
-
-            let options = ["VK", "Op Mayor", "Op Minor"];
-            options.forEach(optionText => {
-                let option = $("<option>", {
-                    value: optionText,
-                    text: optionText,
-                    selected: optionText === result
-                        ?.rooms_id
-                });
-                $selectElementRoom.append(option);
-            });
-
-            inputElementRoom.replaceWith($selectElementRoom);
-        } else {
-            let inputElementRoom = $("#rooms_id-permintaan_operasi");
-
-            let $selectElementRoom = $("<select>", {
-                id: inputElementRoom.attr("id"),
-                name: inputElementRoom.attr("name"),
-                class: inputElementRoom.attr("class")
-            });
-
-            $selectElementRoom.append($("<option>", {
-                value: '',
-                text: 'Select',
-                selected: true
-            }));
-
-            let options = ["VK", "Op Mayor", "Op Minor"];
-            options.forEach(optionText => {
-                let option = $("<option>", {
-                    value: optionText,
-                    text: optionText
-                });
-                $selectElementRoom.append(option);
-            });
-
-            inputElementRoom.replaceWith($selectElementRoom);
-        }
-
-        actionDropdownSpesialisas()
-        initializeQuillEditors();
-        actionBtnUpdateAndInsert(result);
-
-        getPrintDataPermintaan(result)
-    };
-
-    const getPrintDataPermintaan = (props) => {
-        $("#cetak-oprs-permintaan").off().on("click", () => {
-            let resultTemplate = visit;
-            let nameValueVisit2 = [
-                'diantar_oleh', 'age', 'no_registration',
-                'contact_address', 'gendername',
-            ];
-
-            nameValueVisit2.forEach(name => {
-                let id = `${name}-val2-oprs-latter`;
-                let value = resultTemplate?. [name];
-                if (value !== undefined) {
-                    $(`#${id}`).text(value);
-                }
-            });
-
-            $("#tgl_lahir-val2-oprs-latter").text(moment(resultTemplate?.tgl_lahir).format(
-                "DD/MM/YYYY"));
-            $("#tgl_date_oprs_cover").text(moment(resultTemplate?.visit_date).format("DD/MM/YYYY"));
-            $("#tgl-val2-oprs-latter").text(moment(props?.start_operation).format("DD/MM/YYYY"));
-            $("#desc_tarif-val2-oprs-latter").text(props?.tarif_id);
-            $("#diagnosa_desc-val2-oprs-latter").html(props?.diagnosa_desc);
-            $("#advice_doctor-val2-oprs-latter").html(props?.advice_doctor);
-
-            let qrContainer = document.createElement("div");
-            let qrcode = new QRCode(qrContainer, {
-                text: `${props?.doctor ?? ""}`,
-                width: 128,
-                height: 128,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-
-            setTimeout(() => {
-                let qrImg = qrContainer.querySelector("canvas").toDataURL("image/png");
-                $("#validator-ttd-oprs-conver-dokter").html(
-                    `<img src="${qrImg}" width="128" height="128">`);
-                openPrintPreview("coverkopSuratPengantaroprs");
-            }, 500);
-        });
-    };
-
-    function openPrintPreview(divId) {
-        let printContents = document.getElementById(divId).innerHTML;
-        let printWindow = window.open('', '_blank', 'width=800,height=600');
-
-        printWindow.document.write(`
+            printWindow.document.write(`
         <html>
         <head>
             <title>Print Preview</title>
@@ -3224,255 +3232,255 @@ let kopTemplateOprs = [];
         </html>
     `);
 
-        printWindow.document.close();
+            printWindow.document.close();
 
-        printWindow.onload = function() {
-            setTimeout(() => {
-                printWindow.print();
-                printWindow.close();
-            }, 5000);
-        };
-    }
-
-
+            printWindow.onload = function() {
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 5000);
+            };
+        }
 
 
 
 
 
-    const actionButtonAddOperation = (props) => {
-        $("#btn-create-operasi").off().on("click", (e) => {
-            quillInstancesModal = {}
-            setTimeout(() => {
-                $('#tarif_id-permintaan_operasi').val('').trigger('change');
-
-            }, 2000);
 
 
-            e.preventDefault();
+        const actionButtonAddOperation = (props) => {
+            $("#btn-create-operasi").off().on("click", (e) => {
+                quillInstancesModal = {}
+                setTimeout(() => {
+                    $('#tarif_id-permintaan_operasi').val('').trigger('change');
 
-            $("#dropdown-param-tindakan-operasi").html("");
-
-            $("#create-modal-permintaan-operasi").modal("show");
-            $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(props));
-            $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
-            // $('#form-permintaan-operasi')[0].reset();
-
-            $('#btn-save-permintaan-operasi-modal').attr('hidden', false);
-            $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
-            $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', true);
-            $('#cetak-oprs-permintaan').attr('hidden', true);
+                }, 2000);
 
 
-            $('#vactination_id-permintaan_operasi').val(generateCode());
-            $("#trans_id-permintaan_operasi").val(props?.trans_id)
-            $('#org_unit_code-permintaan_operasi').val(props?.org_unit_code);
-            $('#visit_id-permintaan_operasi').val(props?.visit_id);
-            $('#no_registration-permintaan_operasi').val(props?.no_registration);
-            $('#vactination_date-permintaan_operasi').val(moment().format(
-                "YYYY/MM/DD HH:mm"));
-            $('#description-permintaan_operasi').val(props?.description);
-            const $select = $("#employee_id-permintaan_operasi");
-            $select.empty().append(`<option value="">Pilih Dokter</option>`);
+                e.preventDefault();
 
-            dr_oprtOprs.forEach(emp => {
-                $select.append(
-                    `<option value="${emp.employee_id}">${emp.fullname}</option>`
-                );
-            });
+                $("#dropdown-param-tindakan-operasi").html("");
 
-            $select.val(props.employee_id).trigger("change");
-            $('#doctor-permintaan_operasi').val(props.fullname ?? props.doctor);
+                $("#create-modal-permintaan-operasi").modal("show");
+                $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(props));
+                $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
+                // $('#form-permintaan-operasi')[0].reset();
 
-            $select.on("change", function() {
-                const selectedId = $(this).val();
-                const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
-                $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname :
-                    '');
-            });
-            $('#anestesi_type-permintaan_operasi').val(props?.anestesi_type);
-            $('#modified_date-permintaan_operasi').val(moment().format("YYYY/MM/DDTHH:mm"));
-            $('#modified_by-permintaan_operasi').val();
-            $('#validation-permintaan_operasi').val(props?.validation);
-            $('#terlayani-permintaan_operasi').val();
-            $('#thename-permintaan_operasi').val(props?.diantar_oleh);
-            $('#theaddress-permintaan_operasi').val(props?.contact_address);
-            $('#theid-permintaan_operasi').val(props?.pasien_id);
-            $('#isrj-permintaan_operasi').val(props?.isrj);
-            $('#status_pasien_id-permintaan_operasi').val(props?.status_pasien_id);
-            $('#gender-permintaan_operasi').val(props?.gender);
-            $('#ageyear-permintaan_operasi').val(props?.ageyear);
-            $('#agemonth-permintaan_operasi').val(props?.agemonth);
-            $('#ageday-permintaan_operasi').val(props?.ageday);
-            $('#bed_id-permintaan_operasi').val(props?.bed_id);
-            $('#keluar_id-permintaan_operasi').val(props?.keluar_id);
-            $('#diagnosa_pra-permintaan_operasi').val(props?.diagnosa_pra);
-            $('#diagnosa_pasca-permintaan_operasi').val(props?.diagnosa_pasca);
-            $('#end_operation-permintaan_operasi').val();
-            $('#start_anestesi-permintaan_operasi').val(props?.start_anestesi);
-            $('#end_anestesi-permintaan_operasi').val(props?.end_anestesi);
-            $('#result_id-permintaan_operasi').val(props?.result_id);
-            $('#clinic_id-permintaan_operasi').val("P002");
-            $('#transaksi-permintaan_operasi').val(0);
-            $('#layan-permintaan_operasi').val(props?.layan);
-            let currentDateTime = moment(new Date()).format("DD/MM/YYYY HH:mm")
-            $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
-            $("#start_operation-permintaan_operasi").val(moment($(
-                "#flatstart_operation-permintaan_operasi").val(), ["YYYY-MM-DD HH:mm",
-                "DD/MM/YYYY HH:mm"
-            ]).format("DD-MM-YYYY HH:mm"))
-            $('#rooms_id-permintaan_operasi').val(props?.rooms_id);
-            $('#clinic_id_from-permintaan_operasi').val("P002");
-            $('#class_room_id-permintaan_operasi').val(props?.class_room_id);
-            const categoryId = props?.patient_category_id ?? 0;
-            const codeId = props?.kode_operasi ?? 0;
-
-            $('#patient_category_id-elektif').prop('checked', categoryId === 0);
-            $('#patient_category_id-cyto').prop('checked', categoryId === 1);
-            $('#patient_category_id-emergency').prop('checked', categoryId === 2);
+                $('#btn-save-permintaan-operasi-modal').attr('hidden', false);
+                $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
+                $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', true);
+                $('#cetak-oprs-permintaan').attr('hidden', true);
 
 
-            $('#kode_operasi-sc').prop('checked', codeId === 1);
-            $('#kode_operasi-non_sc').prop('checked', codeId === 0);
+                $('#vactination_id-permintaan_operasi').val(generateCode());
+                $("#trans_id-permintaan_operasi").val(props?.trans_id)
+                $('#org_unit_code-permintaan_operasi').val(props?.org_unit_code);
+                $('#visit_id-permintaan_operasi').val(props?.visit_id);
+                $('#no_registration-permintaan_operasi').val(props?.no_registration);
+                $('#vactination_date-permintaan_operasi').val(moment().format(
+                    "YYYY/MM/DD HH:mm"));
+                $('#description-permintaan_operasi').val(props?.description);
+                const $select = $("#employee_id-permintaan_operasi");
+                $select.empty().append(`<option value="">Pilih Dokter</option>`);
 
-
-            $('#operation_type-permintaan_operasi').val("");
-            $('#diagnosa_desc-permintaan_operasi').val("");
-            $('#quill_diagnosa_desc-permintaan_operasi').html("");
-
-            $('#advice_doctor-permintaan_operasi').val("");
-            $('#quill_advice_doctor-permintaan_operasi').html("");
-
-
-            getDataColumnName({
-                table_name: 'class_room',
-                column_name: 'name_of_class',
-                column_id: 'class_room_id',
-                id: props?.class_room_id,
-                element_id: 'class_room_id-permintaan_operasi_name'
-            })
-            getDataColumnName({
-                table_name: 'clinic',
-                column_name: 'name_of_clinic',
-                column_id: 'clinic_id',
-                id: "P002",
-                element_id: 'clinic_id_from-permintaan_operasi_name'
-            })
-
-
-            $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
-                let treatmentData1Action = renderDropdownTreatment();
-
-                $('#bill_id-permintaan_operasi').select2({
-                    data: treatmentData1Action,
-                    disabled: false,
-                    dropdownParent: $('#create-modal-permintaan-operasi'),
-                    width: '100%',
+                dr_oprtOprs.forEach(emp => {
+                    $select.append(
+                        `<option value="${emp.employee_id}">${emp.fullname}</option>`
+                    );
                 });
 
-                let tarif_id_oprs = renderDropdownTarifId();
+                $select.val(props.employee_id).trigger("change");
+                $('#doctor-permintaan_operasi').val(props.fullname ?? props.doctor);
+
+                $select.on("change", function() {
+                    const selectedId = $(this).val();
+                    const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
+                    $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname :
+                        '');
+                });
+                $('#anestesi_type-permintaan_operasi').val(props?.anestesi_type);
+                $('#modified_date-permintaan_operasi').val(moment().format("YYYY/MM/DDTHH:mm"));
+                $('#modified_by-permintaan_operasi').val();
+                $('#validation-permintaan_operasi').val(props?.validation);
+                $('#terlayani-permintaan_operasi').val();
+                $('#thename-permintaan_operasi').val(props?.diantar_oleh);
+                $('#theaddress-permintaan_operasi').val(props?.contact_address);
+                $('#theid-permintaan_operasi').val(props?.pasien_id);
+                $('#isrj-permintaan_operasi').val(props?.isrj);
+                $('#status_pasien_id-permintaan_operasi').val(props?.status_pasien_id);
+                $('#gender-permintaan_operasi').val(props?.gender);
+                $('#ageyear-permintaan_operasi').val(props?.ageyear);
+                $('#agemonth-permintaan_operasi').val(props?.agemonth);
+                $('#ageday-permintaan_operasi').val(props?.ageday);
+                $('#bed_id-permintaan_operasi').val(props?.bed_id);
+                $('#keluar_id-permintaan_operasi').val(props?.keluar_id);
+                $('#diagnosa_pra-permintaan_operasi').val(props?.diagnosa_pra);
+                $('#diagnosa_pasca-permintaan_operasi').val(props?.diagnosa_pasca);
+                $('#end_operation-permintaan_operasi').val();
+                $('#start_anestesi-permintaan_operasi').val(props?.start_anestesi);
+                $('#end_anestesi-permintaan_operasi').val(props?.end_anestesi);
+                $('#result_id-permintaan_operasi').val(props?.result_id);
+                $('#clinic_id-permintaan_operasi').val("P002");
+                $('#transaksi-permintaan_operasi').val(0);
+                $('#layan-permintaan_operasi').val(props?.layan);
+                let currentDateTime = moment(new Date()).format("DD/MM/YYYY HH:mm")
+                $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
+                $("#start_operation-permintaan_operasi").val(moment($(
+                    "#flatstart_operation-permintaan_operasi").val(), ["YYYY-MM-DD HH:mm",
+                    "DD/MM/YYYY HH:mm"
+                ]).format("DD-MM-YYYY HH:mm"))
+                $('#rooms_id-permintaan_operasi').val(props?.rooms_id);
+                $('#clinic_id_from-permintaan_operasi').val("P002");
+                $('#class_room_id-permintaan_operasi').val(props?.class_room_id);
+                const categoryId = props?.patient_category_id ?? 0;
+                const codeId = props?.kode_operasi ?? 0;
+
+                $('#patient_category_id-elektif').prop('checked', categoryId === 0);
+                $('#patient_category_id-cyto').prop('checked', categoryId === 1);
+                $('#patient_category_id-emergency').prop('checked', categoryId === 2);
 
 
-                $('#tarif_id-permintaan_operasi').select2({
-                    placeholder: 'Cari atau pilih',
-                    allowClear: false,
-                    tags: true,
-                    disabled: false,
-                    data: tarif_id_oprs,
-                    dropdownParent: $('#create-modal-permintaan-operasi'),
-                    createTag: function(params) {
+                $('#kode_operasi-sc').prop('checked', codeId === 1);
+                $('#kode_operasi-non_sc').prop('checked', codeId === 0);
 
-                        if ($.trim(params.term) === '') {
-                            return null;
+
+                $('#operation_type-permintaan_operasi').val("");
+                $('#diagnosa_desc-permintaan_operasi').val("");
+                $('#quill_diagnosa_desc-permintaan_operasi').html("");
+
+                $('#advice_doctor-permintaan_operasi').val("");
+                $('#quill_advice_doctor-permintaan_operasi').html("");
+
+
+                getDataColumnName({
+                    table_name: 'class_room',
+                    column_name: 'name_of_class',
+                    column_id: 'class_room_id',
+                    id: props?.class_room_id,
+                    element_id: 'class_room_id-permintaan_operasi_name'
+                })
+                getDataColumnName({
+                    table_name: 'clinic',
+                    column_name: 'name_of_clinic',
+                    column_id: 'clinic_id',
+                    id: "P002",
+                    element_id: 'clinic_id_from-permintaan_operasi_name'
+                })
+
+
+                $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
+                    let treatmentData1Action = renderDropdownTreatment();
+
+                    $('#bill_id-permintaan_operasi').select2({
+                        data: treatmentData1Action,
+                        disabled: false,
+                        dropdownParent: $('#create-modal-permintaan-operasi'),
+                        width: '100%',
+                    });
+
+                    let tarif_id_oprs = renderDropdownTarifId();
+
+
+                    $('#tarif_id-permintaan_operasi').select2({
+                        placeholder: 'Cari atau pilih',
+                        allowClear: false,
+                        tags: true,
+                        disabled: false,
+                        data: tarif_id_oprs,
+                        dropdownParent: $('#create-modal-permintaan-operasi'),
+                        createTag: function(params) {
+
+                            if ($.trim(params.term) === '') {
+                                return null;
+                            }
+                            return {
+                                id: params.term,
+                                text: params.term,
+                                newOption: true,
+                            };
+                        },
+                        templateResult: function(data) {
+                            if (data.newOption) {
+                                return $('<span>Tambah: ' + data.text + '</span>');
+                            }
+                            return data.text;
+                        },
+
+                    });
+
+                    $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                        const selectedValue = e.params.data.text;
+
+                        if (e.params.data.newOption) {
+
+                            // $('#tarif_id-permintaan_operasi').val('').trigger('change');
+                            $('#tarif_id-permintaan_operasi').select2({
+                                placeholder: 'Cari atau pilih',
+                                allowClear: false,
+                                disabled: false,
+                                tags: true,
+                                dropdownParent: $(
+                                    '#create-modal-permintaan-operasi'),
+                                createTag: function(params) {
+                                    return {
+                                        id: params.term,
+                                        text: params.term,
+                                        newOption: true,
+                                    };
+                                },
+                                templateResult: function(data) {
+                                    if (data.newOption) {
+                                        return $('<span>Tambah: ' + data
+                                            .text +
+                                            '</span>');
+                                    }
+                                    return data.text;
+                                },
+
+                            });
                         }
-                        return {
-                            id: params.term,
-                            text: params.term,
-                            newOption: true,
-                        };
-                    },
-                    templateResult: function(data) {
-                        if (data.newOption) {
-                            return $('<span>Tambah: ' + data.text + '</span>');
-                        }
-                        return data.text;
-                    },
+                    });
 
+                    initializeFlatpickrOperasi()
+                    initializeQuillEditors();
                 });
 
-                $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
-                    const selectedValue = e.params.data.text;
 
-                    if (e.params.data.newOption) {
-
-                        // $('#tarif_id-permintaan_operasi').val('').trigger('change');
-                        $('#tarif_id-permintaan_operasi').select2({
-                            placeholder: 'Cari atau pilih',
-                            allowClear: false,
-                            disabled: false,
-                            tags: true,
-                            dropdownParent: $(
-                                '#create-modal-permintaan-operasi'),
-                            createTag: function(params) {
-                                return {
-                                    id: params.term,
-                                    text: params.term,
-                                    newOption: true,
-                                };
-                            },
-                            templateResult: function(data) {
-                                if (data.newOption) {
-                                    return $('<span>Tambah: ' + data
-                                        .text +
-                                        '</span>');
-                                }
-                                return data.text;
-                            },
-
-                        });
-                    }
-                });
-
-                initializeFlatpickrOperasi()
                 initializeQuillEditors();
+                actionDropdownSpesialisas();
+                btnSaveActionRequestOperation(props);
+            });
+        }
+
+        function formatToIDRResult(value) {
+            const parsedValue = Math.floor(parseFloat(value));
+            return parsedValue.toLocaleString('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            });
+        }
+
+
+
+        const renderDropdownTarifId = () => {
+            let data = tarif_id_oprs
+
+            let result = "";
+            data.forEach((item) => {
+                result +=
+                    `<option value="${item.id}">${item.text}</option>`;
             });
 
+            $("#tarif_id-permintaan_operasi").html(
+                `<option selected disabled value="">Pilih Tindakan</option>` +
+                result);
 
-            initializeQuillEditors();
-            actionDropdownSpesialisas();
-            btnSaveActionRequestOperation(props);
-        });
-    }
+        }
 
-    function formatToIDRResult(value) {
-        const parsedValue = Math.floor(parseFloat(value));
-        return parsedValue.toLocaleString('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        });
-    }
+        const getTemplatePermintaanOperasi = () => {
 
-
-
-    const renderDropdownTarifId = () => {
-        let data = tarif_id_oprs
-
-        let result = "";
-        data.forEach((item) => {
-            result +=
-                `<option value="${item.id}">${item.text}</option>`;
-        });
-
-        $("#tarif_id-permintaan_operasi").html(
-            `<option selected disabled value="">Pilih Tindakan</option>` +
-            result);
-
-    }
-
-    const getTemplatePermintaanOperasi = () => {
-
-        return `<div hidden>
+            return `<div hidden>
                 <div class="form-group">
                     <label for="org_unit_code-permintaan_operasi">Org Unit Code</label>
                     <input class="form-control disabled" id="org_unit_code-permintaan_operasi" name="org_unit_code" >
@@ -3766,558 +3774,563 @@ let kopTemplateOprs = [];
                 
             </div>
             `
-    }
+        }
 
-    const modalViewDetailRequestOperation = (data) => {
-        quillInstancesModal = {}
-
-
-        let resultData = data;
-        let result = resultData.data[0];
-
-        $("#dropdown-param-tindakan-operasi").html("");
-        $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
-        $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
-        $("#create-modal-permintaan-operasi").modal("show");
-        $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
-        $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
-        $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', true);
-        $('#cetak-oprs-permintaan').attr('hidden', true);
+        const modalViewDetailRequestOperation = (data) => {
+            quillInstancesModal = {}
 
 
-        $('#org_unit_code-permintaan_operasi').val(result.org_unit_code);
-        $('#visit_id-permintaan_operasi').val(result.visit_id);
-        $('#no_registration-permintaan_operasi').val(result.no_registration);
-        $('#vactination_date-permintaan_operasi').val(moment(result?.vactination_date).format(
-            "YYYY/MM/DD HH:mm"));
-        $('#description-permintaan_operasi').val(result.description);
-        const $select = $("#employee_id-permintaan_operasi");
-        $select.empty().append(`<option value="">Pilih Dokter</option>`);
+            let resultData = data;
+            let result = resultData.data[0];
 
-        dr_oprtOprs.forEach(emp => {
-            $select.append(
-                `<option value="${emp.employee_id}">${emp.fullname}</option>`
-            );
-        });
+            $("#dropdown-param-tindakan-operasi").html("");
+            $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
+            $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
+            $("#create-modal-permintaan-operasi").modal("show");
+            $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
+            $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
+            $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', true);
+            $('#cetak-oprs-permintaan').attr('hidden', false);
 
-        $select.val(result.employee_id).trigger("change");
-        $('#doctor-permintaan_operasi').val(result.fullname ?? result.doctor);
 
-        $select.on("change", function() {
-            const selectedId = $(this).val();
-            const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
-            $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname : '');
-        });
-        // $('#employee_id-permintaan_operasi').val(result.employee_id);
-        // $('#doctor-permintaan_operasi').val(result.fullname);
-        $('#anestesi_type-permintaan_operasi').val(result.anestesi_type);
-        $('#modified_date-permintaan_operasi').val(moment(result?.modified_date).format(
-            "YYYY/MM/DD HH:mm"));
-        $('#modified_by-permintaan_operasi').val(result?.modified_by);
-        $('#validation-permintaan_operasi').val(result.validation);
-        $('#terlayani-permintaan_operasi').val(result.terlayani);
-        $('#thename-permintaan_operasi').val(result.thename);
-        $('#theaddress-permintaan_operasi').val(result.theaddress);
-        $('#theid-permintaan_operasi').val(result.theid);
-        $('#isrj-permintaan_operasi').val(result.isrj);
-        $('#status_pasien_id-permintaan_operasi').val(result.status_pasien_id);
-        $('#gender-permintaan_operasi').val(result.gender);
-        $('#ageyear-permintaan_operasi').val(result.ageyear);
-        $('#agemonth-permintaan_operasi').val(result.agemonth);
-        $('#ageday-permintaan_operasi').val(result.ageday);
-        $('#bed_id-permintaan_operasi').val(result.bed_id);
-        $('#keluar_id-permintaan_operasi').val(result.keluar_id);
-        $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
-        $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
-        $('#diagnosa_desc-permintaan_operasi').val(result.diagnosa_desc);
-        $('#advice_doctor-permintaan_operasi').val(result.advice_doctor);
-        $('#quill_diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
-        $('#quill_advice_doctor-permintaan_operasi').html(result.advice_doctor);
+            $('#org_unit_code-permintaan_operasi').val(result.org_unit_code);
+            $('#visit_id-permintaan_operasi').val(result.visit_id);
+            $('#no_registration-permintaan_operasi').val(result.no_registration);
+            $('#vactination_date-permintaan_operasi').val(moment(result?.vactination_date).format(
+                "YYYY/MM/DD HH:mm"));
+            $('#description-permintaan_operasi').val(result.description);
+            const $select = $("#employee_id-permintaan_operasi");
+            $select.empty().append(`<option value="">Pilih Dokter</option>`);
 
-        $('#end_operation-permintaan_operasi').val(result.end_operation)
-        $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
-        $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
-        $('#result_id-permintaan_operasi').val(result.result_id);
-        $('#clinic_id-permintaan_operasi').val(result.clinic_id);
-        $('#transaksi-permintaan_operasi').val(result.transaksi);
-        $('#layan-permintaan_operasi').val(result.layan);
-        let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
-        $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
-        $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
-        $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
-        $('#class_room_id-permintaan_operasi').val(result.class_room_id);
-
-        $('#patient_category_id-elektif').prop('checked', result.patient_category_id === 0);
-        $('#patient_category_id-cyto').prop('checked', result.patient_category_id === 1);
-        $('#patient_category_id-emergency').prop('checked', result.patient_category_id === 2);
-
-        $('#kode_operasi-sc').prop('checked', result.kode_operasi === 1);
-        $('#kode_operasi-non_sc').prop('checked', result.kode_operasi === 0);
-
-        $('#operation_type-permintaan_operasi').val(result.operation_type);
-        $('#vactination_id-permintaan_operasi').val(result.vactination_id);
-        $("#trans_id-permintaan_operasi").val(result?.trans_id)
-        $("#flatstart_operation-permintaan_operasi").attr("disabled", true)
-
-        $('#patient_category_id-elektif').attr("disabled", true)
-        $('#patient_category_id-cyto').attr("disabled", true)
-        $('#patient_category_id-emergency').attr("disabled", true)
-        const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
-
-        $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
-
-        getDataColumnName({
-            table_name: 'class_room',
-            column_name: 'name_of_class',
-            column_id: 'class_room_id',
-            id: result.class_room_id,
-            element_id: 'class_room_id-permintaan_operasi_name'
-        })
-        getDataColumnName({
-            table_name: 'clinic',
-            column_name: 'name_of_clinic',
-            column_id: 'clinic_id',
-            id: result.clinic_id,
-            element_id: 'clinic_id_from-permintaan_operasi_name'
-        })
-
-        let tarif_id_oprs_data = tarif_id_oprs;
-        const newTreatment = result.tarif_id;
-
-        $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
-            $('#bill_id-permintaan_operasi').select2({
-                disabled: true
-            });
-            $('#tarif_id-permintaan_operasi').select2({
-                disabled: true
+            dr_oprtOprs.forEach(emp => {
+                $select.append(
+                    `<option value="${emp.employee_id}">${emp.fullname}</option>`
+                );
             });
 
+            $select.val(result.employee_id).trigger("change");
+            $('#doctor-permintaan_operasi').val(result.fullname ?? result.doctor);
 
-            const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
-            if (!isExistingValue) {
-                tarif_id_oprs.push({
-                    id: newTreatment,
-                    text: newTreatment
+            $select.on("change", function() {
+                const selectedId = $(this).val();
+                const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
+                $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname : '');
+            });
+            // $('#employee_id-permintaan_operasi').val(result.employee_id);
+            // $('#doctor-permintaan_operasi').val(result.fullname);
+            $('#anestesi_type-permintaan_operasi').val(result.anestesi_type);
+            $('#modified_date-permintaan_operasi').val(moment(result?.modified_date).format(
+                "YYYY/MM/DD HH:mm"));
+            $('#modified_by-permintaan_operasi').val(result?.modified_by);
+            $('#validation-permintaan_operasi').val(result.validation);
+            $('#terlayani-permintaan_operasi').val(result.terlayani);
+            $('#thename-permintaan_operasi').val(result.thename);
+            $('#theaddress-permintaan_operasi').val(result.theaddress);
+            $('#theid-permintaan_operasi').val(result.theid);
+            $('#isrj-permintaan_operasi').val(result.isrj);
+            $('#status_pasien_id-permintaan_operasi').val(result.status_pasien_id);
+            $('#gender-permintaan_operasi').val(result.gender);
+            $('#ageyear-permintaan_operasi').val(result.ageyear);
+            $('#agemonth-permintaan_operasi').val(result.agemonth);
+            $('#ageday-permintaan_operasi').val(result.ageday);
+            $('#bed_id-permintaan_operasi').val(result.bed_id);
+            $('#keluar_id-permintaan_operasi').val(result.keluar_id);
+            $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
+            $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
+            $('#diagnosa_desc-permintaan_operasi').val(result.diagnosa_desc);
+            $('#advice_doctor-permintaan_operasi').val(result.advice_doctor);
+            $('#quill_diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
+            $('#quill_advice_doctor-permintaan_operasi').html(result.advice_doctor);
+
+            $('#end_operation-permintaan_operasi').val(result.end_operation)
+            $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
+            $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
+            $('#result_id-permintaan_operasi').val(result.result_id);
+            $('#clinic_id-permintaan_operasi').val(result.clinic_id);
+            $('#transaksi-permintaan_operasi').val(result.transaksi);
+            $('#layan-permintaan_operasi').val(result.layan);
+            let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
+            $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
+            $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
+            $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
+            $('#class_room_id-permintaan_operasi').val(result.class_room_id);
+
+            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === 2);
+
+            $('#kode_operasi-sc').prop('checked', result.kode_operasi === 1);
+            $('#kode_operasi-non_sc').prop('checked', result.kode_operasi === 0);
+
+            $('#operation_type-permintaan_operasi').val(result.operation_type);
+            $('#vactination_id-permintaan_operasi').val(result.vactination_id);
+            $("#trans_id-permintaan_operasi").val(result?.trans_id)
+            $("#flatstart_operation-permintaan_operasi").attr("disabled", true)
+
+            $('#patient_category_id-elektif').attr("disabled", true)
+            $('#patient_category_id-cyto').attr("disabled", true)
+            $('#patient_category_id-emergency').attr("disabled", true)
+            const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
+
+            $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
+
+            getDataColumnName({
+                table_name: 'class_room',
+                column_name: 'name_of_class',
+                column_id: 'class_room_id',
+                id: result.class_room_id,
+                element_id: 'class_room_id-permintaan_operasi_name'
+            })
+            getDataColumnName({
+                table_name: 'clinic',
+                column_name: 'name_of_clinic',
+                column_id: 'clinic_id',
+                id: result.clinic_id,
+                element_id: 'clinic_id_from-permintaan_operasi_name'
+            })
+
+            let tarif_id_oprs_data = tarif_id_oprs;
+            const newTreatment = result.tarif_id;
+
+            $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
+                $('#bill_id-permintaan_operasi').select2({
+                    disabled: true
                 });
-                setTimeout(() => {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        data: tarif_id_oprs,
-                        dropdownParent: $('#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
+                $('#tarif_id-permintaan_operasi').select2({
+                    disabled: true
+                });
 
+
+                const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
+                if (!isExistingValue) {
+                    tarif_id_oprs.push({
+                        id: newTreatment,
+                        text: newTreatment
                     });
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprs,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
 
-                    $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
-                }, 1000);
-            } else {
-                let tarif_id_oprsresult = renderDropdownTarifId();
-                setTimeout(() => {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        data: tarif_id_oprsresult,
-                        dropdownParent: $('#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
+                        });
 
-                    });
+                        $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
+                    }, 1000);
+                } else {
+                    let tarif_id_oprsresult = renderDropdownTarifId();
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            data: tarif_id_oprsresult,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
 
-                    $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger(
-                        'change');
-                }, 1000);
-            }
-            $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
-                const selectedValue = e.params.data.text;
+                        });
 
-                if (e.params.data.newOption) {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        dropdownParent: $(
-                            '#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
-
-                    });
+                        $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger(
+                            'change');
+                    }, 1000);
                 }
-            });
+                $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                    const selectedValue = e.params.data.text;
 
-            $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
-            initializeFlatpickrOperasi()
-            initializeQuillEditors();
-        });
-        initializeQuillEditors();
-    };
+                    if (e.params.data.newOption) {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            dropdownParent: $(
+                                '#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
 
-    const modalViewEditRequestOperation = (data) => {
-        quillInstancesModal = {}
-
-        let resultData = data;
-        let result = resultData.data[0];
-
-        $("#dropdown-param-tindakan-operasi").html("");
-        $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
-        $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
-        $("#create-modal-permintaan-operasi").modal("show");
-        $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
-        $('#btn-edit-permintaan-operasi-modal').attr('hidden', false);
-        $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', true);
-        $('#cetak-oprs-permintaan').attr('hidden', true);
-
-
-
-        $('#vactination_id-permintaan_operasi').val(result.vactination_id);
-        $("#trans_id-permintaan_operasi").val(result?.trans_id)
-        $('#org_unit_code-permintaan_operasi').val(result.org_unit_code);
-        $('#visit_id-permintaan_operasi').val(result.visit_id);
-        $('#no_registration-permintaan_operasi').val(result.no_registration);
-        $('#vactination_date-permintaan_operasi').val(moment(result?.vactination_date).format(
-            "YYYY/MM/DD HH:mm"));
-        $('#description-permintaan_operasi').val(result.description);
-        const $select = $("#employee_id-permintaan_operasi");
-        $select.empty().append(`<option value="">Pilih Dokter</option>`);
-
-        dr_oprtOprs.forEach(emp => {
-            $select.append(
-                `<option value="${emp.employee_id}">${emp.fullname}</option>`
-            );
-        });
-
-        $select.val(result.employee_id).trigger("change");
-        $('#doctor-permintaan_operasi').val(result.fullname ?? result.doctor);
-
-        $select.on("change", function() {
-            const selectedId = $(this).val();
-            const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
-            $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname : '');
-        });
-        // $('#employee_id-permintaan_operasi').val(result.employee_id);
-        // $('#doctor-permintaan_operasi').val(result?.fullname ?? result?.doctor);
-        $('#anestesi_type-permintaan_operasi').val(result.anestesi_type);
-        $('#modified_date-permintaan_operasi').val(moment(result?.modified_date).format(
-            "YYYY/MM/DD HH:mm"));
-        $('#modified_by-permintaan_operasi').val(result?.modified_by);
-        $('#validation-permintaan_operasi').val(result.validation);
-        $('#terlayani-permintaan_operasi').val(result.terlayani);
-        $('#thename-permintaan_operasi').val(result.thename);
-        $('#theaddress-permintaan_operasi').val(result.theaddress);
-        $('#theid-permintaan_operasi').val(result.theid);
-        $('#isrj-permintaan_operasi').val(result.isrj);
-        $('#status_pasien_id-permintaan_operasi').val(result.status_pasien_id);
-        $('#gender-permintaan_operasi').val(result.gender);
-        $('#ageyear-permintaan_operasi').val(result.ageyear);
-        $('#agemonth-permintaan_operasi').val(result.agemonth);
-        $('#ageday-permintaan_operasi').val(result.ageday);
-        $('#bed_id-permintaan_operasi').val(result.bed_id);
-        $('#keluar_id-permintaan_operasi').val(result.keluar_id);
-        $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
-        $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
-
-        $('#diagnosa_desc-permintaan_operasi').val(result.diagnosa_desc);
-        $('#advice_doctor-permintaan_operasi').val(result.advice_doctor);
-        $('#quill_advice_doctor-permintaan_operasi').html(result.advice_doctor);
-        $('#quill_diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
-        $('#end_operation-permintaan_operasi').val(result.end_operation)
-        $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
-        $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
-        $('#result_id-permintaan_operasi').val(result.result_id);
-        $('#clinic_id-permintaan_operasi').val(result.clinic_id);
-        $('#transaksi-permintaan_operasi').val(result.transaksi);
-        $('#layan-permintaan_operasi').val(result.layan);
-        let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
-        $("#start_operation-permintaan_operasi").val(currentDateTime)
-        $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
-        $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
-        $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
-        $('#class_room_id-permintaan_operasi').val(result.class_room_id);
-        $('#patient_category_id-elektif').prop('checked', result.patient_category_id === "0" || result
-            .patient_category_id === 0);
-        $('#patient_category_id-cyto').prop('checked', result.patient_category_id === "1" || result
-            .patient_category_id === 1);
-        $('#patient_category_id-emergency').prop('checked', result.patient_category_id === "2" || result
-            .patient_category_id === 2);
-
-        $('#kode_operasi-sc').prop('checked', result?.kode_operasi === "1" || result?.kode_operasi === 1);
-        $('#kode_operasi-non_sc').prop('checked', result?.kode_operasi === "0" || result?.kode_operasi ===
-            0);
-
-
-        $('#operation_type-permintaan_operasi').val(result.operation_type);
-
-        const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
-
-        $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
-        getDataColumnName({
-            table_name: 'class_room',
-            column_name: 'name_of_class',
-            column_id: 'class_room_id',
-            id: result.class_room_id,
-            element_id: 'class_room_id-permintaan_operasi_name'
-        })
-        getDataColumnName({
-            table_name: 'clinic',
-            column_name: 'name_of_clinic',
-            column_id: 'clinic_id',
-            id: result.clinic_id,
-            element_id: 'clinic_id_from-permintaan_operasi_name'
-        })
-
-        let tarif_id_oprs_data = tarif_id_oprs;
-        const newTreatment = result.tarif_id;
-
-        $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
-            let treatmentData = renderDropdownTreatment();
-
-            $('#bill_id-permintaan_operasi').select2({
-                data: treatmentData,
-                disabled: false,
-                dropdownParent: $('#create-modal-permintaan-operasi')
-            });
-
-            $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
-
-            const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
-            if (!isExistingValue) {
-                tarif_id_oprs.push({
-                    id: newTreatment,
-                    text: newTreatment
-                });
-                setTimeout(() => {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        disabled: false,
-                        data: tarif_id_oprs,
-                        dropdownParent: $('#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
-
-                    });
-
-                    $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
-                }, 1000);
-            } else {
-                let tarif_id_oprsresult = renderDropdownTarifId();
-                setTimeout(() => {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        disabled: false,
-                        data: tarif_id_oprsresult,
-                        dropdownParent: $('#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
-
-                    });
-
-                    $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger(
-                        'change');
-                }, 1000);
-            }
-            $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
-                const selectedValue = e.params.data.text;
-
-                if (e.params.data.newOption) {
-                    $('#tarif_id-permintaan_operasi').select2({
-                        placeholder: 'Cari atau pilih',
-                        allowClear: false,
-                        tags: true,
-                        disabled: false,
-                        dropdownParent: $(
-                            '#create-modal-permintaan-operasi'),
-                        createTag: function(params) {
-                            return {
-                                id: params.term,
-                                text: params.term,
-                                newOption: true,
-                            };
-                        },
-                        templateResult: function(data) {
-                            if (data.newOption) {
-                                return $('<span>Tambah: ' + data.text +
-                                    '</span>');
-                            }
-                            return data.text;
-                        },
-
-                    });
-                }
-            });
-
-            initializeFlatpickrOperasi()
-            initializeQuillEditors();
-        });
-        initializeFlatpickrOperasi()
-        initializeQuillEditors();
-        btnUpdateDataRequestOperation(result)
-    };
-
-
-
-
-    const valueCatatan = async (props) => {
-
-        try {
-            let promises = props?.data.map(async (e) => {
-                const {
-                    htmlContent
-                } = await getType({
-                    parameter_desc: e?.parameter_desc,
-                    parameter_id: e?.parameter_id,
-                    column_name: e?.column_name,
-                    p_type: e?.p_type,
-                    code: e?.entry_type,
-                    get_data: props?.get_data,
-                    items: props?.items,
-                    data_tindakan: props?.data_tindakan
-                });
-
-                let colClass =
-                    ((e?.p_type === "OPRS030" && ["13", "14", "15", "16", "17", "18"].includes(e
-                            .parameter_id)) ||
-                        (e?.p_type === "OPRS031") || (e?.p_type === "OPRS034") ||
-                        (e?.p_type === "OPRS011" && ["15"].includes(e.parameter_id))) ?
-                    "col-12" :
-
-                    ((e?.p_type === "OPRS011" && ["22", "23", "24", "25"].includes(e
-                            .parameter_id)) ||
-                        (e?.p_type === "OPRS006" && ["28", "29", "30", "31"].includes(e
-                            .parameter_id)) ||
-                        (e?.p_type === "OPRS011" && ["04", "05", "06", "07", "08", "09",
-                            "10",
-                            "11", "16", "17", "19"
-                        ].includes(e.parameter_id))) ? "col-3" :
-
-                    (e?.entry_type == 4 ? "col-12" : "col-6");
-
-                let label = "";
-                if (e?.p_type === "OPRS034") {
-                    switch (e.parameter_id) {
-                        case "38":
-                            label = `<h4 class="fw-bold d-block pt-3">Kepala</h4>`;
-                            break;
-                        case "44":
-                            label = `<h4 class="fw-bold d-block pt-3">Leher</h4>`;
-                            break;
-                        case "45":
-                            label = `<h4 class="fw-bold d-block pt-3">Thorax</h4>`;
-                            break;
-                        case "48":
-                            label = `<h4 class="fw-bold d-block pt-3">Abdomen</h4>`;
-                            break;
-                        case "52":
-                            label = `<h4 class="fw-bold d-block pt-3">Genitalia</h4>`;
-                            break;
-                        case "53":
-                            label = `<h4 class="fw-bold d-block pt-3">Ekstremitas</h4>`;
-                            break;
+                        });
                     }
-                }
+                });
 
-                return htmlContent.trim() ? `
+                $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
+                initializeFlatpickrOperasi()
+                initializeQuillEditors();
+            });
+            initializeQuillEditors();
+
+            getPrintDataPermintaan(result)
+        };
+
+        const modalViewEditRequestOperation = (data) => {
+            quillInstancesModal = {}
+
+            let resultData = data;
+            let result = resultData.data[0];
+
+            $("#dropdown-param-tindakan-operasi").html("");
+            $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
+            $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
+            $("#create-modal-permintaan-operasi").modal("show");
+            $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
+            $('#btn-edit-permintaan-operasi-modal').attr('hidden', false);
+            $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', true);
+            $('#cetak-oprs-permintaan').attr('hidden', true);
+
+
+
+            $('#vactination_id-permintaan_operasi').val(result.vactination_id);
+            $("#trans_id-permintaan_operasi").val(result?.trans_id)
+            $('#org_unit_code-permintaan_operasi').val(result.org_unit_code);
+            $('#visit_id-permintaan_operasi').val(result.visit_id);
+            $('#no_registration-permintaan_operasi').val(result.no_registration);
+            $('#vactination_date-permintaan_operasi').val(moment(result?.vactination_date).format(
+                "YYYY/MM/DD HH:mm"));
+            $('#description-permintaan_operasi').val(result.description);
+            const $select = $("#employee_id-permintaan_operasi");
+            $select.empty().append(`<option value="">Pilih Dokter</option>`);
+
+            dr_oprtOprs.forEach(emp => {
+                $select.append(
+                    `<option value="${emp.employee_id}">${emp.fullname}</option>`
+                );
+            });
+
+            $select.val(result.employee_id).trigger("change");
+            $('#doctor-permintaan_operasi').val(result.fullname ?? result.doctor);
+
+            $select.on("change", function() {
+                const selectedId = $(this).val();
+                const selectedDoctor = dr_oprtOprs.find(d => d.employee_id === selectedId);
+                $('#doctor-permintaan_operasi').val(selectedDoctor ? selectedDoctor.fullname : '');
+            });
+            // $('#employee_id-permintaan_operasi').val(result.employee_id);
+            // $('#doctor-permintaan_operasi').val(result?.fullname ?? result?.doctor);
+            $('#anestesi_type-permintaan_operasi').val(result.anestesi_type);
+            $('#modified_date-permintaan_operasi').val(moment(result?.modified_date).format(
+                "YYYY/MM/DD HH:mm"));
+            $('#modified_by-permintaan_operasi').val(result?.modified_by);
+            $('#validation-permintaan_operasi').val(result.validation);
+            $('#terlayani-permintaan_operasi').val(result.terlayani);
+            $('#thename-permintaan_operasi').val(result.thename);
+            $('#theaddress-permintaan_operasi').val(result.theaddress);
+            $('#theid-permintaan_operasi').val(result.theid);
+            $('#isrj-permintaan_operasi').val(result.isrj);
+            $('#status_pasien_id-permintaan_operasi').val(result.status_pasien_id);
+            $('#gender-permintaan_operasi').val(result.gender);
+            $('#ageyear-permintaan_operasi').val(result.ageyear);
+            $('#agemonth-permintaan_operasi').val(result.agemonth);
+            $('#ageday-permintaan_operasi').val(result.ageday);
+            $('#bed_id-permintaan_operasi').val(result.bed_id);
+            $('#keluar_id-permintaan_operasi').val(result.keluar_id);
+            $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
+            $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
+
+            $('#diagnosa_desc-permintaan_operasi').val(result.diagnosa_desc);
+            $('#advice_doctor-permintaan_operasi').val(result.advice_doctor);
+            $('#quill_advice_doctor-permintaan_operasi').html(result.advice_doctor);
+            $('#quill_diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
+            $('#end_operation-permintaan_operasi').val(result.end_operation)
+            $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
+            $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
+            $('#result_id-permintaan_operasi').val(result.result_id);
+            $('#clinic_id-permintaan_operasi').val(result.clinic_id);
+            $('#transaksi-permintaan_operasi').val(result.transaksi);
+            $('#layan-permintaan_operasi').val(result.layan);
+            let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
+            $("#start_operation-permintaan_operasi").val(currentDateTime)
+            $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
+            $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
+            $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
+            $('#class_room_id-permintaan_operasi').val(result.class_room_id);
+            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === "0" || result
+                .patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === "1" || result
+                .patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === "2" || result
+                .patient_category_id === 2);
+
+            $('#kode_operasi-sc').prop('checked', result?.kode_operasi === "1" || result?.kode_operasi === 1);
+            $('#kode_operasi-non_sc').prop('checked', result?.kode_operasi === "0" || result?.kode_operasi ===
+                0);
+
+
+            $('#operation_type-permintaan_operasi').val(result.operation_type);
+
+            const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
+
+            $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
+            getDataColumnName({
+                table_name: 'class_room',
+                column_name: 'name_of_class',
+                column_id: 'class_room_id',
+                id: result.class_room_id,
+                element_id: 'class_room_id-permintaan_operasi_name'
+            })
+            getDataColumnName({
+                table_name: 'clinic',
+                column_name: 'name_of_clinic',
+                column_id: 'clinic_id',
+                id: result.clinic_id,
+                element_id: 'clinic_id_from-permintaan_operasi_name'
+            })
+
+            let tarif_id_oprs_data = tarif_id_oprs;
+            const newTreatment = result.tarif_id;
+
+            $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
+                let treatmentData = renderDropdownTreatment();
+
+                $('#bill_id-permintaan_operasi').select2({
+                    data: treatmentData,
+                    disabled: false,
+                    dropdownParent: $('#create-modal-permintaan-operasi')
+                });
+
+                $('#bill_id-permintaan_operasi').val(result.bill_id).trigger('change');
+
+                const isExistingValue = tarif_id_oprs_data.some(item => item.text === newTreatment);
+                if (!isExistingValue) {
+                    tarif_id_oprs.push({
+                        id: newTreatment,
+                        text: newTreatment
+                    });
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            disabled: false,
+                            data: tarif_id_oprs,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(newTreatment).trigger('change');
+                    }, 1000);
+                } else {
+                    let tarif_id_oprsresult = renderDropdownTarifId();
+                    setTimeout(() => {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            disabled: false,
+                            data: tarif_id_oprsresult,
+                            dropdownParent: $('#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+
+                        $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger(
+                            'change');
+                    }, 1000);
+                }
+                $('#tarif_id-permintaan_operasi').on('select2:select', function(e) {
+                    const selectedValue = e.params.data.text;
+
+                    if (e.params.data.newOption) {
+                        $('#tarif_id-permintaan_operasi').select2({
+                            placeholder: 'Cari atau pilih',
+                            allowClear: false,
+                            tags: true,
+                            disabled: false,
+                            dropdownParent: $(
+                                '#create-modal-permintaan-operasi'),
+                            createTag: function(params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term,
+                                    newOption: true,
+                                };
+                            },
+                            templateResult: function(data) {
+                                if (data.newOption) {
+                                    return $('<span>Tambah: ' + data.text +
+                                        '</span>');
+                                }
+                                return data.text;
+                            },
+
+                        });
+                    }
+                });
+
+                initializeFlatpickrOperasi()
+                initializeQuillEditors();
+            });
+            initializeFlatpickrOperasi()
+            initializeQuillEditors();
+            btnUpdateDataRequestOperation(result)
+        };
+
+
+
+
+        const valueCatatan = async (props) => {
+
+            try {
+                let promises = props?.data.map(async (e) => {
+                    const {
+                        htmlContent
+                    } = await getType({
+                        parameter_desc: e?.parameter_desc,
+                        parameter_id: e?.parameter_id,
+                        column_name: e?.column_name,
+                        p_type: e?.p_type,
+                        code: e?.entry_type,
+                        get_data: props?.get_data,
+                        items: props?.items,
+                        data_tindakan: props?.data_tindakan
+                    });
+
+                    let colClass =
+                        ((e?.p_type === "OPRS030" && ["13", "14", "15", "16", "17", "18"].includes(e
+                                .parameter_id)) ||
+                            (e?.p_type === "OPRS031") || (e?.p_type === "OPRS034") ||
+                            (e?.p_type === "OPRS011" && ["15"].includes(e.parameter_id))) ?
+                        "col-12" :
+
+                        ((e?.p_type === "OPRS011" && ["22", "23", "24", "25"].includes(e
+                                .parameter_id)) ||
+                            (e?.p_type === "OPRS006" && ["28", "29", "30", "31"].includes(e
+                                .parameter_id)) ||
+                            (e?.p_type === "OPRS011" && ["04", "05", "06", "07", "08", "09",
+                                "10",
+                                "11", "16", "17", "19"
+                            ].includes(e.parameter_id))) ? "col-3" :
+
+                        (e?.entry_type == 4 ? "col-12" : "col-6");
+
+                    let label = "";
+                    if (e?.p_type === "OPRS034") {
+                        switch (e.parameter_id) {
+                            case "38":
+                                label = `<h4 class="fw-bold d-block pt-3">Kepala</h4>`;
+                                break;
+                            case "44":
+                                label = `<h4 class="fw-bold d-block pt-3">Leher</h4>`;
+                                break;
+                            case "45":
+                                label = `<h4 class="fw-bold d-block pt-3">Thorax</h4>`;
+                                break;
+                            case "48":
+                                label = `<h4 class="fw-bold d-block pt-3">Abdomen</h4>`;
+                                break;
+                            case "52":
+                                label = `<h4 class="fw-bold d-block pt-3">Genitalia</h4>`;
+                                break;
+                            case "53":
+                                label = `<h4 class="fw-bold d-block pt-3">Ekstremitas</h4>`;
+                                break;
+                        }
+                    }
+
+                    return htmlContent.trim() ? `
                             ${label} 
                         <div class="row pl-sm-0 ${colClass}" id="type-container-${e?.parameter_id}-${e?.p_type}">
                             ${htmlContent}
                         </div>` : '';
 
-            });
+                });
 
 
-            const results = await Promise.all(promises);
-            const dataHtml = results.filter(html => html.trim() !== '').join('');
+                const results = await Promise.all(promises);
+                const dataHtml = results.filter(html => html.trim() !== '').join('');
 
-            const container = $(`#${props?.content_id}`);
-            container.html(dataHtml);
+                const container = $(`#${props?.content_id}`);
+                container.html(dataHtml);
 
-            initializeQuillEditors();
-            initializeFlatpickrOperasi();
+                initializeQuillEditors();
+                initializeFlatpickrOperasi();
 
-            $('#type-container-03-OPRS011').remove();
+                $('#type-container-03-OPRS011').remove();
 
 
-        } catch (error) {
-            // console.error('Error in valueCatatan:', error);
-        }
-    };
+            } catch (error) {
+                // console.error('Error in valueCatatan:', error);
+            }
+        };
 
-    const renderbodyInstrumenoprs004 = (props) => {
-        let hasil = '';
-        InstrumenValue = props?.items
-        InstrumenValue.forEach((item, index) => {
-            hasil += `<tr>
+        const renderbodyInstrumenoprs004 = (props) => {
+            let hasil = '';
+            InstrumenValue = props?.items
+            InstrumenValue.forEach((item, index) => {
+                hasil += `<tr>
                     <td hidden><input type="number" name="brand_id2[]" value="${item?.brand_id}"/></td>
-                    <td>${item?.brand_name === '1' ? "Instrumen" :
-                                    item?.brand_name === '2' ? "Kassa" :
-                                    item?.brand_name === '3' ? "Jarum" :
-                                    item?.brand_name}
+                    <td> ${item?.brand_name === '1' ? 'Instrumen' :
+                            item?.brand_name === '2' ? 'Kassa' :
+                            item?.brand_name === '3' ? 'Jarum' :
+                            item?.brand_name === '4' ? 'TAMPON KASSA THT' :
+                            item?.brand_name === '5' ? 'TAMPON KASSA BIASA' :
+                            item?.brand_name === '6' ? 'TAMPON KASSA ROLL OBSGYN' :
+                            item?.brand_name}
                         <input type="hidden" name="document_id" id="document_id_checklist_keperawatan" value="${item?.document_id}">
                         <input type="hidden" name="body_id_instrument" id="body_id_instrument" value="${item?.body_id}">
                     </td>
@@ -4331,154 +4344,154 @@ let kopTemplateOprs = [];
                 
                     <td class="result-${index}"></td>
                 </tr>`;
-        });
-        $("#bodyInstrumenoprs004").append(hasil);
-
-
-        $("input.quantity-intra, input.quantity-additional, input.quantity-after").on('input',
-            function() {
-                updateResults();
             });
+            $("#bodyInstrumenoprs004").append(hasil);
 
-        const updateResults = () => {
-            InstrumenValue.forEach((item2, index) => {
-                const quantityBefore = parseFloat(item2?.quantity_before) || 0;
-                const quantityIntra = parseFloat($(`#quantity_intra_${index}`).val()) ||
-                    0;
-                const quantityAdditional = parseFloat($(`#quantity_additional_${index}`)
-                        .val()) ||
-                    0;
-                const quantityAfter = parseFloat($(`#quantity_after_${index}`).val()) ||
-                    0;
 
-                const resultCell = $(`.result-${index}`);
+            $("input.quantity-intra, input.quantity-additional, input.quantity-after").on('input',
+                function() {
+                    updateResults();
+                });
 
-                const condition1 = (quantityIntra === quantityBefore);
+            const updateResults = () => {
+                InstrumenValue.forEach((item2, index) => {
+                    const quantityBefore = parseFloat(item2?.quantity_before) || 0;
+                    const quantityIntra = parseFloat($(`#quantity_intra_${index}`).val()) ||
+                        0;
+                    const quantityAdditional = parseFloat($(`#quantity_additional_${index}`)
+                            .val()) ||
+                        0;
+                    const quantityAfter = parseFloat($(`#quantity_after_${index}`).val()) ||
+                        0;
 
-                const condition2 = (quantityBefore + quantityAdditional ===
-                    quantityAfter);
+                    const resultCell = $(`.result-${index}`);
 
-                if (condition1 && condition2) {
-                    resultCell.html(`<span class="text-success">Sesuai</span>`);
-                } else {
-                    resultCell.html(`<span class="text-danger">Tidak sesuai</span>`);
-                }
-            });
+                    const condition1 = (quantityIntra === quantityBefore);
+
+                    const condition2 = (quantityBefore + quantityAdditional ===
+                        quantityAfter);
+
+                    if (condition1 && condition2) {
+                        resultCell.html(`<span class="text-success">Sesuai</span>`);
+                    } else {
+                        resultCell.html(`<span class="text-danger">Tidak sesuai</span>`);
+                    }
+                });
+            };
+
+            updateResults();
         };
 
-        updateResults();
-    };
 
-
-    const renderDrains004 = (props) => {
-        $('#bodyDrains004').empty();
-        dataDrain.forEach((item) => {
-            AddRowDrains004({
-                item: item
-            });
-        });
-        globalBodyId = get_bodyid();
-
-        $('#addDrain').click(function() {
-            AddRowDrains004({
-                valBody_id: dataDrain[0]?.body_id ?? globalBodyId,
-                item: {}
-            });
-        });
-
-        $('#bodyAldreteoprs023').empty();
-
-
-        if (props?.assessment_anesthesia_recovery?.aldrete) {
-            props.assessment_anesthesia_recovery?.aldrete.forEach((item, index) => {
-                AddRowAldrete005({
-                    item: item,
-                    index: index,
-                    container: 'bodyAldreteoprs023'
+        const renderDrains004 = (props) => {
+            $('#bodyDrains004').empty();
+            dataDrain.forEach((item) => {
+                AddRowDrains004({
+                    item: item
                 });
-                $('#addAldrete').hide();
             });
-        }
+            globalBodyId = get_bodyid();
 
-        $('#addAldrete').click(function() {
-            let rowCount = $('#bodyAldreteoprs023 tr').length;
-
-            if (rowCount === 0) {
-                AddRowAldrete005({
-                    item: {},
-                    index: rowCount,
-                    container: 'bodyAldreteoprs023'
+            $('#addDrain').click(function() {
+                AddRowDrains004({
+                    valBody_id: dataDrain[0]?.body_id ?? globalBodyId,
+                    item: {}
                 });
-                $(this).hide();
+            });
+
+            $('#bodyAldreteoprs023').empty();
+
+
+            if (props?.assessment_anesthesia_recovery?.aldrete) {
+                props.assessment_anesthesia_recovery?.aldrete.forEach((item, index) => {
+                    AddRowAldrete005({
+                        item: item,
+                        index: index,
+                        container: 'bodyAldreteoprs023'
+                    });
+                    $('#addAldrete').hide();
+                });
             }
-        });
 
-    };
-    const AddRowAldrete005 = (props) => {
+            $('#addAldrete').click(function() {
+                let rowCount = $('#bodyAldreteoprs023 tr').length;
 
-        let filteredaValue = avalue.filter(item => item.p_type === 'OPRS023');
+                if (rowCount === 0) {
+                    AddRowAldrete005({
+                        item: {},
+                        index: rowCount,
+                        container: 'bodyAldreteoprs023'
+                    });
+                    $(this).hide();
+                }
+            });
 
-        let groupedData = filteredaValue.reduce((acc, item) => {
-            if (!acc[item.parameter_id]) {
-                acc[item.parameter_id] = [];
-            }
-            acc[item.parameter_id].push(item);
-            return acc;
-        }, {});
+        };
+        const AddRowAldrete005 = (props) => {
 
-        const createSelectOptions = (options, selectedValue) => {
-            return options.map(option => `
+            let filteredaValue = avalue.filter(item => item.p_type === 'OPRS023');
+
+            let groupedData = filteredaValue.reduce((acc, item) => {
+                if (!acc[item.parameter_id]) {
+                    acc[item.parameter_id] = [];
+                }
+                acc[item.parameter_id].push(item);
+                return acc;
+            }, {});
+
+            const createSelectOptions = (options, selectedValue) => {
+                return options.map(option => `
                     <option value="${option.value_id}" data-score="${option.value_score}" ${option.value_id === selectedValue ? 'selected' : ''}>
                         ${option.value_desc}
                     </option>
                 `).join('');
-        };
+            };
 
-        const createTimeOptions = () => {
-            let options = [];
-            for (let i = 5; i <= 30; i += 5) {
-                options.push(`
+            const createTimeOptions = () => {
+                let options = [];
+                for (let i = 5; i <= 30; i += 5) {
+                    options.push(`
                 <option value="${i}">${i} menit</option>
             `);
-            }
-            return options.join('');
-        };
+                }
+                return options.join('');
+            };
 
-        const formatDateTime = (date) => {
-            return moment(date).format('YYYY-MM-DDTHH:mm');
-        };
+            const formatDateTime = (date) => {
+                return moment(date).format('YYYY-MM-DDTHH:mm');
+            };
 
-        const formatTimeOnly = (date) => {
-            return moment(date).format('HH:mm');
-        };
+            const formatTimeOnly = (date) => {
+                return moment(date).format('HH:mm');
+            };
 
-        const calculateTotalScore = (row) => {
-            let totalScore = 0;
-            $(row).find('select[name^="parameter_oprs023_"]').each(function() {
-                const selectedOption = $(this).find('option:selected');
-                const score = parseInt(selectedOption.data('score'), 10) || 0;
-                totalScore += score;
-            });
-            return totalScore;
-        };
+            const calculateTotalScore = (row) => {
+                let totalScore = 0;
+                $(row).find('select[name^="parameter_oprs023_"]').each(function() {
+                    const selectedOption = $(this).find('option:selected');
+                    const score = parseInt(selectedOption.data('score'), 10) || 0;
+                    totalScore += score;
+                });
+                return totalScore;
+            };
 
-        const updateRowScoreAndStatus = (row) => {
-            let totalScore = calculateTotalScore(row);
-            let status = totalScore >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
+            const updateRowScoreAndStatus = (row) => {
+                let totalScore = calculateTotalScore(row);
+                let status = totalScore >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
 
-            row.find('.total-score-input').text(totalScore);
+                row.find('.total-score-input').text(totalScore);
 
-            row.find('.discharge-status-input').text(status);
-        };
+                row.find('.discharge-status-input').text(status);
+            };
 
-        let observationDate = props?.item?.observation_date ? moment(props?.item
-                ?.observation_date) :
-            moment(
-                new Date());
-        let observationDateFormatted = formatDateTime(observationDate);
-        let observationTimeOnly = formatTimeOnly(observationDate);
+            let observationDate = props?.item?.observation_date ? moment(props?.item
+                    ?.observation_date) :
+                moment(
+                    new Date());
+            let observationDateFormatted = formatDateTime(observationDate);
+            let observationTimeOnly = formatTimeOnly(observationDate);
 
-        let newRowDrain = `
+            let newRowDrain = `
                 <tr>
                     ${Object.keys(groupedData).map(parameterId => {
                         let selectedValue = props.item[`value_id_${parameterId}`] || '';
@@ -4521,58 +4534,58 @@ let kopTemplateOprs = [];
                 </tr>
             `;
 
-        $(`#${props?.container}`).append(newRowDrain);
+            $(`#${props?.container}`).append(newRowDrain);
 
-        updateRowScoreAndStatus($(`#${props?.container} tr`).last());
+            updateRowScoreAndStatus($(`#${props?.container} tr`).last());
 
-        $(`#${props?.container}`).on('change', 'select[name^="parameter_oprs023_"]', function() {
-            let row = $(this).closest('tr');
-            updateRowScoreAndStatus(row);
-        });
-
-        $(`#${props?.container}`).on('change', 'select[name="time_interval[]"]', function() {
-            let row = $(this).closest('tr');
-            let selectedMinutes = parseInt($(this).val(), 10) || 0;
-            let previousDatetime = row.prev().find('.datetime-input').val();
-            if (previousDatetime) {
-                let newDatetime = moment(previousDatetime).add(selectedMinutes, 'minutes')
-                    .format(
-                        'YYYY-MM-DDTHH:mm');
-                row.find('.datetime-input').val(newDatetime);
-                row.find('.datetime-display').text(formatTimeOnly(newDatetime));
+            $(`#${props?.container}`).on('change', 'select[name^="parameter_oprs023_"]', function() {
+                let row = $(this).closest('tr');
                 updateRowScoreAndStatus(row);
+            });
+
+            $(`#${props?.container}`).on('change', 'select[name="time_interval[]"]', function() {
+                let row = $(this).closest('tr');
+                let selectedMinutes = parseInt($(this).val(), 10) || 0;
+                let previousDatetime = row.prev().find('.datetime-input').val();
+                if (previousDatetime) {
+                    let newDatetime = moment(previousDatetime).add(selectedMinutes, 'minutes')
+                        .format(
+                            'YYYY-MM-DDTHH:mm');
+                    row.find('.datetime-input').val(newDatetime);
+                    row.find('.datetime-display').text(formatTimeOnly(newDatetime));
+                    updateRowScoreAndStatus(row);
+                }
+            });
+
+            if (props.index > 0) {
+                let previousDatetime = $(`#${props?.container} tr`).eq(props.index - 1).find(
+                        '.datetime-input')
+                    .val();
+                let defaultDatetime = moment(previousDatetime).add(5, 'minutes').format(
+                    'YYYY-MM-DDTHH:mm');
+                $(`#${props?.container} tr`).eq(props.index).find('.datetime-input').val(
+                    defaultDatetime);
+                $(`#${props?.container} tr`).eq(props.index).find('.datetime-display').text(
+                    formatTimeOnly(
+                        defaultDatetime));
             }
-        });
 
-        if (props.index > 0) {
-            let previousDatetime = $(`#${props?.container} tr`).eq(props.index - 1).find(
-                    '.datetime-input')
-                .val();
-            let defaultDatetime = moment(previousDatetime).add(5, 'minutes').format(
-                'YYYY-MM-DDTHH:mm');
-            $(`#${props?.container} tr`).eq(props.index).find('.datetime-input').val(
-                defaultDatetime);
-            $(`#${props?.container} tr`).eq(props.index).find('.datetime-display').text(
-                formatTimeOnly(
-                    defaultDatetime));
-        }
+            $(`#${props?.container}`).on('click', '.adrete-delete-row', function() {
+                let theid = props?.container
+                $(this).closest('tr').remove();
 
-        $(`#${props?.container}`).on('click', '.adrete-delete-row', function() {
-            let theid = props?.container
-            $(this).closest('tr').remove();
+                theid = theid.replace("bodyAldreteoprs023", "addAldrete");
+                if ($(`#${props?.container} tr`).length === 0) {
+                    $(`#${theid}`).show();
+                }
 
-            theid = theid.replace("bodyAldreteoprs023", "addAldrete");
-            if ($(`#${props?.container} tr`).length === 0) {
-                $(`#${theid}`).show();
-            }
+            });
+        };
 
-        });
-    };
+        // new
 
-    // new
-
-    const AddRowDrains004 = (props) => {
-        let newRowDrain = `
+        const AddRowDrains004 = (props) => {
+            let newRowDrain = `
                         <tr>
                             <td>
                                 <input type="text" class="form-control" name="drain_type_drain[]" value="${props?.item.drain_type ?? ""}">
@@ -4604,40 +4617,40 @@ let kopTemplateOprs = [];
                         </tr>
                         `;
 
-        $('#bodyDrains004').append(newRowDrain);
+            $('#bodyDrains004').append(newRowDrain);
 
-        // Attach delete event to new rows
-        $('.delete-row').off().on('click', function() {
-            $(this).closest('tr').remove();
-        });
-    };
-
-    const renderDataTeamInPembedahan = (result) => {
-        const labels = result?.labels || [];
-        const data = result?.data || [];
-
-        const groupedData = data.reduce((acc, item) => {
-            const label = labels.find(lbl => lbl.task_id === item?.task_id);
-            const taskName = label ? label.task : item?.task_id;
-
-            const category = taskName.split(' ')[0];
-
-            if (!acc[category]) {
-                acc[category] = [];
-            }
-            acc[category].push({
-                ...item,
-                taskName
+            // Attach delete event to new rows
+            $('.delete-row').off().on('click', function() {
+                $(this).closest('tr').remove();
             });
-            return acc;
-        }, {});
+        };
 
-        const categories = Object.entries(groupedData);
-        const half = Math.ceil(categories.length / 2);
-        const leftCategories = categories.slice(0, half);
-        const rightCategories = categories.slice(half);
+        const renderDataTeamInPembedahan = (result) => {
+            const labels = result?.labels || [];
+            const data = result?.data || [];
 
-        let hasil = `
+            const groupedData = data.reduce((acc, item) => {
+                const label = labels.find(lbl => lbl.task_id === item?.task_id);
+                const taskName = label ? label.task : item?.task_id;
+
+                const category = taskName.split(' ')[0];
+
+                if (!acc[category]) {
+                    acc[category] = [];
+                }
+                acc[category].push({
+                    ...item,
+                    taskName
+                });
+                return acc;
+            }, {});
+
+            const categories = Object.entries(groupedData);
+            const half = Math.ceil(categories.length / 2);
+            const leftCategories = categories.slice(0, half);
+            const rightCategories = categories.slice(half);
+
+            let hasil = `
                         <div class="d-flex justify-content-between">
                             <div class="flex-fill me-2">
                                 ${leftCategories.map(([category, tasks]) => `
@@ -4670,34 +4683,34 @@ let kopTemplateOprs = [];
                         </div>
                     `;
 
-        $(`#data-oprasi-pembedahan`).html(hasil);
-    }
-    const renderDataTeamInPembedahanAnesthesiLengkap = (result) => {
-        const labels = result?.labels || [];
-        const data = result?.data || [];
+            $(`#data-oprasi-pembedahan`).html(hasil);
+        }
+        const renderDataTeamInPembedahanAnesthesiLengkap = (result) => {
+            const labels = result?.labels || [];
+            const data = result?.data || [];
 
-        const groupedData = data.reduce((acc, item) => {
-            const label = labels.find(lbl => lbl.task_id === item?.task_id);
-            const taskName = label ? label.task : item?.task_id;
+            const groupedData = data.reduce((acc, item) => {
+                const label = labels.find(lbl => lbl.task_id === item?.task_id);
+                const taskName = label ? label.task : item?.task_id;
 
-            const category = taskName.split(' ')[0];
+                const category = taskName.split(' ')[0];
 
-            if (!acc[category]) {
-                acc[category] = [];
-            }
-            acc[category].push({
-                ...item,
-                taskName
-            });
-            return acc;
-        }, {});
+                if (!acc[category]) {
+                    acc[category] = [];
+                }
+                acc[category].push({
+                    ...item,
+                    taskName
+                });
+                return acc;
+            }, {});
 
-        const categories = Object.entries(groupedData);
-        const half = Math.ceil(categories.length / 2);
-        const leftCategories = categories.slice(0, half);
-        const rightCategories = categories.slice(half);
+            const categories = Object.entries(groupedData);
+            const half = Math.ceil(categories.length / 2);
+            const leftCategories = categories.slice(0, half);
+            const rightCategories = categories.slice(half);
 
-        let hasil = `
+            let hasil = `
                         <div class="d-flex justify-content-between">
                             <div class="flex-fill me-2">
                                 ${leftCategories.map(([category, tasks]) => `
@@ -4730,45 +4743,45 @@ let kopTemplateOprs = [];
                         </div>
                     `;
 
-        $(`#bodyTimOperasiAnesthesiLengkap`).html(hasil);
-    } //new 31/07
+            $(`#bodyTimOperasiAnesthesiLengkap`).html(hasil);
+        } //new 31/07
 
-    const renderHistoryTemplate = () => {
-        let item = historyPasien
-        let filteredDataPenyakit = historyPasien.filter(item =>
-            item.value_id === 'G0090201' || item.value_id === 'G0090202'
-        );
+        const renderHistoryTemplate = () => {
+            let item = historyPasien
+            let filteredDataPenyakit = historyPasien.filter(item =>
+                item.value_id === 'G0090201' || item.value_id === 'G0090202'
+            );
 
-        let filteredDataAlergi = historyPasien.filter(item =>
-            item.value_id === 'G0090101' || item.value_id === 'G0090102'
-        );
+            let filteredDataAlergi = historyPasien.filter(item =>
+                item.value_id === 'G0090101' || item.value_id === 'G0090102'
+            );
 
-        let contentPenyakit = '';
-        let contentAlergi = '';
+            let contentPenyakit = '';
+            let contentAlergi = '';
 
-        filteredDataPenyakit.forEach(item => {
-            contentPenyakit +=
-                `${item.value_desc} : ${item.histories || 'Tidak ada catatan'}<br>`;
-        });
+            filteredDataPenyakit.forEach(item => {
+                contentPenyakit +=
+                    `${item.value_desc} : ${item.histories || 'Tidak ada catatan'}<br>`;
+            });
 
-        filteredDataAlergi.forEach(item => {
-            contentAlergi +=
-                `${item.value_desc} : ${item.histories || 'Tidak ada catatan'}<br>`;
-        });
+            filteredDataAlergi.forEach(item => {
+                contentAlergi +=
+                    `${item.value_desc} : ${item.histories || 'Tidak ada catatan'}<br>`;
+            });
 
-        $("#riwayat_penyakit-catatan_operasi").html(contentPenyakit)
-        $("#alergi-catatan_operasi").html(contentAlergi)
+            $("#riwayat_penyakit-catatan_operasi").html(contentPenyakit)
+            $("#alergi-catatan_operasi").html(contentAlergi)
 
 
-    }
+        }
 
-    const getDataKeperawatanOPRS001 = async (props) => {
-        let data = props?.data
-        let blood_request = props?.blood_request
-        let diagnosas = props?.diagnosas
-        let blood_request_history = props?.blood_request_history;
+        const getDataKeperawatanOPRS001 = async (props) => {
+            let data = props?.data
+            let blood_request = props?.blood_request
+            let diagnosas = props?.diagnosas
+            let blood_request_history = props?.blood_request_history;
 
-        let catatanKeperawatanOPRS001 = `
+            let catatanKeperawatanOPRS001 = `
                     <div class="container">
                         <div class="row">
                             <div id="cKeperawatanoprs001-1" class="row"></div>
@@ -4786,7 +4799,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                     `;
-        let bloodRequest = `
+            let bloodRequest = `
             <div class="row mt-4">
                             <div class="table tablecustom-responsive table-responsive">
                                 <h4><b>Produk Darah</b></h4>
@@ -4815,7 +4828,7 @@ let kopTemplateOprs = [];
                         </div>
             `; // new 28 sept
 
-        let diagnosaOPRS001 = `
+            let diagnosaOPRS001 = `
                             <div class="row mt-4">
                                 <div class="table tablecustom-responsive table-responsive">
                                     <h4><b>DIAGNOSA</b></h4>
@@ -4839,7 +4852,7 @@ let kopTemplateOprs = [];
                             </div>
             `;
 
-        let ttdOps2 = `<div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+            let ttdOps2 = `<div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
                         <div class="form-group">
                             <label><strong>Tanda Tangan Dokter Penanda</strong></label>
                             <div class="position-relative" id="qr-doctor_marker_sign-2-${data?.body_id}">
@@ -4851,7 +4864,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>`
 
-        let bloodRequestHistory = `
+            let bloodRequestHistory = `
                         <div class="row mt-4">
                             <div class="table tablecustom-responsive table-responsive">
                                 <h4><b>History Produk Darah</b></h4>
@@ -4906,173 +4919,173 @@ let kopTemplateOprs = [];
                         </div>
             `;
 
-        getAvalueType({
-            p_type: 'OPRS001',
-            content_id: 'cKeperawatanoprs001-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
-
-        $('#ttd-praOps').html(ttdOps2)
-        $('#cKeperawatanoprs001').html(catatanKeperawatanOPRS001);
-        $('#containerBloodRequest').html(bloodRequest);
-        $('#containerBloodRequestHistory').html(bloodRequestHistory);
-        $('#praOperasiDiagnosaBody').html(diagnosaOPRS001);
-
-        if (blood_request) {
-            blood_request.forEach((item, index) => {
-                addBloodRequest('bodyBloodRequest', item.blood_request, item);
+            getAvalueType({
+                p_type: 'OPRS001',
+                content_id: 'cKeperawatanoprs001-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
             });
-        }
 
-        $("#addbloodrequest2").on("click", () => {
-            const container = 'bodyBloodRequest';
-            const bodyId = get_bodyid();
-            const bloodselected = [];
-            addBloodRequest(container, bodyId, bloodselected);
-        });
+            $('#ttd-praOps').html(ttdOps2)
+            $('#cKeperawatanoprs001').html(catatanKeperawatanOPRS001);
+            $('#containerBloodRequest').html(bloodRequest);
+            $('#containerBloodRequestHistory').html(bloodRequestHistory);
+            $('#praOperasiDiagnosaBody').html(diagnosaOPRS001);
+
+            if (blood_request) {
+                blood_request.forEach((item, index) => {
+                    addBloodRequest('bodyBloodRequest', item.blood_request, item);
+                });
+            }
+
+            $("#addbloodrequest2").on("click", () => {
+                const container = 'bodyBloodRequest';
+                const bodyId = get_bodyid();
+                const bloodselected = [];
+                addBloodRequest(container, bodyId, bloodselected);
+            });
 
 
-        if (diagnosas) {
-            diagnosas.forEach((item, index) => {
+            if (diagnosas) {
+                diagnosas.forEach((item, index) => {
 
+                    addRowDiagDokterOprs('bodyDiagPraOperation2-', pasienOperasiSelected
+                        ?.vactination_id,
+                        item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc,
+                        item
+                        ?.diag_cat);
+
+                    // if (item.diag_cat == 13) {
+                    //     addRowDiagDokterOprs('bodyDiagPraOperation2-', pasienOperasiSelected
+                    //         ?.vactination_id,
+                    //         item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc, item
+                    //         ?.diag_cat, item?.diag_suffer);
+                    // }
+                });
+            }
+
+            $("#adddiagnosaPraOperasi").on("click", () => {
                 addRowDiagDokterOprs('bodyDiagPraOperation2-', pasienOperasiSelected
                     ?.vactination_id,
-                    item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc,
-                    item
-                    ?.diag_cat);
-
-                // if (item.diag_cat == 13) {
-                //     addRowDiagDokterOprs('bodyDiagPraOperation2-', pasienOperasiSelected
-                //         ?.vactination_id,
-                //         item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc, item
-                //         ?.diag_cat, item?.diag_suffer);
-                // }
+                    null,
+                    null, 13, 0);
             });
-        }
-
-        $("#adddiagnosaPraOperasi").on("click", () => {
-            addRowDiagDokterOprs('bodyDiagPraOperation2-', pasienOperasiSelected
-                ?.vactination_id,
-                null,
-                null, 13, 0);
-        });
 
 
-        const formId = 'formPraOperasi';
-        const primaryKey = data?.body_id;
-        const formSaveBtn = 'formPraOperasiSaveBtn';
-        $("button[name='signrm']").each(function() {
-            if (data?.body_id) {
-                $(this).prop('disabled', false);
-            } else {
-                $(this).prop('disabled', true);
+            const formId = 'formPraOperasi';
+            const primaryKey = data?.body_id;
+            const formSaveBtn = 'formPraOperasiSaveBtn';
+            $("button[name='signrm']").each(function() {
+                if (data?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+
+
+
+
+            $("button[name='signrm']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+                const signFiled = $(this).data('save');
+
+
+                addSignUserOPS("formPraOperasi", "accordionPraOperasi", 'apobody_id',
+                    buttonId,
+                    7, signKe,
+                    1, "Catatan Keperawatan Pra Operasi", signFiled);
+            });
+
+
+            const {
+                nurse_sign,
+                doctor_marker_sign,
+                body_id
+            } = props?.data || {};
+
+            let targetId = "";
+            let qrText = "";
+
+            if (nurse_sign) {
+                targetId = `qr-nurse_sign-1-${body_id}`;
+                qrText = nurse_sign;
+            } else if (doctor_marker_sign) {
+                targetId = `qr-doctor_marker_sign-2-${body_id}`;
+                qrText = doctor_marker_sign;
             }
-        });
 
 
+            if (targetId) {
+                $(`#${targetId}`).empty();
+                new QRCode(document.getElementById(targetId), {
+                    text: qrText,
+                    width: 70,
+                    height: 70,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H // High error correction
+                });
+            }
 
 
-        $("button[name='signrm']").off().on("click", function() {
-            const buttonId = $(this).data('button-id');
-            const signKe = $(this).data('sign-ke');
-            const signFiled = $(this).data('save');
-
-
-            addSignUserOPS("formPraOperasi", "accordionPraOperasi", 'apobody_id',
-                buttonId,
-                7, signKe,
-                1, "Catatan Keperawatan Pra Operasi", signFiled);
-        });
-
-
-        const {
-            nurse_sign,
-            doctor_marker_sign,
-            body_id
-        } = props?.data || {};
-
-        let targetId = "";
-        let qrText = "";
-
-        if (nurse_sign) {
-            targetId = `qr-nurse_sign-1-${body_id}`;
-            qrText = nurse_sign;
-        } else if (doctor_marker_sign) {
-            targetId = `qr-doctor_marker_sign-2-${body_id}`;
-            qrText = doctor_marker_sign;
+            initializeFlatpickrOperasi();
         }
 
+        //---------bbb
+        const catatanKeperawatanPraOperasi = async (props) => {
 
-        if (targetId) {
-            $(`#${targetId}`).empty();
-            new QRCode(document.getElementById(targetId), {
-                text: qrText,
-                width: 70,
-                height: 70,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
-            });
-        }
+            let data = props?.data
 
-
-        initializeFlatpickrOperasi();
-    }
-
-    //---------bbb
-    const catatanKeperawatanPraOperasi = async (props) => {
-
-        let data = props?.data
-
-        getAvalueType({
-            p_type: 'OPRS003',
-            content_id: 'template-tindakan-operasi-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
-
-        getAvalueType({
-            p_type: 'OPRS004',
-            content_id: 'cKeperawatanIntraOperatif-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
-
-        getAvalueType({
-            p_type: 'OPRS005',
-            content_id: 'cKeperawatanPascaOperatif-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
-        getAvalueType({
-            p_type: 'OPRS024',
-            content_id: 'bodyBromage-0',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
-        const xrayData = data?.xray;
-
-        // if (xrayData !== undefined) {
-        //     $(`input[name="xray"][value="${xrayData}"]`).prop('checked', true);
-        // }
-        if (data?.document_id) {
-
-            getDataVitailSign({
-                pasien_diagnosa_id: data?.document_id ?? pasienOperasiSelected
-                    ?.vactination_id,
-                account_ids: ['10'],
-                suffixes: ["-catatanKeperawatan"]
+            getAvalueType({
+                p_type: 'OPRS003',
+                content_id: 'template-tindakan-operasi-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
             });
 
-            getDataDiagnosassPerawat({
-                visit_id: data?.visit_id,
-                document_id: data?.document_id,
-                vactination_id: data?.document_id
+            getAvalueType({
+                p_type: 'OPRS004',
+                content_id: 'cKeperawatanIntraOperatif-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
             });
-        }
 
-        let oprs003 = `
+            getAvalueType({
+                p_type: 'OPRS005',
+                content_id: 'cKeperawatanPascaOperatif-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
+            });
+            getAvalueType({
+                p_type: 'OPRS024',
+                content_id: 'bodyBromage-0',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
+            });
+            const xrayData = data?.xray;
+
+            // if (xrayData !== undefined) {
+            //     $(`input[name="xray"][value="${xrayData}"]`).prop('checked', true);
+            // }
+            if (data?.document_id) {
+
+                getDataVitailSign({
+                    pasien_diagnosa_id: data?.document_id ?? pasienOperasiSelected
+                        ?.vactination_id,
+                    account_ids: ['10'],
+                    suffixes: ["-catatanKeperawatan"]
+                });
+
+                getDataDiagnosassPerawat({
+                    visit_id: data?.visit_id,
+                    document_id: data?.document_id,
+                    vactination_id: data?.document_id
+                });
+            }
+
+            let oprs003 = `
                         <div class="container">
                             <div class="row">
                                 <div id="template-tindakan-operasi-1" class="row"></div>
@@ -5127,7 +5140,7 @@ let kopTemplateOprs = [];
                         </div>
             `;
 
-        let oprs004 = `
+            let oprs004 = `
                             <div class="container">
                                 <div class="row">
                                     <div id="cKeperawatanIntraOperatif-1" class="row"></div>
@@ -5229,7 +5242,7 @@ let kopTemplateOprs = [];
                             </div>
             `;
 
-        let oprs005 = `
+            let oprs005 = `
                         <div class="container">
                             <div class="row">
                                 <div id="cKeperawatanPascaOperatif-1" class="row"></div>
@@ -5281,7 +5294,7 @@ let kopTemplateOprs = [];
                         </div>
             `;
 
-        let oprs024 = `
+            let oprs024 = `
                         <div class="container">
                             <div class="row">
                                 <h5><b>Bromage</b></h5>
@@ -5290,7 +5303,7 @@ let kopTemplateOprs = [];
                             <button type="button" class="btn btn-primary btn-sm my-3" id="addBromage">+ Tambah Bromage</button>
                         </div>
             `;
-        let oprs025 = `
+            let oprs025 = `
                     <div class="container">
                         <div class="row">
                             <h5><b>Steward</b></h5>
@@ -5314,234 +5327,234 @@ let kopTemplateOprs = [];
                         </div>
             `;
 
-        $('#weight-catatanKeperawatan').val(props?.exam_info?.weight ?? 0);
-        $('#height-catatanKeperawatan').val(props?.exam_info?.height ?? 0);
+            $('#weight-catatanKeperawatan').val(props?.exam_info?.weight ?? 0);
+            $('#height-catatanKeperawatan').val(props?.exam_info?.height ?? 0);
 
-        $('#template-tindakan-operasi').html(oprs003);
-        $('#cKeperawatanIntraOperatif').html(oprs004);
-        $('#cKeperawatanPascaOperatif').html(oprs005);
-        $('#cKeperawatanPascaOperatifBromage').html(oprs024);
-        $('#cKeperawatanPascaOperatifSteward').html(oprs025);
+            $('#template-tindakan-operasi').html(oprs003);
+            $('#cKeperawatanIntraOperatif').html(oprs004);
+            $('#cKeperawatanPascaOperatif').html(oprs005);
+            $('#cKeperawatanPascaOperatifBromage').html(oprs024);
+            $('#cKeperawatanPascaOperatifSteward').html(oprs025);
 
-        if (props.assessment_anesthesia_recovery?.bromage) {
-            props.assessment_anesthesia_recovery?.bromage.forEach(each => {
-                addBromage({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    data: each,
-                    container: 'bromageContainer',
-                    bodyId: 'bodyBromage'
-                });
-                $('#addBromage').hide();
-            });
-        }
-        if (props?.assessment_anesthesia_recovery?.steward) {
-            props.assessment_anesthesia_recovery?.steward.forEach((item, index) => {
-                addSteward({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    item: item,
-                    index: index,
-                    container: 'stewardContainer'
-                });
-                $('#addSteward').hide();
-            });
-        }
-        $("#addBromage").on("click", function(e) {
-            let bromageCount = $('#bromageContainer .bromage-item').length;
-
-
-            if (bromageCount === 0) {
-                addBromage({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    container: 'bromageContainer',
-                    bodyId: 'bodyBromage'
-                });
-
-                $(this).hide();
-            }
-        });
-        $("#addSteward").on("click", function(e) {
-            let rowCount = $('#stewardContainer tr').length;
-            if (rowCount === 0) {
-                addSteward({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    item: {},
-                    index: rowCount,
-                    container: 'stewardContainer'
-                })
-                $(this).hide();
-            }
-        });
-
-
-        $('#bodyAldreteoprs023').empty();
-
-
-        if (data?.assessment_anesthesia_recovery?.aldrete) {
-            data?.assessment_anesthesia_recovery?.aldrete.forEach((item, index) => {
-                AddRowAldrete005({
-                    item: item,
-                    index: index,
-                    container: 'bodyAldreteoprs023'
-                });
-                $("#addAldrete").hide()
-
-            });
-        }
-
-        $('#addAldrete').click(function() {
-            let rowCount = $('#bodyAldreteoprs023 tr').length;
-
-            if (rowCount === 0) {
-                AddRowAldrete005({
-                    item: {},
-                    index: rowCount,
-                    container: 'bodyAldreteoprs023'
-
-                });
-                $(this).hide();
-            }
-
-        });
-
-
-        $('#addInstrumen').off().on("click", function() {
-            addRowInstrumen();
-            updateAddButtonVisibility();
-
-        });
-
-        $('#addInstrumen1').off().on("click", function() {
-            addRowInstrumen();
-            updateAddButtonVisibility();
-        });
-
-        $("#formdiag-catatanPraOprs").on("click", function(e) {
-            addRowDiagPerawat('bodyDiagKepCatatanPraOprs-', data?.document_id ??
-                pasienOperasiSelected
-                ?.vactination_id, null, null, "13");
-        });
-        $("#formdiag-catatanIntraOprs").on("click", function(e) {
-            addRowDiagPerawat('bodyDiagKepCatatanIntraOprs-', data?.document_id ??
-                pasienOperasiSelected
-                ?.vactination_id, null, null, "15");
-        });
-
-        $("#formdiag-catatanPascaOprs").on("click", function(e) {
-            addRowDiagPerawat('bodyDiagKepCatatanPascaOprs-', data?.document_id ??
-                pasienOperasiSelected
-                ?.vactination_id, null, null, "14");
-        });
-
-
-        renderHistoryTemplate();
-
-        btnSavepraOprasi(pasienOperasiSelected);
-
-        $("#vs_status_id-catatanKeperawatan").on("change", function() {
-            var optionSelected = $("option:selected", this);
-            $('#container-vitalsign-catatanKeperawatan').empty();
-
-            switch (optionSelected.val()) {
-                case '4':
-                    getAvalueType({
-                        p_type: 'GEN0022',
-                        content_id: 'container-vitalsign-catatanKeperawatan',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
+            if (props.assessment_anesthesia_recovery?.bromage) {
+                props.assessment_anesthesia_recovery?.bromage.forEach(each => {
+                    addBromage({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        data: each,
+                        container: 'bromageContainer',
+                        bodyId: 'bodyBromage'
                     });
-                    break;
-                case '10':
-                    getAvalueType({
-                        p_type: 'GEN0021',
-                        content_id: 'container-vitalsign-catatanKeperawatan',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
+                    $('#addBromage').hide();
+                });
+            }
+            if (props?.assessment_anesthesia_recovery?.steward) {
+                props.assessment_anesthesia_recovery?.steward.forEach((item, index) => {
+                    addSteward({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        item: item,
+                        index: index,
+                        container: 'stewardContainer'
                     });
-                    break;
+                    $('#addSteward').hide();
+                });
             }
-        })
+            $("#addBromage").on("click", function(e) {
+                let bromageCount = $('#bromageContainer .bromage-item').length;
 
 
-        const formId = 'form-catatan-keperawatan';
-        const primaryKey = data?.body_id;
-        const formSaveBtn = 'btn-save-catatan-keperawatan';
+                if (bromageCount === 0) {
+                    addBromage({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        container: 'bromageContainer',
+                        bodyId: 'bodyBromage'
+                    });
 
-        $("button[name='signperi']").each(function() {
-            if (data?.body_id) {
-                $(this).prop('disabled', false);
-            } else {
-                $(this).prop('disabled', true);
-            }
-        });
-
-
-        $("button[name='signperi']").off().on("click", function() {
-            const buttonId = $(this).data('button-id');
-            const signKe = $(this).data('sign-ke');
-            const signFiled = $(this).data('save');
-            if (!$(this).is(':disabled')) {
-                addSignUserOPS("form-catatan-keperawatan", "catatan-keperawatan",
-                    'body_id-catatan_operasi',
-                    buttonId,
-                    8, signKe, 1,
-                    "Catatan Keperawatan Peri Operasi", signFiled);
-            }
-        });
-
-
-        const {
-            petugas_ibs_signature,
-            instrument_signature,
-            sirkulasi_signature,
-            rr_signature,
-            body_id
-        } = props?.data || {};
-
-        let targetId = "";
-        let qrText = "";
-
-        if (petugas_ibs_signature) {
-            targetId = `qr-petugas_ibs_signature-1-${body_id}`;
-            qrText = petugas_ibs_signature;
-        } else if (instrument_signature) {
-            targetId = `qr-instrument_signature-2-${body_id}`;
-            qrText = instrument_signature;
-        } else if (sirkulasi_signature) {
-            targetId = `qr-sirkulasi_signature-3-${body_id}`;
-            qrText = sirkulasi_signature;
-        } else if (rr_signature) {
-            targetId = `qr-rr_signature-4-${body_id}`;
-            qrText = rr_signature;
-        }
-
-
-        if (targetId) {
-            $(`#${targetId}`).empty();
-            new QRCode(document.getElementById(targetId), {
-                text: qrText,
-                width: 70,
-                height: 70,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
+                    $(this).hide();
+                }
             });
-        }
+            $("#addSteward").on("click", function(e) {
+                let rowCount = $('#stewardContainer tr').length;
+                if (rowCount === 0) {
+                    addSteward({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        item: {},
+                        index: rowCount,
+                        container: 'stewardContainer'
+                    })
+                    $(this).hide();
+                }
+            });
 
-        // if (data?.body_id) {
-        //     checkSignSignature1(formId, primaryKey, formSaveBtn, '8');
-        // }
 
-    };
+            $('#bodyAldreteoprs023').empty();
 
 
+            if (data?.assessment_anesthesia_recovery?.aldrete) {
+                data?.assessment_anesthesia_recovery?.aldrete.forEach((item, index) => {
+                    AddRowAldrete005({
+                        item: item,
+                        index: index,
+                        container: 'bodyAldreteoprs023'
+                    });
+                    $("#addAldrete").hide()
 
-    const addBromage = (props) => {
-        let bromageCount = $('#' + props.container + ' .bromage-item').length;
+                });
+            }
 
-        let newId = `${props.bodyId}`;
+            $('#addAldrete').click(function() {
+                let rowCount = $('#bodyAldreteoprs023 tr').length;
 
-        $('#' + props.container).html(
-            `<div class="col-md-12 bromage-item">
+                if (rowCount === 0) {
+                    AddRowAldrete005({
+                        item: {},
+                        index: rowCount,
+                        container: 'bodyAldreteoprs023'
+
+                    });
+                    $(this).hide();
+                }
+
+            });
+
+
+            $('#addInstrumen').off().on("click", function() {
+                addRowInstrumen();
+                updateAddButtonVisibility();
+
+            });
+
+            $('#addInstrumen1').off().on("click", function() {
+                addRowInstrumen();
+                updateAddButtonVisibility();
+            });
+
+            $("#formdiag-catatanPraOprs").on("click", function(e) {
+                addRowDiagPerawat('bodyDiagKepCatatanPraOprs-', data?.document_id ??
+                    pasienOperasiSelected
+                    ?.vactination_id, null, null, "13");
+            });
+            $("#formdiag-catatanIntraOprs").on("click", function(e) {
+                addRowDiagPerawat('bodyDiagKepCatatanIntraOprs-', data?.document_id ??
+                    pasienOperasiSelected
+                    ?.vactination_id, null, null, "15");
+            });
+
+            $("#formdiag-catatanPascaOprs").on("click", function(e) {
+                addRowDiagPerawat('bodyDiagKepCatatanPascaOprs-', data?.document_id ??
+                    pasienOperasiSelected
+                    ?.vactination_id, null, null, "14");
+            });
+
+
+            renderHistoryTemplate();
+
+            btnSavepraOprasi(pasienOperasiSelected);
+
+            $("#vs_status_id-catatanKeperawatan").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-catatanKeperawatan').empty();
+
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-catatanKeperawatan',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-catatanKeperawatan',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
+
+
+            const formId = 'form-catatan-keperawatan';
+            const primaryKey = data?.body_id;
+            const formSaveBtn = 'btn-save-catatan-keperawatan';
+
+            $("button[name='signperi']").each(function() {
+                if (data?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+
+
+            $("button[name='signperi']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+                const signFiled = $(this).data('save');
+                if (!$(this).is(':disabled')) {
+                    addSignUserOPS("form-catatan-keperawatan", "catatan-keperawatan",
+                        'body_id-catatan_operasi',
+                        buttonId,
+                        8, signKe, 1,
+                        "Catatan Keperawatan Peri Operasi", signFiled);
+                }
+            });
+
+
+            const {
+                petugas_ibs_signature,
+                instrument_signature,
+                sirkulasi_signature,
+                rr_signature,
+                body_id
+            } = props?.data || {};
+
+            let targetId = "";
+            let qrText = "";
+
+            if (petugas_ibs_signature) {
+                targetId = `qr-petugas_ibs_signature-1-${body_id}`;
+                qrText = petugas_ibs_signature;
+            } else if (instrument_signature) {
+                targetId = `qr-instrument_signature-2-${body_id}`;
+                qrText = instrument_signature;
+            } else if (sirkulasi_signature) {
+                targetId = `qr-sirkulasi_signature-3-${body_id}`;
+                qrText = sirkulasi_signature;
+            } else if (rr_signature) {
+                targetId = `qr-rr_signature-4-${body_id}`;
+                qrText = rr_signature;
+            }
+
+
+            if (targetId) {
+                $(`#${targetId}`).empty();
+                new QRCode(document.getElementById(targetId), {
+                    text: qrText,
+                    width: 70,
+                    height: 70,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H // High error correction
+                });
+            }
+
+            // if (data?.body_id) {
+            //     checkSignSignature1(formId, primaryKey, formSaveBtn, '8');
+            // }
+
+        };
+
+
+
+        const addBromage = (props) => {
+            let bromageCount = $('#' + props.container + ' .bromage-item').length;
+
+            let newId = `${props.bodyId}`;
+
+            $('#' + props.container).html(
+                `<div class="col-md-12 bromage-item">
                         <div id="${newId}" class="row">
                         </div>
                         <h3 class="badge text-bg-secondary">Skor Bromage : <span class="span-SkorBromage${newId}">${props?.data?.value_score ?? 0}</span></h3>
@@ -5552,104 +5565,104 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                     `
-        );
+            );
 
 
 
 
-        getAvalueType({
-            p_type: 'OPRS024',
-            content_id: newId,
-            body_id: props.document_id,
-            get_data: props.data,
-        });
-        let hasil = props?.bodyId
+            getAvalueType({
+                p_type: 'OPRS024',
+                content_id: newId,
+                body_id: props.document_id,
+                get_data: props.data,
+            });
+            let hasil = props?.bodyId
 
 
-        $('#' + props.container).on('click', '.deleteBromage', function() {
+            $('#' + props.container).on('click', '.deleteBromage', function() {
 
-            let theid = props?.container
+                let theid = props?.container
 
-            $(this).closest('.bromage-item').remove();
+                $(this).closest('.bromage-item').remove();
 
-            theid = theid.replace("bromageContainer", "addBromage");
-            if ($(`#${props?.container} tr`).length === 0) {
-                $(`#${theid}`).show();
-            }
-        });
+                theid = theid.replace("bromageContainer", "addBromage");
+                if ($(`#${props?.container} tr`).length === 0) {
+                    $(`#${theid}`).show();
+                }
+            });
 
-        $(`#${newId}`).off().on("change", e => {
-            let dataScore = $(`#${newId}`).find("option:selected").data("score");
+            $(`#${newId}`).off().on("change", e => {
+                let dataScore = $(`#${newId}`).find("option:selected").data("score");
 
-            $(`.span-SkorBromage${newId}`).text(dataScore)
-        })
-    };
+                $(`.span-SkorBromage${newId}`).text(dataScore)
+            })
+        };
 
-    const addSteward = (props) => {
+        const addSteward = (props) => {
 
 
-        let filteredaValue = avalue.filter(item => item.p_type === 'OPRS025');
+            let filteredaValue = avalue.filter(item => item.p_type === 'OPRS025');
 
-        let groupedData = filteredaValue.reduce((acc, item) => {
-            if (!acc[item.parameter_id]) {
-                acc[item.parameter_id] = [];
-            }
-            acc[item.parameter_id].push(item);
-            return acc;
-        }, {});
+            let groupedData = filteredaValue.reduce((acc, item) => {
+                if (!acc[item.parameter_id]) {
+                    acc[item.parameter_id] = [];
+                }
+                acc[item.parameter_id].push(item);
+                return acc;
+            }, {});
 
-        const createSelectOptions = (options, selectedValue) => {
-            return options.map(option => `
+            const createSelectOptions = (options, selectedValue) => {
+                return options.map(option => `
             <option value="${option.value_id}" data-score="${option.value_score}" ${option.value_id === selectedValue ? 'selected' : ''}>
                 ${option.value_desc}
             </option>
         `).join('');
-        };
+            };
 
-        const createTimeOptions = () => {
-            let options = [];
-            for (let i = 5; i <= 30; i += 5) {
-                options.push(`
+            const createTimeOptions = () => {
+                let options = [];
+                for (let i = 5; i <= 30; i += 5) {
+                    options.push(`
                 <option value="${i}">${i} menit</option>
             `);
-            }
-            return options.join('');
-        };
+                }
+                return options.join('');
+            };
 
-        const formatDateTime = (date) => {
-            return moment(date).format('YYYY-MM-DDTHH:mm');
-        };
+            const formatDateTime = (date) => {
+                return moment(date).format('YYYY-MM-DDTHH:mm');
+            };
 
-        const formatTimeOnly = (date) => {
-            return moment(date).format('HH:mm');
-        };
+            const formatTimeOnly = (date) => {
+                return moment(date).format('HH:mm');
+            };
 
-        const calculateTotalScore = (row) => {
-            let totalScore = 0;
-            $(row).find('select[name^="parameter_oprs025_"]').each(function() {
-                const selectedOption = $(this).find('option:selected');
-                const score = parseInt(selectedOption.data('score'), 10) || 0;
-                totalScore += score;
-            });
-            return totalScore;
-        };
+            const calculateTotalScore = (row) => {
+                let totalScore = 0;
+                $(row).find('select[name^="parameter_oprs025_"]').each(function() {
+                    const selectedOption = $(this).find('option:selected');
+                    const score = parseInt(selectedOption.data('score'), 10) || 0;
+                    totalScore += score;
+                });
+                return totalScore;
+            };
 
-        const updateRowScoreAndStatus = (row) => {
-            let totalScore = calculateTotalScore(row);
-            row.find('.steward-total-score-input').text(totalScore);
+            const updateRowScoreAndStatus = (row) => {
+                let totalScore = calculateTotalScore(row);
+                row.find('.steward-total-score-input').text(totalScore);
 
-            let status = totalScore >= 5 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
-            row.find('.steward-discharge-status-input').text(status);
-        };
+                let status = totalScore >= 5 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
+                row.find('.steward-discharge-status-input').text(status);
+            };
 
-        let observationDate = props?.item?.observation_date ? moment(props?.item
-                ?.observation_date) :
-            moment(
-                new Date());
-        let observationDateFormatted = formatDateTime(observationDate);
-        let observationTimeOnly = formatTimeOnly(observationDate);
+            let observationDate = props?.item?.observation_date ? moment(props?.item
+                    ?.observation_date) :
+                moment(
+                    new Date());
+            let observationDateFormatted = formatDateTime(observationDate);
+            let observationTimeOnly = formatTimeOnly(observationDate);
 
-        let newRowSteward = `
+            let newRowSteward = `
         <tr>
             ${Object.keys(groupedData).map(parameterId => {
                 let selectedValue = props.item[`value_id_${parameterId}`] || '';
@@ -5692,82 +5705,82 @@ let kopTemplateOprs = [];
         </tr>
         `;
 
-        $(`#${props?.container}`).append(newRowSteward);
+            $(`#${props?.container}`).append(newRowSteward);
 
-        updateRowScoreAndStatus($(`#${props?.container} tr`).last());
+            updateRowScoreAndStatus($(`#${props?.container} tr`).last());
 
-        $(`#${props?.container}`).on('change', 'select[name^="parameter_oprs025_"]', function() {
-            let row = $(this).closest('tr');
-            updateRowScoreAndStatus(row);
-        });
-
-        $(`#${props?.container}`).on('change', 'select[name="steward-time-interval[]"]',
-            function() {
+            $(`#${props?.container}`).on('change', 'select[name^="parameter_oprs025_"]', function() {
                 let row = $(this).closest('tr');
-                let selectedMinutes = parseInt($(this).val(), 10) || 0;
-                let previousDatetime = row.prev().find('.steward-datetime-input').val();
-                if (previousDatetime) {
-                    let newDatetime = moment(previousDatetime).add(selectedMinutes, 'minutes')
-                        .format(
-                            'YYYY-MM-DDTHH:mm');
-                    row.find('.steward-datetime-input').val(newDatetime);
-                    row.find('.steward-datetime-display').text(formatTimeOnly(newDatetime));
-                    updateRowScoreAndStatus(row);
-                }
+                updateRowScoreAndStatus(row);
             });
 
-        if (props.index > 0) {
-            let previousDatetime = $(`#${props?.container} tr`).eq(props.index - 1).find(
-                '.steward-datetime-input').val();
-            let defaultDatetime = moment(previousDatetime).add(5, 'minutes').format(
-                'YYYY-MM-DDTHH:mm');
-            $(`#${props?.container} tr`).eq(props.index).find('.steward-datetime-input').val(
-                defaultDatetime);
-            $(`#${props?.container} tr`).eq(props.index).find('.steward-datetime-display').text(
-                formatTimeOnly(
-                    defaultDatetime));
-        }
+            $(`#${props?.container}`).on('change', 'select[name="steward-time-interval[]"]',
+                function() {
+                    let row = $(this).closest('tr');
+                    let selectedMinutes = parseInt($(this).val(), 10) || 0;
+                    let previousDatetime = row.prev().find('.steward-datetime-input').val();
+                    if (previousDatetime) {
+                        let newDatetime = moment(previousDatetime).add(selectedMinutes, 'minutes')
+                            .format(
+                                'YYYY-MM-DDTHH:mm');
+                        row.find('.steward-datetime-input').val(newDatetime);
+                        row.find('.steward-datetime-display').text(formatTimeOnly(newDatetime));
+                        updateRowScoreAndStatus(row);
+                    }
+                });
 
-        $(`#${props?.container}`).on('click', '.steward-delete-row', function() {
-
-
-            let theid = props?.container
-            $(this).closest('tr').remove();
-
-            theid = theid.replace("stewardContainer", "addSteward");
-            if ($(`#${props?.container} tr`).length === 0) {
-                $(`#${theid}`).show();
+            if (props.index > 0) {
+                let previousDatetime = $(`#${props?.container} tr`).eq(props.index - 1).find(
+                    '.steward-datetime-input').val();
+                let defaultDatetime = moment(previousDatetime).add(5, 'minutes').format(
+                    'YYYY-MM-DDTHH:mm');
+                $(`#${props?.container} tr`).eq(props.index).find('.steward-datetime-input').val(
+                    defaultDatetime);
+                $(`#${props?.container} tr`).eq(props.index).find('.steward-datetime-display').text(
+                    formatTimeOnly(
+                        defaultDatetime));
             }
-        });
-    };
-    //---------cccccccccccccccccccccccccccccccccccccccccccccc
-    const checklistKeselamatan = (props) => {
 
-        let arr = [];
-        let data = props?.data
-        getAvalueType({
-            p_type: 'OPRS026',
-            content_id: 'the-sign-in-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
-        getAvalueType({
-            p_type: 'OPRS027',
-            content_id: 'the-time-out-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
-        getAvalueType({
-            p_type: 'OPRS028',
-            content_id: 'the-sign-out-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
+            $(`#${props?.container}`).on('click', '.steward-delete-row', function() {
 
 
-        $("#body_id_checklist_keselamatan").val(data?.body_id ?? get_bodyid())
+                let theid = props?.container
+                $(this).closest('tr').remove();
 
-        let catatanSignIn = `
+                theid = theid.replace("stewardContainer", "addSteward");
+                if ($(`#${props?.container} tr`).length === 0) {
+                    $(`#${theid}`).show();
+                }
+            });
+        };
+        //---------cccccccccccccccccccccccccccccccccccccccccccccc
+        const checklistKeselamatan = (props) => {
+
+            let arr = [];
+            let data = props?.data
+            getAvalueType({
+                p_type: 'OPRS026',
+                content_id: 'the-sign-in-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
+            });
+            getAvalueType({
+                p_type: 'OPRS027',
+                content_id: 'the-time-out-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
+            });
+            getAvalueType({
+                p_type: 'OPRS028',
+                content_id: 'the-sign-out-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
+            });
+
+
+            $("#body_id_checklist_keselamatan").val(data?.body_id ?? get_bodyid())
+
+            let catatanSignIn = `
                     <div class="container">
                         <div class="row">
                             <div id="the-sign-in-1" class="row"></div>
@@ -5797,7 +5810,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
             `;
-        let catatanTimeOut = `
+            let catatanTimeOut = `
                     <div class="container">
                         <div class="row">
                               
@@ -5840,7 +5853,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                     `;
-        let catatanSignOut = `
+            let catatanSignOut = `
                     <div class="container">
                         <div class="row">
                               
@@ -5886,125 +5899,125 @@ let kopTemplateOprs = [];
                     `;
 
 
-        $('#the-sign-in').html(catatanSignIn);
-        $('#the-time-out').html(catatanTimeOut);
-        $('#the-sign-out').html(catatanSignOut);
+            $('#the-sign-in').html(catatanSignIn);
+            $('#the-time-out').html(catatanTimeOut);
+            $('#the-sign-out').html(catatanSignOut);
 
 
-        const formId = 'form-checklist-keselamatan';
-        const primaryKey = data?.body_id;
-        const formSaveBtn = 'btn-save-checklist-keselamatan';
+            const formId = 'form-checklist-keselamatan';
+            const primaryKey = data?.body_id;
+            const formSaveBtn = 'btn-save-checklist-keselamatan';
 
-        $("button[name='CkOps']").each(function() {
-            if (data?.body_id) {
-                $(this).prop('disabled', false);
-            } else {
-                $(this).prop('disabled', true);
-            }
-        });
-
-
-        $("button[name='CkOps']").off().on("click", function() {
-            const buttonId = $(this).data('button-id');
-            const signKe = $(this).data('sign-ke');
-            const signFiled = $(this).data('save');
-
-            if (!$(this).is(':disabled')) {
-                addSignUserOPS("form-checklist-keselamatan", "checklist-keselamatan",
-                    'body_id_checklist_keselamatan',
-                    buttonId,
-                    9, signKe, 1,
-                    "Checklist Keselamatan Operasi", signFiled);
-            }
-        });
-
-        const {
-            signin_anesthesia_signature,
-            signin_nurse_signature,
-            timeout_surgeon_signature,
-            timeout_anesthesia_signature,
-            timeout_nurse_signature,
-            signout_surgeon_signature,
-            signout_anesthesia_signature,
-            signout_nurse_signature,
-            body_id
-        } = props?.data || {};
-
-        let targetId = "";
-        let qrText = "";
-
-        if (signin_anesthesia_signature) {
-            targetId = `qr-signin_anesthesia_signature-1-${body_id}`;
-            qrText = signin_anesthesia_signature;
-        } else if (signin_nurse_signature) {
-            targetId = `qr-signin_nurse_signature-2-${body_id}`;
-            qrText = signin_nurse_signature;
-        } else if (timeout_surgeon_signature) {
-            targetId = `qr-timeout_surgeon_signature-3-${body_id}`;
-            qrText = timeout_surgeon_signature;
-        } else if (timeout_anesthesia_signature) {
-            targetId = `qr-timeout_anesthesia_signature-4-${body_id}`;
-            qrText = timeout_anesthesia_signature;
-        } else if (timeout_nurse_signature) {
-            targetId = `qr-timeout_nurse_signature-5-${body_id}`;
-            qrText = timeout_nurse_signature;
-        } else if (signout_surgeon_signature) {
-            targetId = `qr-signout_surgeon_signature-6-${body_id}`;
-            qrText = signout_surgeon_signature;
-        } else if (signout_anesthesia_signature) {
-            targetId = `qr-signout_anesthesia_signature-7-${body_id}`;
-            qrText = signout_anesthesia_signature;
-        } else if (signout_nurse_signature) {
-            targetId = `qr-signout_nurse_signature-8-${body_id}`;
-            qrText = signout_nurse_signature;
-        }
-
-
-        if (targetId) {
-            $(`#${targetId}`).empty();
-            new QRCode(document.getElementById(targetId), {
-                text: qrText,
-                width: 70,
-                height: 70,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
+            $("button[name='CkOps']").each(function() {
+                if (data?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
             });
-        }
-        // if (data?.body_id) {
-        //     checkSignSignature1(formId, primaryKey, formSaveBtn, '9');
-        // }
-
-    };
-
-    //---------dddddddddddddd
-    const anestesi = (props) => {
-        let data = props?.data
-
-        getAvalueType({
-            p_type: 'OPRS007',
-            content_id: 'checklist-anestesi-1',
-            body_id: pasienOperasiSelected
-                ?.vactination_id,
-            get_data: data?.assessment_anesthesia_checklist,
-            items: data?.assessment_operation,
-            data_tindakan: data?.ori //new
-        });
 
 
+            $("button[name='CkOps']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+                const signFiled = $(this).data('save');
 
-        let filedsData = ['anesthesia_machine_on', 'oxygen_tube', 'flow_meter', 'power_on',
-            'circuit_leackage',
-            'volatil', 'face_mask', 'laringoskop', 'ett_lma', 'stylet',
-            'spuit_cuff', 'ekg_cable', 'nibp_connection', 'stetoscope', 'suction_tube',
-            'bandage',
-            'nasal_cannula', 'intravenous_line', 'spuit_size', 'epinefrin', 'atropin',
-            'sedative',
-            'opioid',
-            'muscle_relaxant', 'intravena_fluid', 'other_fluid'
-        ]
+                if (!$(this).is(':disabled')) {
+                    addSignUserOPS("form-checklist-keselamatan", "checklist-keselamatan",
+                        'body_id_checklist_keselamatan',
+                        buttonId,
+                        9, signKe, 1,
+                        "Checklist Keselamatan Operasi", signFiled);
+                }
+            });
 
-        let catatan = `
+            const {
+                signin_anesthesia_signature,
+                signin_nurse_signature,
+                timeout_surgeon_signature,
+                timeout_anesthesia_signature,
+                timeout_nurse_signature,
+                signout_surgeon_signature,
+                signout_anesthesia_signature,
+                signout_nurse_signature,
+                body_id
+            } = props?.data || {};
+
+            let targetId = "";
+            let qrText = "";
+
+            if (signin_anesthesia_signature) {
+                targetId = `qr-signin_anesthesia_signature-1-${body_id}`;
+                qrText = signin_anesthesia_signature;
+            } else if (signin_nurse_signature) {
+                targetId = `qr-signin_nurse_signature-2-${body_id}`;
+                qrText = signin_nurse_signature;
+            } else if (timeout_surgeon_signature) {
+                targetId = `qr-timeout_surgeon_signature-3-${body_id}`;
+                qrText = timeout_surgeon_signature;
+            } else if (timeout_anesthesia_signature) {
+                targetId = `qr-timeout_anesthesia_signature-4-${body_id}`;
+                qrText = timeout_anesthesia_signature;
+            } else if (timeout_nurse_signature) {
+                targetId = `qr-timeout_nurse_signature-5-${body_id}`;
+                qrText = timeout_nurse_signature;
+            } else if (signout_surgeon_signature) {
+                targetId = `qr-signout_surgeon_signature-6-${body_id}`;
+                qrText = signout_surgeon_signature;
+            } else if (signout_anesthesia_signature) {
+                targetId = `qr-signout_anesthesia_signature-7-${body_id}`;
+                qrText = signout_anesthesia_signature;
+            } else if (signout_nurse_signature) {
+                targetId = `qr-signout_nurse_signature-8-${body_id}`;
+                qrText = signout_nurse_signature;
+            }
+
+
+            if (targetId) {
+                $(`#${targetId}`).empty();
+                new QRCode(document.getElementById(targetId), {
+                    text: qrText,
+                    width: 70,
+                    height: 70,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H // High error correction
+                });
+            }
+            // if (data?.body_id) {
+            //     checkSignSignature1(formId, primaryKey, formSaveBtn, '9');
+            // }
+
+        };
+
+        //---------dddddddddddddd
+        const anestesi = (props) => {
+            let data = props?.data
+
+            getAvalueType({
+                p_type: 'OPRS007',
+                content_id: 'checklist-anestesi-1',
+                body_id: pasienOperasiSelected
+                    ?.vactination_id,
+                get_data: data?.assessment_anesthesia_checklist,
+                items: data?.assessment_operation,
+                data_tindakan: data?.ori //new
+            });
+
+
+
+            let filedsData = ['anesthesia_machine_on', 'oxygen_tube', 'flow_meter', 'power_on',
+                'circuit_leackage',
+                'volatil', 'face_mask', 'laringoskop', 'ett_lma', 'stylet',
+                'spuit_cuff', 'ekg_cable', 'nibp_connection', 'stetoscope', 'suction_tube',
+                'bandage',
+                'nasal_cannula', 'intravenous_line', 'spuit_size', 'epinefrin', 'atropin',
+                'sedative',
+                'opioid',
+                'muscle_relaxant', 'intravena_fluid', 'other_fluid'
+            ]
+
+            let catatan = `
                     <div class="container">
                         <div class="row">
                               <div class="row pl-sm-0 col-6">
@@ -6019,40 +6032,40 @@ let kopTemplateOprs = [];
                     </div>
                     `;
 
-        $('#ck-anestesi').html(catatan);
+            $('#ck-anestesi').html(catatan);
 
-        if (data?.assessment_anesthesia_checklist) {
-            const allChecked = filedsData.every(field => data.assessment_anesthesia_checklist[
-                field] == 1);
+            if (data?.assessment_anesthesia_checklist) {
+                const allChecked = filedsData.every(field => data.assessment_anesthesia_checklist[
+                    field] == 1);
 
-            $("#checklistanestesi1All").prop("checked", allChecked);
-        }
-
-
-        $(document).on("change", "#checklistanestesi1All", function() {
-            let isChecked = $(this).is(":checked");
-            $("#checklist-anestesi-1 input[type='checkbox']").prop("checked", isChecked);
-        });
-
-        setTimeout(() => {
-            $("#oprs007_02").val(data?.ori?.rooms_id)
-        }, 100);
-
-    };
-
-    //---------eeeeeeeeeeeeeee
-    const pembedahan = (props) => {
-        let data = props?.data
-        let diagnosas = props?.diagnosas
-        getAvalueType({
-            p_type: 'OPRS008',
-            content_id: 'pembedahan-laporan-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-        });
+                $("#checklistanestesi1All").prop("checked", allChecked);
+            }
 
 
-        let oprs008 = `
+            $(document).on("change", "#checklistanestesi1All", function() {
+                let isChecked = $(this).is(":checked");
+                $("#checklist-anestesi-1 input[type='checkbox']").prop("checked", isChecked);
+            });
+
+            setTimeout(() => {
+                $("#oprs007_02").val(data?.ori?.rooms_id)
+            }, 100);
+
+        };
+
+        //---------eeeeeeeeeeeeeee
+        const pembedahan = (props) => {
+            let data = props?.data
+            let diagnosas = props?.diagnosas
+            getAvalueType({
+                p_type: 'OPRS008',
+                content_id: 'pembedahan-laporan-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
+            });
+
+
+            let oprs008 = `
                     <div class="container">
                         <div class="row">
                             <div id="data-oprasi-pembedahan" row></div>
@@ -6106,89 +6119,89 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                     `;
-        $('#pembedahan-laporan').html(oprs008);
+            $('#pembedahan-laporan').html(oprs008);
 
-        setTimeout(() => {
-            let currentValueoprs008_03 = $('#oprs008_03').val();
-            let nameAttributeoprs008_03 = $('#oprs008_03').attr('name');
-            let radioButtonsHtml008_03 = '';
+            setTimeout(() => {
+                let currentValueoprs008_03 = $('#oprs008_03').val();
+                let nameAttributeoprs008_03 = $('#oprs008_03').attr('name');
+                let radioButtonsHtml008_03 = '';
 
-            if (currentValueoprs008_03 === '0') {
-                radioButtonsHtml008_03 = `<div class="form-radio-group">
+                if (currentValueoprs008_03 === '0') {
+                    radioButtonsHtml008_03 = `<div class="form-radio-group">
                                                 <label><input type="radio" name="${nameAttributeoprs008_03}" value="0" checked> Elektif</label>
                                             </div>
                                         `;
-            } else if (currentValueoprs008_03 === '1') {
-                radioButtonsHtml008_03 = `<div class="form-radio-group">
+                } else if (currentValueoprs008_03 === '1') {
+                    radioButtonsHtml008_03 = `<div class="form-radio-group">
                                                                     <label><input type="radio" name="${nameAttributeoprs008_03}" value="1" checked> Cyto</label>
                                                                 </div>
                                                             `;
-            } else if (currentValueoprs008_03 === '2') {
-                radioButtonsHtml008_03 = `<div class="form-radio-group">
+                } else if (currentValueoprs008_03 === '2') {
+                    radioButtonsHtml008_03 = `<div class="form-radio-group">
                                                 <label><input type="radio" name="${nameAttributeoprs008_03}" value="2" checked> Emergency</label>
                                             </div>
                                         `;
-            }
-            $('#oprs008_03').replaceWith(radioButtonsHtml008_03);
+                }
+                $('#oprs008_03').replaceWith(radioButtonsHtml008_03);
 
-            let currentValueoprs008_06 = $('#oprs008_06').val();
-            let nameAttributeoprs008_06 = $('#oprs008_06').attr('name');
+                let currentValueoprs008_06 = $('#oprs008_06').val();
+                let nameAttributeoprs008_06 = $('#oprs008_06').attr('name');
 
-            let treatment = treatmentData.find(t => t.bill_id === currentValueoprs008_06);
+                let treatment = treatmentData.find(t => t.bill_id === currentValueoprs008_06);
 
-            let treatmentName = treatment ? treatment.tarif_name : "-";
-            let labelHtml = `<label id="oprs008_06_label" class="form-control form-thems">
+                let treatmentName = treatment ? treatment.tarif_name : "-";
+                let labelHtml = `<label id="oprs008_06_label" class="form-control form-thems">
                                 ${data.tarif_id}
                             </label>
                         `;
 
-            $('#oprs008_06').replaceWith(labelHtml);
+                $('#oprs008_06').replaceWith(labelHtml);
 
 
-        }, 20);
+            }, 20);
 
-        $("#formdiag2").on("click", function(e) {
-            addRowDiagDokterOprs('bodyDiagPraOperation-', pasienOperasiSelected
-                ?.vactination_id,
-                null,
-                null,
-                13, 0);
-        });
-        if (diagnosas) {
-            diagnosas.forEach((item, index) => {
-
-                if (item.diag_cat == 13) {
-                    addRowDiagDokterOprs('bodyDiagPraOperation-', pasienOperasiSelected
-                        ?.vactination_id,
-                        item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc,
-                        item
-                        ?.diag_cat, item?.diag_suffer);
-                } else {
-                    addRowDiagDokterOprs('bodyDiagPascaOperation-', pasienOperasiSelected
-                        ?.vactination_id,
-                        item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc,
-                        item
-                        ?.diag_cat, item?.diag_suffer);
-                }
+            $("#formdiag2").on("click", function(e) {
+                addRowDiagDokterOprs('bodyDiagPraOperation-', pasienOperasiSelected
+                    ?.vactination_id,
+                    null,
+                    null,
+                    13, 0);
             });
+            if (diagnosas) {
+                diagnosas.forEach((item, index) => {
+
+                    if (item.diag_cat == 13) {
+                        addRowDiagDokterOprs('bodyDiagPraOperation-', pasienOperasiSelected
+                            ?.vactination_id,
+                            item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc,
+                            item
+                            ?.diag_cat, item?.diag_suffer);
+                    } else {
+                        addRowDiagDokterOprs('bodyDiagPascaOperation-', pasienOperasiSelected
+                            ?.vactination_id,
+                            item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc,
+                            item
+                            ?.diag_cat, item?.diag_suffer);
+                    }
+                });
+            }
+            $("#formdiag").on("click", function(e) {
+                addRowDiagDokterOprs('bodyDiagPascaOperation-', pasienOperasiSelected
+                    ?.vactination_id,
+                    null,
+                    null, 14, 0);
+            });
+
+            btnSaveLaporanPembedahan(pasienOperasiSelected)
         }
-        $("#formdiag").on("click", function(e) {
-            addRowDiagDokterOprs('bodyDiagPascaOperation-', pasienOperasiSelected
-                ?.vactination_id,
-                null,
-                null, 14, 0);
-        });
 
-        btnSaveLaporanPembedahan(pasienOperasiSelected)
-    }
+        // -------------------GGGGGGGGG
+        const LaporanAnesthesi = (props) => {
+            let data = props?.data
+            let diagnosas = props?.diagnosas
+            let dataGetAnestesia = "";
 
-    // -------------------GGGGGGGGG
-    const LaporanAnesthesi = (props) => {
-        let data = props?.data
-        let diagnosas = props?.diagnosas
-        let dataGetAnestesia = "";
-
-        let oprs006 = `
+            let oprs006 = `
                         <div class="container">
                             <div class="row">
                                 <div id="informasiMedis-laporan-1" class="row pb-3"></div>
@@ -6224,208 +6237,208 @@ let kopTemplateOprs = [];
                                 </div>
                         </div>
                     `;
-        $('#weight-laporanAnesthesi').val(props?.exam_info?.weight ?? 0);
-        $('#height-laporanAnesthesi').val(props?.exam_info?.height ?? 0);
+            $('#weight-laporanAnesthesi').val(props?.exam_info?.weight ?? 0);
+            $('#height-laporanAnesthesi').val(props?.exam_info?.height ?? 0);
 
-        $('#informasiMedis-laporan').html(oprs006);
-        $("#trans_id-laporan_anestesi").val(data?.trans_id ?? visit?.trans_id);
-        $("#org_unit_code-laporan_anestesi").val(data?.org_unit_code ?? visit?.org_unit_code);
-        $("#visit_id-laporan_anestesi").val(data?.visit_id ?? visit?.visit_id);
-        $("#formdiag-laporan").on("click", function(e) {
-            addRowDiagDokterOprs('bodyDiagLaporanAnesthesi-', pasienOperasiSelected
-                ?.vactination_id,
-                null,
-                null, 14, 0);
-        });
-        getAvalueType({
-            p_type: 'OPRS006',
-            content_id: 'informasiMedis-laporan-1',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data,
-            data_tindakan: props?.ori
-        });
-
-        getAvalueType({
-            p_type: 'OPRS034',
-            content_id: 'informasiMedis-laporan-2',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: props?.assessment_anesthesia_recovery?.organ,
-            data_tindakan: props?.ori
-
-        });
-
-
-
-
-
-        $("#body_id-laporan_anestesi").val(data?.body_id ?? get_bodyid());
-        $("#document_id-laporan_anestesi").val(data?.document_id);
-
-        setTimeout(() => {
-            manipulationsTextCheckbox([
-                'oprs006_26', 'oprs006_27', 'oprs006_28',
-                'oprs006_29', 'oprs006_30', 'oprs006_31', 'oprs006_32'
-            ]);
-        }, 100);
-
-        // getDataVitailSign({
-        //     pasien_diagnosa_id: data?.body_id,
-        //     val: "-laporanAnesthesi",
-        //     account_ids: 11 //new
-        // });
-
-        getDataVitailSign({
-            pasien_diagnosa_id: props?.ori
-                ?.vactination_id,
-            account_ids: ['11'],
-            suffixes: ["-laporanAnesthesi"]
-        });
-
-        if (diagnosas) {
-            diagnosas.forEach((item, index) => {
-
-                addRowDiagDokterOprs('bodyDiagLaporanAnesthesi-', props?.ori
+            $('#informasiMedis-laporan').html(oprs006);
+            $("#trans_id-laporan_anestesi").val(data?.trans_id ?? visit?.trans_id);
+            $("#org_unit_code-laporan_anestesi").val(data?.org_unit_code ?? visit?.org_unit_code);
+            $("#visit_id-laporan_anestesi").val(data?.visit_id ?? visit?.visit_id);
+            $("#formdiag-laporan").on("click", function(e) {
+                addRowDiagDokterOprs('bodyDiagLaporanAnesthesi-', pasienOperasiSelected
                     ?.vactination_id,
-                    item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc, item
-                    ?.diag_cat, item?.suffer_type);
+                    null,
+                    null, 14, 0);
             });
-        }
-
-
-        btnSaveLaporanAnestesi(pasienOperasiSelected);
-        $("#vs_status_id-laporanAnesthesi").on("change", function() {
-            var optionSelected = $("option:selected", this);
-            $('#container-vitalsign-laporanAnesthesi').empty();
-
-            switch (optionSelected.val()) {
-                case '4':
-                    getAvalueType({
-                        p_type: 'GEN0022',
-                        content_id: 'container-vitalsign-laporanAnesthesi',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
-                    });
-                    break;
-                case '10':
-                    getAvalueType({
-                        p_type: 'GEN0021',
-                        content_id: 'container-vitalsign-laporanAnesthesi',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
-                    });
-                    break;
-            }
-        })
-    };
-
-    // -------------------hhhhhhhhhhh
-    const postOperasi = (props) => {
-        postData({
-            body_id: `${props?.data?.vactination_id}`,
-        }, 'admin/PatientOperationRequest/getDataAssessmentPostOperasi', (res) => {
             getAvalueType({
-                p_type: 'OPRS009',
-                content_id: 'informasi-post-operasi-1',
-                body_id: props?.data?.vactination_id,
-                get_data: res[0],
-                items: props?.obat?.treatment
+                p_type: 'OPRS006',
+                content_id: 'informasiMedis-laporan-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
+                data_tindakan: props?.ori
             });
-        });
 
-        let catatan = `
+            getAvalueType({
+                p_type: 'OPRS034',
+                content_id: 'informasiMedis-laporan-2',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: props?.assessment_anesthesia_recovery?.organ,
+                data_tindakan: props?.ori
+
+            });
+
+
+
+
+
+            $("#body_id-laporan_anestesi").val(data?.body_id ?? get_bodyid());
+            $("#document_id-laporan_anestesi").val(data?.document_id);
+
+            setTimeout(() => {
+                manipulationsTextCheckbox([
+                    'oprs006_26', 'oprs006_27', 'oprs006_28',
+                    'oprs006_29', 'oprs006_30', 'oprs006_31', 'oprs006_32'
+                ]);
+            }, 100);
+
+            // getDataVitailSign({
+            //     pasien_diagnosa_id: data?.body_id,
+            //     val: "-laporanAnesthesi",
+            //     account_ids: 11 //new
+            // });
+
+            getDataVitailSign({
+                pasien_diagnosa_id: props?.ori
+                    ?.vactination_id,
+                account_ids: ['11'],
+                suffixes: ["-laporanAnesthesi"]
+            });
+
+            if (diagnosas) {
+                diagnosas.forEach((item, index) => {
+
+                    addRowDiagDokterOprs('bodyDiagLaporanAnesthesi-', props?.ori
+                        ?.vactination_id,
+                        item?.diagnosa_id, item?.diagnosa_name ?? item?.diagnosa_desc, item
+                        ?.diag_cat, item?.suffer_type);
+                });
+            }
+
+
+            btnSaveLaporanAnestesi(pasienOperasiSelected);
+            $("#vs_status_id-laporanAnesthesi").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-laporanAnesthesi').empty();
+
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-laporanAnesthesi',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-laporanAnesthesi',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
+        };
+
+        // -------------------hhhhhhhhhhh
+        const postOperasi = (props) => {
+            postData({
+                body_id: `${props?.data?.vactination_id}`,
+            }, 'admin/PatientOperationRequest/getDataAssessmentPostOperasi', (res) => {
+                getAvalueType({
+                    p_type: 'OPRS009',
+                    content_id: 'informasi-post-operasi-1',
+                    body_id: props?.data?.vactination_id,
+                    get_data: res[0],
+                    items: props?.obat?.treatment
+                });
+            });
+
+            let catatan = `
                     <div class="container">
                         <div class="row">
                             <div id="informasi-post-operasi-1" class="py-4 row"></div>
                         </div>
                     </div>
                     `;
-        $('#ck-informasi-post-operasi').html(catatan);
+            $('#ck-informasi-post-operasi').html(catatan);
 
-    };
+        };
 
-    const laporanAnesthesiLengkap = (props) => {
-        let data = props?.data
-        let anesthesia_recovery = data?.assessment_anesthesia_recovery
+        const laporanAnesthesiLengkap = (props) => {
+            let data = props?.data
+            let anesthesia_recovery = data?.assessment_anesthesia_recovery
 
-        let aldreteScore = anesthesia_recovery?.aldrete[anesthesia_recovery?.aldrete?.length - 1] ??
-            0
-        let bromageScore = anesthesia_recovery?.bromage[anesthesia_recovery?.bromage?.length - 1] ??
-            0
-        let stewardScore = anesthesia_recovery?.steward[anesthesia_recovery?.steward?.length - 1] ??
-            0
+            let aldreteScore = anesthesia_recovery?.aldrete[anesthesia_recovery?.aldrete?.length - 1] ??
+                0
+            let bromageScore = anesthesia_recovery?.bromage[anesthesia_recovery?.bromage?.length - 1] ??
+                0
+            let stewardScore = anesthesia_recovery?.steward[anesthesia_recovery?.steward?.length - 1] ??
+                0
 
-        let resultaldreteScore = (
-            (aldreteScore?.value_score_01 ?? 0) +
-            (aldreteScore?.value_score_02 ?? 0) +
-            (aldreteScore?.value_score_03 ?? 0) +
-            (aldreteScore?.value_score_04 ?? 0) +
-            (aldreteScore?.value_score_05 ?? 0)
-        );
-        let resultbromageScore = bromageScore?.value_score ?? 0
-        let resultStewardScore = (
-            (stewardScore?.value_score_01 ?? 0) +
-            (stewardScore?.value_score_02 ?? 0) +
-            (stewardScore?.value_score_03 ?? 0)
-        );
-
-
-        getAvalueType({
-            p_type: 'OPRS011',
-            content_id: 'informasiMedis-laporan-anesthesia-details-1',
-            body_id: data?.assessment_anesthesia?.document_id ?? pasienOperasiSelected
-                ?.vactination_id,
-            get_data: data?.assessment_anesthesia,
-        });
-        getAvalueType({
-            p_type: 'OPRS013',
-            content_id: 'informasiMedis-Anesthesi-dan-Sedasi-1',
-            body_id: data?.assessment_operation_post?.document_id ?? pasienOperasiSelected
-                ?.vactination_id,
-            get_data: data?.assessment_anesthesia_post,
-        });
+            let resultaldreteScore = (
+                (aldreteScore?.value_score_01 ?? 0) +
+                (aldreteScore?.value_score_02 ?? 0) +
+                (aldreteScore?.value_score_03 ?? 0) +
+                (aldreteScore?.value_score_04 ?? 0) +
+                (aldreteScore?.value_score_05 ?? 0)
+            );
+            let resultbromageScore = bromageScore?.value_score ?? 0
+            let resultStewardScore = (
+                (stewardScore?.value_score_01 ?? 0) +
+                (stewardScore?.value_score_02 ?? 0) +
+                (stewardScore?.value_score_03 ?? 0)
+            );
 
 
-        getAvalueType({
-            p_type: 'OPRS014',
-            content_id: 'informasiMedis-Anesthesi-dan-Sedasi-2',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: data?.assessment_anesthesia_post,
-        });
+            getAvalueType({
+                p_type: 'OPRS011',
+                content_id: 'informasiMedis-laporan-anesthesia-details-1',
+                body_id: data?.assessment_anesthesia?.document_id ?? pasienOperasiSelected
+                    ?.vactination_id,
+                get_data: data?.assessment_anesthesia,
+            });
+            getAvalueType({
+                p_type: 'OPRS013',
+                content_id: 'informasiMedis-Anesthesi-dan-Sedasi-1',
+                body_id: data?.assessment_operation_post?.document_id ?? pasienOperasiSelected
+                    ?.vactination_id,
+                get_data: data?.assessment_anesthesia_post,
+            });
 
-        getAvalueType({
-            p_type: 'OPRS029',
-            content_id: 'recovery-room-oprs029',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: anesthesia_recovery?.infusion,
-        });
 
-        getAvalueType({
-            p_type: 'OPRS030',
-            content_id: 'recovery-room-oprs030',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: anesthesia_recovery?.general,
-        });
-        getAvalueType({
-            p_type: 'OPRS031',
-            content_id: 'recovery-room-oprs031',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: anesthesia_recovery?.ventilasi,
-        });
-        getAvalueType({
-            p_type: 'OPRS032',
-            content_id: 'recovery-room-oprs032',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: anesthesia_recovery?.jalan_napas,
-        });
+            getAvalueType({
+                p_type: 'OPRS014',
+                content_id: 'informasiMedis-Anesthesi-dan-Sedasi-2',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data?.assessment_anesthesia_post,
+            });
 
-        getAvalueType({
-            p_type: 'OPRS033',
-            content_id: 'recovery-room-oprs033',
-            body_id: pasienOperasiSelected?.vactination_id,
-            get_data: anesthesia_recovery?.regional,
-        });
+            getAvalueType({
+                p_type: 'OPRS029',
+                content_id: 'recovery-room-oprs029',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.infusion,
+            });
 
-        let oprs011 = `
+            getAvalueType({
+                p_type: 'OPRS030',
+                content_id: 'recovery-room-oprs030',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.general,
+            });
+            getAvalueType({
+                p_type: 'OPRS031',
+                content_id: 'recovery-room-oprs031',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.ventilasi,
+            });
+            getAvalueType({
+                p_type: 'OPRS032',
+                content_id: 'recovery-room-oprs032',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.jalan_napas,
+            });
+
+            getAvalueType({
+                p_type: 'OPRS033',
+                content_id: 'recovery-room-oprs033',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.regional,
+            });
+
+            let oprs011 = `
                     <div class="container">
                         <div class="row">
                             <div id="informasiMedis-laporan-anesthesia-details-1" class="row"></div>
@@ -6434,7 +6447,7 @@ let kopTemplateOprs = [];
                     </div>
                     `;
 
-        let obatInhalasi = `
+            let obatInhalasi = `
                     <div class="container">
                         <div class="row">
                             <div id="obatInhalasi-1" class="table tablecustom-responsive table-responsive">
@@ -6457,7 +6470,7 @@ let kopTemplateOprs = [];
                     </div>
                     `;
 
-        let obatInjeksi = `
+            let obatInjeksi = `
                     <div class="container">
                         <div class="row">
                             <div id="obatInjeksi-1" class="table tablecustom-responsive table-responsive">
@@ -6479,7 +6492,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                     `;
-        let cairanMasuk = `
+            let cairanMasuk = `
                     <div class="container">
                         <div class="row">
                             <div id="cairanMasuk-1" class="table tablecustom-responsive table-responsive">
@@ -6502,7 +6515,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                     `;
-        let oprs006 = `
+            let oprs006 = `
                         <div class="container">
                             <div class="row">
                                 <input class="form-control" id="body_id-laporan_anestesiLengkap" name="body_id" value="" hidden></input>
@@ -6531,7 +6544,7 @@ let kopTemplateOprs = [];
                             </div>
                         </div>
                     `;
-        let monitoringDurante = `
+            let monitoringDurante = `
                     <div class="container">
                         <div class="row">
                             <div id="cairanMasuk-1" class="table tablecustom-responsive table-responsive">
@@ -6570,7 +6583,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                     `;
-        let recoveryRoom = `
+            let recoveryRoom = `
                         <div class="container">
                             <div class="row">
                                 <div id="cairanMasuk-1" class="table tablecustom-responsive table-responsive">
@@ -6609,7 +6622,7 @@ let kopTemplateOprs = [];
                             </div>
                         </div>
                     `;
-        let roomRecoveryScore = `
+            let roomRecoveryScore = `
                         <div class="container">
                             <div class="row">
                                 <div id="cKeperawatanPascaOperatif-1" class="row"></div>
@@ -6657,7 +6670,7 @@ let kopTemplateOprs = [];
                         </div>
             `;
 
-        let recoveryRoomOprs029Oprs033 = `
+            let recoveryRoomOprs029Oprs033 = `
                 <div class="container mb-3">
                     <h3>Infus</h3>
                     <div class="row mb-3">
@@ -6689,7 +6702,7 @@ let kopTemplateOprs = [];
                     </div>
                 </div>
             `; //new 02/09
-        let monitoringDurante1 = `
+            let monitoringDurante1 = `
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -6717,7 +6730,7 @@ let kopTemplateOprs = [];
                                     </div>
                                 </div>
                             `;
-        let oprs013 = `
+            let oprs013 = `
                     <div class="container">
                         <div class="row">
                             <div id="informasiMedis-Anesthesi-dan-Sedasi-1" class="row"></div>
@@ -6725,7 +6738,7 @@ let kopTemplateOprs = [];
                     </div>
                     `;
 
-        let output = `<div class="container">
+            let output = `<div class="container">
                             <div class="row">
                                 <div id="informasiMedis-laporan-output-2" class="row">
                                             <div class="mb-3 col-6">
@@ -6739,7 +6752,7 @@ let kopTemplateOprs = [];
                                 </div>
                             </div>
                         </div>`;
-        let medication = `
+            let medication = `
                     <hr>
                     <div class="container">
                         <div class="row">
@@ -6765,7 +6778,7 @@ let kopTemplateOprs = [];
 
 
 
-        let oprs014 = `
+            let oprs014 = `
                     <hr>
                     <div class="container">
                         <div class="row">
@@ -6794,7 +6807,7 @@ let kopTemplateOprs = [];
                         </div>
                     </div>
                 `;
-        let ttdAll = `
+            let ttdAll = `
                         <div class="col-xs-12 col-sm-12 col-md-6 mt-2 ps-3 pb-2">
                             <div class="form-group">
                                 <label><strong>Tanda Tangan Dokter</strong></label>
@@ -6819,356 +6832,364 @@ let kopTemplateOprs = [];
                         </div>
                     `;
 
-        $('#weight-laporanAnesthesi-lengkap-durantee').val(props?.exam_info?.weight ?? 0)
-        $('#height-laporanAnesthesi-lengkap-durantee').val(props?.exam_info?.height ?? 0)
+            $('#weight-laporanAnesthesi-lengkap-durantee').val(props?.exam_info?.weight ?? 0)
+            $('#height-laporanAnesthesi-lengkap-durantee').val(props?.exam_info?.height ?? 0)
 
-        $('#weight-laporanAnesthesi-lengkap').val(props?.exam_info?.weight ?? 0)
-        $('#height-laporanAnesthesi-lengkap').val(props?.exam_info?.height ?? 0)
+            $('#weight-laporanAnesthesi-lengkap').val(props?.exam_info?.weight ?? 0)
+            $('#height-laporanAnesthesi-lengkap').val(props?.exam_info?.height ?? 0)
 
-        $("#informasiMedis-laporan-durante-signature").html(ttdAll);
-        $('#informasiMedis-laporan-output').html(output)
-        $('#bodyDiagnosisAnesthesiLengkap').html(oprs006);
-        $('#informasiMedis-laporan-anesthesia-details').html(oprs011);
-        $('#informasiMedis-laporan-obat-inhalasi').html(obatInhalasi);
-        $('#informasiMedis-laporan-obat-injeksi').html(obatInjeksi);
-        $('#informasiMedis-laporan-cairan-masuk').html(cairanMasuk);
-        $('#informasiMedis-laporan-monitoring-durante-date').html(monitoringDurante1);
-        $('#informasiMedis-laporan-monitoring-durante-2').html(monitoringDurante);
-        $('#informasiMedis-laporan-recovery-medication').html(medication);
-        $('#informasiMedis-laporan-recovery-room-monitoring').html(recoveryRoom);
-        $('#informasiMedis-laporan-recovery-room-monitoring-score').html(roomRecoveryScore);
-        $('#body-recovery-room-oprs029-oprs033').html(recoveryRoomOprs029Oprs033);
-        // $('#infus-monitoring-duranate').html(recoveryRoomOprs029Oprs033);
+            $("#informasiMedis-laporan-durante-signature").html(ttdAll);
+            $('#informasiMedis-laporan-output').html(output)
+            $('#bodyDiagnosisAnesthesiLengkap').html(oprs006);
+            $('#informasiMedis-laporan-anesthesia-details').html(oprs011);
+            $('#informasiMedis-laporan-obat-inhalasi').html(obatInhalasi);
+            $('#informasiMedis-laporan-obat-injeksi').html(obatInjeksi);
+            $('#informasiMedis-laporan-cairan-masuk').html(cairanMasuk);
+            $('#informasiMedis-laporan-monitoring-durante-date').html(monitoringDurante1);
+            $('#informasiMedis-laporan-monitoring-durante-2').html(monitoringDurante);
+            $('#informasiMedis-laporan-recovery-medication').html(medication);
+            $('#informasiMedis-laporan-recovery-room-monitoring').html(recoveryRoom);
+            $('#informasiMedis-laporan-recovery-room-monitoring-score').html(roomRecoveryScore);
+            $('#body-recovery-room-oprs029-oprs033').html(recoveryRoomOprs029Oprs033);
+            // $('#infus-monitoring-duranate').html(recoveryRoomOprs029Oprs033);
 
-        $('#informasiMedis-laporan-intruksi-pasca-anesthesi').html(oprs013)
-        $('#informasiMedis-laporan-recovery-room-monitoring-score-2').html(oprs014)
+            $('#informasiMedis-laporan-intruksi-pasca-anesthesi').html(oprs013)
+            $('#informasiMedis-laporan-recovery-room-monitoring-score-2').html(oprs014)
 
-        $("#formdiag-lengkap").on("click", function(e) {
-            addRowDiagDokterOprs('bodyDiagLaporanAnesthesiLengkap-', pasienOperasiSelected
-                ?.vactination_id,
-                null, null, 14, 0);
-        });
-
-        $("#bleeding_amount_val").val(data?.assessment_anesthesia?.bleeding_amount ?? 0)
-        $("#urine_amount_val").val(data?.assessment_anesthesia?.urine_amount ?? 0)
-
-        if (data?.assessment_anesthesia?.start_anesthesia) {
-            $("#anesthesiaStart").val(moment(data?.assessment_anesthesia.start_anesthesia).format(
-                'DD/MM/YYYY HH:mm'));
-
-        }
-        if (data?.assessment_anesthesia?.end_anesthesia) {
-            $("#anesthesiaEnd").val(moment(data?.assessment_anesthesia.end_anesthesia).format(
-                'DD/MM/YYYY HH:mm'));
-        }
-        let startOperation = pasienOperasiSelected?.start_operation;
-        let endOperation = pasienOperasiSelected?.end_operation;
-
-        let formatDate = (date, format = 'DD/MM/YYYY HH:mm') => date ? moment(date).format(format) :
-            '';
-
-        let validEndOperation = endOperation && moment(endOperation).isSameOrAfter(startOperation);
-
-        $("#surgeryStart").val(formatDate(startOperation));
-        $("#surgeryEnd").val(validEndOperation ?
-            formatDate(endOperation) :
-            formatDate(moment()));
-
-        $("#body_id-laporan_anestesiLengkap").val(data?.assessment_anesthesia?.body_id ??
-            get_bodyid());
-        $("#document_id-laporan_anestesiLengkap").val(pasienOperasiSelected?.vactination_id);
-
-        if (anesthesia_recovery?.bromage) {
-            anesthesia_recovery?.bromage.forEach(each => {
-
-                addBromage({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    data: each,
-                    container: 'bromageContainer1',
-                    bodyId: 'bodyBromage1'
-                })
-                $("#addBromage1").hide();
-
-            })
-        }
-
-        if (anesthesia_recovery?.steward) {
-            anesthesia_recovery?.steward.forEach((item, index) => {
-                addSteward({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    item: item,
-                    index: index, // new 08/08
-                    container: 'stewardContainer1'
-                })
-                $("#addSteward1").hide();
+            $("#formdiag-lengkap").on("click", function(e) {
+                addRowDiagDokterOprs('bodyDiagLaporanAnesthesiLengkap-', pasienOperasiSelected
+                    ?.vactination_id,
+                    null, null, 14, 0);
             });
-        }
 
-        $("#addBromage1").on("click", function(e) {
-            let bromageCount = $('#bromageContainer1 .bromage-item').length;
+            $("#bleeding_amount_val").val(data?.assessment_anesthesia?.bleeding_amount ?? 0)
+            $("#urine_amount_val").val(data?.assessment_anesthesia?.urine_amount ?? 0)
 
+            if (data?.assessment_anesthesia?.start_anesthesia) {
+                $("#anesthesiaStart").val(moment(data?.assessment_anesthesia.start_anesthesia).format(
+                    'DD/MM/YYYY HH:mm'));
 
-            if (bromageCount === 0) {
-                addBromage({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    data: {},
-                    container: 'bromageContainer1',
-                    bodyId: 'bodyBromage1'
-                })
-
-                $(this).hide();
             }
-        });
-
-        $("#addSteward1").on("click", function(e) {
-            let rowCount = $('#stewardContainer1 tr').length;
-            if (rowCount === 0) {
-                addSteward({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    item: {},
-                    index: rowCount, // new 08/08,
-                    container: 'stewardContainer1'
-                })
-                $(this).hide();
+            if (data?.assessment_anesthesia?.end_anesthesia) {
+                $("#anesthesiaEnd").val(moment(data?.assessment_anesthesia.end_anesthesia).format(
+                    'DD/MM/YYYY HH:mm'));
             }
-        });
+            let startOperation = pasienOperasiSelected?.start_operation;
+            let endOperation = pasienOperasiSelected?.end_operation;
 
+            let formatDate = (date, format = 'DD/MM/YYYY HH:mm') => date ? moment(date).format(format) :
+                '';
 
+            let validEndOperation = endOperation && moment(endOperation).isSameOrAfter(startOperation);
 
-        $('#bodyAldreteoprs023-1').empty();
+            $("#surgeryStart").val(formatDate(startOperation));
+            $("#surgeryEnd").val(validEndOperation ?
+                formatDate(endOperation) :
+                formatDate(moment()));
 
+            $("#body_id-laporan_anestesiLengkap").val(data?.assessment_anesthesia?.body_id ??
+                get_bodyid());
+            $("#document_id-laporan_anestesiLengkap").val(pasienOperasiSelected?.vactination_id);
 
-        if (data?.assessment_anesthesia_recovery?.aldrete) {
-            data?.assessment_anesthesia_recovery?.aldrete.forEach((item, index) => {
-                AddRowAldrete005({
-                    item: item,
-                    index: index,
-                    container: 'bodyAldreteoprs023-1'
+            if (anesthesia_recovery?.bromage) {
+                anesthesia_recovery?.bromage.forEach(each => {
+
+                    addBromage({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        data: each,
+                        container: 'bromageContainer1',
+                        bodyId: 'bodyBromage1'
+                    })
+                    $("#addBromage1").hide();
+
+                })
+            }
+
+            if (anesthesia_recovery?.steward) {
+                anesthesia_recovery?.steward.forEach((item, index) => {
+                    addSteward({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        item: item,
+                        index: index, // new 08/08
+                        container: 'stewardContainer1'
+                    })
+                    $("#addSteward1").hide();
                 });
-                $("#addAldrete-1").hide()
+            }
 
+            $("#addBromage1").on("click", function(e) {
+                let bromageCount = $('#bromageContainer1 .bromage-item').length;
+
+
+                if (bromageCount === 0) {
+                    addBromage({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        data: {},
+                        container: 'bromageContainer1',
+                        bodyId: 'bodyBromage1'
+                    })
+
+                    $(this).hide();
+                }
             });
-        }
 
-        $('#addAldrete-1').click(function() {
-            let rowCount = $('#bodyAldreteoprs023-1 tr').length;
+            $("#addSteward1").on("click", function(e) {
+                let rowCount = $('#stewardContainer1 tr').length;
+                if (rowCount === 0) {
+                    addSteward({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        item: {},
+                        index: rowCount, // new 08/08,
+                        container: 'stewardContainer1'
+                    })
+                    $(this).hide();
+                }
+            });
 
-            if (rowCount === 0) {
-                AddRowAldrete005({
-                    item: {},
-                    index: rowCount,
-                    container: 'bodyAldreteoprs023-1'
+
+
+            $('#bodyAldreteoprs023-1').empty();
+
+
+            if (data?.assessment_anesthesia_recovery?.aldrete) {
+                data?.assessment_anesthesia_recovery?.aldrete.forEach((item, index) => {
+                    AddRowAldrete005({
+                        item: item,
+                        index: index,
+                        container: 'bodyAldreteoprs023-1'
+                    });
+                    $("#addAldrete-1").hide()
 
                 });
-                $(this).hide();
             }
 
-        });
+            $('#addAldrete-1').click(function() {
+                let rowCount = $('#bodyAldreteoprs023-1 tr').length;
 
+                if (rowCount === 0) {
+                    AddRowAldrete005({
+                        item: {},
+                        index: rowCount,
+                        container: 'bodyAldreteoprs023-1'
 
+                    });
+                    $(this).hide();
+                }
 
-        getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesiLengkap', '11');
-        getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesiLengkap2', '12');
-        getVitalSignLaporanAnesthesiLengkap2('vitalSignBodyLaporanAnesthesiLengkap3', '13');
-
-        if (data?.assessment_anesthesia?.body_id) {
-
-            getDataVitailSign({
-                pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
-                account_ids: ['11', '12', '13'],
-                suffixes: ["-laporanAnesthesi-lengkap", "-laporanAnesthesi-lengkap-durante",
-                    "-laporanAnesthesi-lengkap-monitoring"
-                ]
             });
 
 
-            getDataDiagnosasss({
-                pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
-                vactination_id: pasienOperasiSelected?.vactination_id
-            });
-        }
-        const monitoringDuranteId = '#monitoringDurante-1';
-        const recoveryRoomId = '#RecoveryRoom-1';
 
+            getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesiLengkap', '11');
+            getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesiLengkap2', '12');
+            getVitalSignLaporanAnesthesiLengkap2('vitalSignBodyLaporanAnesthesiLengkap3', '13');
 
-        getRequestVtRangeAnesthesia({
-            vactination_id: pasienOperasiSelected?.vactination_id,
-            filters: ["ALL", "13"],
-            body_requestCharts: ["myChartMonitoringDurante", "myChartRecoveryRoom"],
-            body_requestTables: ["bodyDatamyChartMonitoringDurante", "bodyDatamyChartRecoveryRoom"]
-        });
-
-
-        const formId = 'form-laporanAnesthesi-lengkap';
-        const primaryKey = data?.assessment_anesthesia?.body_id;
-        const formSaveBtn = 'btn-save-laporan-anesthesiLengkap';
-
-        $("#body_id-laporanAnesthesi-lengkap").val(primaryKey ?? get_bodyid())
-        $("#vs_status_id-laporanAnesthesi-lengkap-durantee").on("change", function() {
-            var optionSelected = $("option:selected", this);
-            $('#container-vitalsign-laporanAnesthesi-lengkap-durantee').empty();
-
-            switch (optionSelected.val()) {
-                case '4':
-                    getAvalueType({
-                        p_type: 'GEN0022',
-                        content_id: 'container-vitalsign-laporanAnesthesi-lengkap-durantee',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
-                    });
-                    break;
-                case '10':
-                    getAvalueType({
-                        p_type: 'GEN0021',
-                        content_id: 'container-vitalsign-laporanAnesthesi-lengkap-durantee',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
-                    });
-                    break;
-            }
-        })
-        $("#vs_status_id-laporanAnesthesi-lengkap").on("change", function() {
-            var optionSelected = $("option:selected", this);
-            $('#container-vitalsign-laporanAnesthesi-lengkap').empty();
-
-            switch (optionSelected.val()) {
-                case '4':
-                    getAvalueType({
-                        p_type: 'GEN0022',
-                        content_id: 'container-vitalsign-laporanAnesthesi-lengkap',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
-                    });
-                    break;
-                case '10':
-                    getAvalueType({
-                        p_type: 'GEN0021',
-                        content_id: 'container-vitalsign-laporanAnesthesi-lengkap',
-                        body_id: pasienOperasiSelected?.vactination_id,
-                        get_data: data ?? null,
-                    });
-                    break;
-            }
-        })
-
-        $("button[name='signAlengkap']").each(function() {
             if (data?.assessment_anesthesia?.body_id) {
-                $(this).prop('disabled', false);
-            } else {
-                $(this).prop('disabled', true);
+
+                getDataVitailSign({
+                    pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
+                    account_ids: ['11', '12', '13'],
+                    suffixes: ["-laporanAnesthesi-lengkap", "-laporanAnesthesi-lengkap-durante",
+                        "-laporanAnesthesi-lengkap-monitoring"
+                    ]
+                });
+
+
+                getDataDiagnosasss({
+                    pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
+                    vactination_id: pasienOperasiSelected?.vactination_id
+                });
             }
-        });
-
-        $("button[name='signAlengkap']").off().on("click", function() {
-            const buttonId = $(this).data('button-id');
-            const signKe = $(this).data('sign-ke');
-            const signFiled = $(this).data('save');
-            if (!$(this).is(':disabled')) {
-                addSignUserOPS("form-laporanAnesthesi-lengkap", "anesthesi-lengkap",
-                    'body_id-laporanAnesthesi-lengkap',
-                    buttonId, 10, signKe, 1, "Laporan Anesthesi Lengkap", signFiled);
-            }
-        });
-
-        const {
-            signin_surgeon_signature,
-            signin_anesthesia_signature,
-
-            body_id
-        } = props?.data || {};
-
-        let targetId = "";
-        let qrText = "";
-
-        if (signin_surgeon_signature) {
-            targetId = `qr-signin_surgeon_signature-1-${body_id}`;
-            qrText = signin_surgeon_signature;
-        } else if (signin_anesthesia_signature) {
-            targetId = `qr-signin_anesthesia_signature-2-${body_id}`;
-            qrText = signin_anesthesia_signature;
-        }
+            const monitoringDuranteId = '#monitoringDurante-1';
+            const recoveryRoomId = '#RecoveryRoom-1';
 
 
-        if (targetId) {
-            $(`#${targetId}`).empty();
-            new QRCode(document.getElementById(targetId), {
-                text: qrText,
-                width: 70,
-                height: 70,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
+            getRequestVtRangeAnesthesia({
+                vactination_id: pasienOperasiSelected?.vactination_id,
+                filters: ["ALL", "13"],
+                body_requestCharts: ["myChartMonitoringDurante", "myChartRecoveryRoom"],
+                body_requestTables: ["bodyDatamyChartMonitoringDurante", "bodyDatamyChartRecoveryRoom"]
             });
+
+
+            const formId = 'form-laporanAnesthesi-lengkap';
+            const primaryKey = data?.assessment_anesthesia?.body_id;
+            const formSaveBtn = 'btn-save-laporan-anesthesiLengkap';
+
+            $("#body_id-laporanAnesthesi-lengkap").val(primaryKey ?? get_bodyid())
+            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-laporanAnesthesi-lengkap-durantee').empty();
+
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap-durantee',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap-durantee',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
+            $("#vs_status_id-laporanAnesthesi-lengkap").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-laporanAnesthesi-lengkap').empty();
+
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
+
+            $("button[name='signAlengkap']").each(function() {
+                if (data?.assessment_anesthesia?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+
+            $("button[name='signAlengkap']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+                const signFiled = $(this).data('save');
+                if (!$(this).is(':disabled')) {
+                    addSignUserOPS("form-laporanAnesthesi-lengkap", "anesthesi-lengkap",
+                        'body_id-laporanAnesthesi-lengkap',
+                        buttonId, 10, signKe, 1, "Laporan Anesthesi Lengkap", signFiled);
+                }
+            });
+
+            const {
+                signin_surgeon_signature,
+                signin_anesthesia_signature,
+
+                body_id
+            } = props?.data || {};
+
+            let targetId = "";
+            let qrText = "";
+
+            if (signin_surgeon_signature) {
+                targetId = `qr-signin_surgeon_signature-1-${body_id}`;
+                qrText = signin_surgeon_signature;
+            } else if (signin_anesthesia_signature) {
+                targetId = `qr-signin_anesthesia_signature-2-${body_id}`;
+                qrText = signin_anesthesia_signature;
+            }
+
+
+            if (targetId) {
+                $(`#${targetId}`).empty();
+                new QRCode(document.getElementById(targetId), {
+                    text: qrText,
+                    width: 70,
+                    height: 70,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H // High error correction
+                });
+            }
+
+            $(document).on("change", "#oprs031_01", function() {
+                if ($(this).is(":checked")) {
+                    $("input[type='radio'][name='oprs032_03']")
+                        .prop("checked", false)
+                        .off("change");
+                }
+            });
+
+            $(document).on("change", "input[type='radio'][name='oprs032_03']", function() {
+                $("#oprs031_01").prop("checked", false); // Hanya ubah tanpa trigger change
+            });
+
+
+
+            // if (data?.assessment_anesthesia?.body_id) {
+            //     checkSignSignature1(formId, primaryKey, formSaveBtn, '10');
+            // }
+            initializeFlatpickrOperasi()
+            btnSaveLaporanAnestesiLengkap(pasienOperasiSelected)
         }
 
-        $(document).on("change", "#oprs031_01", function() {
-            if ($(this).is(":checked")) {
-                $("input[type='radio'][name='oprs032_03']")
-                    .prop("checked", false)
-                    .off("change");
-            }
-        });
-
-        $(document).on("change", "input[type='radio'][name='oprs032_03']", function() {
-            $("#oprs031_01").prop("checked", false); // Hanya ubah tanpa trigger change
-        });
+        const escapeHtmlOperasi = (unsafe) => {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        };
 
 
+        const getType = (props) => {
 
-        // if (data?.assessment_anesthesia?.body_id) {
-        //     checkSignSignature1(formId, primaryKey, formSaveBtn, '10');
-        // }
-        initializeFlatpickrOperasi()
-        btnSaveLaporanAnestesiLengkap(pasienOperasiSelected)
-    }
+            return new Promise((resolve) => {
+                let htmlContent = '';
+                let initializeQuill = false;
+                let isAnastesi = props?.p_type == 'OPRS007'; //new
 
+                const validTypesRecoveryRoom = ['OPRS029', 'OPRS030', 'OPRS031', 'OPRS032',
+                    'OPRS033', "OPRS034"
+                ];
 
+                if ([3, 4, 7].includes(parseInt(props?.code))) {
+                    let matchedData = avalue?.filter(item => item?.parameter_id === props
+                        ?.parameter_id &&
+                        item?.p_type === props?.p_type);
+                    let valueProp = props?.p_type === "" ? 'value_score' : 'value_id';
 
-    const getType = (props) => {
-
-        return new Promise((resolve) => {
-            let htmlContent = '';
-            let initializeQuill = false;
-            let isAnastesi = props?.p_type == 'OPRS007'; //new
-
-            const validTypesRecoveryRoom = ['OPRS029', 'OPRS030', 'OPRS031', 'OPRS032',
-                'OPRS033', "OPRS034"
-            ];
-
-            if ([3, 4, 7].includes(parseInt(props?.code))) {
-                let matchedData = avalue?.filter(item => item?.parameter_id === props
-                    ?.parameter_id &&
-                    item?.p_type === props?.p_type);
-                let valueProp = props?.p_type === "" ? 'value_score' : 'value_id';
-
-                switch (parseInt(props?.code)) {
-                    case 3:
-                        let selectOptions = '';
-                        if (props?.p_type == 'OPRS024') {
-                            selectOptions = matchedData?.map(item =>
-                                `<option value="${item[valueProp]}"  data-type="${item?.p_type}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" 
+                    switch (parseInt(props?.code)) {
+                        case 3:
+                            let selectOptions = '';
+                            if (props?.p_type == 'OPRS024') {
+                                selectOptions = matchedData?.map(item =>
+                                    `<option value="${item[valueProp]}"  data-type="${item?.p_type}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" 
                                 data-parameter="${item?.parameter_id}" ${props?.get_data?.value_id === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
-                            ).join('');
-                        } else if (props?.p_type == 'GEN0022' || props?.p_type ==
-                            'GEN0021') {
+                                ).join('');
+                            } else if (props?.p_type == 'GEN0022' || props?.p_type ==
+                                'GEN0021') {
 
-                            selectOptions = matchedData?.map(item =>
-                                `<option value="${item['value_score']}" ${(props?.get_data?.[props?.column_name?.toLowerCase()] ?? "") === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
-                            ).join('');
-                        } else if (props?.p_type && validTypesRecoveryRoom?.includes(props
-                                .p_type)) {
-                            selectOptions = matchedData?.map(item =>
-                                `<option value="${item['value_id']}" data-score="${item?.value_score}" data-desc="${item?.value_desc}"  ${props?.get_data?.['value_desc_'+props?.parameter_id] == item?.value_desc ? 'selected': ''}>${item?.value_desc}</option>`
-                            ).join('');
-                        } else {
+                                selectOptions = matchedData?.map(item =>
+                                    `<option value="${item['value_score']}" ${(props?.get_data?.[props?.column_name?.toLowerCase()] ?? "") === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
+                                ).join('');
+                            } else if (props?.p_type && validTypesRecoveryRoom?.includes(props
+                                    .p_type)) {
+                                selectOptions = matchedData?.map(item =>
+                                    `<option value="${item['value_id']}" data-score="${item?.value_score}" data-desc="${item?.value_desc}"  ${props?.get_data?.['value_desc_'+props?.parameter_id] == item?.value_desc ? 'selected': ''}>${item?.value_desc}</option>`
+                                ).join('');
+                            } else {
 
-                            selectOptions = matchedData?.map(item =>
-                                `<option value="${item[valueProp]}" ${(props?.get_data?.[props?.column_name?.toLowerCase()] ?? "") === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
-                            ).join('');
-                        }
+                                selectOptions = matchedData?.map(item =>
+                                    `<option value="${item[valueProp]}" ${(props?.get_data?.[props?.column_name?.toLowerCase()] ?? "") === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
+                                ).join('');
+                            }
 
-                        if (props?.p_type == 'GEN0022' || props?.p_type == 'GEN0021') {
-                            htmlContent = `
+                            if (props?.p_type == 'GEN0022' || props?.p_type == 'GEN0021') {
+                                htmlContent = `
                                                     <div class="form-group mb-0 pt-4">
                                                         <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                                         <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
@@ -7177,9 +7198,9 @@ let kopTemplateOprs = [];
                                                         </select>
                                                     </div>
                                                         `;
-                        } else if (props?.p_type && validTypesRecoveryRoom?.includes(props
-                                .p_type)) {
-                            htmlContent = `
+                            } else if (props?.p_type && validTypesRecoveryRoom?.includes(props
+                                    .p_type)) {
+                                htmlContent = `
                                                     <div class="form-group mb-0 pt-4">
                                                         <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                                         <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
@@ -7188,9 +7209,9 @@ let kopTemplateOprs = [];
                                                         </select>
                                                     </div>
                                                     `;
-                        } else {
+                            } else {
 
-                            htmlContent = `
+                                htmlContent = `
                                         <div class="form-group mb-0 pt-4">
                                             <label for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                             <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}">
@@ -7199,36 +7220,41 @@ let kopTemplateOprs = [];
                                             </select>
                                         </div>
                                             `;
-                        }
-                        break;
+                            }
+                            break;
 
-                    case 4:
-                        initializeQuill = true;
-                        if (props?.p_type && validTypesRecoveryRoom?.includes(props
-                                .p_type)) {
+                        case 4:
+                            initializeQuill = true;
+                            if (props?.p_type && validTypesRecoveryRoom?.includes(props
+                                    .p_type)) {
 
 
-                            htmlContent = `
+                                htmlContent = `
                                     <div class="form-group pb-5 pt-4" style="padding-bottom: 4rem !important;">
                                     <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input type="hidden" id="quill_oprsInp${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" >
+                                    <input type="hidden" id="quill_oprsInp${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" 
+                                    data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" value="${escapeHtmlOperasi(props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}" >
                                     <div id="quill_${props?.p_type?.toLowerCase()}_${props?.parameter_id}" class="quill-editor-oprs" 
                                     data-id="quill_oprsInp${props?.p_type?.toLowerCase()}_${props?.parameter_id}"
                                     name='${props?.p_type?.toLowerCase()}_${props?.parameter_id}'>${(props?.get_data?.['value_id_'+props?.parameter_id]) ?? ''}</div>
                                     </div>
                                     `;
-                        } else {
-                            initializeQuill = true;
+                            } else {
+                                initializeQuill = true;
 
-                            if (props.p_type != 'OPRS008') {
-                                let resultValueInput = `${props?.get_data?.[props?.column_name?.toLowerCase()] 
+                                if (props.p_type != 'OPRS008') {
+                                    let resultValueInput = `${props?.get_data?.[props?.column_name?.toLowerCase()] 
                                                                 ? (props?.get_data?.[props?.column_name?.toLowerCase()]) 
                                                                 : ''}`
 
-                                htmlContent = `
+
+
+                                    htmlContent = `
                                         <div class="form-group pb-5 pt-4">
                                             <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                            <input type="hidden" id="quill_oprsInp${props?.column_name?.toLowerCase()}" name="${props?.column_name?.toLowerCase()}" >
+                                            <input type="hidden" id="quill_oprsInp${props?.column_name?.toLowerCase()}" name="${props?.column_name?.toLowerCase()}" 
+                                            value="${escapeHtmlOperasi(props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}"
+                                            >
                                             <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}_${props?.p_type}"  data-id="quill_oprsInp${props?.column_name?.toLowerCase()}"
                                                     class="quill-editor-oprs" 
                                                     name="${props?.column_name?.toLowerCase()}">
@@ -7237,74 +7263,77 @@ let kopTemplateOprs = [];
                                         </div>
                                     `;
 
-                            } else {
-                                initializeQuill = true;
+                                } else {
+                                    initializeQuill = true;
 
-                                if (props?.column_name != 'OPERATION_DESC') {
-                                    htmlContent = `
+                                    if (props?.column_name != 'OPERATION_DESC') {
+
+                                        htmlContent = `
                                                         <div class="form-group pb-5 pt-4">
                                                             <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                                            <input type="hidden" name="${props?.column_name?.toLowerCase()}" id="quill_oprsInp${props?.column_name?.toLowerCase()}">
+                                                            <input type="hidden" name="${props?.column_name?.toLowerCase()}" id="quill_oprsInp${props?.column_name?.toLowerCase()}" 
+                                                            value="${escapeHtmlOperasi(props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}">
                                                             <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor-oprs" name="${props?.column_name?.toLowerCase()}" data-id="quill_oprsInp${props?.column_name?.toLowerCase()}">
                                                                 ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}
                                                             </div>
                                                         </div>
                                                     `;
-                                } else {
+                                    } else {
 
-                                    initializeQuill = true;
-                                    htmlContent = `
+                                        initializeQuill = true;
+                                        htmlContent = `
                                                         <div class="form-group pb-5 pt-4">
                                                             <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_oprs008">${props?.parameter_desc}</label>
-                                                            <input type="hidden" name="${props?.column_name?.toLowerCase()}_oprs008"  id="quill_oprsInp${props?.column_name?.toLowerCase()}_oprs008">
+                                                            <input type="hidden" name="${props?.column_name?.toLowerCase()}_oprs008"  id="quill_oprsInp${props?.column_name?.toLowerCase()}_oprs008"
+                                                            value="${escapeHtmlOperasi(props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}">
                                                             <div id="quill_${props?.column_name?.toLowerCase()}_oprs008" class="quill-editor-oprs" name="${props?.column_name?.toLowerCase()}" data-id="quill_oprsInp${props?.column_name?.toLowerCase()}_oprs008">
                                                                 ${(props?.get_data?.[props?.column_name?.toLowerCase()]) ?? ''}
                                                             </div>
                                                         </div>
                                                     `;
+                                    }
+
                                 }
 
                             }
+                            break;
 
-                        }
-                        break;
-
-                    case 7:
-                        if (props?.p_type && validTypesRecoveryRoom?.includes(props
-                                .p_type)) {
-                            let radioOptions = matchedData.map((item, index) => `
+                        case 7:
+                            if (props?.p_type && validTypesRecoveryRoom?.includes(props
+                                    .p_type)) {
+                                let radioOptions = matchedData.map((item, index) => `
                                     <div class="form-check mb-0 pt-4">
                                         <input class="form-check-input" type="radio" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" value="${item[valueProp]}" ${props?.get_data?.['value_desc_'+ props?.parameter_id] === item.value_desc ? 'checked' : (index === 0 && !props?.get_data?.['value_desc_' + props?.parameter_id] ? 'checked' : '')}>
                                         <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
                                     </div>
                                 `).join('');
-                            htmlContent = `
+                                htmlContent = `
                                     <div class="form-group mb-0 pt-4">
                                         <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                         ${radioOptions}
                                     </div>
                                 `;
-                        } else {
-                            let radioOptions = '';
-                            if (props?.column_name?.toLowerCase() == 'terlayani') {
+                            } else {
+                                let radioOptions = '';
+                                if (props?.column_name?.toLowerCase() == 'terlayani') {
 
-                                const selectedValue = props?.get_data?. [props?.column_name
-                                    ?.toLowerCase()
-                                ];
-                                let isChecked =
-                                    false;
+                                    const selectedValue = props?.get_data?.[props?.column_name
+                                        ?.toLowerCase()
+                                    ];
+                                    let isChecked =
+                                        false;
 
-                                radioOptions = matchedData.map((item) => {
-                                    let checked = "";
+                                    radioOptions = matchedData.map((item) => {
+                                        let checked = "";
 
-                                    if (selectedValue === item.value_score && !
-                                        isChecked) {
-                                        checked = 'checked';
-                                        isChecked =
-                                            true;
-                                    }
+                                        if (selectedValue === item.value_score && !
+                                            isChecked) {
+                                            checked = 'checked';
+                                            isChecked =
+                                                true;
+                                        }
 
-                                    return `
+                                        return `
                                         <div class="form-check mb-0 pt-4">
                                             <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" 
                                                 id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item.value_id}" 
@@ -7313,10 +7342,10 @@ let kopTemplateOprs = [];
                                             <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item.value_id}">${item.value_desc}</label>
                                         </div>
                                     `;
-                                }).join('');
+                                    }).join('');
 
-                            } else {
-                                radioOptions = matchedData.map((item, index) => `
+                                } else {
+                                    radioOptions = matchedData.map((item, index) => `
                                         <div class="form-check mb-0 pt-4">
                                             <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item[valueProp]}" 
                                             ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] 
@@ -7325,34 +7354,34 @@ let kopTemplateOprs = [];
                                             <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
                                         </div>
                                     `).join('');
-                            }
+                                }
 
-                            htmlContent = `
+                                htmlContent = `
                                     <div class="form-group mb-0 pt-4">
                                         <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                         ${radioOptions}
                                     </div>
                                 `;
-                        }
+                            }
 
-                        break;
+                            break;
 
-                    default:
-                        htmlContent = '';
-                        break;
-                }
-            } else {
-                let matchedData = avalue?.filter(item => item?.parameter_id === props
-                    ?.parameter_id &&
-                    item.p_type === props?.p_type);
-                let valueProp = props?.p_type === "" ? 'value_score' : 'value_id';
-                //new
-                switch (parseInt(props?.code)) {
+                        default:
+                            htmlContent = '';
+                            break;
+                    }
+                } else {
+                    let matchedData = avalue?.filter(item => item?.parameter_id === props
+                        ?.parameter_id &&
+                        item.p_type === props?.p_type);
+                    let valueProp = props?.p_type === "" ? 'value_score' : 'value_id';
+                    //new
+                    switch (parseInt(props?.code)) {
 
-                    case 2:
-                        if (props?.p_type && validTypesRecoveryRoom?.includes(props
-                                .p_type)) {
-                            htmlContent = `
+                        case 2:
+                            if (props?.p_type && validTypesRecoveryRoom?.includes(props
+                                    .p_type)) {
+                                htmlContent = `
                                 <div class="form-check mb-0 pt-4">
                                     <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="">
                                     <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}"  
@@ -7363,87 +7392,87 @@ let kopTemplateOprs = [];
                                 </div>
                                 `;
 
-                            if (props?.p_type === "OPRS031" && props?.parameter_id ===
-                                "01") {
-                                const value = props?.get_data?. ['value_id_' + props
-                                    ?.parameter_id
-                                ];
+                                if (props?.p_type === "OPRS031" && props?.parameter_id ===
+                                    "01") {
+                                    const value = props?.get_data?.['value_id_' + props
+                                        ?.parameter_id
+                                    ];
 
-                                if (value === 1 || value === "1") {
-                                    setTimeout(() => {
-                                        $("input[type='radio'][name='oprs032_03']")
-                                            .prop(
-                                                "checked", false);
-                                    }, 300);
+                                    if (value === 1 || value === "1") {
+                                        setTimeout(() => {
+                                            $("input[type='radio'][name='oprs032_03']")
+                                                .prop(
+                                                    "checked", false);
+                                        }, 300);
+                                    }
                                 }
-                            }
 
-                        } else {
+                            } else {
 
-                            htmlContent = `
+                                htmlContent = `
                                 <div class="form-check mb-0 pt-4">
                                     <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="">
                                     <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="1" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''}>
                                     <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                 </div>
                                 `;
-                        }
-                        break;
-
-
-                    case 5:
-                        let data_start_operation = '';
-                        if (isAnastesi) {
-                            if (props?.column_name?.toLowerCase() == 'start_operation') {
-                                data_start_operation = moment(props?.data_tindakan[props
-                                    ?.column_name
-                                    ?.toLowerCase()]).format(
-                                    "DD/MM/YYYY HH:mm")
                             }
-                        }
-                        // oprs004_05
+                            break;
 
 
-                        htmlContent = `
+                        case 5:
+                            let data_start_operation = '';
+                            if (isAnastesi) {
+                                if (props?.column_name?.toLowerCase() == 'start_operation') {
+                                    data_start_operation = moment(props?.data_tindakan[props
+                                        ?.column_name
+                                        ?.toLowerCase()]).format(
+                                        "DD/MM/YYYY HH:mm")
+                                }
+                            }
+                            // oprs004_05
+
+
+                            htmlContent = `
                         <div class="form-group mb-0 pt-4">
                             <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                             <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
                             <input class="form-control datetime-input datetimeflatpickr-oprs" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
                         </div>
                             `;
-                        break;
-                    case 6:
-                        let multiOptions = matchedData?.map((item, index) => `
+                            break;
+                        case 6:
+                            let multiOptions = matchedData?.map((item, index) => `
                             <div class="form-check mb-0 pt-4">
                                 <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" name="${item?.value_info?.toLowerCase()}" value="${item.value_score}" ${props?.get_data?.[item?.value_info?.toLowerCase()] !== null ? 'checked' : ''}>
                                 <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
                             </div>
                         `).join('');
-                        htmlContent = `
+                            htmlContent = `
                             <div class="form-group mb-0 pt-4">
                                 <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                 ${multiOptions}
                             </div>
                         `;
-                        break;
-                    case 1:
-                        if (props?.p_type && validTypesRecoveryRoom?.includes(props
-                                .p_type)) {
-                            const paramId =
-                                `${props?.p_type?.toLowerCase()}_${props?.parameter_id}`;
-                            const isOPRS031 = props?.p_type === "OPRS031";
-                            const isOPRS033 = props?.p_type === "OPRS033";
-                            const isOPRS034 = props?.p_type === "OPRS034";
-                            const paramDesc = props?.parameter_desc;
+                            break;
+                        case 1:
+                            if (props?.p_type && validTypesRecoveryRoom?.includes(props
+                                    .p_type)) {
+                                const paramId =
+                                    `${props?.p_type?.toLowerCase()}_${props?.parameter_id}`;
+                                const isOPRS031 = props?.p_type === "OPRS031";
+                                const isOPRS033 = props?.p_type === "OPRS033";
+                                const isOPRS034 = props?.p_type === "OPRS034";
+                                const paramDesc = props?.parameter_desc;
 
-                            if (isOPRS033 && ["lcs", "lor", "barbotage"].includes(paramDesc
-                                    ?.toLowerCase())) {
-                                const selectedValue = props?.get_data?. ['value_desc_' +
-                                    props
-                                    ?.parameter_id
-                                ]
+                                if (isOPRS033 && ["lcs", "lor", "barbotage"].includes(paramDesc
+                                        ?.toLowerCase())) {
+                                    const selectedValue = props?.get_data?.['value_desc_' +
+                                        props
+                                        ?.parameter_id
+                                    ]
 
-                                htmlContent = `
+                                    htmlContent = `
                                             <div class="form-group mb-0 pt-4">
                                                 <label for="${paramId}">${paramDesc}</label>
                                                 <select class="form-select" id="${paramId}" name="${paramId}">
@@ -7452,18 +7481,18 @@ let kopTemplateOprs = [];
                                                     <option value="-" ${selectedValue === "-" ? "selected" : ""}>-</option>
                                                 </select>
                                             </div>`;
-                            } else if (isOPRS033) {
-                                htmlContent = `
+                                } else if (isOPRS033) {
+                                    htmlContent = `
                                             <div class="form-group mb-0 pt-4">
                                                 <label class="fw-bold" for="${paramId}">${paramDesc}</label>
                                                 <input type="text" class="form-control form-thems" id="${paramId}" 
                                                     data-score="${props?.value_score}" data-desc="${paramDesc}"
                                                     name="${paramId}" value="${props?.get_data['value_id_' + props?.parameter_id] ?? ''}">
                                             </div>`;
-                            } else if (isOPRS034) {
+                                } else if (isOPRS034) {
 
 
-                                htmlContent = `
+                                    htmlContent = `
                                             <div class="form-group mb-0 pt-4">
                                                 <label class="fw-bold" for="${paramId}">${paramDesc}</label>
                                                 <input type="text" class="form-control form-thems" id="${paramId}" 
@@ -7477,9 +7506,9 @@ let kopTemplateOprs = [];
                                                         ? "" 
                                                         : props?.get_data['value_id_' + props?.parameter_id]}">
                                             </div>`;
-                            } else if (isOPRS031) {
+                                } else if (isOPRS031) {
 
-                                htmlContent = `
+                                    htmlContent = `
                                                 <div class="form-group mb-0 pt-4">
                                                     <label class="fw-bold" for="${paramId}">${paramDesc}</label>
                                                     <input type="text" class="form-control form-thems" id="${paramId}" 
@@ -7493,8 +7522,8 @@ let kopTemplateOprs = [];
                                                             ? "" 
                                                             : props?.get_data['value_id_' + props?.parameter_id]}">
                                                 </div>`;
-                            } else {
-                                htmlContent = `
+                                } else {
+                                    htmlContent = `
                                             <div class="form-group mb-0 pt-4">
                                                 <label class="fw-bold" for="${paramId}">${paramDesc}</label>
                                                 <input type="text" class="form-control form-thems" id="${paramId}"
@@ -7507,86 +7536,86 @@ let kopTemplateOprs = [];
                                                                     : (props?.get_data['value_desc_' + props?.parameter_id] ?? '')
                                                                 }">
                                             </div>`;
-                            }
-                        } else if (props?.p_type === "OPRS006" && props?.column_name
-                            ?.toLowerCase() ===
-                            'rooms_id') {
-                            const columnName = props?.column_name?.toLowerCase();
-                            htmlContent = `
+                                }
+                            } else if (props?.p_type === "OPRS006" && props?.column_name
+                                ?.toLowerCase() ===
+                                'rooms_id') {
+                                const columnName = props?.column_name?.toLowerCase();
+                                htmlContent = `
                                         <div class="form-group mb-0 pt-4">
                                             <label class="fw-bold" for="${columnName}">${props?.parameter_desc}</label>
                                             <input type="${columnName === 'bleeding' ? 'number' : 'text'}" 
                                                 class="form-control form-thems" id="${columnName}" name="${columnName}"
                                                 value="${props?.data_tindakan[columnName] ?? props?.get_data?.[columnName] ?? ''}" disabled>
                                         </div>`;
-                        } else if (props?.p_type === "OPRS009" && ["analgesik",
-                                "antiemetik",
-                                "antibiotik", "other_drugs"
-                            ].includes(props?.column_name?.toLowerCase())) {
-                            const columnName = props?.column_name?.toLowerCase();
-                            const obatMap = {
-                                analgesik: ["J22", "J21"],
-                                antibiotik: ["J128", "J54"],
-                                antiemetik: ["J09"],
-                            };
-                            const dataFilterObat = obatMap[columnName] || [];
+                            } else if (props?.p_type === "OPRS009" && ["analgesik",
+                                    "antiemetik",
+                                    "antibiotik", "other_drugs"
+                                ].includes(props?.column_name?.toLowerCase())) {
+                                const columnName = props?.column_name?.toLowerCase();
+                                const obatMap = {
+                                    analgesik: ["J22", "J21"],
+                                    antibiotik: ["J128", "J54"],
+                                    antiemetik: ["J09"],
+                                };
+                                const dataFilterObat = obatMap[columnName] || [];
 
-                            let resultObatOPRS009 = props?.items.filter(e => dataFilterObat
-                                .includes(e
-                                    ?.code_5) && e.isalkes.trim() !== "1");
-                            let initialValue = isAnastesi ? (props?.items[columnName] ??
-                                '') : (
-                                props
-                                ?.get_data?. [columnName] ?? '');
+                                let resultObatOPRS009 = props?.items.filter(e => dataFilterObat
+                                    .includes(e
+                                        ?.code_5) && e.isalkes.trim() !== "1");
+                                let initialValue = isAnastesi ? (props?.items[columnName] ??
+                                    '') : (
+                                    props
+                                    ?.get_data?.[columnName] ?? '');
 
-                            if (!initialValue && resultObatOPRS009.length > 0) {
-                                initialValue = resultObatOPRS009.map(item => item?.name)
-                                    .join(', ');
-                            }
+                                if (!initialValue && resultObatOPRS009.length > 0) {
+                                    initialValue = resultObatOPRS009.map(item => item?.name)
+                                        .join(', ');
+                                }
 
-                            htmlContent = `
+                                htmlContent = `
                                         <div class="form-group mb-0 pt-4">
                                             <label class="fw-bold" for="${columnName}">${props?.parameter_desc}</label>
                                             <input type="${columnName === 'bleeding' ? 'number' : 'text'}" 
                                                 class="form-control form-thems" id="${columnName}" name="${columnName}" value="${initialValue}" 
                                                 ${isAnastesi ? 'disabled' : ''}>
                                         </div>`;
-                        } else if (props?.p_type === "OPRS008" && props?.parameter_id ===
-                            "03") {
-                            const columnName = props?.column_name?.toLowerCase();
-                            let labelsData = "";
-                            let badgeClass = ""; // Default tanpa badge
+                            } else if (props?.p_type === "OPRS008" && props?.parameter_id ===
+                                "03") {
+                                const columnName = props?.column_name?.toLowerCase();
+                                let labelsData = "";
+                                let badgeClass = ""; // Default tanpa badge
 
-                            if (props?.get_data?. [columnName] == 0) {
-                                labelsData = "Elektif";
-                            } else if (props?.get_data?. [columnName] == 1) {
-                                labelsData = "Cyto";
-                                badgeClass = "badge bg-warning text-dark";
-                            } else if (props?.get_data?. [columnName] == 2) {
-                                labelsData = "Emergency";
-                                badgeClass = "badge bg-danger";
-                            }
+                                if (props?.get_data?.[columnName] == 0) {
+                                    labelsData = "Elektif";
+                                } else if (props?.get_data?.[columnName] == 1) {
+                                    labelsData = "Cyto";
+                                    badgeClass = "badge bg-warning text-dark";
+                                } else if (props?.get_data?.[columnName] == 2) {
+                                    labelsData = "Emergency";
+                                    badgeClass = "badge bg-danger";
+                                }
 
-                            htmlContent = `<div class="form-group mb-0 pt-4">
+                                htmlContent = `<div class="form-group mb-0 pt-4">
                                                 <label class="fw-bold" for="${columnName}">${props?.parameter_desc}</label>
                                                 <p class="fw-bold" for="${columnName}">
                                                     ${badgeClass ? `<span class="${badgeClass}">${labelsData}</span>` : labelsData}
                                                 </p>
                                             </div>`;
 
-                        } else if (props?.p_type === "OPRS006" && ["26", "27", "28", "29",
-                                "30",
-                                "31"
-                            ]
-                            .includes(props.parameter_id)) {
-                            const columnName = props?.column_name?.toLowerCase();
-                            const selectedValue = isAnastesi ? (props?.items[columnName] ??
-                                '') : (
-                                props
-                                ?.get_data?. [columnName] ?? '');
+                            } else if (props?.p_type === "OPRS006" && ["26", "27", "28", "29",
+                                    "30",
+                                    "31"
+                                ]
+                                .includes(props.parameter_id)) {
+                                const columnName = props?.column_name?.toLowerCase();
+                                const selectedValue = isAnastesi ? (props?.items[columnName] ??
+                                    '') : (
+                                    props
+                                    ?.get_data?.[columnName] ?? '');
 
 
-                            htmlContent = `
+                                htmlContent = `
                                     <div class="form-group mb-0 pt-4">
                                         <label class="fw-bold">${props?.parameter_desc} <span class="text-muted"></span></label>
                                         <div>
@@ -7597,18 +7626,18 @@ let kopTemplateOprs = [];
                                         </div>
                                     </div>`;
 
-                            $(document).on('change', `.param-check`, function() {
-                                if ($(this).prop('checked')) {
-                                    $('.param-check').not(this).prop('checked',
-                                        false);
-                                }
-                            });
+                                $(document).on('change', `.param-check`, function() {
+                                    if ($(this).prop('checked')) {
+                                        $('.param-check').not(this).prop('checked',
+                                            false);
+                                    }
+                                });
 
-                        } else {
+                            } else {
 
-                            const columnName = props?.column_name?.toLowerCase();
+                                const columnName = props?.column_name?.toLowerCase();
 
-                            htmlContent = `
+                                htmlContent = `
                                         <div class="form-group mb-0 pt-4">
                                             <label class="fw-bold" for="${columnName}">${props?.parameter_desc}</label>
                                             <input type="${columnName === 'bleeding' ? 'number' : 'text'}" class="form-control form-thems" 
@@ -7616,183 +7645,183 @@ let kopTemplateOprs = [];
                                                 value="${isAnastesi ? (props?.items[columnName] ?? '') : (props?.get_data?.[columnName] ?? '')}"
                                                 ${isAnastesi ? 'disabled' : ''}>
                                         </div>`;
-                        }
+                            }
 
-                        if (isAnastesi && props?.column_name?.toLowerCase() ===
-                            'type_of_anesthesia' &&
-                            props?.items?.type_of_anesthesia) {
-                            getDataColumnName({
-                                table_name: 'ASSESSMENT_PARAMETER_VALUE',
-                                column_name: 'value_desc',
-                                column_id: 'value_id',
-                                id: props?.items.type_of_anesthesia,
-                                element_id: `${props?.p_type?.toLowerCase()}_${props?.parameter_id}`
-                            });
-                        }
-                        break;
-                    default:
-                        htmlContent = '';
-                        break;
-                }
-            }
-
-            const container = document.createElement('div');
-            container.innerHTML = htmlContent;
-
-            resolve({
-                htmlContent: container.innerHTML,
-                initializeQuill
-            });
-        });
-    };
-
-    const initializeQuillEditors = () => {
-        document.querySelectorAll('.quill-editor-oprs').forEach(editor => {
-
-            const editorId = editor.id;
-            if (!quillInstances[editorId]) {
-                const quill = new Quill(editor, {
-                    theme: 'snow'
-                });
-                quillInstances[editorId] = quill;
-
-                const inputFieldId = editor.getAttribute('data-id');
-                const inputField = document.querySelector(`#${inputFieldId}`);
-                if (inputField) {
-                    if (inputField.value) {
-                        quill.root.innerHTML = inputField.value;
+                            if (isAnastesi && props?.column_name?.toLowerCase() ===
+                                'type_of_anesthesia' &&
+                                props?.items?.type_of_anesthesia) {
+                                getDataColumnName({
+                                    table_name: 'ASSESSMENT_PARAMETER_VALUE',
+                                    column_name: 'value_desc',
+                                    column_id: 'value_id',
+                                    id: props?.items.type_of_anesthesia,
+                                    element_id: `${props?.p_type?.toLowerCase()}_${props?.parameter_id}`
+                                });
+                            }
+                            break;
+                        default:
+                            htmlContent = '';
+                            break;
                     }
-                    quill.on('text-change', () => {
-                        inputField.value = quill.root.innerHTML;
-                    });
                 }
-                // if (inputField) {
 
-                //     let initialContent = inputField.value || '';
-                //     quill.root.innerHTML = initialContent;
-                //     quill.on('text-change', () => {
-                //         const quillContent = quill.root.innerHTML.trim();
-                //         inputField.value = quillContent === '<p><br></p>' ? '' : quillContent;
-                //     });
-                // }
-            }
-        });
+                const container = document.createElement('div');
+                container.innerHTML = htmlContent;
 
-
-
-        const quillElementquillmodal = document.getElementById(
-            'quill_diagnosa_desc-permintaan_operasi');
-        if (quillElementquillmodal && !quillInstancesModal[
-                'quill_diagnosa_desc-permintaan_operasi']) {
-            const quill = new Quill(quillElementquillmodal, {
-                theme: 'snow'
-            });
-
-            quillInstancesModal['quill_diagnosa_desc-permintaan_operasi'] = quill;
-
-            const inputField = document.getElementById('diagnosa_desc-permintaan_operasi');
-
-            if (inputField) {
-                let initialContent = inputField.value || '';
-                quill.root.innerHTML = initialContent;
-
-                quill.on('text-change', () => {
-                    const quillContent = quill.root.innerHTML.trim();
-                    inputField.value = quillContent === '<p><br></p>' ? '' : quillContent;
+                resolve({
+                    htmlContent: container.innerHTML,
+                    initializeQuill
                 });
-            }
-        }
-
-        const quillElementquillmodal1 = document.getElementById(
-            'quill_advice_doctor-permintaan_operasi');
-        if (quillElementquillmodal1 && !quillInstancesModal[
-                'quill_advice_doctor-permintaan_operasi']) {
-            const quill = new Quill(quillElementquillmodal1, {
-                theme: 'snow'
             });
-
-            quillInstancesModal['quill_advice_doctor-permintaan_operasi'] = quill;
-
-            const inputField = document.getElementById('advice_doctor-permintaan_operasi');
-
-            if (inputField) {
-                let initialContent = inputField.value || '';
-                quill.root.innerHTML = initialContent;
-
-                quill.on('text-change', () => {
-                    const quillContent = quill.root.innerHTML.trim();
-                    inputField.value = quillContent === '<p><br></p>' ? '' : quillContent;
-                });
-            }
-        }
-    };
-
-
-    const createDropdownTables = (props) => {
-        let content = '';
-        $("#dropdown-param-tindakan-operasi").html('');
-        const extractGroupName = (taskName) => {
-            if (taskName.startsWith("Asisten Anestesi")) {
-                return "Asisten Anestesi";
-            }
-            if (taskName === "Asisten Dokter") {
-                return taskName;
-            }
-            return taskName.split(" ")[0];
         };
 
-        const groupedTasks = tasksValue.data.reduce((groups, item) => {
-            const groupName = extractGroupName(item.task);
-            if (!groups[groupName]) groups[groupName] = [];
-            groups[groupName].push(item);
-            return groups;
-        }, {});
+        const initializeQuillEditors = () => {
+            document.querySelectorAll('.quill-editor-oprs').forEach(editor => {
+
+                const editorId = editor.id;
+                if (!quillInstances[editorId]) {
+                    const quill = new Quill(editor, {
+                        theme: 'snow'
+                    });
+                    quillInstances[editorId] = quill;
+
+                    const inputFieldId = editor.getAttribute('data-id');
+                    const inputField = document.querySelector(`#${inputFieldId}`);
+                    if (inputField) {
+                        if (inputField.value) {
+                            quill.root.innerHTML = inputField.value;
+                        }
+                        quill.on('text-change', () => {
+                            inputField.value = quill.root.innerHTML;
+                        });
+                    }
+                    // if (inputField) {
+
+                    //     let initialContent = inputField.value || '';
+                    //     quill.root.innerHTML = initialContent;
+                    //     quill.on('text-change', () => {
+                    //         const quillContent = quill.root.innerHTML.trim();
+                    //         inputField.value = quillContent === '<p><br></p>' ? '' : quillContent;
+                    //     });
+                    // }
+                }
+            });
 
 
-        const groupedEmployees = employesValue.data.reduce((groups, item) => {
-            let groupLabel;
-            switch (item.shift_id) {
-                case 1:
-                    groupLabel = "Dokter Operator";
-                    break;
-                case 2:
-                    groupLabel = "Dokter Anestesi";
-                    break;
-                case 3:
-                    groupLabel = "Perawat";
-                    break;
-                case 4:
-                    groupLabel = "Asisten Anestesi";
-                    break;
-                default:
-                    groupLabel = "Other"; // For any unexpected shift_id
+
+            const quillElementquillmodal = document.getElementById(
+                'quill_diagnosa_desc-permintaan_operasi');
+            if (quillElementquillmodal && !quillInstancesModal[
+                    'quill_diagnosa_desc-permintaan_operasi']) {
+                const quill = new Quill(quillElementquillmodal, {
+                    theme: 'snow'
+                });
+
+                quillInstancesModal['quill_diagnosa_desc-permintaan_operasi'] = quill;
+
+                const inputField = document.getElementById('diagnosa_desc-permintaan_operasi');
+
+                if (inputField) {
+                    let initialContent = inputField.value || '';
+                    quill.root.innerHTML = initialContent;
+
+                    quill.on('text-change', () => {
+                        const quillContent = quill.root.innerHTML.trim();
+                        inputField.value = quillContent === '<p><br></p>' ? '' : quillContent;
+                    });
+                }
             }
-            if (!groups[groupLabel]) groups[groupLabel] = [];
-            groups[groupLabel].push(item);
-            return groups;
-        }, {});
 
-        const generateTaskOptions = (selectedId) => {
-            return Object.keys(groupedTasks).map(group => `
+            const quillElementquillmodal1 = document.getElementById(
+                'quill_advice_doctor-permintaan_operasi');
+            if (quillElementquillmodal1 && !quillInstancesModal[
+                    'quill_advice_doctor-permintaan_operasi']) {
+                const quill = new Quill(quillElementquillmodal1, {
+                    theme: 'snow'
+                });
+
+                quillInstancesModal['quill_advice_doctor-permintaan_operasi'] = quill;
+
+                const inputField = document.getElementById('advice_doctor-permintaan_operasi');
+
+                if (inputField) {
+                    let initialContent = inputField.value || '';
+                    quill.root.innerHTML = initialContent;
+
+                    quill.on('text-change', () => {
+                        const quillContent = quill.root.innerHTML.trim();
+                        inputField.value = quillContent === '<p><br></p>' ? '' : quillContent;
+                    });
+                }
+            }
+        };
+
+
+        const createDropdownTables = (props) => {
+            let content = '';
+            $("#dropdown-param-tindakan-operasi").html('');
+            const extractGroupName = (taskName) => {
+                if (taskName.startsWith("Asisten Anestesi")) {
+                    return "Asisten Anestesi";
+                }
+                if (taskName === "Asisten Dokter") {
+                    return taskName;
+                }
+                return taskName.split(" ")[0];
+            };
+
+            const groupedTasks = tasksValue.data.reduce((groups, item) => {
+                const groupName = extractGroupName(item.task);
+                if (!groups[groupName]) groups[groupName] = [];
+                groups[groupName].push(item);
+                return groups;
+            }, {});
+
+
+            const groupedEmployees = employesValue.data.reduce((groups, item) => {
+                let groupLabel;
+                switch (item.shift_id) {
+                    case 1:
+                        groupLabel = "Dokter Operator";
+                        break;
+                    case 2:
+                        groupLabel = "Dokter Anestesi";
+                        break;
+                    case 3:
+                        groupLabel = "Perawat";
+                        break;
+                    case 4:
+                        groupLabel = "Asisten Anestesi";
+                        break;
+                    default:
+                        groupLabel = "Other"; // For any unexpected shift_id
+                }
+                if (!groups[groupLabel]) groups[groupLabel] = [];
+                groups[groupLabel].push(item);
+                return groups;
+            }, {});
+
+            const generateTaskOptions = (selectedId) => {
+                return Object.keys(groupedTasks).map(group => `
                             <optgroup label="${group}">
                                 ${groupedTasks[group].map(item => `
                                     <option value="${item.task_id}" ${item.task_id == selectedId ? 'selected' : ''}>${item.task}</option>
                                 `).join('')}
                             </optgroup>
                         `).join('');
-        };
+            };
 
-        const generateEmployeeOptions = (selectedId) => {
-            return Object.keys(groupedEmployees).map(group => `
+            const generateEmployeeOptions = (selectedId) => {
+                return Object.keys(groupedEmployees).map(group => `
             <optgroup label="${group}">
                 ${groupedEmployees[group].map(item => `
                     <option value="${item.employee_id}" ${item.employee_id == selectedId ? 'selected' : ''}>${item.fullname}</option>
                 `).join('')}
             </optgroup>
         `).join('');
-        };
+            };
 
-        let droppdown = `
+            let droppdown = `
                         <table class="table table-borderless" id="data-dropdown">
                             <tbody>
                                 ${props?.map(e => `
@@ -7821,7 +7850,7 @@ let kopTemplateOprs = [];
                         </div>
                     `;
 
-        let contentFormEsekusi = `
+            let contentFormEsekusi = `
                         <table class="table table-borderless">
                             <tr>
                                 <td>
@@ -7837,7 +7866,7 @@ let kopTemplateOprs = [];
                         </table>
                     `;
 
-        let TransaksiContent = `
+            let TransaksiContent = `
                         <table class="table table-borderless">
                             <tr>
                                 <td>
@@ -7850,59 +7879,24 @@ let kopTemplateOprs = [];
                         </table>
                     `;
 
-        $("#dropdown-param-tindakan-operasi").html(content + droppdown + contentFormEsekusi +
-            TransaksiContent);
+            $("#dropdown-param-tindakan-operasi").html(content + droppdown + contentFormEsekusi +
+                TransaksiContent);
 
-        $('#dropdown-param-tindakan-operasi').on('click', '.delete-dropdown', function() {
-            $(this).closest('tr').next().remove(); // Remove the next row
-            $(this).closest('tr').remove(); // Remove the current row
-        });
+            $('#dropdown-param-tindakan-operasi').on('click', '.delete-dropdown', function() {
+                $(this).closest('tr').next().remove(); // Remove the next row
+                $(this).closest('tr').remove(); // Remove the current row
+            });
 
-        $('#dropdown-param-tindakan-operasi').on('click', '.add-dropdown', function() {
-            let selectedTasks = $('.task-dropdown').map(function() {
-                return $(this).val();
-            }).get();
+            $('#dropdown-param-tindakan-operasi').on('click', '.add-dropdown', function() {
+                let selectedTasks = $('.task-dropdown').map(function() {
+                    return $(this).val();
+                }).get();
 
+                if (selectedTasks?.includes('pilih') || selectedTasks?.includes(null)) {
+                    return;
+                }
 
-            // ======================== Validation ==========================
-
-            let lastSelectedTask = selectedTasks[selectedTasks.length - 1];
-            const requiredTaskIds = ['1', '17', '5'];
-            const requiredTaskLabels = {
-                '1': 'Operator 1',
-                '17': 'Anestesi',
-                '5': 'Asisten 1',
-            };
-
-            const selectedRequired = requiredTaskIds.filter(id => selectedTasks.includes(id));
-            const remainingRequired = requiredTaskIds.filter(id => !selectedTasks.includes(id));
-
-            let canAdd;
-
-            if (selectedTasks.length === 0) {
-                canAdd = true;
-            } else if (selectedTasks.length < requiredTaskIds.length) {
-                canAdd = requiredTaskIds.includes(lastSelectedTask);
-            } else {
-                canAdd = requiredTaskIds.every(id => selectedTasks.includes(id));
-            }
-
-            if (!canAdd) {
-                const missingTasks = remainingRequired.map(id =>
-                    `- ${requiredTaskLabels[id] || `Task ID ${id}`}`).join('\n');
-                errorSwal(`Task wajib berikut belum dipilih:\n\n${missingTasks}`);
-                return;
-            }
-
-
-            // =================================================
-
-
-            if (selectedTasks?.includes('pilih') || selectedTasks?.includes(null)) {
-                return;
-            }
-
-            let newTaskOptions = Object.keys(groupedTasks).map(group => `
+                let newTaskOptions = Object.keys(groupedTasks).map(group => `
                             <optgroup label="${group}">
                                 ${groupedTasks[group].filter(item => !selectedTasks?.includes(item.task_id)).map(item => `
                                     <option value="${item.task_id}">${item.task}</option>
@@ -7910,7 +7904,7 @@ let kopTemplateOprs = [];
                             </optgroup>
                         `).join('');
 
-            let newTaskOptionsEmployee = Object.keys(groupedEmployees).map(group => `
+                let newTaskOptionsEmployee = Object.keys(groupedEmployees).map(group => `
                             <optgroup label="${group}">
                                 ${groupedEmployees[group].filter(item => !selectedTasks?.includes(item.employee_id)).map(item => `
                                     <option value="${item.employee_id}">${item.fullname}</option>
@@ -7918,14 +7912,14 @@ let kopTemplateOprs = [];
                             </optgroup>
                         `).join('');
 
-            if (!newTaskOptions.trim()) {
-                alert(
-                    'Semua task sudah dipilih, tidak ada task baru yang dapat ditambahkan!'
-                );
-                return;
-            }
+                if (!newTaskOptions.trim()) {
+                    alert(
+                        'Semua task sudah dipilih, tidak ada task baru yang dapat ditambahkan!'
+                    );
+                    return;
+                }
 
-            let dataDropdownContent = `
+                let dataDropdownContent = `
                             <tr class="bg-light">
                                 <td>
                                     <select class="form-select task-dropdown select2-oprs" name="groupedTasks_option[]">
@@ -7947,44 +7941,44 @@ let kopTemplateOprs = [];
                             </tr>
                         `;
 
-            $('#data-dropdown tbody').append(dataDropdownContent);
+                $('#data-dropdown tbody').append(dataDropdownContent);
+
+                initializeSelect2();
+            });
 
             initializeSelect2();
-        });
-
-        initializeSelect2();
-    };
+        };
 
 
 
 
-    const getDropdownOptions = (shiftId) => {
-        let options = '';
+        const getDropdownOptions = (shiftId) => {
+            let options = '';
 
-        window.employees.data.forEach(employee => {
-            if (shiftId === null ||
-                (shiftId === 1 && employee.shift_id === 1) ||
-                (shiftId === 2 && employee.shift_id === 2) ||
-                (shiftId === 3 && employee.shift_id === 3) ||
-                (shiftId === 4 && employee.shift_id !== 2)) {
-                options +=
-                    `<option value="${employee.employee_id}">${employee.fullname}</option>`;
-            }
-        });
+            window.employees.data.forEach(employee => {
+                if (shiftId === null ||
+                    (shiftId === 1 && employee.shift_id === 1) ||
+                    (shiftId === 2 && employee.shift_id === 2) ||
+                    (shiftId === 3 && employee.shift_id === 3) ||
+                    (shiftId === 4 && employee.shift_id !== 2)) {
+                    options +=
+                        `<option value="${employee.employee_id}">${employee.fullname}</option>`;
+                }
+            });
 
-        return `<option selected disabled value="">Pilih</option>` + options;
-    };
+            return `<option selected disabled value="">Pilih</option>` + options;
+        };
 
-    const renderDataRequestOperation = (data) => {
+        const renderDataRequestOperation = (data) => {
 
 
-        let hasil = "";
-        data?.data?.map((item, index) => {
-            let treatment = treatmentData.find(t => t.tarif_id === item?.bill_id);
-            let treatmentName = treatment ? treatment.tarif_name : "-";
-            let treatmentPrice = treatment ? (treatment.amount_paid ?? '0') : "0";
+            let hasil = "";
+            data?.data?.map((item, index) => {
+                let treatment = treatmentData.find(t => t.tarif_id === item?.bill_id);
+                let treatmentName = treatment ? treatment.tarif_name : "-";
+                let treatmentPrice = treatment ? (treatment.amount_paid ?? '0') : "0";
 
-            hasil += `<tr class="${
+                hasil += `<tr class="${
                                 item?.patient_category_id === 0 ? 'outline-white-bg' :
                                 item?.patient_category_id === 1 ? 'outline-warning-bg' :
                                 item?.patient_category_id === 2 ? 'outline-danger-bg' : ''
@@ -8014,7 +8008,7 @@ let kopTemplateOprs = [];
                         </button>
                         <?php } ?>
 
-                        <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkPermission("assesmenoperasi", 'r')|| user()->checkRoles(['superuser'])) { ?>
+                        <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkPermission("assesmenoperasi", 'r') || user()->checkRoles(['superuser'])) { ?>
                         <button type="button" id="btn-show-assesment-requestOperation${item?.vactination_id}" class="btn btn-sm btn-success btn-show-assesment-requestOperation" data-date="${moment(item?.start_operation).format("DD/MM/YYYY HH:mm")}" data-treatname="${treatmentName}" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}" data-index="${index}">
                            <i class="far fa-file-alt"></i> Asssesment
                         </button>
@@ -8027,7 +8021,7 @@ let kopTemplateOprs = [];
                         </button>
                         <?php } ?>
 
-                         <?php if (user()->checkPermission("assesmenoperasi", 'c') ||user()->checkPermission("assesmenoperasi", 'r') || user()->checkRoles(['superuser'])) { ?>
+                         <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkPermission("assesmenoperasi", 'r') || user()->checkRoles(['superuser'])) { ?>
                         <button type="button" id="btn-show-assesment-requestOperation${item?.vactination_id}" class="btn btn-sm btn-success btn-show-assesment-requestOperation" data-date="${moment(item?.start_operation).format("DD/MM/YYYY HH:mm")}" data-treatname="${treatmentName}" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}" data-index="${index}">
                            <i class="far fa-file-alt"></i> Asssesment
                         </button>
@@ -8035,61 +8029,64 @@ let kopTemplateOprs = [];
                     `}
                 </td>
             </tr>`;
-        });
-        $("#bodydataRequestOperation").html(hasil);
+            });
+            $("#bodydataRequestOperation").html(hasil);
 
-        getDetailRequestOperation();
-        getEditRequestOperation();
-        deleteModalDataRequestOperation();
-        viewModalOperationAction();
-        groupingGetAllArcodions(data?.data);
-        getDataPenyakit(data?.data[0]);
+            getDetailRequestOperation();
+            getEditRequestOperation();
+            deleteModalDataRequestOperation();
+            viewModalOperationAction();
+            groupingGetAllArcodions(data?.data);
+            getDataPenyakit(data?.data[0]);
 
-        if (!(visit?.locked === '0' || visit?.locked === null)) {
-            $(".spppoli-to-hide").remove();
+            if (!(visit?.locked === '0' || visit?.locked === null)) {
+                $(".spppoli-to-hide").remove();
+            }
+
         }
 
-    }
 
 
+        //GET DATA
 
-    //GET DATA
+        const templateOprasiPembedahan = (props) => {
+            let data = props?.data
+            renderDataTeamInPembedahan({
+                data: data?.operation_team,
+                labels: data?.operation_task
+            });
+        }
 
-    const templateOprasiPembedahan = (props) => {
-        let data = props?.data
-        renderDataTeamInPembedahan({
-            data: data?.operation_team,
-            labels: data?.operation_task
-        });
-    }
-
-    const templateOprasiPembedahanAnesthesiLengkap = (props) => {
-        let data = props?.data
-        renderDataTeamInPembedahanAnesthesiLengkap({
-            data: data?.operation_team,
-            labels: data?.operation_task
-        });
-
-    } //new 31/07
-
-    const getInstrumen = (props) => {
-        if (props.data) {
-            dataInstrumen = props?.data;
-            renderbodyInstrumenoprs004({
-                items: dataInstrumen
+        const templateOprasiPembedahanAnesthesiLengkap = (props) => {
+            let data = props?.data
+            renderDataTeamInPembedahanAnesthesiLengkap({
+                data: data?.operation_team,
+                labels: data?.operation_task
             });
 
-            let tableInstrumen = $("#get-data-instrumen").html("");
-            $("#body-instrumen").html("");
+        } //new 31/07
 
-            dataInstrumen?.forEach((element, key) => {
-                tableInstrumen.append(
-                    `<tr>
+        const getInstrumen = (props) => {
+            if (props.data) {
+                dataInstrumen = props?.data;
+                renderbodyInstrumenoprs004({
+                    items: dataInstrumen
+                });
+
+                let tableInstrumen = $("#get-data-instrumen").html("");
+                $("#body-instrumen").html("");
+
+                dataInstrumen?.forEach((element, key) => {
+                    tableInstrumen.append(
+                        `<tr>
                             <td class="text-center">${key + 1}</td>
                             <td class="text-center">
-                                ${element?.brand_name === '1' ? "Instrumen" :
-                                    element?.brand_name === '2' ? "Kassa" :
-                                    element?.brand_name === '3' ? "Jarum" :
+                                ${element?.brand_name === '1' ? 'Instrumen' :
+                                    element?.brand_name === '2' ? 'Kassa' :
+                                    element?.brand_name === '3' ? 'Jarum' :
+                                    element?.brand_name === '4' ? 'TAMPON KASSA THT' :
+                                    element?.brand_name === '5' ? 'TAMPON KASSA BIASA' :
+                                    element?.brand_name === '6' ? 'TAMPON KASSA ROLL OBSGYN' :
                                     element?.brand_name}
                                 </td>
 
@@ -8098,48 +8095,60 @@ let kopTemplateOprs = [];
                             <td class="text-center">${element?.quantity_additional}</td>
                             <td class="text-center">${element?.quantity_after}</td>
                         </tr>`
+                    );
+                    addRowInstrumen(element)
+                });
+            }
+        };
+
+
+        const addRowInstrumen = (props = {}) => {
+            const usedValues = $('select[name="brand_id[]"]').map(function() {
+                return $(this).val();
+            }).get();
+
+            const options = [{
+                    value: '1',
+                    label: 'Instrumen'
+                },
+                {
+                    value: '2',
+                    label: 'Kassa'
+                },
+                {
+                    value: '3',
+                    label: 'Jarum'
+                },
+                {
+                    value: '4',
+                    label: 'TAMPON KASSA THT '
+                },
+                {
+                    value: '5',
+                    label: 'TAMPON KASSA BIASA'
+                },
+                {
+                    value: '6',
+                    label: 'TAMPON KASSA ROLL OBSGYN'
+                },
+            ];
+
+            const availableOptions = options.filter(opt => !usedValues.includes(opt.value));
+
+            if (availableOptions.length === 0) {
+                alert('Semua instrumen telah dipilih.');
+                return;
+            }
+
+            const select = $('<select class="form-select" name="brand_id[]"></select>');
+            availableOptions.forEach(opt => {
+                const selected = props?.brand_id === opt.value ? 'selected' : '';
+                select.append(
+                    `<option data-nama-instrumen="${opt.label}" value="${opt.value}" ${selected}>${opt.label}</option>`
                 );
-                addRowInstrumen(element)
             });
-        }
-    };
 
-
-    const addRowInstrumen = (props = {}) => {
-        const usedValues = $('select[name="brand_id[]"]').map(function() {
-            return $(this).val();
-        }).get();
-
-        const options = [{
-                value: '1',
-                label: 'Instrumen'
-            },
-            {
-                value: '2',
-                label: 'Kassa'
-            },
-            {
-                value: '3',
-                label: 'Jarum'
-            },
-        ];
-
-        const availableOptions = options.filter(opt => !usedValues.includes(opt.value));
-
-        if (availableOptions.length === 0) {
-            alert('Semua instrumen telah dipilih.');
-            return;
-        }
-
-        const select = $('<select class="form-select" name="brand_id[]"></select>');
-        availableOptions.forEach(opt => {
-            const selected = props?.brand_id === opt.value ? 'selected' : '';
-            select.append(
-                `<option data-nama-instrumen="${opt.label}" value="${opt.value}" ${selected}>${opt.label}</option>`
-            );
-        });
-
-        const $newRow = $(`
+            const $newRow = $(`
                     <tr>
                         <td></td>
                         <td>
@@ -8155,420 +8164,429 @@ let kopTemplateOprs = [];
                     </tr>
                 `);
 
-        $newRow.find('td:first').append(select);
+            $newRow.find('td:first').append(select);
 
-        $('#body-instrumen').append($newRow);
-        $('#body-instrumen1').append($newRow.clone(true));
+            $('#body-instrumen').append($newRow);
+            $('#body-instrumen1').append($newRow.clone(true));
 
-        $newRow.find('.delete-row').click(function() {
-            $(this).closest('tr').remove();
+            $newRow.find('.delete-row').click(function() {
+                $(this).closest('tr').remove();
+                updateAddButtonVisibility();
+            });
+
             updateAddButtonVisibility();
-        });
-
-        updateAddButtonVisibility();
-    };
-
-
-    const updateAddButtonVisibility = () => {
-        let rowCount = $('#body-instrumen tr').length;
-        let rowCount1 = $('#body-instrumen1 tr').length;
-
-        if (rowCount1 >= 3) {
-            $('#addInstrumen1').hide();
-        } else {
-            $('#addInstrumen1').show();
-        }
-
-
-        if (rowCount >= 3) {
-            $('#addInstrumen').hide();
-        } else {
-            $('#addInstrumen').show();
-        }
-    }
-
-
-    const getDataDrain = (props) => {
-        let data = props?.data
-        dataDrain = data || []
-        assessment_anesthesia_recovery = props?.assessment_anesthesia_recovery || []
-        // assessment_anesthesia_recovery_aldrete = props?.assessment_anesthesia_recovery_aldrete || []
-        renderDrains004({
-            results: dataDrain,
-            valBody_id: globalBodyId,
-            assessment_anesthesia_recovery: props?.assessment_anesthesia_recovery,
-            // assessment_anesthesia_recovery_aldrete: props?.assessment_anesthesia_recovery_aldrete
-        });
-    };
-
-
-    const getAvalueType = (props) => {
-
-        let filteredData = aparameter?.filter(item => item?.p_type === props?.p_type);
-
-        valueCatatan({
-            data: filteredData,
-            content_id: props?.content_id,
-            get_data: props?.get_data,
-            items: props?.items ?? "",
-            data_tindakan: props?.data_tindakan //new
-        });
-    }; // new Update 29/07
-
-    const getDataMental = () => {
-        postData({
-                parameter_id: '01'
-            }, 'admin/PatientOperationRequest/getPasienOprasiValue',
-            (res) => {
-                if (res) {
-                    let data = ''
-                    res.map(item => {
-                        data +=
-                            `<option value="${item?.value_id}">${item?.value_desc}</option>`
-                    })
-                    $("#status_mental-catatan_operasi").html(`<option selected>Pilih</option>` +
-                        data)
-                }
-            })
-    }
-
-    const getDataPenyakit = async (props) => {
-        postData({
-                NO_REGISTRATION: `${props?.no_registration}`
-            }, 'admin/PatientOperationRequest/getPasienOprasiHistory',
-            (res) => {
-                if (res) {
-                    historyPasien = res;
-
-
-                }
-            })
-    }
-
-    const getDataDropdownAllemployee = (props) => {
-        getDataList(
-            'admin/PatientOperationRequest/getDropdowntempAll',
-            (res) => {
-                if (res.response) {
-                    tasksValue = res
-                    window.groupedTasks = groupTasks(res.data);
-                    getDataList(
-                        'admin/PatientOperationRequest/getDropdownAddAll',
-                        (res) => {
-                            if (res.response) {
-                                employesValue = res
-                                window.employees = res;
-                                postData({
-                                    vactination_id: `${props?.vactination_id}`
-                                }, 'admin/PatientOperationRequest/getDataTim', (
-                                    res) => {
-                                    if (res.response) {
-                                        createDropdownTables(res.data);
-                                        $('#transaksi-permintaan_operasi').val(props
-                                            ?.transaksi);
-                                        $("#form-action-pelayanan").val(props
-                                            ?.terlayani ?? 0);
-                                    }
-                                });
-                            }
-                        }
-                    );
-                } else {
-                    console.error('Failed to fetch dropdown data.');
-                }
-            }
-        );
-    };
-
-    const viewModalOperationAction = () => {
-        $('.operation_action').off().on('click', function(e) {
-            postData({
-                vactination_id: `${$(this).data('id')}`,
-                visit_id: `${$(this).data('visit_id')}`,
-                no_registration: `${$(this).data('noregis')}`
-            }, 'admin/PatientOperationRequest/getDetail', (res) => {
-
-                modalViewOperationAction({
-                    data: res
-                });
-            });
-        })
-    }
-
-    const deleteActionRequestOperation = (props) => {
-        postData({
-            vactination_id: `${props?.vactination_id}`,
-            visit_id: `${props?.visit_id}`,
-            no_registration: `${props?.no_registration}`,
-        }, 'admin/PatientOperationRequest/deleteData', (res) => {
-            if (res.respon === true) {
-                successSwal('Data berhasil Dihapus.');
-
-                getDataTabelRequestOperation({
-                    no_registration: `${props?.no_registration}`,
-                    visit_id: `${props?.visit_id}`,
-                    trans_id: `${props?.trans_id}`
-                });
-            } else {
-                errorSwal("Gagal Di hapus")
-            }
-        });
-    }
-
-    const getEditRequestOperation = () => {
-        $('.btn-show-edit-requestOperation').on('click', function(e) {
-            postData({
-                vactination_id: `${$(this).data('id')}`,
-                visit_id: `${$(this).data('visit_id')}`,
-                no_registration: `${$(this).data('noregis')}`
-            }, 'admin/PatientOperationRequest/getDetail', (res) => {
-
-                modalViewEditRequestOperation({
-                    data: res
-                });
-            });
-        });
-    }
-
-    const getDetailRequestOperation = () => {
-        $('.btn-show-detail-requestOperation').on('click', function(e) {
-            postData({
-                vactination_id: `${$(this).data('id')}`,
-                visit_id: `${$(this).data('visit_id')}`,
-                no_registration: `${$(this).data('noregis')}`
-            }, 'admin/PatientOperationRequest/getDetail', (res) => {
-
-                modalViewDetailRequestOperation({
-                    data: res
-                });
-            });
-        });
-    }
-
-    const getDataTabelRequestOperation = (props) => {
-        postData({
-            no_registration: `${props?.no_registration}`,
-            visit_id: `${props?.visit_id}`,
-            trans_id: `${props?.trans_id}`
-        }, 'admin/PatientOperationRequest/getOperationData', (res) => {
-            if (res.length >= 1) {
-                pasienOperasiValue = res
-                renderDataRequestOperation({
-                    data: res
-                });
-            } else {
-                $("#bodydataRequestOperation").html(tempTablesNull());
-            }
-        }, (beforesend) => {
-            getLoadingGlobalServices('bodydataRequestOperation');
-        });
-        // $("#container-tab").slideUp();
-    }
-
-
-
-    const getDataVitailSign = (props) => {
-        const pasienDiagnosaId = props?.pasien_diagnosa_id;
-        const accountIds = props?.account_ids || [];
-        const suffixes = props?.suffixes || [];
-
-
-        postData({
-            pasien_diagnosa_id: `${pasienDiagnosaId}`,
-            account_ids: `${accountIds}`
-        }, 'admin/PatientOperationRequest/getExaminationData', (res) => {
-
-            if (res?.respon === false || !res?.data?.length) {
-                suffixes.forEach((suffix) => {
-                    const newBodyId = get_bodyid();
-                    $(`#avtbody_id${suffix}`).val(newBodyId);
-                    clearVitalsignFields(suffix);
-                });
-            } else {
-                const dataByAccountId = res.data.reduce((acc, item) => {
-                    acc[item.account_id] = item;
-                    return acc;
-                }, {});
-
-                suffixes.forEach((suffix, index) => {
-                    const accountId = accountIds[index];
-                    const data = dataByAccountId[accountId];
-
-                    const elementId = `#avtbody_id${suffix}`;
-                    if (data) {
-                        const bodyIdFromData = data?.body_id;
-                        $(elementId).val(bodyIdFromData);
-                        renderDataVitailSign(data, suffix);
-                    } else {
-                        const newBodyId = get_bodyid();
-                        $(elementId).val(newBodyId);
-                        clearVitalsignFields(suffix);
-                    }
-                });
-            }
-        });
-    }
-
-
-
-    //new 02/08//new update  30/07
-
-    const clearVitalsignFields = (suffix) => {
-        const baseMappings = {
-            examination_date: 'examination_date',
-            vs_status_id: 'vs_status_id',
-            arm_diameter: 'arm_diameter',
-            nadi: 'nadi',
-            nafas: 'nafas',
-            height: 'height',
-            saturasi: 'saturasi',
-            temperature: 'temperature',
-            tension_below: 'tension_below',
-            tension_upper: 'tension_upper',
-            pemeriksaan: 'pemeriksaan',
-            weight: 'weight',
-            oxygen_usage: 'oxygen_usage'
         };
 
-        Object.keys(baseMappings).forEach(key => {
-            const baseName = baseMappings[key];
-            const selector = `#avt${baseName}${suffix}`;
-            $(selector).val('');
-        });
-    }; // new 30/7
 
-    const getDataDiagnosass = (props) => {
-        postData({
-            pasien_diagnosa_id: `${props?.vactination_id}`
-        }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
-            if (res.respon && Array.isArray(res.data)) {
-                const tbodyId = `bodyDiagLaporanAnesthesi-${props?.vactination_id}`;
-                const tbody = $(`#${tbodyId}`);
-                tbody.empty();
+        const updateAddButtonVisibility = () => {
+            let rowCount = $('#body-instrumen tr').length;
+            let rowCount1 = $('#body-instrumen1 tr').length;
 
-                res.data.forEach((diagnosis) => {
-
-                    addRowDiagDokterOprs('bodyDiagLaporanAnesthesi-', props
-                        ?.vactination_id,
-                        diagnosis?.diagnosa_id, diagnosis?.diagnosa_name ??
-                        diagnosis
-                        ?.diagnosa_desc,
-                        diagnosis
-                        ?.diag_cat,
-                        diagnosis?.suffer_type);
-                });
+            if (rowCount1 >= 6) {
+                $('#addInstrumen1').hide();
+            } else {
+                $('#addInstrumen1').show();
             }
-        });
-    };
+
+
+            if (rowCount >= 6) {
+                $('#addInstrumen').hide();
+            } else {
+                $('#addInstrumen').show();
+            }
+        }
+
+
+        const getDataDrain = (props) => {
+            let data = props?.data
+            dataDrain = data || []
+            assessment_anesthesia_recovery = props?.assessment_anesthesia_recovery || []
+            // assessment_anesthesia_recovery_aldrete = props?.assessment_anesthesia_recovery_aldrete || []
+            renderDrains004({
+                results: dataDrain,
+                valBody_id: globalBodyId,
+                assessment_anesthesia_recovery: props?.assessment_anesthesia_recovery,
+                // assessment_anesthesia_recovery_aldrete: props?.assessment_anesthesia_recovery_aldrete
+            });
+        };
+
+
+        const getAvalueType = (props) => {
+
+            let filteredData = aparameter?.filter(item => item?.p_type === props?.p_type);
+
+            valueCatatan({
+                data: filteredData,
+                content_id: props?.content_id,
+                get_data: props?.get_data,
+                items: props?.items ?? "",
+                data_tindakan: props?.data_tindakan //new
+            });
+        }; // new Update 29/07
+
+        const getDataMental = () => {
+            postData({
+                    parameter_id: '01'
+                }, 'admin/PatientOperationRequest/getPasienOprasiValue',
+                (res) => {
+                    if (res) {
+                        let data = ''
+                        res.map(item => {
+                            data +=
+                                `<option value="${item?.value_id}">${item?.value_desc}</option>`
+                        })
+                        $("#status_mental-catatan_operasi").html(`<option selected>Pilih</option>` +
+                            data)
+                    }
+                })
+        }
+
+        const getDataPenyakit = async (props) => {
+            postData({
+                    NO_REGISTRATION: `${props?.no_registration}`
+                }, 'admin/PatientOperationRequest/getPasienOprasiHistory',
+                (res) => {
+                    if (res) {
+                        historyPasien = res;
+
+
+                    }
+                })
+        }
+
+        const getDataDropdownAllemployee = (props) => {
+            getDataList(
+                'admin/PatientOperationRequest/getDropdowntempAll',
+                (res) => {
+                    if (res.response) {
+                        tasksValue = res
+                        window.groupedTasks = groupTasks(res.data);
+                        getDataList(
+                            'admin/PatientOperationRequest/getDropdownAddAll',
+                            (res) => {
+                                if (res.response) {
+                                    employesValue = res
+                                    window.employees = res;
+                                    postData({
+                                        vactination_id: `${props?.vactination_id}`
+                                    }, 'admin/PatientOperationRequest/getDataTim', (
+                                        res) => {
+                                        if (res.response) {
+                                            createDropdownTables(res.data);
+                                            $('#transaksi-permintaan_operasi').val(props
+                                                ?.transaksi);
+                                            $("#form-action-pelayanan").val(props
+                                                ?.terlayani ?? 0);
+                                        }
+                                    });
+                                }
+                            }
+                        );
+                    } else {
+                        console.error('Failed to fetch dropdown data.');
+                    }
+                }
+            );
+        };
+
+        const viewModalOperationAction = () => {
+            $('.operation_action').off().on('click', function(e) {
+                postData({
+                    vactination_id: `${$(this).data('id')}`,
+                    visit_id: `${$(this).data('visit_id')}`,
+                    no_registration: `${$(this).data('noregis')}`
+                }, 'admin/PatientOperationRequest/getDetail', (res) => {
+                    Swal.fire({
+                        title: 'Harap tunggu...',
+                        html: '',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    modalViewOperationAction({
+                        data: res
+                    });
+                });
+            })
+        }
+
+        const deleteActionRequestOperation = (props) => {
+            postData({
+                vactination_id: `${props?.vactination_id}`,
+                visit_id: `${props?.visit_id}`,
+                no_registration: `${props?.no_registration}`,
+            }, 'admin/PatientOperationRequest/deleteData', (res) => {
+                if (res.respon === true) {
+                    successSwal('Data berhasil Dihapus.');
+
+                    getDataTabelRequestOperation({
+                        no_registration: `${props?.no_registration}`,
+                        visit_id: `${props?.visit_id}`,
+                        trans_id: `${props?.trans_id}`
+                    });
+                } else {
+                    errorSwal("Gagal Di hapus")
+                }
+            });
+        }
+
+        const getEditRequestOperation = () => {
+            $('.btn-show-edit-requestOperation').on('click', function(e) {
+                postData({
+                    vactination_id: `${$(this).data('id')}`,
+                    visit_id: `${$(this).data('visit_id')}`,
+                    no_registration: `${$(this).data('noregis')}`
+                }, 'admin/PatientOperationRequest/getDetail', (res) => {
+
+                    modalViewEditRequestOperation({
+                        data: res
+                    });
+                });
+            });
+        }
+
+        const getDetailRequestOperation = () => {
+            $('.btn-show-detail-requestOperation').on('click', function(e) {
+                postData({
+                    vactination_id: `${$(this).data('id')}`,
+                    visit_id: `${$(this).data('visit_id')}`,
+                    no_registration: `${$(this).data('noregis')}`
+                }, 'admin/PatientOperationRequest/getDetail', (res) => {
+
+                    modalViewDetailRequestOperation({
+                        data: res
+                    });
+                });
+            });
+        }
+
+        const getDataTabelRequestOperation = (props) => {
+            postData({
+                no_registration: `${props?.no_registration}`,
+                visit_id: `${props?.visit_id}`,
+                trans_id: `${props?.trans_id}`
+            }, 'admin/PatientOperationRequest/getOperationData', (res) => {
+                if (res.length >= 1) {
+                    pasienOperasiValue = res
+                    renderDataRequestOperation({
+                        data: res
+                    });
+                } else {
+                    $("#bodydataRequestOperation").html(tempTablesNull());
+                }
+            }, (beforesend) => {
+                getLoadingGlobalServices('bodydataRequestOperation');
+            });
+            // $("#container-tab").slideUp();
+        }
 
 
 
-    const getDataDiagnosassPerawat = (props) => {
-        postData({
-            document_id: `${props?.document_id}`,
-            visit_id: `${props?.visit_id}`,
-        }, 'admin/PatientOperationRequest/getDiagnosassPerawatData', (res) => {
-            if (res.respon === true) {
-                const tbodyIdPra = `bodyDiagKepCatatanPraOprs-${props?.vactination_id}`;
-                const tbodyPra = $(`#${tbodyIdPra}`);
-                tbodyPra.empty();
-                // =============intra 
-                const tbodyIdIntra = `bodyDiagKepCatatanIntraOprs-${props?.vactination_id}`;
-                const tbodyIntra = $(`#${tbodyIdIntra}`);
-                tbodyIntra.empty();
+        const getDataVitailSign = (props) => {
+            const pasienDiagnosaId = props?.pasien_diagnosa_id;
+            const accountIds = props?.account_ids || [];
+            const suffixes = props?.suffixes || [];
 
-                //============pasca
-                const tbodyIdPasca = `bodyDiagKepCatatanPascaOprs-${props?.vactination_id}`;
-                const tbodyPasca = $(`#${tbodyIdPasca}`);
-                tbodyPasca.empty();
 
-                res?.data?.diagnosa.forEach((diagnosis) => {
-                    if (diagnosis?.diag_cat === "13") {
-                        addRowDiagPerawat('bodyDiagKepCatatanPraOprs-', props
+            postData({
+                pasien_diagnosa_id: `${pasienDiagnosaId}`,
+                account_ids: `${accountIds}`
+            }, 'admin/PatientOperationRequest/getExaminationData', (res) => {
+
+                if (res?.respon === false || !res?.data?.length) {
+                    suffixes.forEach((suffix) => {
+                        const newBodyId = get_bodyid();
+                        $(`#avtbody_id${suffix}`).val(newBodyId);
+                        clearVitalsignFields(suffix);
+                    });
+                } else {
+                    const dataByAccountId = res.data.reduce((acc, item) => {
+                        acc[item.account_id] = item;
+                        return acc;
+                    }, {});
+
+                    suffixes.forEach((suffix, index) => {
+                        const accountId = accountIds[index];
+                        const data = dataByAccountId[accountId];
+
+                        const elementId = `#avtbody_id${suffix}`;
+                        if (data) {
+                            const bodyIdFromData = data?.body_id;
+                            $(elementId).val(bodyIdFromData);
+                            renderDataVitailSign(data, suffix);
+                        } else {
+                            const newBodyId = get_bodyid();
+                            $(elementId).val(newBodyId);
+                            clearVitalsignFields(suffix);
+                        }
+                    });
+                }
+            });
+        }
+
+
+
+        //new 02/08//new update  30/07
+
+        const clearVitalsignFields = (suffix) => {
+            const baseMappings = {
+                examination_date: 'examination_date',
+                vs_status_id: 'vs_status_id',
+                arm_diameter: 'arm_diameter',
+                nadi: 'nadi',
+                nafas: 'nafas',
+                height: 'height',
+                saturasi: 'saturasi',
+                temperature: 'temperature',
+                tension_below: 'tension_below',
+                tension_upper: 'tension_upper',
+                pemeriksaan: 'pemeriksaan',
+                weight: 'weight',
+                oxygen_usage: 'oxygen_usage'
+            };
+
+            Object.keys(baseMappings).forEach(key => {
+                const baseName = baseMappings[key];
+                const selector = `#avt${baseName}${suffix}`;
+                $(selector).val('');
+            });
+        }; // new 30/7
+
+        const getDataDiagnosass = (props) => {
+            postData({
+                pasien_diagnosa_id: `${props?.vactination_id}`
+            }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
+                if (res.respon && Array.isArray(res.data)) {
+                    const tbodyId = `bodyDiagLaporanAnesthesi-${props?.vactination_id}`;
+                    const tbody = $(`#${tbodyId}`);
+                    tbody.empty();
+
+                    res.data.forEach((diagnosis) => {
+
+                        addRowDiagDokterOprs('bodyDiagLaporanAnesthesi-', props
                             ?.vactination_id,
-                            diagnosis?.diagnosan_id, diagnosis?.diag_notes,
+                            diagnosis?.diagnosa_id, diagnosis?.diagnosa_name ??
                             diagnosis
-                            ?.diag_cat);
-                    } else if (diagnosis?.diag_cat === "15") {
-                        addRowDiagPerawat('bodyDiagKepCatatanIntraOprs-', props
-                            ?.vactination_id,
-                            diagnosis?.diagnosan_id, diagnosis?.diag_notes,
+                            ?.diagnosa_desc,
                             diagnosis
-                            ?.diag_cat);
-                    } else if (diagnosis?.diag_cat === "14") {
-                        addRowDiagPerawat('bodyDiagKepCatatanPascaOprs-', props
-                            ?.vactination_id,
-                            diagnosis?.diagnosan_id, diagnosis?.diag_notes,
-                            diagnosis
-                            ?.diag_cat);
+                            ?.diag_cat,
+                            diagnosis?.suffer_type);
+                    });
+                }
+            });
+        };
+
+
+
+        const getDataDiagnosassPerawat = (props) => {
+            postData({
+                document_id: `${props?.document_id}`,
+                visit_id: `${props?.visit_id}`,
+            }, 'admin/PatientOperationRequest/getDiagnosassPerawatData', (res) => {
+                if (res.respon === true) {
+                    const tbodyIdPra = `bodyDiagKepCatatanPraOprs-${props?.vactination_id}`;
+                    const tbodyPra = $(`#${tbodyIdPra}`);
+                    tbodyPra.empty();
+                    // =============intra 
+                    const tbodyIdIntra = `bodyDiagKepCatatanIntraOprs-${props?.vactination_id}`;
+                    const tbodyIntra = $(`#${tbodyIdIntra}`);
+                    tbodyIntra.empty();
+
+                    //============pasca
+                    const tbodyIdPasca = `bodyDiagKepCatatanPascaOprs-${props?.vactination_id}`;
+                    const tbodyPasca = $(`#${tbodyIdPasca}`);
+                    tbodyPasca.empty();
+
+                    res?.data?.diagnosa.forEach((diagnosis) => {
+                        if (diagnosis?.diag_cat === "13") {
+                            addRowDiagPerawat('bodyDiagKepCatatanPraOprs-', props
+                                ?.vactination_id,
+                                diagnosis?.diagnosan_id, diagnosis?.diag_notes,
+                                diagnosis
+                                ?.diag_cat);
+                        } else if (diagnosis?.diag_cat === "15") {
+                            addRowDiagPerawat('bodyDiagKepCatatanIntraOprs-', props
+                                ?.vactination_id,
+                                diagnosis?.diagnosan_id, diagnosis?.diag_notes,
+                                diagnosis
+                                ?.diag_cat);
+                        } else if (diagnosis?.diag_cat === "14") {
+                            addRowDiagPerawat('bodyDiagKepCatatanPascaOprs-', props
+                                ?.vactination_id,
+                                diagnosis?.diagnosan_id, diagnosis?.diag_notes,
+                                diagnosis
+                                ?.diag_cat);
+                        }
+                    });
+
+
+
+
+                }
+            });
+        }; // new update 30/07
+
+        const selectedDiagnosaOprs = (index) => {
+            const diagtext = $(`#adiagdiag_id${index} option:selected`).text();
+            const diagVal = $(`#adiagdiag_id${index} option:selected`).val();
+            const diagdesc = moment(new Date).format("YYYY")
+
+            if (diagtext && diagtext.trim() !== "") {
+                if (diagVal.includes(diagdesc)) {
+                    $(`#adiagdiag_desc${index}`).val(diagtext);
+                    $(`#adiagdiag_name${index}`).val(null);
+                } else {
+                    $(`#adiagdiag_name${index}`).val(diagtext);
+                    $(`#adiagdiag_desc${index}`).val(null);
+                }
+            }
+        };
+
+        const addRowDiagDokterOprs = (container, bodyId, diag_id = null, diag_name = null, diag_cat = null,
+            diag_suffer = 0) => {
+            const tbody = document.getElementById(`${container}${bodyId}`);
+            let diagIndex = tbody.getElementsByTagName("tr").length;
+
+            if (diag_id) {
+                let isDuplicate = false;
+                $(`#${container}${bodyId} tr`).each(function() {
+                    const existingDiagId = $(this).find(`[name="diag_id[]"]`).val();
+                    if (existingDiagId === diag_id) {
+                        isDuplicate = true;
+                        return false;
                     }
                 });
 
-
-
-
-            }
-        });
-    }; // new update 30/07
-
-    const selectedDiagnosaOprs = (index) => {
-        const diagtext = $(`#adiagdiag_id${index} option:selected`).text();
-        const diagVal = $(`#adiagdiag_id${index} option:selected`).val();
-        const diagdesc = moment(new Date).format("YYYY")
-
-        if (diagtext && diagtext.trim() !== "") {
-            if (diagVal.includes(diagdesc)) {
-                $(`#adiagdiag_desc${index}`).val(diagtext);
-                $(`#adiagdiag_name${index}`).val(null);
-            } else {
-                $(`#adiagdiag_name${index}`).val(diagtext);
-                $(`#adiagdiag_desc${index}`).val(null);
-            }
-        }
-    };
-
-    const addRowDiagDokterOprs = (container, bodyId, diag_id = null, diag_name = null, diag_cat = null,
-        diag_suffer = 0) => {
-        const tbody = document.getElementById(`${container}${bodyId}`);
-        let diagIndex = tbody.getElementsByTagName("tr").length;
-
-        if (diag_id) {
-            let isDuplicate = false;
-            $(`#${container}${bodyId} tr`).each(function() {
-                const existingDiagId = $(this).find(`[name="diag_id[]"]`).val();
-                if (existingDiagId === diag_id) {
-                    isDuplicate = true;
-                    return false;
+                if (isDuplicate) {
+                    // alert("Diagnosa sudah ditambahkan sebelumnya!");
+                    return;
                 }
-            });
-
-            if (isDuplicate) {
-                // alert("Diagnosa sudah ditambahkan sebelumnya!");
-                return;
             }
-        }
 
-        if (!diag_cat) diag_cat = diagIndex > 1 ? 2 : 1;
-        diagIndex = `${bodyId}_${diagIndex + 1}`;
+            if (!diag_cat) diag_cat = diagIndex > 1 ? 2 : 1;
+            diagIndex = `${bodyId}_${diagIndex + 1}`;
 
-        const sufferOptions = <?= json_encode(array_map(function($item) {
-            return ['value' => $item['suffer_type'], 'label' => $item['suffer']];
-        }, $suffer)); ?>;
+            const sufferOptions = <?= json_encode(array_map(function ($item) {
+                                        return ['value' => $item['suffer_type'], 'label' => $item['suffer']];
+                                    }, $suffer)); ?>;
 
-        const diagCatOptions = <?= json_encode($diagCat); ?>;
+            const diagCatOptions = <?= json_encode($diagCat); ?>;
 
-        const filteredDiagCatOptions = diagCatOptions.filter(option => ['1', '13', '14', '15']
-            .includes(
-                option
-                .diag_cat.toString()));
+            const filteredDiagCatOptions = diagCatOptions.filter(option => ['1', '13', '14', '15']
+                .includes(
+                    option
+                    .diag_cat.toString()));
 
-        const sufferList = sufferOptions.map(opt =>
-                `<option value="${opt.value}">${opt.label}</option>`)
-            .join('');
-        const diagCatList = filteredDiagCatOptions.map(opt =>
-            `<option value="${opt.diag_cat}">${opt.diagnosa_category}</option>`).join('');
+            const sufferList = sufferOptions.map(opt =>
+                    `<option value="${opt.value}">${opt.label}</option>`)
+                .join('');
+            const diagCatList = filteredDiagCatOptions.map(opt =>
+                `<option value="${opt.diag_cat}">${opt.diagnosa_category}</option>`).join('');
 
-        $(`#${container}${bodyId}`).append(`
+            $(`#${container}${bodyId}`).append(`
                     <tr id="adiagdiag${diagIndex}${container}">
                         <td>
                             <span id="idCopydiag${diagIndex}${container}" class="pointer text-primary fw-bold text-decoration-underline">Copy</span>
@@ -8616,135 +8634,135 @@ let kopTemplateOprs = [];
                     </tr>
          `);
 
-        $(`#adiagdiag_id${diagIndex}${container}`).on('change', function() {
-            selectedDiagnosaOprs(diagIndex + container);
-        });
-        initializeDiagSelect21(`adiagdiag_id${diagIndex}${container}`, diag_id, diag_name,
-            diagIndex +
-            container);
+            $(`#adiagdiag_id${diagIndex}${container}`).on('change', function() {
+                selectedDiagnosaOprs(diagIndex + container);
+            });
+            initializeDiagSelect21(`adiagdiag_id${diagIndex}${container}`, diag_id, diag_name,
+                diagIndex +
+                container);
 
-        $(`#adiagsuffer_type${diagIndex}${container}`).val(diag_suffer ?? 0);
-        $(`#adiagdiag_cat${diagIndex}${container}`).val(diag_cat);
+            $(`#adiagsuffer_type${diagIndex}${container}`).val(diag_suffer ?? 0);
+            $(`#adiagdiag_cat${diagIndex}${container}`).val(diag_cat);
 
-        $(`#idCopydiag${diagIndex}${container}`).on("click", function() {
-            const selectedText = $(`#adiagdiag_id${diagIndex}${container} option:selected`)
-                .text();
-            if (selectedText) {
-                navigator.clipboard.writeText(selectedText).then(() => {
-                    alert("Teks berhasil disalin: " + selectedText);
-                }).catch(err => {
-                    console.error("Gagal menyalin teks", err);
-                });
-            } else {
-                alert("Tidak ada teks yang dipilih!");
+            $(`#idCopydiag${diagIndex}${container}`).on("click", function() {
+                const selectedText = $(`#adiagdiag_id${diagIndex}${container} option:selected`)
+                    .text();
+                if (selectedText) {
+                    navigator.clipboard.writeText(selectedText).then(() => {
+                        alert("Teks berhasil disalin: " + selectedText);
+                    }).catch(err => {
+                        console.error("Gagal menyalin teks", err);
+                    });
+                } else {
+                    alert("Tidak ada teks yang dipilih!");
+                }
+            });
+        };
+
+
+        function initializeDiagSelect21(theid, initialvalue = null, initialname = null, index = null) {
+            const $select = $("#" + theid);
+
+            $select.select2({
+                placeholder: "Input Diagnosa",
+                allowClear: false,
+                tags: true,
+                ajax: {
+                    url: '<?= base_url(); ?>admin/patient/getDiagnosisListAjax',
+                    type: "post",
+                    dataType: 'json',
+                    delay: 50,
+                    data: function(params) {
+                        return {
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response
+                        };
+                    },
+                    cache: false
+                },
+                createTag: function(params) {
+                    if ($.trim(params.term) === '') {
+                        return null;
+                    }
+                    return {
+                        id: "new_" + get_bodyid(),
+                        text: params.term,
+                        newOption: true
+                    };
+                },
+                templateResult: function(data) {
+                    if (data.newOption) {
+                        $(`#adiagdiag_desc${index}`).val(data.text);
+                        $(`#adiagdiag_name${index}`).val(null);
+                        return $('<span>Tambah: ' + data.text + '</span>');
+                    }
+                    return data.text;
+                },
+
+            });
+
+            if (initialvalue != null) {
+                let option = new Option(initialname, initialvalue, true, true);
+                $select.append(option).trigger('change');
             }
-        });
-    };
 
+            $select.on('select2:select', function(e) {
+                const selectedValue = e.params.data.text;
+                const isNew = e.params.data.newOption || e.params.data.id.startsWith("new_");
 
-    function initializeDiagSelect21(theid, initialvalue = null, initialname = null, index = null) {
-        const $select = $("#" + theid);
-
-        $select.select2({
-            placeholder: "Input Diagnosa",
-            allowClear: false,
-            tags: true,
-            ajax: {
-                url: '<?= base_url(); ?>admin/patient/getDiagnosisListAjax',
-                type: "post",
-                dataType: 'json',
-                delay: 50,
-                data: function(params) {
-                    return {
-                        searchTerm: params.term
-                    };
-                },
-                processResults: function(response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: false
-            },
-            createTag: function(params) {
-                if ($.trim(params.term) === '') {
-                    return null;
-                }
-                return {
-                    id: "new_" + get_bodyid(),
-                    text: params.term,
-                    newOption: true
-                };
-            },
-            templateResult: function(data) {
-                if (data.newOption) {
-                    $(`#adiagdiag_desc${index}`).val(data.text);
+                if (isNew) {
+                    $(`#adiagdiag_desc${index}`).val(selectedValue);
                     $(`#adiagdiag_name${index}`).val(null);
-                    return $('<span>Tambah: ' + data.text + '</span>');
+                    setTimeout(() => {
+                        $(".select2-search__field").val(selectedValue).focus();
+                    }, 50);
+                } else {
+                    $(`#adiagdiag_desc${index}`).val(null);
+                    $(`#adiagdiag_name${index}`).val(selectedValue);
                 }
-                return data.text;
-            },
+            });
 
-        });
+            $select.on("select2:open", function() {
+                let lastSelectedText = $select.find("option:selected").text();
+                setTimeout(() => {
+                    $(".select2-search__field").val(lastSelectedText).focus();
+                }, 50);
+            });
 
-        if (initialvalue != null) {
-            let option = new Option(initialname, initialvalue, true, true);
-            $select.append(option).trigger('change');
+            $select.parent().find("input.select2-search__field").on("keypress", function(e) {
+                if (e.which === 13) {
+                    const inputVal = $(this).val().trim();
+                    if (inputVal !== "") {
+                        let newOption = new Option(inputVal, 'new_' + Date.now(), true, true);
+                        $select.append(newOption).trigger('change');
+                    }
+                    return false;
+                }
+            });
+
         }
 
-        $select.on('select2:select', function(e) {
-            const selectedValue = e.params.data.text;
-            const isNew = e.params.data.newOption || e.params.data.id.startsWith("new_");
-
-            if (isNew) {
-                $(`#adiagdiag_desc${index}`).val(selectedValue);
-                $(`#adiagdiag_name${index}`).val(null);
-                setTimeout(() => {
-                    $(".select2-search__field").val(selectedValue).focus();
-                }, 50);
-            } else {
-                $(`#adiagdiag_desc${index}`).val(null);
-                $(`#adiagdiag_name${index}`).val(selectedValue);
-            }
-        });
-
-        $select.on("select2:open", function() {
-            let lastSelectedText = $select.find("option:selected").text();
-            setTimeout(() => {
-                $(".select2-search__field").val(lastSelectedText).focus();
-            }, 50);
-        });
-
-        $select.parent().find("input.select2-search__field").on("keypress", function(e) {
-            if (e.which === 13) {
-                const inputVal = $(this).val().trim();
-                if (inputVal !== "") {
-                    let newOption = new Option(inputVal, 'new_' + Date.now(), true, true);
-                    $select.append(newOption).trigger('change');
-                }
-                return false;
-            }
-        });
-
-    }
 
 
+        function addRowDiagPerawat(container, bodyId, diag_id = null, diag_notes = null, diag_cat = null) {
+            const diagCatOptions = <?= json_encode($diagCat); ?>;
+            const filteredDiagCatOptions = diagCatOptions.filter(option => ['13', '14', '15'].includes(
+                option
+                .diag_cat.toString()));
+            const tbody = $("#" + container + bodyId);
+            let diagIndex = tbody.find("tr").length;
 
-    function addRowDiagPerawat(container, bodyId, diag_id = null, diag_notes = null, diag_cat = null) {
-        const diagCatOptions = <?= json_encode($diagCat); ?>;
-        const filteredDiagCatOptions = diagCatOptions.filter(option => ['13', '14', '15'].includes(
-            option
-            .diag_cat.toString()));
-        const tbody = $("#" + container + bodyId);
-        let diagIndex = tbody.find("tr").length;
+            diagIndex = bodyId + diagIndex;
 
-        diagIndex = bodyId + diagIndex;
+            const diagCatList = filteredDiagCatOptions.map(opt =>
+                `<option value="${opt.diag_cat}">${opt.diagnosa_category}</option>`
+            ).join('');
 
-        const diagCatList = filteredDiagCatOptions.map(opt =>
-            `<option value="${opt.diag_cat}">${opt.diagnosa_category}</option>`
-        ).join('');
-
-        const rowHtml = `
+            const rowHtml = `
         <tr id="${container}${bodyId}${diagIndex}">
             <td>
                 <select id="adiagpdiagnosan_id${container}${bodyId}${diagIndex}" class="form-control" name="diagnosan_id[]" style="width: 100%"></select>
@@ -8764,50 +8782,50 @@ let kopTemplateOprs = [];
         </tr>
     `;
 
-        tbody.append(rowHtml);
+            tbody.append(rowHtml);
 
-        const diagSelect = $(`#adiagpdiagnosan_id${container}${bodyId}${diagIndex}`);
-        const diagCatSelect = $(`#adiagdiag_cat${container}${bodyId}${diagIndex}`);
+            const diagSelect = $(`#adiagpdiagnosan_id${container}${bodyId}${diagIndex}`);
+            const diagCatSelect = $(`#adiagdiag_cat${container}${bodyId}${diagIndex}`);
 
-        initializeDiagPerawatSelect2(diagSelect.attr("id"), diag_id, diag_notes);
-        diagCatSelect.val(diag_cat || "");
+            initializeDiagPerawatSelect2(diagSelect.attr("id"), diag_id, diag_notes);
+            diagCatSelect.val(diag_cat || "");
 
-        diagSelect.on("focus", function() {
-            removetextdiag(diagIndex);
-        }).on("change", function() {
-            selectedDiagNursePerawatOprs(container + bodyId + diagIndex);
-        });
+            diagSelect.on("focus", function() {
+                removetextdiag(diagIndex);
+            }).on("change", function() {
+                selectedDiagNursePerawatOprs(container + bodyId + diagIndex);
+            });
 
-        $(`#${container}${bodyId}${diagIndex} .closebtn`).on("click", function() {
-            $(`#${container}${bodyId}${diagIndex}`).remove();
-        });
-    }
-    // new update 30/07
+            $(`#${container}${bodyId}${diagIndex} .closebtn`).on("click", function() {
+                $(`#${container}${bodyId}${diagIndex}`).remove();
+            });
+        }
+        // new update 30/07
 
 
-    const getDataColumnName = (props) => {
-        postData({
-                table_name: props?.table_name,
-                column_name: props?.column_name,
-                column_id: props?.column_id,
-                id: props?.id,
-            }, 'admin/PatientOperationRequest/getDataColumnName',
-            (res) => {
-                if (res && Array.isArray(res) && res.length > 0) {
-                    $('#' + props?.element_id).val(res[0][props?.column_name]);
-                }
-            })
-    }
+        const getDataColumnName = (props) => {
+            postData({
+                    table_name: props?.table_name,
+                    column_name: props?.column_name,
+                    column_id: props?.column_id,
+                    id: props?.id,
+                }, 'admin/PatientOperationRequest/getDataColumnName',
+                (res) => {
+                    if (res && Array.isArray(res) && res.length > 0) {
+                        $('#' + props?.element_id).val(res[0][props?.column_name]);
+                    }
+                })
+        }
 
-    const renderDataTreatmentObat = (props) => {
-        let data = props?.data
-        let obatInhalasi = "";
-        let obatInjeksi = "";
-        let blood = '';
-        let obatCairan = ''
-        let medication = ''
-        data?.treatment?.filter(item => parseInt(item.isalkes) === 2).map((item, index) => {
-            obatInhalasi += `<tr id="obat${item?.bill_id}cstm">
+        const renderDataTreatmentObat = (props) => {
+            let data = props?.data
+            let obatInhalasi = "";
+            let obatInjeksi = "";
+            let blood = '';
+            let obatCairan = ''
+            let medication = ''
+            data?.treatment?.filter(item => parseInt(item.isalkes) === 2).map((item, index) => {
+                obatInhalasi += `<tr id="obat${item?.bill_id}cstm">
                 <td>
                 <input type="text" id="dateObat${item?.bill_id}" name="dateobat[]" class="form-control datetimeflatpickr-oprs-anes"
                  value="${moment(item?.treat_date).format("DD/MM/YYYY HH:mm")}">   
@@ -8817,11 +8835,11 @@ let kopTemplateOprs = [];
                 <td>${item?.name ?? "-"}</td>
                 <td>${item?.quantity ?? "0"}</td>
             </tr>`;
-        });
+            });
 
-        data?.treatment?.filter(item => parseInt(item.isalkes) === 20).map((item, index) => {
+            data?.treatment?.filter(item => parseInt(item.isalkes) === 20).map((item, index) => {
 
-            obatInjeksi += `<tr id="obat${item?.bill_id}cstm">
+                obatInjeksi += `<tr id="obat${item?.bill_id}cstm">
                 <td>
                 <input type="text" id="dateObat${item?.bill_id}" name="dateobat[]" class="form-control datetimeflatpickr-oprs-anes"
                  value="${moment(item?.treat_date).format("DD/MM/YYYY HH:mm")}">   
@@ -8831,10 +8849,10 @@ let kopTemplateOprs = [];
                 <td>${item?.name ?? "-"}</td>
                 <td>${item?.quantity ?? "0"}</td>
             </tr>`;
-        });
+            });
 
-        data?.treatment?.filter(item => parseInt(item.isalkes) === 19).map((item, index) => {
-            obatCairan += `<tr>
+            data?.treatment?.filter(item => parseInt(item.isalkes) === 19).map((item, index) => {
+                obatCairan += `<tr>
                <td>
                 <input type="text" id="dateObat${item?.bill_id}" name="dateobat[]" class="form-control datetimeflatpickr-oprs-anes"
                  value="${moment(item?.treat_date).format("DD/MM/YYYY HH:mm")}">   
@@ -8845,20 +8863,20 @@ let kopTemplateOprs = [];
                 <td>${item?.name ?? "-"}</td>
                 <td>${item?.quantity ?? "0"}</td>
             </tr>`;
-        });
+            });
 
 
-        // data?.treatment?.map((item, index) => {
-        //     obatCairan += `<tr>
-        //                 <td>${moment(item?.treat_date).format("DD/MM/YYYY HH:mm")}</td>
-        //                 <td></td>
-        //                 <td>${item?.name  ?? "-"}</td>
-        //                 <td>${item?.quantity ?? "0"}</td>
-        //             </tr>`;
-        // });
-        data?.blood_request?.map((item, index) => {
+            // data?.treatment?.map((item, index) => {
+            //     obatCairan += `<tr>
+            //                 <td>${moment(item?.treat_date).format("DD/MM/YYYY HH:mm")}</td>
+            //                 <td></td>
+            //                 <td>${item?.name  ?? "-"}</td>
+            //                 <td>${item?.quantity ?? "0"}</td>
+            //             </tr>`;
+            // });
+            data?.blood_request?.map((item, index) => {
 
-            blood += `<tr>
+                blood += `<tr>
                         <td>
                           <input type="text" id="dateObat${item?.blood_request}" name="dateobatBoold[]" class="form-control datetimeflatpickr-oprs-anes"
                             value="${moment(item?.using_time).format("DD/MM/YYYY HH:mm")}">   
@@ -8869,101 +8887,101 @@ let kopTemplateOprs = [];
                         <td>${item?.usagetype  ?? "-"}</td>
                         <td>${item?.blood_quantity ?? "0"}</td>
                     </tr>`;
-        });
+            });
 
-        const isalkesArray = [2, 19, 20];
+            const isalkesArray = [2, 19, 20];
 
-        data?.treatment?.filter(item => isalkesArray?.includes(parseInt(item.isalkes))).map((item,
-            index) => {
-            medication += `<tr>
+            data?.treatment?.filter(item => isalkesArray?.includes(parseInt(item.isalkes))).map((item,
+                index) => {
+                medication += `<tr>
                     <td>${item?.name ?? "-"}</td>
                     <td>${item?.quantity ?? "0"}</td>
                   </tr>`;
-        });
-
-        $("#bodyDataObatInhalasi").html(obatInhalasi);
-        $("#bodyDataObatInjeksi").html(obatInjeksi)
-        $("#bodyDatacairanMasuk").html(obatCairan + blood)
-        $("#bodyDataMedication").html(medication)
-
-
-    } // new  31/07
-
-    const getRequestVtRangeAnesthesia = (props) => {
-
-        let {
-            vactination_id,
-            filters,
-            body_requestCharts,
-            body_requestTables
-        } = props;
-
-        filters.forEach((filter, index) => {
-            postData({
-                document_id: vactination_id ?? "",
-                filter: filter ?? ""
-            }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (res) => {
-
-                if (res.respon && res.data.examination_info.length > 0) {
-                    ChartMonitoringDurante({
-                        data: res.data.examination_info,
-                        body_requestChart: body_requestCharts[index],
-                        body_requestTabels: body_requestTables[index]
-                    });
-                } else {
-                    $(`#${body_requestCharts[index]}`).closest('.box.box-info').hide();
-                    $(`#${body_requestTables[index]}`).closest('.box.box-info').hide();
-                }
             });
 
-        });
-    };
-    // new 1/8
-    const getDataDiagnosasss = (props) => {
-        postData({
-            pasien_diagnosa_id: `${props?.vactination_id}`
-        }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
+            $("#bodyDataObatInhalasi").html(obatInhalasi);
+            $("#bodyDataObatInjeksi").html(obatInjeksi)
+            $("#bodyDatacairanMasuk").html(obatCairan + blood)
+            $("#bodyDataMedication").html(medication)
 
 
-            if (res.respon && Array.isArray(res.data)) {
-                const tbodyId = `bodyDiagLaporanAnesthesiLengkap-${props?.vactination_id}`;
-                const tbody = $(`#${tbodyId}`);
-                tbody.empty();
-                res.data.forEach((diagnosis) => {
+        } // new  31/07
 
-                    addRowDiagDokterOprs('bodyDiagLaporanAnesthesiLengkap-', props
-                        ?.vactination_id,
-                        diagnosis.diagnosa_id, diagnosis.diagnosa_name ??
-                        diagnosis
-                        .diagnosa_desc, diagnosis
-                        .diag_cat,
-                        diagnosis.suffer_type);
+        const getRequestVtRangeAnesthesia = (props) => {
+
+            let {
+                vactination_id,
+                filters,
+                body_requestCharts,
+                body_requestTables
+            } = props;
+
+            filters.forEach((filter, index) => {
+                postData({
+                    document_id: vactination_id ?? "",
+                    filter: filter ?? ""
+                }, 'admin/PatientOperationRequest/getDataVitailSignRangeAnesthesia', (res) => {
+
+                    if (res.respon && res.data.examination_info.length > 0) {
+                        ChartMonitoringDurante({
+                            data: res.data.examination_info,
+                            body_requestChart: body_requestCharts[index],
+                            body_requestTabels: body_requestTables[index]
+                        });
+                    } else {
+                        $(`#${body_requestCharts[index]}`).closest('.box.box-info').hide();
+                        $(`#${body_requestTables[index]}`).closest('.box.box-info').hide();
+                    }
                 });
+
+            });
+        };
+        // new 1/8
+        const getDataDiagnosasss = (props) => {
+            postData({
+                pasien_diagnosa_id: `${props?.vactination_id}`
+            }, 'admin/PatientOperationRequest/getDiagnosassDockterData', (res) => {
+
+
+                if (res.respon && Array.isArray(res.data)) {
+                    const tbodyId = `bodyDiagLaporanAnesthesiLengkap-${props?.vactination_id}`;
+                    const tbody = $(`#${tbodyId}`);
+                    tbody.empty();
+                    res.data.forEach((diagnosis) => {
+
+                        addRowDiagDokterOprs('bodyDiagLaporanAnesthesiLengkap-', props
+                            ?.vactination_id,
+                            diagnosis.diagnosa_id, diagnosis.diagnosa_name ??
+                            diagnosis
+                            .diagnosa_desc, diagnosis
+                            .diag_cat,
+                            diagnosis.suffer_type);
+                    });
+                }
+            });
+        }; //new 01/08
+
+        const convertDate = (dateString) => {
+            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm",
+                "YYYY-MM-DDTHH:mm"
+            ];
+            const parsedDate = moment(dateString, formats, true);
+            if (parsedDate.isValid()) {
+                return parsedDate.format("YYYY-MM-DD HH:mm");
+            } else {
+                return null;
             }
-        });
-    }; //new 01/08
+        };
 
-    const convertDate = (dateString) => {
-        const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm",
-            "YYYY-MM-DDTHH:mm"
-        ];
-        const parsedDate = moment(dateString, formats, true);
-        if (parsedDate.isValid()) {
-            return parsedDate.format("YYYY-MM-DD HH:mm");
-        } else {
-            return null;
+    })()
+
+    function selectedDiagNursePerawatOprs(index) {
+        var diagname = $("#adiagpdiagnosan_id" + index).text();
+
+        if (typeof diagname !== "undefined") {
+            $("#adiagpdiag_notes" + index).val(diagname);
         }
-    };
-
-})()
-
-function selectedDiagNursePerawatOprs(index) {
-    var diagname = $("#adiagpdiagnosan_id" + index).text();
-
-    if (typeof diagname !== "undefined") {
-        $("#adiagpdiag_notes" + index).val(diagname);
     }
-}
 </script>
 <script>
 

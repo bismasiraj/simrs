@@ -42,25 +42,25 @@
     }
 
     const getRujukInternal = (visitIdKonsul) => {
-        // postData({
-        //     visitIdKonsul: pasienDiagnosaId
-        // }, 'admin/PatientOperationRequest/getExaminationData', (res) => {
-        //     if (res?.respon === false) {
-        //         // Jika data tidak ditemukan, gunakan newBodyId
-        //         $(`#avtbody_id${suffix}`).val(newBodyId);
-        //     } else {
-        //         const data = res?.data[0];
+        postData({
+            visitIdKonsul: pasienDiagnosaId
+        }, 'admin/PatientOperationRequest/getExaminationData', (res) => {
+            if (res?.respon === false) {
+                // Jika data tidak ditemukan, gunakan newBodyId
+                $(`#avtbody_id${suffix}`).val(newBodyId);
+            } else {
+                const data = res?.data[0];
 
-        //         // Tentukan body_id untuk elemen
-        //         const bodyIdFromData = data?.body_id === pasienDiagnosaId ? data?.body_id : newBodyId;
+                // Tentukan body_id untuk elemen
+                const bodyIdFromData = data?.body_id === pasienDiagnosaId ? data?.body_id : newBodyId;
 
-        //         // Perbarui nilai elemen HTML sesuai suffix
-        //         $(`#avtbody_id${suffix}`).val(bodyIdFromData);
+                // Perbarui nilai elemen HTML sesuai suffix
+                $(`#avtbody_id${suffix}`).val(bodyIdFromData);
 
-        //         // Render data jika body_id valid
-        //         renderDataVitailSign(data);
-        //     }
-        // });
+                // Render data jika body_id valid
+                renderDataVitailSign(data);
+            }
+        });
     }
 
     $("#rujintclinicid").on("click", function() {

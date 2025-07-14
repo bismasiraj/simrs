@@ -83,11 +83,11 @@ class Cetak extends \App\Controllers\BaseController
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
 
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -103,11 +103,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -123,7 +123,7 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $select['ttd_pasien'] = $ttdPasienBase64;
             $select['ttd_dok'] = $ttdDokterBase64;
 
@@ -133,7 +133,7 @@ class Cetak extends \App\Controllers\BaseController
                     'title' => $title,
                     "val" => $select,
                     "informasiMedis" => $newData ?? [],
-                    "lokalis" => $selectlokalis ??[],
+                    "lokalis" => $selectlokalis ?? [],
                     "operasi" => $operasi,
                     "diagnosa" => $selectDiagnosa,
                     "riwayat_alergi" => $riwayat_alergi,
@@ -191,8 +191,8 @@ class Cetak extends \App\Controllers\BaseController
 
 
                 $informasiMedis = array_splice($select, 13, 16);
-                $keadaanUmum = array_splice($select, 14, 3);
-                $perencanaanAnestesi = array_splice($select, 15, 11);
+                $keadaanUmum = array_splice($select, 15, 2);
+                $perencanaanAnestesi = array_splice($select, 17, 11);
 
                 $newData = [];
                 $newData2 = [];
@@ -208,13 +208,13 @@ class Cetak extends \App\Controllers\BaseController
             $operasi = $this->lowerKey($db->query("
             SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
 
-            
+
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -230,11 +230,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -250,11 +250,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $select['ttd_pasien'] = $ttdPasienBase64;
             $select['ttd_dok'] = $ttdDokterBase64;
             $select['ttd_dokter_name'] = $operasi['doctor'];
-            
+
 
             if (isset($select)) {
                 return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
@@ -307,13 +307,13 @@ class Cetak extends \App\Controllers\BaseController
             $operasi = $this->lowerKey($db->query("
             SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
 
-            
+
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -329,11 +329,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -349,11 +349,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $select['ttd_pasien'] = $ttdPasienBase64;
             $select['ttd_dok'] = $ttdDokterBase64;
             $select['ttd_dokter_name'] = $operasi['doctor'];
-            
+
 
             if (isset($select)) {
                 return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
@@ -402,11 +402,11 @@ class Cetak extends \App\Controllers\BaseController
             SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
 
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -422,11 +422,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -442,7 +442,7 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $select['ttd_pasien'] = $ttdPasienBase64;
             $select['ttd_dok'] = $ttdDokterBase64;
             $select['ttd_dokter_name'] = $operasi['doctor'];
@@ -583,17 +583,17 @@ class Cetak extends \App\Controllers\BaseController
                     GROUP BY BODY_ID, OBSERVATION_DATE;
                 ")->getResultArray() ?? []);
 
-                
+
                 $informasiMedis = array_slice($select, 8, 8);
                 $informasiIntra = array_slice($select, 16, 23);
-                
+
                 $informasiIntra2 = array_slice($select, 39, 13);
                 $informasiPasca = array_slice($select, 51, 11);
                 $newData = [];
                 $newData2 = [];
                 $newData3 = [];
                 $newData4 = [];
-                
+
                 $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS003');
                 $newData2 = $this->ConvertValue($informasiIntra, $newData2, 'OPRS004');
                 $newData3 = $this->ConvertValue($informasiIntra2, $newData3, 'OPRS004');
@@ -605,11 +605,11 @@ class Cetak extends \App\Controllers\BaseController
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
 
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -625,11 +625,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -645,7 +645,7 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $select['ttd_pasien'] = $ttdPasienBase64;
             $select['ttd_dok'] = $ttdDokterBase64;
             $select['dokter'] = $operasi['doctor'];
@@ -714,13 +714,13 @@ class Cetak extends \App\Controllers\BaseController
             $operasi = $this->lowerKey($db->query("
             SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
 
-            
+
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -736,11 +736,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -756,7 +756,7 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $select['ttd_pasien'] = $ttdPasienBase64;
             $select['ttd_dok'] = $ttdDokterBase64;
             $select['dokter'] = $operasi['doctor'];
@@ -830,13 +830,13 @@ class Cetak extends \App\Controllers\BaseController
             $operasi = $this->lowerKey($db->query("
             SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
 
-            
+
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -852,11 +852,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -872,7 +872,7 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $query['ttd_pasien'] = $ttdPasienBase64;
             $query['ttd_dok'] = $ttdDokterBase64;
             $query['ttd_dokter_name'] = $operasi['doctor'];
@@ -1067,11 +1067,11 @@ class Cetak extends \App\Controllers\BaseController
             SELECT NO_REGISTRATION, EMPLOYEE_ID, DOCTOR FROM pasien_operasi  WHERE vactination_id = '" . $vactination_id . "'")->getRowArray() ?? []);
 
             $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-        
+
             $ttdPasienBase64 = null;
             $ttdPasienDir = $this->imageloc . "uploads/signatures/";
             $noReg = $visit['no_registration'] ?? '';
-        
+
             if (!empty($noReg)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdPasienDir . '*' . $noReg . '*.' . $ext;
@@ -1087,11 +1087,11 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $ttdDokterBase64 = null;
             $ttdDokterDir = $this->imageloc . "uploads/dokter/";
             $employeeId = $operasi['employee_id'] ?? '';
-        
+
             if (!empty($employeeId)) {
                 foreach ($allowedExtensions as $ext) {
                     $pattern = $ttdDokterDir . '*' . $employeeId . '*.' . $ext;
@@ -1107,12 +1107,12 @@ class Cetak extends \App\Controllers\BaseController
                     }
                 }
             }
-        
+
             $query['ttd_pasien'] = $ttdPasienBase64;
             $query['ttd_dok'] = $ttdDokterBase64;
             $query['ttd_dokter_name'] = $operasi['doctor'];
 
-            
+
 
             return view("admin/patient/cetak/operasi/laporan-anesthesi-lengkap.php", [
                 "visit" => $visit,
@@ -1743,7 +1743,7 @@ class Cetak extends \App\Controllers\BaseController
             ORDER BY EXAMINATION_DATE DESC;", $decoded_visit["id"])->getResultArray());
 
             $exam = $exam ? $exam[0] : [];
-
+            // dd($results);
 
             if ($resultsContent === null || $resultsContent === 'cetak') {
                 return view("admin/patient/cetak/cairan-cetak.php", [
@@ -2481,7 +2481,7 @@ class Cetak extends \App\Controllers\BaseController
 
             $model = new CairanModel();
 
-            $sql = $model->where('visit_id', $decoded_visit["visit_id"]);
+            $sql = $model->where('visit_id', $decoded_visit['visit']["visit_id"]);
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
@@ -2505,21 +2505,21 @@ class Cetak extends \App\Controllers\BaseController
             $selectAParameterValue = $this->lowerKey($resultArrayAParameterValue);
 
             $diagnosa = $db->table('PASIEN_DIAGNOSA')
-                ->where('visit_id', $decoded_visit["visit_id"])
+                ->where('visit_id', $decoded_visit['visit']["visit_id"])
                 ->get();
             $resultArrayDiagnosa = $diagnosa->getResultArray();
             $resultArrayDiagnosa = $this->lowerKey($resultArrayDiagnosa);
 
 
+            // dd($results);
             return view("admin/patient/cetak/monitoring-infus.php", [
-                "visit" => $decoded_visit,
+                "visit" => $decoded_visit['visit'],
                 "title" => "MONITORING INFUS",
                 "organization" => $selectorganization,
                 "dataTabels" => $results,
                 "aValue" => $selectAParameterValue,
                 "aPrameter" => $selectAParameter,
                 "diagnosa" => $resultArrayDiagnosa
-
             ]);
         }
     }
@@ -2537,11 +2537,11 @@ class Cetak extends \App\Controllers\BaseController
                                                         SELECT *,
                                                             ROW_NUMBER() OVER (PARTITION BY brand_id ORDER BY treat_date) AS rn
                                                         FROM PASIEN_PRESCRIPTION_DETAIL
-                                                        WHERE VISIT_ID = '202406231817490203553'
+                                                        WHERE VISIT_ID = ?
                                                         AND MEASURE_ID IN (3, 7, 16, 22, 37) --- hapus yang 3 hanya test 
                                                     ) AS RankedData
                                                     WHERE rn <= 6
-                                                    ORDER BY brand_id, treat_date;")->getResultArray());
+                                                    ORDER BY brand_id, treat_date;", [$decoded_visit['visit_id']])->getResultArray());
 
             return view("admin/patient/cetak/daftar_pengobatan_parenteral.php", [
                 "visit" => $decoded_visit,
@@ -2567,11 +2567,11 @@ class Cetak extends \App\Controllers\BaseController
                                                         SELECT *,
                                                             ROW_NUMBER() OVER (PARTITION BY brand_id ORDER BY treat_date) AS rn
                                                         FROM PASIEN_PRESCRIPTION_DETAIL
-                                                        WHERE VISIT_ID = '202406231817490203553'
+                                                        WHERE VISIT_ID = ?
                                                         AND MEASURE_ID IN (3, 5, 15, 12, 17) 
                                                     ) AS RankedData
                                                     WHERE rn <= 6
-                                                    ORDER BY brand_id, treat_date;")->getResultArray());
+                                                    ORDER BY brand_id, treat_date;", [$decoded_visit['visit_id']])->getResultArray());
 
 
 
@@ -2581,7 +2581,6 @@ class Cetak extends \App\Controllers\BaseController
                 "kop" => $selectorganization,
                 "visit" => $decoded_visit,
                 "data" => $select
-
             ]);
         }
     }

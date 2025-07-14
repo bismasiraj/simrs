@@ -1,12 +1,13 @@
-<div id="atransferkonsulinternalgroup" class="row" style="display: none;">
+<div id="atransferrujukaninternalgroup" class="row" style="display: none;">
     <div class="mb-4">
-        <h3>Pembuatan Konsul Internal</h3>
+        <h3>Pembuatan Rujukan Internal</h3>
         <div class="row">
             <div class="col-sm-12 col-md-4">
                 <div class="mb-3">
                     <div class="form-group">
                         <label>Tanggal Rencana</label>
-                        <input id="knslintvisitdate" name="knslintvisitdate" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
+                        <input id="flatrujintvisitdate" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                        <input id="rujintvisitdate" name=" rujintvisitdate" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
                     </div>
                 </div>
             </div>
@@ -14,7 +15,7 @@
                 <div class="mb-3">
                     <div class="form-group">
                         <label>Poli Tujuan</label>
-                        <select name='knslintclinicid' id="knslintclinicid" class="form-control select2 act" style="width:100%">
+                        <select name='rujintclinicid' id="rujintclinicid" class="form-control select2 act" style="width:100%">
                             <?php $cliniclist = array();
                             foreach (@$clinicAll as $key => $value) {
                                 if (@$clinicAll[$key]['stype_id'] == '1' || @$clinicAll[$key]['stype_id'] == '5') {
@@ -34,7 +35,7 @@
                 <div class="mb-3">
                     <div class="form-group">
                         <label>Dokter Tujuan</label>
-                        <select name='knslintemployeeid' id="knslintemployeeid" class="form-control select2 act" style="width:100%">
+                        <select name='rujintemployeeid' id="rujintemployeeid" class="form-control select2 act" style="width:100%">
                             <?php foreach ($employee as $key => $value) {
                             ?>
                                 <?php if ($dokterselected == $visit['employee_id']) { ?>

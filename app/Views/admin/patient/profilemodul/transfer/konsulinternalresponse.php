@@ -1,6 +1,9 @@
+<div class="panel-footer text-start mb-4">
+    <button type="submit" id="knslintsimpanbtn" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Respon</span></button>
+</div>
 <div id="atransferkonsulinternalgroup" class="row" style="display: none;">
     <div class="mb-4">
-        <h3>Pembuatan Konsul Internal</h3>
+        <h3>Respon Konsul Internal</h3>
         <div class="row">
             <div class="col-sm-12 col-md-4">
                 <div class="mb-3">

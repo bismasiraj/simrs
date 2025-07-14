@@ -50,6 +50,7 @@ foreach ($examDetail as $key => $value) {
     var userRoles = <?= json_encode(user()->getRoles()); ?>;
     // $(document).ready(function(e) {
 
+    var resepDetail = [];
     var fallRiskScore = Array();
     var painjson = [];
     var painMonitoring;
@@ -111,6 +112,13 @@ foreach ($examDetail as $key => $value) {
         let sortedArr = arr.sort(function(a, b) {
             // Compare the values of the dynamic property (passed as varForModifiedDateObjectName)
             return new Date(a[varForModifiedDateObjectName]) - new Date(b[varForModifiedDateObjectName]);
+        });
+        return sortedArr;
+    };
+    const sortDescending = (arr, varForModifiedDateObjectName) => {
+        // Sort descending by the specified dynamic object field
+        let sortedArr = arr.sort(function(a, b) {
+            return new Date(b[varForModifiedDateObjectName]) - new Date(a[varForModifiedDateObjectName]);
         });
         return sortedArr;
     };
@@ -9568,8 +9576,6 @@ foreach ($examDetail as $key => $value) {
             raciktidak = 'Tidak ada';
             isfarmasi = 0;
         }
-
-        console.log(raciktidak)
 
         // var statusantrean = $("#pvstatusantrean").val()
         // if (statusantrean == '2' + (String)(checktask) || (statusantrean == '11' && task == 1)) {

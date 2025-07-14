@@ -242,10 +242,10 @@
         let rujtipeRujukan = $("#artiperujukan").val()
         // let rujpoliRujukan = $("#arkdpoli_kontrol").val()
         let rujpoliRujukanName = $("#arnmpoli_kontrol").val()
-        if (rujpoliRujukanName == '' || rujpoliRujukanName == null) {
-            alert('Poli rujukan harus diisi')
-            return '';
-        }
+        // if (rujpoliRujukanName == '' || rujpoliRujukanName == null) {
+        //     alert('Poli rujukan harus diisi')
+        //     return '';
+        // }
         let rujsex = '<?= $visit['gender']; ?>'
         let rujnama = '<?= $visit['diantar_oleh']; ?>'
         let rujnokartu = '<?= $visit['pasien_id']; ?>'

@@ -31,6 +31,7 @@ use App\Models\FamilyModel;
 use App\Models\FollowUpModel;
 use App\Models\GoodGfModel;
 use App\Models\HandoverModel;
+use App\Models\PasienHistoryModel;
 use App\Models\TreatDocsModel;
 use CodeIgniter\Files\File;
 use App\Models\GenerateIdModel;
@@ -2639,6 +2640,8 @@ This Function is used to Add Patient
         $pv = $model->where("visit_id", $id)->first();
         $pv = $this->lowerKeyOne($pv);
 
+
+
         // return $pv['visit_id'];
 
         $img_time = new Time('now');
@@ -2719,6 +2722,12 @@ This Function is used to Add Patient
         // $visit = $this->lowerKey($pv->find($id));
         $visit = $pv;
         $visit['session_id'] = $session_id;
+        if (isset($pv['no_registration'])) {
+            $pmodel = new PasienModel();
+            $p = $pmodel->select("isnull(mobile,phone_number) as phone_number")->where("no_registration", $pv['no_registration'])->first();
+            if (isset($p['phone_number']))
+                $visit['phone_number'] = $p['phone_number'];
+        }
         $db = db_connect();
         $checkLock = $db->query("select locked from pasien_visitation where visit_id = '" . $visit['visit_id'] . "'")->getFirstRow('array');
         $visit['locked'] = @$checkLock['locked'];
@@ -2948,6 +2957,21 @@ This Function is used to Add Patient
         }
         $visit['platform'] = 'profile';
 
+        $phModel = new PasienHistoryModel();
+        $history = $this->lowerKey($phModel->whereIn("value_id", ["G0090201", "G0090202"])->where("no_registration", $visit['no_registration'])->findAll());
+        $visit['alergi_obat'] = "";
+        $visit['alergi_non'] = "";
+        if (!is_null($history)) {
+            if (count($history) > 0) {
+                foreach ($history as $keyh => $valueh) {
+                    if ($valueh['value_id'] == "G0090201")
+                        $visit['alergi_obat'] = $valueh['histories'];
+                    if ($valueh['value_id'] == "G0090202")
+                        $visit['alergi_non'] = $valueh['histories'];
+                }
+            }
+        }
+
         // dd($visit);
 
 
@@ -3175,7 +3199,12 @@ This Function is used to Add Patient
         }
         $visit['class_id'] = $class_id;
         $visit['class_id_plafond'] = $class_id_plafond;
-
+        if (isset($visit['no_registration']) && !isset($visit['phone_number'])) {
+            $pmodel = new PasienModel();
+            $p = $pmodel->select("isnull(mobile,phone_number) as phone_number")->where("no_registration", $visit['no_registration'])->first();
+            if (isset($p['phone_number']))
+                $visit['phone_number'] = $p['phone_number'];
+        }
         $classModel = new ClassModel();
         $class = $this->lowerKey($classModel->findAll());
 
@@ -3365,7 +3394,20 @@ This Function is used to Add Patient
         if (is_null($visit['locked'])) {
             $visit['locked'] = '0';
         }
-
+        $phModel = new PasienHistoryModel();
+        $history = $this->lowerKey($phModel->whereIn("value_id", ["G0090201", "G0090202"])->where("no_registration", $visit['no_registration'])->findAll());
+        $visit['alergi_obat'] = "";
+        $visit['alergi_non'] = "";
+        if (!is_null($history)) {
+            if (count($history) > 0) {
+                foreach ($history as $keyh => $valueh) {
+                    if ($valueh['value_id'] == "G0090201")
+                        $visit['alergi_obat'] = $valueh['histories'];
+                    if ($valueh['value_id'] == "G0090202")
+                        $visit['alergi_non'] = $valueh['histories'];
+                }
+            }
+        }
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,
@@ -3483,7 +3525,12 @@ This Function is used to Add Patient
                 $visit['locked'] = 0;
             }
         }
-
+        if (isset($visit['no_registration']) && !isset($visit['phone_number'])) {
+            $pmodel = new PasienModel();
+            $p = $pmodel->select("isnull(mobile,phone_number) as phone_number")->where("no_registration", $visit['no_registration'])->first();
+            if (isset($p['phone_number']))
+                $visit['phone_number'] = $p['phone_number'];
+        }
 
         // $visit = $ta;
         unset($ta['visit_date']);
@@ -3544,21 +3591,28 @@ This Function is used to Add Patient
         // inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
         // inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
         // where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
-        $specialist = $this->lowerKey($db->query("select top(1) st.specialist_type_id from 
+        $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
         SPECIALIST_TYPE st
         inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
-        inner join treatment_akomodasi ta on ta.clinic_type = ct.clinic_type
-        where ta.visit_id = '" . $visit['visit_id'] . "' order by ta.treat_date desc;")->getResultArray());
-
+        inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
         foreach ($specialist as $key => $value) {
             $visit['specialist_type_id'] = $value['specialist_type_id'];
         }
-
-        // return json_encode($ta['employee_id']);
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+            SPECIALIST_TYPE st
+            inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+            inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+            where c.CLINIC_ID = 'P001';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
         if (!isset($visit['specialist_type_id'])) {
             $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
                 employee_all st
-                where st.employee_id = '" . $ta['employee_id'] . "';")->getResultArray());
+                where st.employee_id = '" . $visit['employee_id'] . "';")->getResultArray());
             foreach ($specialist as $key => $value) {
                 $visit['specialist_type_id'] = $value['specialist_type_id'];
             }
@@ -3676,7 +3730,20 @@ This Function is used to Add Patient
 
         $visit['platform'] = 'profilepenunjang';
         // dd($visit['locked']);
-
+        $phModel = new PasienHistoryModel();
+        $history = $this->lowerKey($phModel->whereIn("value_id", ["G0090201", "G0090202"])->where("no_registration", $visit['no_registration'])->findAll());
+        $visit['alergi_obat'] = "";
+        $visit['alergi_non'] = "";
+        if (!is_null($history)) {
+            if (count($history) > 0) {
+                foreach ($history as $keyh => $valueh) {
+                    if ($valueh['value_id'] == "G0090201")
+                        $visit['alergi_obat'] = $valueh['histories'];
+                    if ($valueh['value_id'] == "G0090202")
+                        $visit['alergi_non'] = $valueh['histories'];
+                }
+            }
+        }
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,
@@ -5887,145 +5954,178 @@ This Function is used to Add Patient
         $visit_id = $body['visit_id'];
         $trans_id = $body['trans_id'];
         $clinic_id = $body['clinicId'];
+        $class_room_id = @$body['classRoomId'];
         $session_id = $body['sessionId'];
 
         $strinbill = str_replace(['[', ']'], ['', ''], str_replace('"', "'", json_encode($billId)));
 
+        if (($class_room_id == '' || is_null($class_room_id)) && ($clinic_id != 'P012')) {
+            $model = new TreatmentObatModel();
+            $checkResep = $model->where("nota_no", $session_id)->select('resep_no')->first();
+
+            if (isset($checkResep['resep_no'])) {
+                $response['status'] = 'error';
+                $response['message'] = 'Copy Resep tidak bisa dilakukan karena anda sudah membuat resep pada sesi ini. Silahkan edit resep untuk menambahkan obat.';
+                $response['data'] = $checkResep['resep_no'];
+                return $this->response->setJSON($response);
+            }
+        }
+
         // return json_encode($strinbill);
 
         $db = db_connect();
-        $db->query("
-        insert into treatment_obat
-        select
-        ORG_UNIT_CODE,
-        left(replace(replace(REPLACE(convert(varchar,getdate(),121),'-',''),':',''),' ',''),14)+right(newid(),4) as bill_id,
-        NO_REGISTRATION,
-        '$visit_id' as visit_id,
-        TARIF_ID,
-        CLASS_ID,
-        '$clinic_id',
-        '$clinic_id',
-        TREATMENT,
-        getdate(),
-        0,
-        MEASURE_ID,
-        DESCRIPTION,
-        '$noresep',
-        DOSE_PRESC,
-        SOLD_STATUS,
-        RACIKAN,
-        CLASS_ROOM_ID,
-        KELUAR_ID,
-        BED_ID,
-        '" . user()->employee_id . "', --employee_id
-        DESCRIPTION2,
-        BRAND_ID,
-        '" . user()->getFullname() . "', --doctor
-        EXIT_DATE,
-        '" . user()->employee_id . "', --employee_id_from
-        '" . user()->getFullname() . "', --doctor
-        status_pasien_id,
-        THENAME,
-        THEADDRESS,
-        THEID,
-        NULL,
-        ISRJ,
-        AGEYEAR,
-        AGEMONTH,
-        AGEDAY,
-        GENDER,
-        KARYAWAN,
-        '" . user()->username . "',
-        getdate(),
-        MODIFIED_FROM,
-        NUMER,
-        '$session_id',
-        MEASURE_ID2,
-        POTONGAN,
-        BAYAR,
-        RETUR,
-        TARIF_TYPE,
-        PPNVALUE,
-        0,
-        KOREKSI,
-        0,
-        DISKON,
-        SELL_PRICE,
-        ACCOUNT_ID,
-        subsidi,
-        PROFESI,
-        EMBALACE,
-        DISCOUNT,
-        0,
-        PPN,
-        ITER,
-        PAYOR_ID,
-        STATUS_OBAT,
-        SUBSIDISAT,
-        MARGIN,
-        POKOK_JUAL,
-        PRINTQ,
-        PRINTED_BY,
-        STOCK_AVAILABLE,
-        STATUS_TARIF,
-        PACKAGE_ID,
-        MODULE_ID,
-        profession,
-        THEORDER,
-        CORRECTION_ID,
-        CORRECTION_BY,
-        CASHIER,
-        islunas,
-        PAY_METHOD_ID,
-        PAYMENT_DATE,
-        ISCETAK,
-        print_date,
-        DOSE,
-        JML_BKS,
-        ORIG_DOSE,
-        RESEP_KE,
-        ITER_KE,
-        KUITANSI_ID,
-        PEMBULATAN,
-        KAL_ID,
-        INVOICE_ID,
-        SERVICE_TIME,
-        TAKEN_TIME,
-        modified_datesys,
-        '$trans_id' as trans_id,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        NOSEP,
-        FUND_ID,
-        ATURANMINUM2,
-        REKONSTATUS_ID,
-        EDUCATION_ID,
-        TAKEPILL_DATE,
-        STOKDARI,
-        C,
-        CIF,
-        ED,
-        DOSE1,
-        DOSE2,
-        SIGNA_1,
-        SIGNA_2,
-        SIGNA_3,
-        SIGNA_4,
-        SIGNA_5,
-        measure_dosis,
-        body_id
-        from treatment_obat where bill_id in ($strinbill)");
+        $sql = "
+                INSERT INTO treatment_obat
+                SELECT
+                    ORG_UNIT_CODE,
+                    LEFT(REPLACE(REPLACE(REPLACE(CONVERT(varchar, GETDATE(), 121), '-', ''), ':', ''), ' ', ''), 14) + RIGHT(NEWID(), 4) AS bill_id,
+                    NO_REGISTRATION,
+                    ? AS visit_id,
+                    TARIF_ID,
+                    CLASS_ID,
+                    ? AS CLINIC_ID,
+                    ? AS CLINIC_ID_FROM,
+                    TREATMENT,
+                    GETDATE(),
+                    0,
+                    MEASURE_ID,
+                    DESCRIPTION,
+                    ? AS NORESEP,
+                    DOSE_PRESC,
+                    SOLD_STATUS,
+                    RACIKAN,
+                    CLASS_ROOM_ID,
+                    KELUAR_ID,
+                    BED_ID,
+                    ? AS EMPLOYEE_ID,
+                    DESCRIPTION2,
+                    BRAND_ID,
+                    ? AS DOCTOR,
+                    EXIT_DATE,
+                    ? AS EMPLOYEE_ID_FROM,
+                    ? AS DOCTOR_FROM,
+                    status_pasien_id,
+                    THENAME,
+                    THEADDRESS,
+                    THEID,
+                    NULL,
+                    ISRJ,
+                    AGEYEAR,
+                    AGEMONTH,
+                    AGEDAY,
+                    GENDER,
+                    KARYAWAN,
+                    ? AS MODIFIED_BY,
+                    GETDATE(),
+                    MODIFIED_FROM,
+                    NUMER,
+                    ? AS SESSION_ID,
+                    MEASURE_ID2,
+                    POTONGAN,
+                    BAYAR,
+                    RETUR,
+                    TARIF_TYPE,
+                    PPNVALUE,
+                    0,
+                    KOREKSI,
+                    0,
+                    DISKON,
+                    SELL_PRICE,
+                    ACCOUNT_ID,
+                    subsidi,
+                    PROFESI,
+                    EMBALACE,
+                    DISCOUNT,
+                    0,
+                    PPN,
+                    ITER,
+                    PAYOR_ID,
+                    STATUS_OBAT,
+                    SUBSIDISAT,
+                    MARGIN,
+                    POKOK_JUAL,
+                    PRINTQ,
+                    PRINTED_BY,
+                    STOCK_AVAILABLE,
+                    STATUS_TARIF,
+                    PACKAGE_ID,
+                    MODULE_ID,
+                    profession,
+                    THEORDER,
+                    CORRECTION_ID,
+                    CORRECTION_BY,
+                    CASHIER,
+                    islunas,
+                    PAY_METHOD_ID,
+                    PAYMENT_DATE,
+                    ISCETAK,
+                    print_date,
+                    DOSE,
+                    JML_BKS,
+                    ORIG_DOSE,
+                    RESEP_KE,
+                    ITER_KE,
+                    KUITANSI_ID,
+                    PEMBULATAN,
+                    KAL_ID,
+                    INVOICE_ID,
+                    SERVICE_TIME,
+                    TAKEN_TIME,
+                    modified_datesys,
+                    ? AS TRANS_ID,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    NOSEP,
+                    FUND_ID,
+                    ATURANMINUM2,
+                    REKONSTATUS_ID,
+                    EDUCATION_ID,
+                    TAKEPILL_DATE,
+                    STOKDARI,
+                    C,
+                    CIF,
+                    ED,
+                    DOSE1,
+                    DOSE2,
+                    SIGNA_1,
+                    SIGNA_2,
+                    SIGNA_3,
+                    SIGNA_4,
+                    SIGNA_5,
+                    measure_dosis,
+                    body_id
+                FROM treatment_obat
+                WHERE bill_id IN ($strinbill)
+                ";
 
-        $response['code'] = '200';
+        // Binding array
+        $bindings = [
+            $visit_id,                   // ?
+            $clinic_id,                  // ?
+            $clinic_id,                  // ?
+            $noresep,                    // ?
+            user()->employee_id,         // ?
+            user()->getFullname(),       // ?
+            user()->employee_id,         // ?
+            user()->getFullname(),       // ?
+            user()->username,            // ?
+            $session_id,                 // ?
+            $trans_id                    // ?
+        ];
+
+        // Jalankan query dengan binding
+        $db->query($sql, $bindings);
+
+        $response['status'] = 'success';
         $response['message'] = 'Copy Resep berhasil';
-
+        $response['data'] = $noresep;
 
         return json_encode($noresep);
     }
@@ -7114,282 +7214,286 @@ This Function is used to Add Patient
         $body_id = $this->request->getPost('body_id');
         $status_tarif = $this->request->getPost('status_tarif');
         $sold_status = $this->request->getPost('sold_status');
+        $status_pasien_id = $this->request->getPost('status_pasien_id');
 
         $result = [];
 
         // return json_encode($measure_dosis);
 
+        if (!is_null($org_unit_code)) {
+            if (count($org_unit_code) > 0) {
 
-        if (count($org_unit_code) > 0) {
+                $pasienPrescription = new PasienPrescriptionModel();
+                $getresep = $pasienPrescription->select("resep_no")
+                    ->where("valid_user is not null")
+                    ->find($resep_no[0]);
+                if (!isset($getresep['resep_no'])) {
+                    $data = [
+                        'org_unit_code' => $org_unit_code[0],
+                        'no_registration' => $no_registration[0],
+                        'visit_id' => $visit_id[0],
+                        'trans_id' => $trans_id[0],
+                        'resep_no' => $resep_no[0],
+                        'nota_no' => $nota_no[0],
+                        'treat_date' => $treat_date[0],
+                        'sold_status' => $soldstatus[0],
+                        'start_date' => $treat_date[0],
+                        'iter' => 1,
+                        'clinic_id' => $clinic_id[0],
+                        'terlayani' => 0,
+                        'employee_id' => $employee_id[0],
+                        'description' => $description[0],
+                        'modified_date' => $modified_date[0],
+                        'modified_by' => user()->username,
+                        'modified_from' => $modified_from[0],
+                        'thename' => $thename[0],
+                        'theaddress' => $theaddress[0],
+                        'theid' => $theid[0],
+                        'isrj' => $isrj[0],
+                        'ageyear' => $visit['ageyear'],
+                        'agemonth' => $visit['agemonth'],
+                        'ageday' => $visit['ageday'],
+                        'status_pasien_id' => $status_pasien_id[0],
+                        'payor_id' => $visit['payor_id'],
+                        'doctor' => $doctor[0],
+                        'class_room_id' => $class_room_id[0],
+                        'bed_id' => $visit['ageday'],
+                        'keluar_id' => $visit['ageday'],
+                    ];
+                    // return json_encode($data);
+                    $pasienPrescription->save($data);
 
-            $pasienPrescription = new PasienPrescriptionModel();
-            $getresep = $pasienPrescription->select("resep_no")
-                ->where("valid_user is not null")
-                ->find($resep_no[0]);
-            if (!isset($getresep['resep_no'])) {
-                $data = [
-                    'org_unit_code' => $org_unit_code[0],
-                    'no_registration' => $no_registration[0],
-                    'visit_id' => $visit_id[0],
-                    'trans_id' => $trans_id[0],
-                    'resep_no' => $resep_no[0],
-                    'nota_no' => $nota_no[0],
-                    'treat_date' => $treat_date[0],
-                    'sold_status' => $soldstatus[0],
-                    'start_date' => $treat_date[0],
-                    'iter' => 1,
-                    'clinic_id' => $clinic_id[0],
-                    'terlayani' => 0,
-                    'employee_id' => $employee_id[0],
-                    'description' => $description[0],
-                    'modified_date' => $modified_date[0],
-                    'modified_by' => user()->username,
-                    'modified_from' => $modified_from[0],
-                    'thename' => $thename[0],
-                    'theaddress' => $theaddress[0],
-                    'theid' => $theid[0],
-                    'isrj' => $isrj[0],
-                    'ageyear' => $visit['ageyear'],
-                    'agemonth' => $visit['agemonth'],
-                    'ageday' => $visit['ageday'],
-                    'status_pasien_id' => $visit['status_pasien_id'],
-                    'payor_id' => $visit['payor_id'],
-                    'doctor' => $doctor[0],
-                    'class_room_id' => $class_room_id[0],
-                    'bed_id' => $visit['ageday'],
-                    'keluar_id' => $visit['ageday'],
-                ];
-                $pasienPrescription->save($data);
 
-                // return json_encode($data);
+                    $model = new TreatmentObatModel();
+                    $modelgf = new GoodGfModel();
 
-                $model = new TreatmentObatModel();
-                $modelgf = new GoodGfModel();
+                    $berhasil = [];
 
-                $berhasil = [];
-
-                // return json_encode($soldstatus);
-                $isracik = false;
-                foreach ($org_unit_code as $key => $value) {
-                    if ($soldstatus[$key] != 0) {
-                        $data = [
-                            'org_unit_code' => $org_unit_code[$key],
-                            'jml_bks' => (int)$jml_bks[$key],
-                            'dose' => (float)$dose[$key],
-                            'orig_dose' => (float)$orig_dose[$key],
-                            'resep_ke' => $resep_ke[$key],
-                            'description' => @$description[$key],
-                            'brand_id' => @$brand_id[$key],
-                            'measure_id' => @$measure_id[$key],
-                            'measure_id2' => @$measure_id2[$key],
-                            'racikan' => (int)$racikan[$key],
-                            'doctor' => @$doctor[$key],
-                            'employee_id' => @$employee_id[$key],
-                            'employee_id_from' => @$employee_id_from[$key],
-                            'doctor_from' => @$doctor_from[$key],
-                            // 'status_obat' => $status_obat[$key],
-                            'tarif_id' => @$tarif_id[$key],
-                            'treatment' => @$treatment[$key],
-                            'tarif_type' => @$tarif_type[$key],
-                            'amount' => (float)$amount[$key],
-                            'sell_price' => (float)$sell_price[$key],
-                            'tagihan' => (float)$tagihan[$key],
-                            'subsidi' => (float)$subsidi[$key],
-                            'subsidisat' => (float)$subsidisat[$key],
-                            'margin' => (float)$margin[$key],
-                            'ppn' => (float)$ppn[$key],
-                            'ppnvalue' => (float)$ppnvalue[$key],
-                            'discount' => (float)$discount[$key],
-                            'diskon' => (float)$diskon[$key],
-                            // 'profession' => $profession[$key],
-                            // 'profesi' => $profesi[$key],
-                            'amount_paid' => (float)$amount_paid[$key],
-                            'description2' => $description2[$key],
-                            'dose_presc' => (float)$dose_presc[$key],
-                            'quantity' => (float)$quantity[$key],
-                            'numer' => (int)$numer[$key],
-                            'resep_no' => @$resep_no[$key],
-                            'nota_no' => @$nota_no[$key],
-                            'treat_date' => $treat_date[$key],
-                            'bill_id' => $bill_id[$key],
-                            'class_room_id' => @$class_room_id[$key],
-                            'clinic_id' => @$clinic_id[$key],
-                            'clinic_id_from' => @$clinic_id_from[$key],
-                            'visit_id' => $visit_id[$key],
-                            'no_registration' => $no_registration[$key],
-                            'trans_id' => $trans_id[$key],
-                            'modified_from' => $modified_from[$key],
-                            'modified_date' => $modified_date[$key],
-                            'isrj' => (float)$isrj[$key],
-                            'thename' => $thename[$key],
-                            'theaddress' => $theaddress[$key],
-                            'theid' => $theid[$key],
-                            'dose1' => (float)$dose1[$key],
-                            'dose2' => (float)$dose2[$key],
-                            'module_id' => $moduleId[$key] ?? null,
-                            'theorder' => (int)$theorder[$key],
-                            'body_id' => $body_id[$key],
-                            'status_tarif' => $status_tarif[$key],
-                            'sold_status' => $sold_status[$key],
-                        ];
-                        if ((int)$racikan[$key] == 1 && isset($measure_dosis[$key])) {
-                            $data['measure_dosis'] = $measure_dosis[$key];
-                        }
-                        if ($racikan[$key] == 1) {
-                            $isracik = true;
-                        }
-
-                        $model->save($data, true);
-
-                        $result[] = $data;
-                    } else {
-                        $data = [
-                            'org_unit_code' => $org_unit_code[$key],
-                            'jml_bks' => (int)$jml_bks[$key],
-                            'dose' => (float)$dose[$key],
-                            'orig_dose' => (float)$orig_dose[$key],
-                            'resep_ke' => $resep_ke[$key],
-                            'description' => $description[$key],
-                            'brand_id' => $brand_id[$key],
-                            'measure_id' => $measure_id[$key],
-                            'measure_id2' => $measure_id2[$key],
-                            'racikan' => (int)$racikan[$key],
-                            'doctor' => $doctor[$key],
-                            'employee_id' => $employee_id[$key],
-                            'employee_id_from' => $employee_id_from[$key],
-                            'doctor_from' => $doctor_from[$key],
-                            // 'status_obat' => $status_obat[$key],
-                            'tarif_id' => $tarif_id[$key],
-                            'treatment' => $treatment[$key],
-                            'tarif_type' => $tarif_type[$key],
-                            'amount' => (float)$amount[$key],
-                            'sell_price' => (float)$sell_price[$key],
-                            'tagihan' => (float)$tagihan[$key],
-                            'subsidi' => (float)$subsidi[$key],
-                            'subsidisat' => (float)$subsidisat[$key],
-                            'margin' => (float)$margin[$key],
-                            'ppn' => (float)$ppn[$key],
-                            'ppnvalue' => (float)$ppnvalue[$key],
-                            'discount' => (float)$discount[$key],
-                            'diskon' => (float)$diskon[$key],
-                            // 'profession' => $profession[$key],
-                            // 'profesi' => $profesi[$key],
-                            'amount_paid' => (float)$amount_paid[$key],
-                            'description2' => $description2[$key],
-                            'dose_presc' => (float)$dose_presc[$key],
-                            'quantity' => (float)$quantity[$key],
-                            'numer' => (int)$numer[$key],
-                            'resep_no' => $resep_no[$key],
-                            'nota_no' => $nota_no[$key],
-                            'treat_date' => $treat_date[$key],
-                            'bill_id' => $bill_id[$key],
-                            'class_room_id' => $class_room_id[$key],
-                            'clinic_id' => $clinic_id[$key],
-                            'clinic_id_from' => $clinic_id_from[$key],
-                            'visit_id' => $visit_id[$key],
-                            'no_registration' => $no_registration[$key],
-                            'trans_id' => $trans_id[$key],
-                            'modified_from' => $modified_from[$key],
-                            'modified_date' => $modified_date[$key],
-                            'isrj' => (float)$isrj[$key],
-                            'thename' => $thename[$key],
-                            'theaddress' => $theaddress[$key],
-                            'theid' => $theid[$key],
-                            'dose1' => (float)$dose1[$key],
-                            'dose2' => (float)$dose2[$key],
-                            'module_id' => $moduleId[$key],
-                            'theorder' => (int)$theorder[$key],
-                            'sold_status' => $soldstatus[$key]
-                        ];
-                        $dataalkes = [
-                            'org_unit_code' => $org_unit_code[$key],
-                            'size_goods' => (float)$dose[$key],
-                            'brand_name' => $description[$key],
-                            'brand_id' => $brand_id[$key],
-                            'measure_dosis' => $measure_id[$key],
-                            'measure_id2' => $measure_id2[$key],
-                            'measure_id3' => $measure_id2[$key],
-                            'distribution_type' => (int)$numer[$key] == 4 ? 3 : (int)$racikan[$key],
-                            'price' => (float)$amount[$key],
-                            'order_price' => (float)$sell_price[$key],
-                            'discount' => (float)$subsidi[$key],
-                            'discount2' => (float)$discount[$key],
-                            'corrections' => $description2[$key],
-                            'diminta' => (float)$dose_presc[$key],
-                            'quantity' => (float)$quantity[$key],
-                            'condition' => (int)$numer[$key],
-                            'invoice_id' => $resep_no[$key],
-                            'po' => $nota_no[$key],
-                            'allocated_date' => $treat_date[$key],
-                            'item_id' => $bill_id[$key],
-                            'org_id' => $clinic_id[$key],
-                            'org_unit_from' => $clinic_id_from[$key],
-                            'company_id' => $no_registration[$key],
-                            'retur_id' => $trans_id[$key],
-                            'rooms_id' => $visit['clinic_id'],
-                            'allocated_from' => $thename[$key],
-                            'doc_no' => $theid[$key],
-                            'isoutlet' => $soldstatus[$key],
-                            'from_rooms_id' => $clinic_id[$key] == $modified_from[$key] ? $clinic_id_from[$key] : $clinic_id[$key],
-                            'discountoff' => 0,
-                            'dijual' => (float)$quantity[$key],
-                            'invoice_id2' => $employee_id[$key] . $doctor[$key],
-                            'month_id' => new rawsql("month('{$treat_date[$key]}')"),
-                            'year_id' => new rawsql("year('{$treat_date[$key]}')"),
-                            'correction_doc' => substr($tarif_id[$key] . $treatment[$key], 0, 50),
-                            'stock_opname' => 0,
-                            'stok_awal' => 0,
-                            'stock_lalu' => 0,
-                            'stock_koreksi' => 0,
-                            'diterima' => 0,
-                            'distribusi' => 0,
-                            'dihapus' => 0,
-                            'diretur' => 0,
-                            'batch_no' => $visit_id[$key]
-                        ];
-
-                        $modelgf->save($dataalkes, true);
-
-                        $result[] = $data;
-                    }
-                }
-                if (count($org_unit_code) > 0) {
-                    if ($isrj[0] == '1') {
-                        $antrianFarmasi = new AntrianFarmasiModel();
-                        if ($isracik) {
-                            $loket = $clinic_id[0] . "F";
+                    // return json_encode($soldstatus);
+                    $isracik = false;
+                    foreach ($org_unit_code as $key => $value) {
+                        if ($soldstatus[$key] != 0 && !is_null($org_unit_code[$key]) && $org_unit_code[$key] != '') {
+                            $data = [
+                                'org_unit_code' => $org_unit_code[$key],
+                                'jml_bks' => (int)$jml_bks[$key],
+                                'dose' => (float)$dose[$key],
+                                'orig_dose' => (float)$orig_dose[$key],
+                                'resep_ke' => $resep_ke[$key],
+                                'description' => @$description[$key],
+                                'brand_id' => @$brand_id[$key],
+                                'measure_id' => @$measure_id[$key],
+                                'measure_id2' => @$measure_id2[$key],
+                                'racikan' => (int)$racikan[$key],
+                                'doctor' => @$doctor[$key],
+                                'employee_id' => @$employee_id[$key],
+                                'employee_id_from' => @$employee_id_from[$key],
+                                'doctor_from' => @$doctor_from[$key],
+                                // 'status_obat' => $status_obat[$key],
+                                'tarif_id' => @$tarif_id[$key],
+                                'treatment' => @$treatment[$key],
+                                'tarif_type' => @$tarif_type[$key],
+                                'amount' => (float)$amount[$key],
+                                'sell_price' => (float)$sell_price[$key],
+                                'tagihan' => (float)$tagihan[$key],
+                                'subsidi' => (float)$subsidi[$key],
+                                'subsidisat' => (float)$subsidisat[$key],
+                                'margin' => (float)$margin[$key],
+                                'ppn' => (float)$ppn[$key],
+                                'ppnvalue' => (float)$ppnvalue[$key],
+                                'discount' => (float)$discount[$key],
+                                'diskon' => (float)$diskon[$key],
+                                // 'profession' => $profession[$key],
+                                // 'profesi' => $profesi[$key],
+                                'amount_paid' => (float)$amount_paid[$key],
+                                'description2' => $description2[$key],
+                                'dose_presc' => (float)$dose_presc[$key],
+                                'quantity' => (float)$quantity[$key],
+                                'numer' => (int)$numer[$key],
+                                'resep_no' => @$resep_no[$key],
+                                'nota_no' => @$nota_no[$key],
+                                'treat_date' => $treat_date[$key],
+                                'bill_id' => $bill_id[$key],
+                                'class_room_id' => @$class_room_id[$key],
+                                'clinic_id' => @$clinic_id[$key],
+                                'clinic_id_from' => @$clinic_id_from[$key],
+                                'visit_id' => $visit_id[$key],
+                                'no_registration' => $no_registration[$key],
+                                'trans_id' => $trans_id[$key],
+                                'modified_from' => $modified_from[$key],
+                                'modified_date' => $modified_date[$key],
+                                'isrj' => (float)$isrj[$key],
+                                'thename' => $thename[$key],
+                                'theaddress' => $theaddress[$key],
+                                'theid' => $theid[$key],
+                                'dose1' => (float)$dose1[$key],
+                                'dose2' => (float)$dose2[$key],
+                                'module_id' => $moduleId[$key] ?? null,
+                                'theorder' => (int)$theorder[$key],
+                                'body_id' => $body_id[$key],
+                                'status_tarif' => $status_tarif[$key],
+                                'sold_status' => $sold_status[$key],
+                                'status_pasien_id' => $status_pasien_id[$key]
+                            ];
+                            if ((int)$racikan[$key] == 1 && isset($measure_dosis[$key])) {
+                                $data['measure_dosis'] = $measure_dosis[$key];
+                            }
+                            if ($racikan[$key] == 1) {
+                                $isracik = true;
+                            }
+                            if ($org_unit_code[$key] != "" && !is_null($org_unit_code[$key])) {
+                                $model->save($data, true);
+                                $result[] = $data;
+                            }
                         } else {
-                            $loket = $clinic_id[0] . "E";
-                        }
-                        $select = $antrianFarmasi->select("isnull(max(no_urut),0)+1 as nourut")
-                            ->where("year(tanggal_daftar) = year('{$treat_date[0]}') and month(tanggal_daftar) = month('{$treat_date[0]}') and day(tanggal_daftar) = DAY('{$treat_date[0]}') ")->first();
-                        $no_urut = @$select['nourut'];
+                            if (!is_null($org_unit_code[$key]) && $org_unit_code[$key] != '') {
+                                $data = [
+                                    'org_unit_code' => $org_unit_code[$key],
+                                    'jml_bks' => (int)$jml_bks[$key],
+                                    'dose' => (float)$dose[$key],
+                                    'orig_dose' => (float)$orig_dose[$key],
+                                    'resep_ke' => $resep_ke[$key],
+                                    'description' => $description[$key],
+                                    'brand_id' => $brand_id[$key],
+                                    'measure_id' => $measure_id[$key],
+                                    'measure_id2' => $measure_id2[$key],
+                                    'racikan' => (int)$racikan[$key],
+                                    'doctor' => $doctor[$key],
+                                    'employee_id' => $employee_id[$key],
+                                    'employee_id_from' => $employee_id_from[$key],
+                                    'doctor_from' => $doctor_from[$key],
+                                    // 'status_obat' => $status_obat[$key],
+                                    'tarif_id' => $tarif_id[$key],
+                                    'treatment' => $treatment[$key],
+                                    'tarif_type' => $tarif_type[$key],
+                                    'amount' => (float)$amount[$key],
+                                    'sell_price' => (float)$sell_price[$key],
+                                    'tagihan' => (float)$tagihan[$key],
+                                    'subsidi' => (float)$subsidi[$key],
+                                    'subsidisat' => (float)$subsidisat[$key],
+                                    'margin' => (float)$margin[$key],
+                                    'ppn' => (float)$ppn[$key],
+                                    'ppnvalue' => (float)$ppnvalue[$key],
+                                    'discount' => (float)$discount[$key],
+                                    'diskon' => (float)$diskon[$key],
+                                    // 'profession' => $profession[$key],
+                                    // 'profesi' => $profesi[$key],
+                                    'amount_paid' => (float)$amount_paid[$key],
+                                    'description2' => $description2[$key],
+                                    'dose_presc' => (float)$dose_presc[$key],
+                                    'quantity' => (float)$quantity[$key],
+                                    'numer' => (int)$numer[$key],
+                                    'resep_no' => $resep_no[$key],
+                                    'nota_no' => $nota_no[$key],
+                                    'treat_date' => $treat_date[$key],
+                                    'bill_id' => $bill_id[$key],
+                                    'class_room_id' => $class_room_id[$key],
+                                    'clinic_id' => $clinic_id[$key],
+                                    'clinic_id_from' => $clinic_id_from[$key],
+                                    'visit_id' => $visit_id[$key],
+                                    'no_registration' => $no_registration[$key],
+                                    'trans_id' => $trans_id[$key],
+                                    'modified_from' => $modified_from[$key],
+                                    'modified_date' => $modified_date[$key],
+                                    'isrj' => (float)$isrj[$key],
+                                    'thename' => $thename[$key],
+                                    'theaddress' => $theaddress[$key],
+                                    'theid' => $theid[$key],
+                                    'dose1' => (float)$dose1[$key],
+                                    'dose2' => (float)$dose2[$key],
+                                    'module_id' => $moduleId[$key],
+                                    'theorder' => (int)$theorder[$key],
+                                    'sold_status' => $soldstatus[$key]
+                                ];
+                                $dataalkes = [
+                                    'org_unit_code' => $org_unit_code[$key],
+                                    'size_goods' => (float)$dose[$key],
+                                    'brand_name' => $description[$key],
+                                    'brand_id' => $brand_id[$key],
+                                    'measure_dosis' => $measure_id[$key],
+                                    'measure_id2' => $measure_id2[$key],
+                                    'measure_id3' => $measure_id2[$key],
+                                    'distribution_type' => (int)$numer[$key] == 4 ? 3 : (int)$racikan[$key],
+                                    'price' => (float)$amount[$key],
+                                    'order_price' => (float)$sell_price[$key],
+                                    'discount' => (float)$subsidi[$key],
+                                    'discount2' => (float)$discount[$key],
+                                    'corrections' => $description2[$key],
+                                    'diminta' => (float)$dose_presc[$key],
+                                    'quantity' => (float)$quantity[$key],
+                                    'condition' => (int)$numer[$key],
+                                    'invoice_id' => $resep_no[$key],
+                                    'po' => $nota_no[$key],
+                                    'allocated_date' => $treat_date[$key],
+                                    'item_id' => $bill_id[$key],
+                                    'org_id' => $clinic_id[$key],
+                                    'org_unit_from' => $clinic_id_from[$key],
+                                    'company_id' => $no_registration[$key],
+                                    'retur_id' => $trans_id[$key],
+                                    'rooms_id' => $visit['clinic_id'],
+                                    'allocated_from' => $thename[$key],
+                                    'doc_no' => $theid[$key],
+                                    'isoutlet' => $soldstatus[$key],
+                                    'from_rooms_id' => $clinic_id[$key] == $modified_from[$key] ? $clinic_id_from[$key] : $clinic_id[$key],
+                                    'discountoff' => 0,
+                                    'dijual' => (float)$quantity[$key],
+                                    'invoice_id2' => $employee_id[$key] . $doctor[$key],
+                                    'month_id' => new rawsql("month('{$treat_date[$key]}')"),
+                                    'year_id' => new rawsql("year('{$treat_date[$key]}')"),
+                                    'correction_doc' => substr($tarif_id[$key] . $treatment[$key], 0, 50),
+                                    'stock_opname' => 0,
+                                    'stok_awal' => 0,
+                                    'stock_lalu' => 0,
+                                    'stock_koreksi' => 0,
+                                    'diterima' => 0,
+                                    'distribusi' => 0,
+                                    'dihapus' => 0,
+                                    'diretur' => 0,
+                                    'batch_no' => $visit_id[$key]
+                                ];
 
-                        // select isnull(max(no_urut),0) into :liurutmax from antrian_FARMASI where 
-                        // year(getdate()) = year(tanggal_daftar) and month(getdate()) = month(tanggal_daftar)
-                        // and day(getdate()) = DAY(tanggal_daftar) 
-                        $dataantrian = [
-                            'q_id' => $resep_no[0],
-                            'no_urut' => $no_urut,
-                            'tanggal_daftar' => $treat_date[0],
-                            'loket' => $loket,
-                            'status_panggil' => 0,
-                            'no_registration' => $no_registration[0],
-                            'thename' => $thename[0],
-                            'visit_id' => $visit_id[0],
-                        ];
-                        $antrianFarmasi->save($dataantrian);
+                                $modelgf->save($dataalkes, true);
+
+                                $result[] = $data;
+                            }
+                        }
                     }
+                    if (count($org_unit_code) > 0) {
+                        if ($isrj[0] == '1') {
+                            $antrianFarmasi = new AntrianFarmasiModel();
+                            if ($isracik) {
+                                $loket = $clinic_id[0] . "F";
+                            } else {
+                                $loket = $clinic_id[0] . "E";
+                            }
+                            $select = $antrianFarmasi->select("isnull(max(no_urut),0)+1 as nourut")
+                                ->where("year(tanggal_daftar) = year('{$treat_date[0]}') and month(tanggal_daftar) = month('{$treat_date[0]}') and day(tanggal_daftar) = DAY('{$treat_date[0]}') ")->first();
+                            $no_urut = @$select['nourut'];
+
+                            // select isnull(max(no_urut),0) into :liurutmax from antrian_FARMASI where 
+                            // year(getdate()) = year(tanggal_daftar) and month(getdate()) = month(tanggal_daftar)
+                            // and day(getdate()) = DAY(tanggal_daftar) 
+                            $dataantrian = [
+                                'q_id' => $resep_no[0],
+                                'no_urut' => $no_urut,
+                                'tanggal_daftar' => $treat_date[0],
+                                'loket' => $loket,
+                                'status_panggil' => 0,
+                                'no_registration' => $no_registration[0],
+                                'thename' => $thename[0],
+                                'visit_id' => $visit_id[0],
+                            ];
+                            $antrianFarmasi->save($dataantrian);
+                        }
+                    }
+                    $array   = array('status' => 'success', 'error' => '', 'message' => 'Berhasil simpan data', 'data' => $result);
+                    return json_encode($array);
+                } else {
+                    $array   = array('status' => 'fail', 'error' => '', 'message' => 'Data ini sudah terkunci, tidak bisa mengubah data lagi', 'data' => $result);
+                    return json_encode($array);
                 }
-                $array   = array('status' => 'success', 'error' => '', 'message' => 'Berhasil simpan data', 'data' => $result);
-                return json_encode($array);
-            } else {
-                $array   = array('status' => 'fail', 'error' => '', 'message' => 'Data ini sudah terkunci, tidak bisa mengubah data lagi', 'data' => $result);
-                return json_encode($array);
             }
         } else {
-
-            $array   = array('status' => 'fail', 'error' => '', 'message' => 'Data tidak ada', 'data' => $result);
+            $array   = array('status' => 'success', 'error' => '', 'message' => 'Berhasil hapus resep', 'data' => $result);
             return json_encode($array);
         }
     }
@@ -7688,10 +7792,14 @@ This Function is used to Add Patient
                         goods.name
 
                         ORDER BY GOODS.NAME ASC")->getRow(0, 'array');
-        $val = $this->lowerKeyOne($select);
-        $val['stokopname'] = 0;
-        $jml = $val['awal'] + $val['bapb'] +  $val['masukrettrx']
-            - $val['keluarretur'] - $val['keluar'];
+        if (!is_null($select)) {
+            $val = $this->lowerKey($select);
+            $val['stokopname'] = 0;
+            $jml = $val['awal'] + $val['bapb'] +  $val['masukrettrx']
+                - $val['keluarretur'] - $val['keluar'];
+        } else {
+            $jml = 0;
+        }
         return json_encode($jml);
     }
     public function deletePresc()

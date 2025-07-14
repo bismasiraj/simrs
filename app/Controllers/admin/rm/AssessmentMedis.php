@@ -31,6 +31,97 @@ use CodeIgniter\I18n\Time;
 
 class AssessmentMedis extends BaseController
 {
+    public function getAssessmentMedis()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $visit_id = $body['visit_id'];
+        $no_registration = $body['nomor'];
+        $diag_cat = $body['diagCat'];
+        $norujukan = $body['norujukan'];
+        $isrj = $body['isrj'];
+
+        $stringDiagCat = "";
+        if ($diag_cat != 99) {
+            // $stringDiagCat = " and pd.diag_cat = '$diag_cat'";
+        }
+
+        $db = db_connect();
+        if ($isrj == 1) {
+            $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
+            eid.weight, eid.height, eid.temperature, eid.nadi, eid.tension_upper, eid.tension_below, eid.saturasi, eid.nafas, eid.arm_diameter, eid.saturasi, eid.vs_status_id, eid.awareness
+            from pasien_diagnosa pd 
+            inner join pasien_visitation pv on pd.visit_id = pv.visit_id
+            left join examination_info ei on ei.body_id = pd.body_id
+            left join examination_detail eid on ei.body_id = eid.document_id
+            left join employee_all ea on pd.employee_id = ea.employee_id 
+            left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = ? 
+            and (pd.visit_id = ? or pv.norujukan = ?)" . $stringDiagCat, [$no_registration, $visit_id, $norujukan])->getResultArray());
+        } else {
+            $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
+            eid.weight, eid.height, eid.temperature, eid.nadi, eid.tension_upper, eid.tension_below, eid.saturasi, eid.nafas, eid.arm_diameter, eid.saturasi, eid.vs_status_id, eid.awareness
+            from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
+            left join examination_detail eid on ei.body_id = eid.document_id
+            left join employee_all ea on pd.employee_id = ea.employee_id 
+            left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = ? and pd.visit_id = ?" . $stringDiagCat, [$no_registration, $visit_id])->getResultArray());
+        }
+        // $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
+        // ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
+        // from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
+        // left join employee_all ea on pd.employee_id = ea.employee_id 
+        // left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id'" . $stringDiagCat)->getResultArray());
+
+        $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = ", [$no_registration])->getResultArray());
+
+        // return json_encode($selectpd);
+        if (isset($selectpd[0])) {
+            $primaryPD = "";
+            foreach ($selectpd as $key => $value) {
+                $primaryPD .= "'" . $value['pasien_diagnosa_id'] . "',";
+            }
+            $primaryPD = substr($primaryPD, 0, -1);
+            // return ($primaryPD);
+            $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+            $selectprocedures = $this->lowerKey($db->query("select * from pasien_procedures where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+
+            $selectlokalis = $this->lowerKey($db->query("select * from assessment_lokalis where body_id in ($primaryPD)")->getResultArray());
+
+
+            foreach ($selectlokalis as $key => $value) {
+                if ($value['value_score'] == 3) {
+                    $filepath = $this->imageloc . 'uploads/lokalis/' . $value['value_detail'];
+                    if (file_exists($filepath)) {
+                        $filedata = file_get_contents($filepath);
+                        $filedata64 = base64_encode($filedata);
+                        $selectlokalis[$key]['filedata64'] = $filedata64;
+                    }
+                }
+            }
+
+            return json_encode([
+                'pasienDiagnosa' => $selectpd,
+                'pasienHistory' => $selecthistory,
+                'pasienDiagnosas' => $selectdiagnosas,
+                'pasienProcedures' => $selectprocedures,
+                'lokalis' => $selectlokalis
+            ]);
+        } else {
+            return json_encode([
+                'pasienDiagnosa' => $selectpd,
+                'pasienHistory' => $selecthistory,
+                // 'papsienDiagnosas' => $selectdiagnosas,
+                // 'pasienProcedures' => $selectprocedures,
+                // 'lokalis' => $selectlokalis
+            ]);
+        }
+    }
     public function addAssessmentMedis()
     {
         if (!$this->request->is('post')) {
@@ -47,6 +138,11 @@ class AssessmentMedis extends BaseController
             $controller = new Assessment();
             if ($value["id"] == "formaddarm") {
                 $medis = $this->saveAssessmentMedis($value["data"]);
+            }
+            if (strpos($value["id"], "formEducationForm") !== false) {
+                // return json_encode(is_null($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $education = $controller->saveeducationForm($value["data"]);
             }
             if (strpos($value["id"], "formGcs") !== false) {
                 // return json_encode(is_null($value["data"]));
@@ -85,7 +181,8 @@ class AssessmentMedis extends BaseController
             "fallRisk" => @$fallRisk,
             "neuro" => @$neuro,
             "dermatologi" => @$dermatologi,
-            "triage" => @$triage
+            "triage" => @$triage,
+            "educationForm" => @$education
         ]);
     }
 
@@ -523,11 +620,11 @@ class AssessmentMedis extends BaseController
         }
         if (@$clinic_id == 'P012') {
             $pv = new PasienVisitationModel();
-            $emergency = @$emergency ?? '';
-            $employee_id = @$employee_id ?? '';
+            // $emergency = @$emergency ?? '';
+            // $employee_id = @$employee_id ?? '';
             $pvdata = [
                 'patient_category_id' => @$emergency,
-                'employee_id' => @$employee_id,
+                // 'employee_id' => @$employee_id,
                 'visit_id' => @$visit_id
             ];
 
@@ -539,11 +636,11 @@ class AssessmentMedis extends BaseController
             // ");
             $pv->set([
                 'patient_category_id' => @$emergency,
-                'employee_id' => @$employee_id
+                // 'employee_id' => @$employee_id
             ])->where('visit_id', @$visit_id)->update();
             // return json_encode($pvdata);
             $pv->save($pvdata);
-            $tb->where("visit_id", @$visit_id)->where("tarif_id", "0211001")->set("employee_id", @$employee_id)->update();
+            // $tb->where("visit_id", @$visit_id)->where("tarif_id", "0211001")->set("employee_id", @$employee_id)->update();
         }
         $data['pasienHistory'] = $pasienHistory;
 
@@ -574,6 +671,9 @@ class AssessmentMedis extends BaseController
         if ($clinic_id = 'P012') {
             $apgar = $this->getApgar($pasien_diagnosa_id, $visit_id);
         }
+        $pasienHistory = $this->getHistoryPasien($pasien_diagnosa_id);
+        $lokalis = $this->getLokalis($pasien_diagnosa_id);
+
         return $this->response->setJSON([
             // 'triage' => $triage,
             'gcs' => $gcs,
@@ -582,17 +682,55 @@ class AssessmentMedis extends BaseController
             'pernapasan' => $pernapasan,
             'apgar' => @$apgar,
             'educationForm' => @$educationForm,
-            'examDetail' => @$examDetail
+            'examDetail' => @$examDetail,
+            'pasienHistory' => @$pasienHistory,
+            'lokalis' => @$lokalis
         ]);
+    }
+    public function getLokalis($pasien_diagnosa_id)
+    {
+        $db = db_connect();
+        $selectlokalis = $this->lowerKey($db->query("select * from assessment_lokalis where body_id = ?", [$pasien_diagnosa_id])->getResultArray());
+
+
+        foreach ($selectlokalis as $key => $value) {
+            if ($value['value_score'] == 3) {
+                $filepath = $this->imageloc . 'uploads/lokalis/' . $value['value_detail'];
+                if (file_exists($filepath)) {
+                    $filedata = file_get_contents($filepath);
+                    $filedata64 = base64_encode($filedata);
+                    $selectlokalis[$key]['filedata64'] = $filedata64;
+                }
+            }
+        }
+        return $selectlokalis;
+    }
+    public function getHistoryPasien($pasien_diagnosa_id)
+    {
+        $pd = new PasienDiagnosaModel();
+        $pddata = $pd->select("no_registration")->find($pasien_diagnosa_id);
+        if (isset($pddata['no_registration'])) {
+            $no_registration = @$pddata['no_registration'];
+            $model = new PasienHistoryModel();
+            $select = $this->lowerKey($model->where("no_registration", $no_registration)->select("*")->findAll());
+        } else {
+            $select = [];
+        }
+        return $select;
     }
     public function getExamDetail($bodyId, $visit)
     {
         $model = new ExaminationDetailModel();
-        if ($bodyId == '') {
-            $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->orderBy("examination_date desc")->first());
-        } else {
-            $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->first());
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)
+            ->where("(isnull(TEMPERATURE,0) > 0 or  isnull(TENSION_UPPER,0) > 0 or  isnull(TENSION_BELOW,0) > 0 or  isnull(nadi,0) > 0
+                or  isnull(nafas,0) > 0 or  isnull(weight,0) > 0 or  isnull(height,0) > 0)")->select("*")->first());
+        if (count($select) == 0) {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")
+                ->where("(isnull(TEMPERATURE,0) > 0 or  isnull(TENSION_UPPER,0) > 0 or  isnull(TENSION_BELOW,0) > 0 or  isnull(nadi,0) > 0
+                or  isnull(nafas,0) > 0 or  isnull(weight,0) > 0 or  isnull(height,0) > 0)")->orderBy("examination_date desc")->first());
         }
+        $select['body_id'] = $bodyId;
+        $select['document_id'] = $bodyId;
         return $select;
     }
     public function getTriage($bodyId, $visit)

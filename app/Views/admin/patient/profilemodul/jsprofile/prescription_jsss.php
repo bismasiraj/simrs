@@ -58,7 +58,7 @@
         $(this).attr("class", "col-md-9 col-sm-9 col-sm-12")
         $("#divNonRacikan").attr("class", "col-md-3 col-sm-3 col-sm-12")
     })
-    $("#eresepTab").on("click", function() {
+    $("#eresepTab").off().on("click", function() {
         <?php if ($visit['isrj'] == 1) {
         ?>
             $("#jenisresep").val(1)
@@ -68,15 +68,18 @@
             $("#jenisresep").val(7)
         <?php
         } ?>
+        $("#resepno").val('%');
         getResep(visit.visit_id, nomor)
         $("#eresepTitle").html("E-Resep")
         $("#eresepBtnGroup").slideDown()
         $("#medItemBtnGroup").slideUp()
         $("#generateResepGroup").show()
+
         $("#eresepAddRGenerateResep").trigger("click")
     })
     $("#eresepDischargeTab").on("click", function() {
         $("#jenisresep").val(5)
+        $("#resepno").val('%');
         getResep(visit.visit_id, nomor)
         $("#eresepTitle").html("Obat Pulang")
         $("#eresepBtnGroup").slideDown()
@@ -85,6 +88,7 @@
     })
     $("#medicalitemTab").on("click", function() {
         $("#jenisresep").val(8)
+        $("#resepno").val('%');
         getResep(visit.visit_id, nomor)
         $("#eresepTitle").html("Medical Item")
         $("#eresepBtnGroup").slideUp()
@@ -121,10 +125,11 @@
         }, 'admin/patient/getResep', function(data) {
             signaParam = data.signa;
             $("#ereseploadingspace").html("")
+            const resepnya = $("#resepno").val()
+            console.log($("#resepno").val())
             $("#resepno").html("")
 
             $("#resepno").append($('<option>').val('%').text('Semua'));
-
 
 
             signaParam.forEach((selemet, skey) => {
@@ -154,6 +159,9 @@
                 resepDetail = data.obat;
             }
 
+            if (resepnya != null)
+                $("#resepno").val(resepnya)
+
             visitHistory = data.visitHistory;
 
             $("#historyEresep").html(visitHistory)
@@ -181,10 +189,13 @@
 
 
             // filteredResep('%')
-            $("#resepno").val('%');
-
+            // $("#resepno").val('%');
+            console.log($("#resepno").val())
             if ($("#resepno").val() != '%')
-                filteredResep($("#resepno").val())
+                filteredResep(resepnya)
+            else
+                $("#eresepAddRGenerateResep").trigger("click")
+
             if (visit?.locked == null)
                 visit.locked = 0
             if (!visit?.locked || visit.locked !== '0') {
@@ -323,6 +334,7 @@
                         'visit_id': '<?= $visit['visit_id']; ?>',
                         'trans_id': '<?= $visit['trans_id']; ?>',
                         'clinicId': '<?= $visit['clinic_id']; ?>',
+                        'classRoomId': visit?.class_room_id,
                         'sessionId': visit?.session_id
                     }),
                     dataType: 'json',
@@ -330,12 +342,22 @@
                     cache: false,
                     processData: false,
                     success: function(data) {
-                        var noresep = data
+
+                        var noresep = data?.data
 
                         $("#historyEresepModal").modal("hide")
                         $("#prescriptionDetailModal").modal("hide")
                         $("#resepno").val(noresep)
-                        $("#eresepTab").trigger("click")
+                        console.log($("#resepno").val())
+                        if (data?.status == 'error') {
+                            errorSwal(data?.message)
+                            filteredResep(noresep)
+                            // getResep(visit.visit_id, nomor)
+                        } else {
+                            successSwal(data?.message)
+                            getResep(visit.visit_id, nomor)
+                        }
+                        console.log($("#resepno").val())
                         // $("#eresepAddR").trigger("click")
                     },
                     error: function() {
@@ -1192,6 +1214,7 @@
         }
 
         resep_no = $("#resepno").val()
+        console.log(resep_no)
 
 
         if (resep == null) {

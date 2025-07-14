@@ -413,7 +413,8 @@ $group = user()->getRoles();
                     `))
                 )
                 .append($(`<tr class="${rowColor}">`)
-                    .append($("<td>").html(`<b>Obyektif</b>: ${typeof(examselect?.alo_anamnase) === 'undefined' || examselect?.alo_anamnase == null? '-':examselect?.alo_anamnase?.replace(/\r\n/g, '<br>')}`))
+                    .append($("<td>").html(examselect.account_id == "1" || examselect.account_id == "7" ? '' :
+                        `<b>Obyektif</b>: ${typeof(examselect?.alo_anamnase) === 'undefined' || examselect?.alo_anamnase == null? '-':examselect?.alo_anamnase?.replace(/\r\n/g, '<br>')}`))
                 )
                 .append($(`<tr class="${rowColor}">`)
                     .append($("<td>").html("<b>A</b>"))

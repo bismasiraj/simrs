@@ -31,7 +31,7 @@ class PasienTransferModel extends Model
         'bill_id',
         'document_id2',
         'document_id3',
-        'clinc_id_to',
+        'clinic_id_to',
         'to_petugas_id',
         'to_petugas',
         'between_petugas_id',

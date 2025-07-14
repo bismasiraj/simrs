@@ -6,7 +6,7 @@
         $('#notaNoLab').html(`<option value="%">Semua</option>`)
         getBillPoli(nomor, ke, mulai, akhir, lunas, '<?= $visit['clinic_id']; ?>', rj, status, nota, trans)
     })
-    $("#formSaveBillPoliBtn").on("click", function() {
+    $("#formSaveBillPoliBtn").off().on("click", function() {
         $("#billPoliChargesBody").find("button.simpanbill:visible").trigger("click")
         // $("#billPoliChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
     })

@@ -1295,7 +1295,7 @@ class Gizi extends \App\Controllers\BaseController
                     unlink($file);
                 }
 
-                $formFile->move(WRITEPATH . $uploadPath, $newFileName);
+                $formFile->move($this->imageloc . $uploadPath, $newFileName);
 
                 $dataUpdate = [
                     'treat_image' => $filePath ?? null,

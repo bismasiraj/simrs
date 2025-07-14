@@ -131,60 +131,59 @@
                     <tr>
                         <td class="p-1">
                             <b>Nomor RM</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['visit']['no_registration']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
                         </td>
                         <td class="p-1">
                             <b>Nama Pasien</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_pasien']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['visitor_address']; ?></p>
                         </td>
                         <td class="p-1">
                             <b>Jenis Kelamin</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_gender']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['gendername']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
-                            <?php if (!empty($visit['date_of_birth'])) : ?>
-                                <p class="m-0 mt-1 p-0"><?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['visit']['age'] . ')'; ?></p>
+                            <?php if (!empty($visit['tgl_lahir'])) : ?>
+                                <p class="m-0 mt-1 p-0"><?= date('d/m/Y', strtotime($visit['tgl_lahir'])) . ' (' . @$visit['age'] . ')'; ?></p>
                             <?php else : ?>
                                 <p class="m-0 mt-1 p-0">-</p>
                             <?php endif; ?>
                         </td>
                         <td class="p-1" colspan="2">
                             <b>Alamat Pasien</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['visit']['contact_address']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['visitor_address']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
                             <b>DPJP</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['visit']['sspractitioner_name']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= $val['fullname']; ?></p>
                         </td>
                         <td class="p-1">
                             <b>Department</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_clinic']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= $val['name_of_clinic']; ?></p>
                         </td>
                         <td class="p-1">
                             <b>Tanggal Masuk</b>
-                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime(@$visit['visit']['visit_datetime'])) ?></p>
+                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime(@$visit['visit_datetime'])) ?></p>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td class="p-1">
                             <b>Kelas</b>
-                            <div><?= @$sub['kelas']; ?></div>
+                            <div><?= @$visit['name_of_class']; ?></div>
                         </td>
                         <td class="p-1">
                             <b>Bangsal/ Kamar</b>
-                            <div><?= @$sub['bangsal']; ?></div>
+                            <div><?= @$visit['bangsal']; ?></div>
                         </td>
                         <td class="p-1">
                             <b>Bed</b>
-                            <div><?= @$sub['bed'] === 0 ? "" : @$sub['bed']; ?></div>
+                            <div><?= @$visit['bed_id'] === 0 ? "" : @$sub['bed']; ?></div>
                         </td>
-
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
             <div class="row">
@@ -277,9 +276,9 @@
                         </td>
                         <td>
                             <b>Asal Pasien</b>
-                            <div type="text" class="form-control" name=""><?= @$val['clinic_id'] ?></div>
+                            <div type="text" class="form-control" name=""><?= @$val['name_of_clinic'] ?></div>
                             <b>Tujuan Pasien</b>
-                            <div type="text" class="form-control" name=""><?= @$val['clinc_id_to'] ?></div>
+                            <div type="text" class="form-control" name=""><?= @$val['name_of_clinic_to'] ?></div>
                         </td>
                         <td>
                             <b>Waktu Berangkat</b>

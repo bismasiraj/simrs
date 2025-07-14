@@ -217,6 +217,9 @@ $getDataTarif = $db->query("SELECT
 
         const printJfisio = (props) => {
             $(`#${props?.id_button}`).off().on('click', function() {
+
+                console.log(props);
+
                 const printContent = document.querySelector(`#${props?.id_formTab} .card-body`).cloneNode(
                     true);
                 const style = document.createElement('style');
@@ -413,7 +416,8 @@ $getDataTarif = $db->query("SELECT
                     </style>
                 </head>
                 <body>
-                    ${printContent.innerHTML} 
+                    ${$(`#${props?.id_formTab}`).html()}
+
                 </body>
             </html>
         `);
@@ -660,7 +664,7 @@ $getDataTarif = $db->query("SELECT
         const renderFisioterapiTemplate = (props) => {
             let visit = <?= json_encode($visit) ?>;
 
-            const vactinationDate = props?.fisioterapi?.vactination_date ?
+            const vactinationDate = props?.fisioterapi.vactination_date ?
                 moment(props.fisioterapi.vactination_date).format('DD-MM-YYYY HH:mm') :
                 new Date().toLocaleString();
             $('#vactination_date-fisio').text(vactinationDate);
@@ -1008,10 +1012,23 @@ $getDataTarif = $db->query("SELECT
                 '<?= user()->employee_id ?>');
             $("#doctor-fisio-val-coverfisio").val(props?.fisioterapi?.doctor || '<?= user()->fullname ?>')
 
+
             $("#employedocTindakanFisio").on("change", function() {
                 let ggg = $(`#employedocTindakanFisio option:selected`).text()
                 $("#doctor-fisio-val-coverfisio").val(ggg)
             })
+
+            const selectedValue = props?.fisioterapi?.employee_id || '<?= user()->employee_id ?>';
+
+            $("#employedocTindakanFisio option").each(function() {
+                const optVal = $(this).val();
+                if (String(optVal) === String(selectedValue)) {
+                    $(this).attr("selected", "selected");
+                } else {
+                    $(this).removeAttr("selected");
+                }
+            });
+
 
 
             $("#patient_category_id-fisio-val-coverfisio").val(props?.fisioterapi?.patient_category_id || visit

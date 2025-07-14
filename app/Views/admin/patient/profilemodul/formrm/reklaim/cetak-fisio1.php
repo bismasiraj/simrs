@@ -42,7 +42,7 @@
                             </td>
                             <td style="width: 50%;">
                                 <b>Tanggal Masuk</b>
-                                <p class="p-1"><?= tanggal_indo(date('Y-m-d')) ?></p>
+                                <p class="p-1"><?= tanggal_indo(substr(@$visit['visit_date'], 0, 10)) ?></p>
                             </td>
                         </tr>
                         <tr>

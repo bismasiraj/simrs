@@ -23,13 +23,45 @@ class CaseManager extends \App\Controllers\BaseController
 
         $model = new InformedConsentModel();
 
-        $data = $model->select('visit_id, parameter_id, body_id, MIN(modified_date) as modified_date')
-            ->where('visit_id', $formData['visit_id'])
-            ->where('p_type', 'GEN0019')
-            ->groupBy(['visit_id', 'parameter_id', 'body_id'])
-            // ->orderBy('modified_date', 'ASC')
-            ->findAll();
+        $db = db_connect();
 
+        $sql = "SELECT 
+                        a1.visit_id, 
+                        'CM_A_01' AS parameter_id, 
+                        a1.body_id,
+                        ISNULL(
+                            (
+                                SELECT TOP 1 
+                                    TRY_CAST(
+                                        LEFT(REPLACE(a2.value_info, 'T', ' ') + ':00', 19) 
+                                        AS DATETIME
+                                    )
+                                FROM ASSESSMENT_INFORMED_CONCENT a2
+                                WHERE 
+                                    a2.visit_id = a1.visit_id AND 
+                                    a2.body_id = a1.body_id AND 
+                                    a2.value_id = 'G019A0100' AND 
+                                    NULLIF(LTRIM(RTRIM(a2.value_info)), '') IS NOT NULL
+                                ORDER BY a2.modified_date ASC
+                            ),
+                            MIN(a1.modified_date)
+                        ) AS modified_date
+                    FROM ASSESSMENT_INFORMED_CONCENT a1
+                    WHERE 
+                        a1.visit_id = ? AND 
+                        a1.p_type = 'GEN0019'
+                    GROUP BY 
+                        a1.visit_id, a1.body_id
+                    ";
+        $query = $db->query($sql, [$formData['visit_id']]);
+
+        // $data = $model->select('visit_id, parameter_id, body_id, MIN(modified_date) as modified_date')
+        //     ->where('visit_id', $formData['visit_id'])
+        //     ->where('p_type', 'GEN0019')
+        //     ->groupBy(['visit_id', 'parameter_id', 'body_id'])
+        //     // ->orderBy('modified_date', 'ASC')
+        //     ->findAll();
+        $data = $query->getResultArray();
         $data = $this->lowerKey($data);
 
         return $this->response->setJSON($data);
@@ -197,23 +229,28 @@ class CaseManager extends \App\Controllers\BaseController
 
                 $updateData[] = $data;
             }
-
-            $getAction[] = [];
+            $getAction = [];
 
             foreach ($updateData as $data) {
-                $dataExist = $model->where(['body_id' => $data['body_id'], 'value_id' => $data['value_id']])->first();
-                if (!empty($dataExist)) {
-                    $getAction[] = $model->where(['body_id' => $data['body_id'], 'value_id' => $data['value_id']])
-                        ->set($data)
-                        ->update();
-                } else {
-                    $getAction[] = $model->insert($data);
-                }
+                $dataExist = $model->where([
+                    'body_id'  => $data['body_id'],
+                    'value_id' => $data['value_id']
+                ])->first();
+            
+                $result = $dataExist
+                    ? $model->where([
+                        'body_id'  => $data['body_id'],
+                        'value_id' => $data['value_id']
+                    ])->set($data)->update()
+                    : $model->insert($data);
+            
+                $getAction[] = $result;
             }
-
-            if (in_array(false, array_splice($getAction, 1))) {
-                throw new \Exception('Update Data Gagal ');
+            
+            if (in_array(false, $getAction, true)) {
+                throw new \Exception('Update Data Gagal');
             }
+            
 
             $db->transCommit();
             return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true, 'data' => $updateData]);
@@ -222,6 +259,8 @@ class CaseManager extends \App\Controllers\BaseController
             return $this->response->setJSON(['message' => 'Error : ' . $e->getMessage(), 'respon' => false]);
         }
     }
+
+  
 
     public function deleteData()
     {
@@ -354,7 +393,8 @@ class CaseManager extends \App\Controllers\BaseController
                 "
                 SELECT ASSESSMENT_INFORMED_CONCENT.visit_id, ASSESSMENT_INFORMED_CONCENT.body_id, ASSESSMENT_INFORMED_CONCENT.p_type, ASSESSMENT_INFORMED_CONCENT.parameter_id, ASSESSMENT_INFORMED_CONCENT.VALUE_SCORE, ASSESSMENT_INFORMED_CONCENT.VALUE_INFO,ASSESSMENT_INFORMED_CONCENT.VALUE_DESC , ASSESSMENT_PARAMETER_VALUE.VALUE_INFO AS 'DESC',ASSESSMENT_INFORMED_CONCENT.MODIFIED_DATE FROM ASSESSMENT_INFORMED_CONCENT 
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_INFORMED_CONCENT.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                WHERE ASSESSMENT_INFORMED_CONCENT.visit_id = '" . $decoded_visit['visit_id'] . "' AND ASSESSMENT_INFORMED_CONCENT.p_type='GEN0019' AND ASSESSMENT_INFORMED_CONCENT.body_id = '" . $decoded_visit['body_id'] . "' AND ASSESSMENT_INFORMED_CONCENT.parameter_id = 'CM_A_01' 
+                WHERE ASSESSMENT_INFORMED_CONCENT.visit_id = '" . $decoded_visit['visit_id'] . "' AND ASSESSMENT_INFORMED_CONCENT.p_type='GEN0019' AND 
+                ASSESSMENT_INFORMED_CONCENT.body_id = '" . $decoded_visit['body_id'] . "' AND ASSESSMENT_INFORMED_CONCENT.parameter_id = 'CM_A_01' AND ASSESSMENT_INFORMED_CONCENT.VALUE_ID !='G019A0100'
                 "
             )->getResultArray() ?? []);
             $data_cm_02 = $this->lowerKey($db->query(
@@ -374,22 +414,59 @@ class CaseManager extends \App\Controllers\BaseController
 
             $data_cm_b = $this->lowerKey($db->query(
                 "
-                SELECT 
-                    modified_date,
-                    modified_by,
-                    MAX(CASE WHEN PARAMETER_ID = 'CM_B_01' THEN VALUE_INFO END) AS implementasi,
-                    MAX(CASE WHEN PARAMETER_ID = 'CM_B_02' THEN VALUE_INFO END) AS catatan
-                FROM 
-                    ASSESSMENT_INFORMED_CONCENT 
-                WHERE 
-                    P_TYPE = 'GEN0019' 
-                    AND visit_id = '" . $decoded_visit['visit_id'] . "' 
-                    AND BODY_ID = '" . $decoded_visit['body_id'] . "' 
-                    AND PARAMETER_ID LIKE 'CM_B_0%'
+              WITH BaseData AS (
+                    SELECT 
+                        a1.visit_id,
+                        a1.body_id,
+                        a1.modified_by,
+                        a1.parameter_id,
+                        a1.value_info,
+                        (
+                            SELECT 
+                                ISNULL(
+                                    (
+                                        SELECT TOP 1 
+                                            TRY_CAST(
+                                                LEFT(REPLACE(a2.value_info, 'T', ' ') + ':00', 19) 
+                                                AS DATETIME
+                                            )
+                                        FROM ASSESSMENT_INFORMED_CONCENT a2
+                                        WHERE 
+                                            a2.visit_id = a1.visit_id AND 
+                                            a2.body_id = a1.body_id AND 
+                                            a2.value_id = 'G019A0100' AND 
+                                            NULLIF(LTRIM(RTRIM(a2.value_info)), '') IS NOT NULL
+                                        ORDER BY a2.modified_date ASC
+                                    ),
+                                    (
+                                        SELECT MIN(a3.modified_date)
+                                        FROM ASSESSMENT_INFORMED_CONCENT a3
+                                        WHERE 
+                                            a3.visit_id = a1.visit_id AND 
+                                            a3.body_id = a1.body_id
+                                    )
+                                )
+                        ) AS modified_date
+                    FROM ASSESSMENT_INFORMED_CONCENT a1
+                    WHERE 
+                        a1.p_type = 'GEN0019' AND
+                        a1.visit_id = '" . $decoded_visit['visit_id'] . "' AND
+                        a1.body_id = '" . $decoded_visit['body_id'] . "' AND
+                        a1.parameter_id LIKE 'CM_B_0%'
+                )
 
-                GROUP BY modified_date,modified_by
+                SELECT 
+                    visit_id,
+                    body_id,
+                    modified_by,
+                    MIN(modified_date) AS modified_date,
+                    MAX(CASE WHEN parameter_id = 'CM_B_01' THEN value_info END) AS implementasi,
+                    MAX(CASE WHEN parameter_id = 'CM_B_02' THEN value_info END) AS catatan
+                FROM BaseData
+                GROUP BY visit_id, body_id, modified_by;
                             
                 "
+
             )->getResultArray() ?? []);
 
             return view("admin/patient/profilemodul/cetak-caseManager.php", [

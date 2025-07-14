@@ -2451,17 +2451,19 @@ class medis extends \App\Controllers\BaseController
             $selectlokalis = $this->lowerKey($db->query(
                 "SELECT assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = '1.00' and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
-                where body_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 3
-                order by mas.theorder"
+                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = ? and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
+                where body_id = ? AND assessment_lokalis.VALUE_SCORE = 3
+                order by mas.theorder",
+                [$specialist_type_id, $vactination_id]
             )->getResultArray());
 
             $selectlokalis2 = $this->lowerKey($db->query(
                 "SELECT assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = '1.00' and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
-                where body_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 2
-                order by mas.theorder"
+                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = ? and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
+                where body_id = ? AND assessment_lokalis.VALUE_SCORE = 2
+                order by mas.theorder",
+                [$specialist_type_id, $vactination_id]
             )->getResultArray());
 
 
@@ -2499,10 +2501,20 @@ class medis extends \App\Controllers\BaseController
                                 WHEN ISINTERNAL = 10 THEN 'TRANSFER INTERNAL'
                                 WHEN ISINTERNAL = 11 THEN 'Pengobatan Selesai'
                                 ELSE ''
-                            END AS tindak_lanjut
+                            END AS tindak_lanjut,
+                            examination_date
                         FROM PASIEN_TRANSFER
                         WHERE visit_id = ?
                         AND ISINTERNAL <> 11;", [$visit['visit_id']])->getRowArray());
+            if ($visit['class_room_id'] == '' || is_null($visit['class_room_id']))
+                if (count($tindakLanjut) == 0) {
+                    $waktuakhir = $this->lowerKey($db->query("select dateadd(hour,7,waktu) as waktu from batching_bridging where trans_id = ? and tipe = '25' ", [$visit['trans_id']])->getRowArray());
+                    if (count($waktuakhir) > 0)
+                        $visit['exit_date'] = $waktuakhir['waktu'];
+                } else {
+                    $visit['exit_date'] = $tindakLanjut['examination_date'];
+                }
+            // dd($waktuakhir);
 
             $farma = $db->query("SELECT  STUFF(
                         (SELECT ', ' +  description + ' ( ' + isnull(description2,'') + ' ) '   from  treatment_obat where 
@@ -3712,8 +3724,8 @@ class medis extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
 
-            if (!is_null($visit['class_room_id']) && $visit['class_room_id'] != '')
-                $db = db_connect();
+            // if (!is_null($visit['class_room_id']) && $visit['class_room_id'] != '')
+            $db = db_connect();
 
             $select = $this->lowerKey($db->query("SELECT
             INASIS_KONTROL.NOSEP,  

@@ -110,15 +110,15 @@
                         </td>
                         <td class="p-1">
                             <b>Jenis Kelamin</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_gender']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['gendername']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
-                            <?php if (!empty($visit['date_of_birth'])) : ?>
+                            <?php if (!empty($visit['tgl_lahir'])) : ?>
                                 <p class="m-0 mt-1 p-0">
-                                    <?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?>
+                                    <?= date('d/m/Y', strtotime($visit['tgl_lahir'])) . ' (' . @$visit['age'] . ')'; ?>
                                 </p>
                             <?php else : ?>
                                 <p class="m-0 mt-1 p-0">-</p>
@@ -126,13 +126,13 @@
                         </td>
                         <td class="p-1" colspan="2">
                             <b>Alamat Pasien</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['contact_address']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['visitor_address']; ?></p>
                         </td>
                     </tr>
                     <tr>
                         <td class="p-1">
                             <b>DPJP</b>
-                            <p class="m-0 mt-1 p-0"><?= @$visit['sspractitioner_name']; ?></p>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['fullname']; ?></p>
                         </td>
                         <td class="p-1">
                             <b>Department</b>
@@ -150,7 +150,7 @@
                         </td>
                         <td class="p-1">
                             <b>Bangsal/ Kamar</b>
-                            <div><?= @$visit['name_of_class']; ?></div>
+                            <div><?= @$visit['name_of_class_room']; ?></div>
                         </td>
                         <td class="p-1">
                             <b>Bed</b>
@@ -214,26 +214,82 @@
         $("#edukasi-tables").html(dataResult)
 
         data?.forEach((e, index) => {
-            let qrcodeFamily = new QRCode(document.getElementById(`qrcode-keluarga-${index + 1}`), {
-                text: !e?.family_name ? "" : e?.family_name,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // Tingkat koreksi tinggi
-            });
-
-            let qrcodeStaff = new QRCode(document.getElementById(`qrcode-${index + 1}`), {
-                text: !e?.staff ? "" : e?.staff,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // Tingkat koreksi tinggi
-            });
+            if (e?.sign_file_family)
+                cropTransparentPNG(`data:image/gif;base64,` + e?.sign_file_family, (croppedImage) => {
+                    if (croppedImage) {
+                        $('#qrcode1').html(
+                            `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+                        );
+                        $(`#qrcode-keluarga-${index + 1}`).html('<img class="mt-3" src="' + croppedImage + '" width="100px">')
+                    } else {
+                        $('#qrcode1').html('');
+                    }
+                });
+            if (e?.sign_file_staff)
+                cropTransparentPNG(`data:image/gif;base64,` + e?.sign_file_staff, (croppedImage) => {
+                    if (croppedImage) {
+                        $('#qrcode1').html(
+                            `<img src="${croppedImage}" alt="Signature" style="width: 100%; max-width: 55px; height: auto;">`
+                        );
+                        $(`#qrcode-${index + 1}`).html('<img class="mt-3" src="' + croppedImage + '" width="100px">')
+                    } else {
+                        $('#qrcode1').html('');
+                    }
+                });
         });
         window.print();
     }
+</script>
+<script type="text/javascript">
+    const cropTransparentPNG = (base64, callback) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            let top = null,
+                bottom = null,
+                left = null,
+                right = null;
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const index = (y * canvas.width + x) * 4;
+                    const alpha = data[index + 3];
+                    if (alpha > 0) {
+                        if (top === null || y < top) top = y;
+                        if (bottom === null || y > bottom) bottom = y;
+                        if (left === null || x < left) left = x;
+                        if (right === null || x > right) right = x;
+                    }
+                }
+            }
+
+            if (top === null) return callback(null); // tidak ada gambar
+
+            const width = right - left + 1;
+            const height = bottom - top + 1;
+
+            const croppedCanvas = document.createElement('canvas');
+            croppedCanvas.width = width;
+            croppedCanvas.height = height;
+
+            const croppedCtx = croppedCanvas.getContext('2d');
+            croppedCtx.drawImage(canvas, left, top, width, height, 0, 0, width, height);
+
+            const croppedBase64 = croppedCanvas.toDataURL('image/png');
+            callback(croppedBase64);
+        };
+        img.src = base64;
+    };
 </script>
 <style>
     @media print {

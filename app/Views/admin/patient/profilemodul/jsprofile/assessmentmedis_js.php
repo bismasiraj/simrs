@@ -92,8 +92,8 @@
                 'visit_id': visit.visit_id,
                 'nomor': nomor,
                 'diagCat': diagCat,
-                'norujukan': '<?= @$visit['norujukan']; ?>',
-                'isrj': '<?= @$visit['isrj']; ?>'
+                'norujukan': visit?.norujukan,
+                'isrj': visit?.isrj
             }),
             dataType: 'json',
             contentType: false,
@@ -530,7 +530,7 @@
             }
             // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
         })
-        copyLastArm()
+        // copyLastArm()
         fillViewAssessmentMedis(pasienDiagnosaId, flag)
     }
     const fillViewAssessmentMedis = async (pasienDiagnosaId, flag = 1) => {
@@ -584,8 +584,8 @@
             examselectdetail = selected[0]
             fillExaminationDetail(examselectdetail, 'arm')
 
-            fillPemeriksaanFisik(pasienDiagnosa?.pasien_diagnosa_id)
-            fillRiwayat()
+            // fillPemeriksaanFisik(pasienDiagnosa?.pasien_diagnosa_id)
+            // fillRiwayat()
             getSateliteMedis(pasienDiagnosa)
         } else {
             let clinicSelect = clinics.filter(item => item?.clinic_id == '<?= @$visit['clinic_id']; ?>')
@@ -643,7 +643,17 @@
                 reqFill(reqfill, pasienDiagnosaId, flag)
             }
 
-            copyLastArm()
+            const props = {
+                visit_id: visit?.visit_id,
+                pasien_diagnosa_id: visit?.session_id,
+                specialist_type_id: visit?.specialist_type_id,
+                clinic_id: visit?.clinic_id
+            }
+            setTimeout(function() {
+                copyLastArm()
+            }, 2000)
+            getSateliteMedis(props)
+
         }
     }
 
@@ -674,10 +684,17 @@
             // if (pasienDiagnosaLocal.specialist_type_id == '<?= @@$visit['specialist_type_id']; ?>')
             fillPemeriksaanFisik(pasienDiagnosaLocal?.pasien_diagnosa_id)
 
-            var filterexaxmdetail = examForassessmentDetail.filter(item => item?.petugas_type == '11');
-            var initialexamdetail = getLastObject(sortAscending(filterexaxmdetail, 'examination_date'))
-            if (initialexamdetail)
-                fillExaminationDetail(initialexamdetail, 'arm')
+            // var filterexaxmdetail = examForassessmentDetail;
+            // var initialexamdetail = getLastObject(sortDescending(filterexaxmdetail, 'examination_date'))
+            // console.log(initialexamdetail)
+            // if (initialexamdetail)
+            //     fillExaminationDetail(initialexamdetail, 'arm')
+        } else {
+            // var filterexaxmdetail = examForassessmentDetail;
+            // var initialexamdetail = getLastObject(sortDescending(filterexaxmdetail, 'examination_date'))
+            // console.log(initialexamdetail)
+            // if (initialexamdetail)
+            //     fillExaminationDetail(initialexamdetail, 'arm')
         }
     }
 
@@ -772,7 +789,7 @@
 
         displayTableAssessmentMedis(index)
 
-        fillRiwayat()
+        // fillRiwayat()
 
 
         $("#armcollapseVitalSign").find("input, select").trigger("change")
@@ -810,6 +827,29 @@
             if (res?.examDetail) {
                 let examselect = res?.examDetail
                 fillExaminationDetail(examselect, 'arm')
+            }
+            if (res?.lokalis) {
+                $.each(res?.lokalis, function(key, value) {
+                    if (value.body_id == pasienDiagnosa?.pasien_diagnosa_id) {
+                        if (value.value_score == 2 || value.value_score == 4 || value.value_score == 5) {
+                            $("#arm" + value?.p_type + value?.parameter_id + value?.value_id).val(value?.value_detail);
+                            // $("#arm" + value?.p_type + value?.parameter_id + value?.value_id).prop("disabled", true)
+                        } else if (value.value_score == 3) {
+                            if ($("#lokalis" + value?.value_id).length) {
+                                $("#lokalis" + value?.value_id).val(value?.value_detail);
+                                $("#lokalis" + value?.value_id + "desc").val(value?.value_desc);
+                                var canvas = document.getElementById('canvas' + value?.p_type + value?.parameter_id + value?.value_id);
+                                const canvasDataInput = document.getElementById('lokalis' + value?.value_id);
+                                var context = canvas?.getContext('2d');
+                                const img = new Image();
+                                img.onload = function() {
+                                    context.drawImage(img, 0, 0, canvas?.width, canvas?.height);
+                                };
+                                img.src = "data:image/png;base64," + value?.filedata64;
+                            }
+                        }
+                    }
+                })
             }
             if (res?.gcs) {
                 gcsAll = res?.gcs
@@ -908,6 +948,10 @@
                     }
                 })
             }
+            if (res?.pasienHistory) {
+                riwayatAll = res?.pasienHistory;
+                fillRiwayat()
+            }
             if (pasienDiagnosa?.clinic_id == 'P012') {
                 getTriage(pasienDiagnosa?.pasien_diagnosa_id, "bodyTriageMedis")
                 // getTriageNew(pasienDiagnosa?.pasien_diagnosa_id, "bodyTriageMedis")
@@ -955,7 +999,8 @@
 
 
     const enableARM = async () => {
-        $("#formsignarm").slideDown()
+        $("#formsignarm").slideUp()
+        $("#formsignarm2").slideUp()
         $("#formsavearmbtn").slideDown()
         $("#formeditarm").slideUp()
         $("#formdeletearm").slideDown()
@@ -976,25 +1021,23 @@
 
     const disableARM = async () => {
         $("#formsavearmbtn").slideUp()
-        console.warn('4' + $("#armclinic_id").val())
 
         if ($("#armmodified_by").val() == '<?= user()->username; ?>' || <?= json_encode(user()->checkRoles(['superuser'])) ?>) {
             $("#formeditarm").slideDown()
         } else {
             $("#formeditarm").slideUp()
         }
-        console.warn('5' + $("#armclinic_id").val())
         $("#formaddarm input").prop("disabled", true)
         $("#formaddarm textarea").prop("disabled", true)
         $("#formaddarm select").prop("disabled", true)
         // $("#formaddarm option").prop("disabled", true)
-        console.warn('6' + $("#armclinic_id").val())
 
         $("#formaddarm").find(".btn-to-hide").slideUp()
         if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
             $("#formeditarm").slideUp()
             $("#formdeletearm").slideDown()
             $("#formsignarm").slideDown()
+            $("#formsignarm2").slideDown()
             $("#formaddarp").find(".btn-edit").each(function() {
                 $(this).hide()
             })
@@ -1003,7 +1046,6 @@
             $("#formdeletearm").slideDown()
             $("#formsignarm").slideDown()
         }
-        console.warn('7' + $("#armclinic_id").val())
         disableCanvasLokalis()
         await checkSignSignature("formaddarm", "armpasien_diagnosa_id", "formsavearmbtn", 2)
     }
@@ -1167,7 +1209,7 @@
                                     <td rowspan="6">
                                         <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
                                             <button type="button" class="btn btn-success" onclick="fillDataArm(${key})">Lihat</button>
-                                            <button type="button" class="btn btn-light" onclick="openPopUpTabWithPost('<?= base_url() ?>admin/rm/medis/${linkcetak}/${value?.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
+                                            <button type="button" class="btn btn-light" onclick="openPopUpTabWithPost('<?= base_url() ?>admin/rm/medis/${linkcetak}/visit/${value?.pasien_diagnosa_id}/${titlerj}')">Cetak</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -1341,7 +1383,8 @@
                         // $("#formaddarm").find(".btn-save:visible").each(function() {
                         //     $(this).trigger("click")
                         // })
-                        $("#armModal").modal("hide")
+                        // $("#armModal").modal("hide")
+                        disableARM()
                         let formData = new FormData(document.getElementById("formaddarm"))
                         let formDataObject = {};
                         formData.forEach(function(value, key) {
@@ -1558,6 +1601,7 @@
 </script>
 <script type="text/javascript">
     const signarm = (user_type) => {
+        enableARM()
         addSignUser("formaddarm", "arm", "armpasien_diagnosa_id", "formsavearmbtn", 2, user_type, 1, $("#armTitle").html(), 'valid_user')
     }
 
@@ -1972,9 +2016,9 @@
             $("#armvs_status_id").prop("selectedIndex", 4)
         <?php
         } ?>
-        var initialexamdetail = getLastObject(sortAscending(examForassessmentDetail, 'examination_date'))
-        if (initialexamdetail)
-            fillExaminationDetail(initialexamdetail, 'arm')
+        // var initialexamdetail = getLastObject(sortAscending(examForassessmentDetail, 'examination_date'))
+        // if (initialexamdetail)
+        //     fillExaminationDetail(initialexamdetail, 'arm')
         $("#armdweight").keydown(function(e) {
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
@@ -2002,15 +2046,15 @@
         $("#armdarm_diameter").keydown(function(e) {
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
-        $.each(examForassessmentDetail, function(key, value) {
-            if (value?.body_id == pasienDiagnosa?.pasien_diagnosa_id) {
-                examselectdetail = value
-                setTimeout(() => {
-                    fillExaminationDetail(examselectdetail, 'arm')
-                }, 1000);
-                return false
-            }
-        })
+        // $.each(examForassessmentDetail, function(key, value) {
+        //     if (value?.body_id == pasienDiagnosa?.pasien_diagnosa_id) {
+        //         examselectdetail = value
+        //         setTimeout(() => {
+        //             fillExaminationDetail(examselectdetail, 'arm')
+        //         }, 1000);
+        //         return false
+        //     }
+        // })
     }
 
     function appendRiwayatMedis(accordionId) {
@@ -3265,9 +3309,11 @@
     `;
         appendAccordionItem(accordionId, accordionContent);
 
-
+        let newvisit = visit
+        if (pasienDiagnosa?.pasien_diagnosa_id)
+            newvisit.session_id = pasienDiagnosa?.pasien_diagnosa_id
         templateDermatovenerologi({
-            visit: visit
+            visit: newvisit
         })
     }
 
@@ -3301,8 +3347,12 @@
     `;
         appendAccordionItem(accordionId, accordionContent);
 
+        let newvisit = visit
+        if (pasienDiagnosa?.pasien_diagnosa_id)
+            newvisit.session_id = pasienDiagnosa?.pasien_diagnosa_id
+
         templateNeurologi({
-            visit: visit
+            visit: newvisit
         })
     }
 </script>

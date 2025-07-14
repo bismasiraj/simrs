@@ -127,7 +127,7 @@ if (user()->checkPermission("educationintegration", "r"))
     $menu['educationIntegration'] = 1;
 if (user()->checkPermission("educationform", "r"))
     $menu['educationForm'] = 1;
-if (user()->checkPermission("reporteklaim", "r"))
+if (user()->checkPermission("reporteklaim", "c"))
     $menu['eklaim'] = 1;
 if (user()->checkPermission("asuhangizi", "r"))
     $menu['gizi'] = 1;
@@ -141,6 +141,12 @@ if (user()->checkPermission("reporteklaim", "r"))
     $menu['reportEKlaim'] = 1;
 if (user()->checkPermission("permintaandarah", "r"))
     $menu['permintaandarah'] = 1;
+// if (user()->checkPermission("treatintensive", "r"))
+if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat', 'bidan', 'casemix']) && $visit['class_room_id'] != '' && !is_null($visit['class_room_id']))
+    $menu['treatintensive'] = 1;
+// if (user()->checkPermission("alatinvasi", "r"))
+if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat', 'bidan', 'casemix']) && $visit['class_room_id'] != '' && !is_null($visit['class_room_id']))
+    $menu['alatinvasi'] = 1;
 
 if ($visit['specialist_type_id'] == '1.05' && user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat', 'bidan', 'casemix'])) {
     $menu['nifas'] = 1;
@@ -406,12 +412,12 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="giziTab" class="nav-link border-bottom" href="#gizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Asuhan Gizi</a></li>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['treatintensive'] == 1 && $visit['isrj'] == '0') {
+                                        <?php if ($menu['treatintensive'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="treatintensiveTab" class="nav-link border-bottom" href="#treatintensive" data-bs-toggle="tab" aria-expanded="true" role="tab">Treatment Intensive</a></li>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['alatinvasi'] == 1 && $visit['isrj'] == '0') {
+                                        <?php if ($menu['alatinvasi'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="gearinvasiTab" class="nav-link border-bottom" href="#gearinvasi" data-bs-toggle="tab" aria-expanded="true" role="tab">Alat Invasi</a></li>
                                         <?php
@@ -3077,6 +3083,25 @@ if ($menu['persalinan'] == 1) {
 }
 if ($menu['riwayatHamil'] == 1) {
     echo view('admin/patient/profilemodul/jsprofile/riwayatHamil_js.php', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa
+    ]);
+}
+if ($menu['treatintensive'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/treat-intensive_js.php', [
         'title' => '',
         'orgunit' => $orgunit,
         'statusPasien' => $statusPasien,

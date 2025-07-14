@@ -500,6 +500,19 @@
             })
 
 
+            const selectedValue = props?.fisioterapi?.employee_id || '<?= user()->employee_id ?>';
+
+            $("#employedocTindakanFisio option").each(function() {
+                const optVal = $(this).val();
+                if (String(optVal) === String(selectedValue)) {
+                    $(this).attr("selected", "selected");
+                } else {
+                    $(this).removeAttr("selected");
+                }
+            });
+
+
+
             $("#patient_category_id-fisio-val-coverfisio").val(props?.fisioterapi?.patient_category_id || visit
                 ?.patient_category_id);
             $("#tarif_id-fisio-val-coverfisio").val(props?.fisioterapi?.tarif_id || visit?.tarif_id);

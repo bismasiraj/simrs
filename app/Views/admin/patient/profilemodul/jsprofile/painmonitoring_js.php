@@ -210,9 +210,10 @@
             url: '<?php echo base_url(); ?>admin/rm/assessment/getPainMonitoring',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit.visit_id,
-                'nomor': nomor,
-                'body_id': ''
+                'visit_id': visit?.visit_id,
+                'nomor': visit?.no_registration,
+                'body_id': '',
+                'class_room_id': visit?.class_room_id
             }),
             dataType: 'json',
             contentType: false,

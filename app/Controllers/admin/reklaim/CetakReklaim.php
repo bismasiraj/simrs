@@ -1471,17 +1471,19 @@ class CetakReklaim extends \App\Controllers\BaseController
             $selectlokalis = $this->lowerKey($db->query(
                 "SELECT assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = '1.00' and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
-                where body_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 3
-                order by mas.theorder"
+                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = ? and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
+                where body_id = ? AND assessment_lokalis.VALUE_SCORE = 3
+                order by mas.theorder",
+                [$specialist_type_id, $vactination_id]
             )->getResultArray());
 
             $selectlokalis2 = $this->lowerKey($db->query(
                 "SELECT assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = '1.00' and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
-                where body_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 2
-                order by mas.theorder"
+                inner join MAPPING_ASSESSMENT_SPECIALIST MAS ON MAS.SPECIALIST_TYPE_ID = ? and ASSESSMENT_LOKALIS.VALUE_ID = MAS.DOC_ID
+                where body_id = ? AND assessment_lokalis.VALUE_SCORE = 2
+                order by mas.theorder",
+                [$specialist_type_id, $vactination_id]
             )->getResultArray());
 
 
@@ -3579,16 +3581,24 @@ class CetakReklaim extends \App\Controllers\BaseController
                 ];
             }
 
-            $dataTables = $this->lowerKey($db->query("
-                SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound, h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi,
-                    PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, null as kode,
-                    reg_date AS tgl_hasil, norm, k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, 
-                    k.pengirim_name, k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl, k.diagnosa_desc, h.valid_user, h.valid_date, k.indication_desc
+            $dataTables = $this->lowerKey($db->query("SELECT
+                    h.nolab_lis, h.kode_kunjungan, h.tarif_id, h.tarif_name, h.kel_pemeriksaan,
+                    h.urut_bound, h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi, h.PARAMETER_NAME,
+                    h.hasil, h.satuan, h.NILAI_RUJUKAN, h.METODE_PERIKSA, NULL as kode,
+                    h.reg_date AS tgl_hasil, h.norm,
+                    k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name,
+                    k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl,
+                    k.diagnosa_desc, h.valid_user, h.valid_date, k.indication_desc
                 FROM sharelis.dbo.hasillis h
-                LEFT JOIN sharelis.dbo.kirimlis k ON h.norm COLLATE database_default = k.no_pasien COLLATE database_default 
-                    AND H.kode_kunjungan = K.Kode_Kunjungan
-                WHERE H.NOLAB_LIS IN ($placeholders)
-                ORDER BY urut_bound, kode_kunjungan, tarif_id
+                OUTER APPLY (
+                    SELECT TOP 1 *
+                    FROM sharelis.dbo.kirimlis k
+                    WHERE k.no_pasien COLLATE database_default = h.norm COLLATE database_default
+                    AND k.Kode_Kunjungan = h.kode_kunjungan
+                    ORDER BY k.Tgl_Periksa DESC
+                ) k
+                WHERE h.nolab_lis IN ($placeholders)
+                ORDER BY h.urut_bound, h.kode_kunjungan, h.tarif_id;
             ", $data)->getResultArray());
 
             $doctor = $this->lowerKey($db->query("SELECT fullname from EMPLOYEE_ALL where NONACTIVE= 0 and employee_id in (select employee_id from DOCTOR_SCHEDULE where clinic_id ='P013')")->getRowArray());
@@ -3828,7 +3838,7 @@ class CetakReklaim extends \App\Controllers\BaseController
     {
         $formData = $this->request->getJSON();
         $db = db_connect();
-
+    
         $result = $db->query(
             "SELECT EXAMINATION_DATE 
              FROM PASIEN_TRANSFER 
@@ -3836,12 +3846,13 @@ class CetakReklaim extends \App\Controllers\BaseController
              ORDER BY EXAMINATION_DATE DESC",
             [$formData->no_regis, $formData->trans_id]
         )->getRowArray();
-
+    
         $query = $this->lowerKey($result);
-
+    
         return $this->response->setJSON([
             'value' => $query,
             'status' => $query ? true : false
         ]);
     }
+    
 }

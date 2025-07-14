@@ -740,7 +740,8 @@ foreach ($aValue as $key => $value) {
             document_id: ex.body_id,
             visit_id: ex.visit_id,
             specialist_type_id: ex.specialist_type_id,
-            clinic_id: ex.specialist_type_id
+            clinic_id: ex.specialist_type_id,
+            no_registration: ex.no_registration
         }, 'admin/rm/assessmentperawat/getSatelitePerawat', (res) => {
             $("#bodyGcsPerawat").html("")
             $("#bodyFallRiskPerawat").html("")
@@ -762,7 +763,10 @@ foreach ($aValue as $key => $value) {
             $("#bodySocial").html("")
             $("#bodyHearing").html("")
             $("#bodySleeping").html("")
-
+            if (res.pasienHistory) {
+                riwayatAll = res?.pasienHistory;
+                fillRiwayatArp()
+            }
             if (res.diagPerawat) {
                 $.each(res.diagPerawat, function(key, value) {
                     addRowDiagPerawatBasic('bodyDiagPerawat', '', value.diagnosan_id, value.diag_notes, 'arpModal')

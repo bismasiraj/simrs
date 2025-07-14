@@ -72,7 +72,7 @@ class GoodsModel extends Model
             ->like('name', $brand)
             ->where('iscompounding in (1,2)')
             ->where('measure_dosis is not null')
-            // ->where('isactive', '1')
+            ->where('isactive', '1')
             // ->where('code_5 <> \'%\'')
             ->select('GOODS.NAME, goods.net_price AS SELL_PRICE,    
                     100 AS STOCKnya,GOODS.OTHER_CODE,size_kemasan,

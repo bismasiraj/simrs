@@ -100,8 +100,8 @@ class TreatmentAkomodasiModel extends Model
 
     public function getPasienRanap($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null, $keluar = null, $x)
     {
-        $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_NOKARTU_NEWFILTER;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '$dokter', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
-        // $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_NOKARTU;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '$dokter', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
+        // $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_NOKARTU_NEWFILTER;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '$dokter', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
+        $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_NOKARTU;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '$dokter', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }

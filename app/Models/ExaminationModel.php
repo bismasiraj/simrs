@@ -67,7 +67,8 @@ class ExaminationModel extends Model
         "valid_pasien",
         "valid_date",
         "pengantarlabcppt",
-        "pengantarlabcpptotherstext"
+        "pengantarlabcpptotherstext",
+        "consul_type"
     ];
 
     protected $useTimestamps = true;

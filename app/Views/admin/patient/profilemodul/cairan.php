@@ -18,16 +18,16 @@
                     </button>
                 </center> -->
 
-                <?php if (user()->checkPermission("asuhancairan", 'c') && user()->checkRoles(['superuser', 'admin', 'perawat'])){ ?>
-                <div id="cairanItmBtnGroup" class="row">
-                    <div class="col-md-12">
-                        <div id="addCairannn" class="box-tab-tools text-center">
-                            <button data-toggle="modal" class="btn btn-primary btn-lg" id="add-cairan-gen0023"
-                                style="width: 300px"><i class=" fa fa-plus"></i> Tambah
-                                Dokumen</button>
+                <?php if (user()->checkPermission("asuhancairan", 'c')) { ?>
+                    <div id="cairanItmBtnGroup" class="row">
+                        <div class="col-md-12">
+                            <div id="addCairannn" class="box-tab-tools text-center">
+                                <button data-toggle="modal" class="btn btn-primary btn-lg" id="add-cairan-gen0023"
+                                    style="width: 300px"><i class=" fa fa-plus"></i> Tambah
+                                    Dokumen</button>
+                            </div>
                         </div>
                     </div>
-                </div>
                 <?php } ?>
                 <div class="row mt-4 mb-3">
                     <div class="col-md-3">
@@ -79,6 +79,9 @@
                         </button>
                         <button type="button" id="btn-print-cairangen0023" class="btn btn-secondary  ml-2">
                             <i class="fa fa-print"></i> Print
+                        </button>
+                        <button type="button" id="btn-print-monitoring-infus" class="btn btn-secondary  ml-2">
+                            <i class="fa fa-print"></i> Monitoring Infus
                         </button>
                     </div>
                 </div>

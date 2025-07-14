@@ -5,7 +5,7 @@
     $("#tindakanPerawatTab").on("click", function() {
         getTindakanPerawat()
     })
-    $("#formSaveTindPerawatBtn").on("click", function() {
+    $("#formSaveTindPerawatBtn").off().on("click", function() {
         // $("#tindakanBodyPerawatKolaborasi").find("button.simpanbill:not([disabled])").trigger("click")
         $("#tindakanBodyPerawatKolaborasi").find("button.simpanbill:visible").trigger("click")
     })
@@ -115,7 +115,7 @@
             sell_price = tarifData.amount;
             amount_paid = tarifData.amount;
             tarif_id = tarifData.tarif_id;
-            if (tarifData.amount == 0) {
+            if (tarifData.amount == 0 && tarifData.tarif_id == '31010001') {
                 if (type == 1) {
                     $("#perawatTindakan" + key)
                         .append($("<td>>").html(String(rowKolaborasi) + "."))
@@ -200,7 +200,7 @@
             sell_price = billPerawat.sell_price;
             amount_paid = billPerawat.amount_paid;
             tarif_id = billPerawat.tarif_id;
-            if (billPerawat.amount == 0) {
+            if (billPerawat.amount == 0 && billPerawat.tarif_id == '31010001') {
                 if (type == 1) {
                     $("#perawatTindakan" + key)
                         .append($("<td>>").html(String(rowKolaborasi) + "."))
